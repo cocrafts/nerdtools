@@ -1,26 +1,26 @@
 let mapleader = ","
 
 set scrolloff = 5
-set relativenumber
+"set relativenumber
 set idearefactormode = keep
 set ideajoin
 set highlightedyank
-set easymotion " enable easy motion plugin
+set easymotion
 set commentary
-set surround " enable surround
+set surround
 set showmode
 set NERDTree
 
-set which-key " enable which-key plugin
-set notimeout " disable timout option
-set timeoutlen = 1000 " increase the timeout len (default: 10000)
-let g:WhichKey_DefaultDelay = 0 " make popup show instantly
+set which-key
+set notimeout
+set timeoutlen = 1000
+let g:WhichKey_DefaultDelay = 0
 
 nnoremap <leader>e :NERDTreeToggle<CR>
 
 " Nice remap
-nnoremap H Hzz " centered High command
-nnoremap L Lzz " centered Low command
+nnoremap H Hzz
+nnoremap L Lzz
 
 " Moving text up and down
 vnoremap J :m '>+1<CR>gv=gv
@@ -35,10 +35,10 @@ nnoremap <leader>v :split<CR>
 nnoremap <leader>s :vsplit<CR>
 
 " File and window management
-inoremap <leader>w <ESC>:w<CR> " save changes
-nnoremap <leader>w :w<CR> " save changes
-inoremap <leader>q <ESC>:q<CR> " close current Tab
-nnoremap <leader>q :q<CR> " close current Tab
+inoremap <leader>w <ESC>:w<CR>
+nnoremap <leader>w :w<CR>
+inoremap <leader>q <ESC>:q<CR>
+nnoremap <leader>q :q<CR>
 
 nnoremap <leader>p :action ManageRecentProjects<CR>
 inoremap <leader>p <ESC>:action ManageRecentProjects<CR>
