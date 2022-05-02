@@ -19,8 +19,8 @@ let g:WhichKey_DefaultDelay = 0 " make popup show instantly
 nnoremap <leader>e :NERDTreeToggle<CR>
 
 " Nice remap
-nnoremap H Hzz
-nnoremap L Lzz
+nnoremap H Hzz " centered High command
+nnoremap L Lzz " centered Low command
 
 " Moving text up and down
 vnoremap J :m '>+1<CR>gv=gv
@@ -33,7 +33,6 @@ nnoremap <leader>k :m .-2<CR>==
 " Split
 nnoremap <leader>v :split<CR>
 nnoremap <leader>s :vsplit<CR>
-
 
 " File and window management
 inoremap <leader>w <ESC>:w<CR> " save changes
