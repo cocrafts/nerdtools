@@ -1,0 +1,35 @@
+- name: Configure fancy oh-my-zsh
+  hosts: local
+
+  tasks:
+    - name: Clone oh-my-zsh
+      git:
+        repo: https://github.com/robbyrussell/oh-my-zsh.git
+        dest: "~/.oh-my-zsh"
+        update: no
+
+    - name: Install Auto suggestions plugin for Zsh
+      git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+
+    - name: Install Syntax highlighting plugin for Zsh
+      git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+
+    - name: Install Nvm plugin for Zsh
+      git:
+        repo: https://github.com/lukechilds/zsh-nvm
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-nvm
+
+    - name: Install starship shell prompt
+      shell: brew install starship
+      args:
+        creates: /usr/local/bin/starship
+
+    - name: Copy .zshrc to user's Home
+      template:
+        src: ./templates/.zshrc
+        dest: ~/.zshrc
+        force: no

@@ -1,0 +1,14 @@
+- name: Configure fancy NeoVim
+  hosts: local
+
+  tasks:
+    - name: Install NeoVim
+      shell: brew install neovim
+      args:
+        creates: /usr/local/bin/nvim
+
+    - name: Create symlink to neovim configure
+      file:
+        src: ~/nerdtools/vim/
+        dest: ~/.config/nvim
+        state: link

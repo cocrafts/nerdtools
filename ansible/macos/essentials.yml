@@ -1,0 +1,34 @@
+- name: Setup essential tools
+  hosts: local
+
+  tasks:
+    - name: Install Homebrew
+      shell: yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      args:
+        creates: /usr/local/bin/brew
+
+    - name: Grant permission for main8
+      shell: sudo chown -R $(whoami) /usr/local/share/man/man8
+
+    - name: Install official git
+      shell: brew install git
+      args:
+        creates: /usr/local/Cellar/git/
+
+    - name: Install Kitty terminal
+      shell: brew install --cask kitty
+      args:
+        creates: /usr/local/bin/kitty
+
+    - name: Install Fzf
+      shell: |
+        brew install fzf
+        $(brew --prefix)/opt/fzf/install
+      args:
+        creates: /usr/local/bin/fzf
+
+    - name: Override Kitty conf
+      template:
+        src: ./templates/kitty.conf
+        dest: ~/.config/kitty/kitty.conf
+        force: yes

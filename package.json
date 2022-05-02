@@ -1,0 +1,21 @@
+{
+  "name": "@cocrafts/nerdtools",
+  "version": "1.0.0",
+  "description": "Automation tool, install everything your operating-system need for Metacraft development",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cocrafts/nerdtools.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cocrafts/nerdtools/issues"
+  },
+  "homepage": "https://github.com/cocrafts/nerdtools#readme"
+}

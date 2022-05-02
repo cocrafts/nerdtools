@@ -1,0 +1,19 @@
+- name: Setup scripting languages
+  hosts: local
+
+  tasks:
+    - name: Download nvm installation
+      shell: yes | /bin/bash -c "$(curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh)"
+      args:
+        creates: ~/.nvm/nvm.sh
+
+    - name: Install Node.js latest version
+      shell: |
+        source ~/.nvm/nvm.sh
+        nvm install stable
+      args:
+        executable: /bin/zsh
+        creates: ~/.nvm/versions/node
+
+    - name: Install Yarn via npm
+      shell: npm i -g yarn

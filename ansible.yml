@@ -1,0 +1,10 @@
+---
+- name: Run all local playbooks
+  hosts: local
+
+- import_playbook: ansible/macos/initialize.yml
+- import_playbook: ansible/macos/essentials.yml
+- import_playbook: ansible/macos/zsh.yml
+- import_playbook: ansible/macos/vim.yml
+- import_playbook: ansible/macos/scripting-languages.yml
+- import_playbook: ansible/macos/react-native.yml

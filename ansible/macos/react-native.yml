@@ -1,0 +1,11 @@
+- name: Setup react-native tools
+  hosts: local
+
+  tasks:
+    - name: Install watchman
+      shell: brew install watchman
+      args:
+        creates: /usr/local/bin/watchman
+
+    - name: Install react-native-cli
+      shell: npm i -g react-native-cli
