@@ -12,3 +12,9 @@
         src: ~/nerdtools/vim/
         dest: ~/.config/nvim
         state: link
+
+    - name: Create .ideavimrc symlink
+      template:
+        src: ./templates/.ideavimrc
+        dest: ~/.ideavimrc
+        force: yes
