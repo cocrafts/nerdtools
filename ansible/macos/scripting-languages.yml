@@ -11,6 +11,7 @@
       shell: |
         source ~/.nvm/nvm.sh
         nvm install stable
+        nvm use stable
       args:
         executable: /bin/zsh
         creates: ~/.nvm/versions/node
