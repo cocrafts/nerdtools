@@ -7,8 +7,10 @@
       args:
         creates: /usr/local/bin/brew
 
-    - name: Grant permission for main8
+    - name: Grant permission for main8 [if exist]
       shell: sudo chown -R $(whoami) /usr/local/share/man/man8
+      args:
+        creates: /usr/local/share/man/man8
 
     - name: Install official git
       shell: brew install git
