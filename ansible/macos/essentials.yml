@@ -24,7 +24,13 @@
       args:
         creates: /usr/local/bin/fzf
 
+    - name: Ensure .config/kitty exists
+      file:
+        path: ~/.config/kitty
+        state: directory
+
     - name: Override Kitty conf
       template:
         src: ./templates/kitty.conf
         dest: ~/.config/kitty/kitty.conf
+        force: yes
