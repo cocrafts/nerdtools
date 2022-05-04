@@ -2,6 +2,23 @@
   hosts: local
 
   tasks:
+    - name: Ensure .config/kitty exists
+      file:
+        path: ~/.config/kitty
+        state: directory
+
+    - name: Override Kitty conf
+      template:
+        src: ./templates/kitty.conf
+        dest: ~/.config/kitty/kitty.conf
+        force: yes
+
+    - name: Copy .zshrc to user's Home
+      template:
+        src: ./templates/.zshrc
+        dest: ~/.zshrc
+        force: no
+
     - name: Install Homebrew
       shell: yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       args:
@@ -23,14 +40,3 @@
         $(brew --prefix)/opt/fzf/install
       args:
         creates: /usr/local/bin/fzf
-
-    - name: Ensure .config/kitty exists
-      file:
-        path: ~/.config/kitty
-        state: directory
-
-    - name: Override Kitty conf
-      template:
-        src: ./templates/kitty.conf
-        dest: ~/.config/kitty/kitty.conf
-        force: yes

@@ -27,9 +27,3 @@
       shell: brew install starship
       args:
         creates: /usr/local/bin/starship
-
-    - name: Copy .zshrc to user's Home
-      template:
-        src: ./templates/.zshrc
-        dest: ~/.zshrc
-        force: no
