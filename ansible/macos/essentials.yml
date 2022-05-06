@@ -40,3 +40,10 @@
         $(brew --prefix)/opt/fzf/install
       args:
         creates: /usr/local/bin/fzf
+
+    - name: Install Terraform
+      shell: |
+        brew tap hashicorp/tap
+        brew install hashicorp/tap/terraform
+      args:
+        creates: /usr/local/bin/terraform
