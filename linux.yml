@@ -1,5 +1,6 @@
 ---
 - name: Run all local playbooks
-  hosts: stormgate
+  hosts: ec2
 
 - import_playbook: ansible/linux/essentials.yml
+- import_playbook: ansible/linux/zsh.yml

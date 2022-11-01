@@ -1,9 +1,11 @@
 - name: Setup essential tools
-  hosts: stormgate
+  hosts: ec2
 
   tasks:
-    - name: Copy .zshrc to user's Home
-      template:
-        src: ./templates/.zshrc
-        dest: ~/.zshrc
-        force: no
+    - name: Create sources directory
+      file:
+        path: "{{item}}"
+        state: directory
+      with_items:
+        - ~/Sources
+        - ~/Projects

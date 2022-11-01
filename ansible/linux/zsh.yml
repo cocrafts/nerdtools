@@ -1,0 +1,49 @@
+- name: Setup essential tools
+  hosts: ec2
+
+  tasks:
+    - name: Install zsh
+      become: true
+      apt:
+        name: zsh
+        state: present
+
+    - name: Clone oh-my-zsh
+      git:
+        repo: https://github.com/robbyrussell/oh-my-zsh.git
+        dest: "~/.oh-my-zsh"
+        update: no
+
+    - name: Install Auto suggestions plugin for Zsh
+      git:
+        repo: https://github.com/zsh-users/zsh-autosuggestions
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+
+    - name: Install Syntax highlighting plugin for Zsh
+      git:
+        repo: https://github.com/zsh-users/zsh-syntax-highlighting
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+
+    - name: Install Nvm plugin for Zsh
+      git:
+        repo: https://github.com/lukechilds/zsh-nvm
+        dest: ~/.oh-my-zsh/custom/plugins/zsh-nvm
+
+    - name: Install starship shell prompt
+      shell: curl -sS https://starship.rs/install.sh | sh
+      args:
+        creates: /usr/local/bin/starship
+
+    - name: Copy .zshrc to user's Home
+      template:
+        src: ./templates/.zshrc
+        dest: ~/.zshrc
+        force: no
+
+    - name: Register current user
+      shell: whoami
+      register: current_user
+
+    - name: Change default shell to zsh
+      become: true
+      shell: "chsh -s $(which zsh) {{ current_user.stdout }}"
