@@ -3,6 +3,7 @@
 
   tasks:
     - name: Copy .zshrc to user's Home
-      template: ./templates/.zshrc
-      dest: ~/.zshrc
-      force: no
+      template:
+        src: ./templates/.zshrc
+        dest: ~/.zshrc
+        force: no
