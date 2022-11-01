@@ -1,0 +1,8 @@
+- name: Setup essential tools
+  hosts: local
+
+  tasks:
+    - name: Copy .zshrc to user's Home
+      template: ./templates/.zshrc
+      dest: ~/.zshrc
+      force: no
