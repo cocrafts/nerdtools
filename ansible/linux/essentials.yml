@@ -1,5 +1,5 @@
 - name: Setup essential tools
-  hosts: local
+  hosts: stormgate
 
   tasks:
     - name: Copy .zshrc to user's Home

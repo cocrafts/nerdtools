@@ -1,5 +1,5 @@
 ---
 - name: Run all local playbooks
-  hosts: local
+  hosts: stormgate
 
 - import_playbook: ansible/linux/essentials.yml
