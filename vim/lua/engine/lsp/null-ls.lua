@@ -2,10 +2,6 @@ local M = {}
 local buf_map = require("engine.utils").buf_map
 
 M.setup = function()
-  require("null-ls").config({
-
-  })
-
   require("lspconfig")["null-ls"].setup({
     on_attach = function(client, bufnr)
       vim.cmd("command! LspDef lua vim.lsp.buf.definition()")
@@ -31,7 +27,7 @@ M.setup = function()
       buf_map(bufnr, "n", "<Leader>a", ":LspDiagLine<CR>")
       buf_map(bufnr, "n", "<C-x><C-x>", ":LspSignatureHelp<CR>")
 
-      if client.resolved_capabilities.document_formatting then
+      if client.server_capabilities.document_formatting then
         vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()")
       end
     end

@@ -38,7 +38,7 @@ M.coq_settings = {
     },
   },
   clients = {
-    tabnine = { enabled = true }
+    tabnine = { enabled = false }
   },
 }
 
