@@ -9,3 +9,9 @@
       with_items:
         - ~/Sources
         - ~/Projects
+
+    - name: Clone nerdtools
+      git:
+        repo: https://github.com/cocrafts/nerdtools.git
+        dest: ~/nerdtools
+        clone: yes
