@@ -4,6 +4,7 @@ local providers = {
   sumneko_lua = require("engine.lsp.providers.sumneko-lua"),
   tsserver = require("engine.lsp.providers.tsserver"),
   terraformls = require("engine.lsp.providers.terraformls"),
+  rust_analyzer = require("engine.lsp.providers.rust"),
 }
 
 M.setup = function()
