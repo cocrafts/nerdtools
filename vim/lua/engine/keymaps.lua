@@ -37,6 +37,8 @@ M.configure = function()
 
     ["H"] = "Hzz",
     ["L"] = "Lzz",
+
+    ["K"] = ":LspHover<CR>",
   })
 
   utils.mode_keys("v", {
