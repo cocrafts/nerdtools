@@ -7,7 +7,6 @@ return {
   { "jose-elias-alvarez/nvim-lsp-ts-utils" },
   {
     "nvim-treesitter/nvim-treesitter",
-    branch = "0.5-compat",
     config = function()
       require("engine.plugins.treesitter").setup()
     end,

@@ -11,3 +11,6 @@
 - make sure host machine configured be able to ssh to replaced "ip-address"
 - make sure Ansible client existed on remote client
 - execute `ansible-playbook -i hosts.yml linux.yml`
+
+### Other notes:
+- For Kitty user, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.
