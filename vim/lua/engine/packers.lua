@@ -3,6 +3,9 @@ return {
   { "neovim/nvim-lspconfig" },
   { "williamboman/nvim-lsp-installer" },
   { "jose-elias-alvarez/null-ls.nvim" },
+  ["jose-elias-alvarez/null-ls.nvim"] = {
+    after = "nvim-lspconfig",
+  },
   { "ray-x/lsp_signature.nvim" },
   { "jose-elias-alvarez/nvim-lsp-ts-utils" },
   {
@@ -17,7 +20,7 @@ return {
   },
   { "wakatime/vim-wakatime" },
   { "nvim-lua/plenary.nvim" },
-  -- { "sheerun/vim-polyglot" },
+  { "sheerun/vim-polyglot" },
   { "tpope/vim-fugitive" },
   { "joshdick/onedark.vim" },
   { "andymass/vim-matchup" },

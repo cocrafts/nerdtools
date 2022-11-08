@@ -14,7 +14,7 @@ M.setup = function()
     utils.configure_server(name, options)
   end
 
-  --require("engine.lsp.null-ls"):setup()
+  require("engine.lsp.null-ls"):setup()
 end
 
 return M

@@ -2,7 +2,14 @@ local M = {}
 local buf_map = require("engine.utils").buf_map
 
 M.setup = function()
-  require("lspconfig")["null-ls"].setup({
+  local null_ls = require("null-ls")
+
+  null_ls.setup({
+    sources = {
+      null_ls.builtins.formatting.stylua,
+      null_ls.builtins.diagnostics.eslint,
+      null_ls.builtins.completion.spell,
+    },
     on_attach = function(client, bufnr)
       vim.cmd("command! LspDef lua vim.lsp.buf.definition()")
       vim.cmd("command! LspFormatting lua vim.lsp.buf.formatting()")
@@ -30,7 +37,7 @@ M.setup = function()
       if client.server_capabilities.document_formatting then
         vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()")
       end
-    end
+    end,
   })
 end
 
