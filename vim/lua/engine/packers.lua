@@ -20,11 +20,13 @@ return {
   -- { "sheerun/vim-polyglot" },
   { "tpope/vim-fugitive" },
   { "joshdick/onedark.vim" },
-  { "kyazdani42/nvim-web-devicons" },
   { "andymass/vim-matchup" },
   { "itchyny/vim-cursorword" },
   {
-    'kyazdani42/nvim-tree.lua',
+    'nvim-tree/nvim-tree.lua',
+    requires = {
+      'nvim-tree/nvim-web-devicons'
+    },
     config = function()
       require("engine.plugins.nvimtree"):setup()
     end,
@@ -63,8 +65,7 @@ return {
     end,
   },
   {
-    "romgrk/barbar.nvim",
-    event = "BufWinEnter",
+    "romgrk/barbar.nvim"
   },
   -- {
   --   "hrsh7th/nvim-cmp",
