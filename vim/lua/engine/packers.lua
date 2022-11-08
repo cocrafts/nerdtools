@@ -112,10 +112,10 @@ return {
     event = "BufRead",
   },
   {
-    "Pocco81/AutoSave.nvim",
+    "Pocco81/auto-save.nvim",
     config = function()
-      require("autosave"):setup()
-    end
+      require("auto-save").setup()
+    end,
   },
   {
     "machakann/vim-sandwich",
