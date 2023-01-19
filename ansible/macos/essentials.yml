@@ -29,11 +29,6 @@
       args:
         creates: /usr/local/Cellar/git/
 
-    - name: Install Kitty terminal
-      shell: brew install --cask kitty
-      args:
-        creates: /usr/local/bin/kitty
-
     - name: Install Fzf
       shell: |
         brew install fzf

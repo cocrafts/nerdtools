@@ -15,9 +15,3 @@
       args:
         executable: /bin/zsh
         creates: ~/.nvm/versions/node
-
-    - name: Install Yarn via npm
-      shell: npm i -g yarn
-
-    - name: Install Serverless cli
-      shell: npm i -g serverless
