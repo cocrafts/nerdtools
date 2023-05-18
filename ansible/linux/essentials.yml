@@ -10,8 +10,14 @@
         - ~/Sources
         - ~/Projects
 
-    - name: Clone nerdtools
-      git:
-        repo: https://github.com/cocrafts/nerdtools.git
-        dest: ~/nerdtools
-        clone: yes
+    - name: Install build-essential
+      become: true
+      apt:
+        name: build-essential
+        state: present
+
+    - name: Install fzf
+      become: true
+      apt:
+        name: fzf
+        state: present
