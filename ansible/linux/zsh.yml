@@ -29,11 +29,6 @@
         repo: https://github.com/lukechilds/zsh-nvm
         dest: ~/.oh-my-zsh/custom/plugins/zsh-nvm
 
-    - name: Install starship shell prompt
-      shell: curl -sS https://starship.rs/install.sh | sh
-      args:
-        creates: /usr/local/bin/starship
-
     - name: Copy .zshrc to user's Home
       template:
         src: ./templates/.zshrc
