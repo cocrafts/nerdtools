@@ -2,10 +2,8 @@ local M = {}
 
 local config = {
   setup = {
-    open_onsetup = false,
     open_on_tab = true,
     update_cwd = true,
-    ignore_ft_on_setup = { "startify", "dashboard" },
     update_focused_file = {
       enable = true,
       update_cwd = false,
