@@ -19,11 +19,10 @@
     - name: Install packages
       become: true
       apt:
-        name: build-essential
+        name: "{{item}}"
         state: present
-
-    - name: Install fzf
-      become: true
-      apt:
-        name: fzf
-        state: present
+        update_cache: yes
+      with_items:
+        - build-essential
+        - zsh
+        - fzf

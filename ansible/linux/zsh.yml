@@ -2,12 +2,6 @@
   hosts: ec2
 
   tasks:
-    - name: Install zsh
-      become: true
-      apt:
-        name: zsh
-        state: present
-
     - name: Clone oh-my-zsh
       git:
         repo: https://github.com/robbyrussell/oh-my-zsh.git
