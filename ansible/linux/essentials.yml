@@ -10,7 +10,13 @@
         - ~/Sources
         - ~/Projects
 
-    - name: Install build-essential
+    - name: Clone nerdtools
+      git:
+        repo: https://github.com/cocrafts/nerdtools.git
+        dest: ~/nerdtools
+        clone: yes
+
+    - name: Install packages
       become: true
       apt:
         name: build-essential
