@@ -2,6 +2,7 @@ local M = {}
 
 local config = {
 	setup = {
+		theme = "tokyonight-night",
 		options = {
 			icons_enabled = true,
 		},
