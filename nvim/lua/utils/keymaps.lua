@@ -1,8 +1,5 @@
 local key = require("utils.key")
 
-vim.g.mapleader = ' '
-vim.g.maploacalleader = ' '
-
 key.mode_keys("i", {
 	-- MacOS movement
 	["S4"] = "<ESC>_i", -- cmd+left to start of line

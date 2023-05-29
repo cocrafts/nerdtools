@@ -33,23 +33,19 @@ local config = {
 		["o"] = { "<cmd>Telescope find_files<CR>", "File search" },
 		["i"] = { "<cmd>Telescope live_grep<CR>", "Text search" },
 		["u"] = { "<cmd>Telescope oldfiles<CR>", "Recent files" },
-	},
-	p = {
-		name = "Packer",
-		c = { "<cmd>PackerCompile<CR>", "Compile" },
-		i = { "<cmd>PackerInstall<CR>", "Install" },
-		s = { "<cmd>PackerSync<CR>", "Sync" },
-		S = { "<cmd>PackerStatus<CR>", "Status" },
-		u = { "<cmd>PackerUpdate<CR>", "Update" },
+		p = {
+			name = "Packer",
+			c = { "<cmd>PackerCompile<CR>", "Compile" },
+			i = { "<cmd>PackerInstall<CR>", "Install" },
+			s = { "<cmd>PackerSync<CR>", "Sync" },
+			S = { "<cmd>PackerStatus<CR>", "Status" },
+			u = { "<cmd>PackerUpdate<CR>", "Update" },
+		},
 	},
 }
 
 M.configure = function()
 	local whichkey = require("which-key")
-	local settings = require("utils.settings")
-
-	vim.opt.timeout = settings.timeout
-	vim.opt.timeoutlen = settings.timeoutlen
 
 	whichkey.setup(config.setup)
 	whichkey.register(config.nmaps, config.nopts)
