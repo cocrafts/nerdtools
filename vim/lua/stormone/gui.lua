@@ -4,11 +4,12 @@ return {
   NvimTreeFolderIcon = { fg = C.blue },
   NvimTreeIndentMarker = { fg = C.dark_gray },
   NvimTreeNormal = { fg = C.light_gray, bg = C.darker_bg },
-  NvimTreeVertSplit = { fg = C.darker_bg, bg = C.darker_bg },
+  NvimTreeWinSeparator = { fg = C.darker_bg, bg = C.darker_bg },
   NvimTreeFolderName = { fg = C.light_gray },
   NvimTreeOpenedFolderName = { fg = C.light_gray },
   NvimTreeImageFile = { fg = C.purple },
   NvimTreeSpecialFile = { fg = C.orange },
+  -- NvimTreeEndOfBuffer = { fg = "red", bg = "yellow" }, -- space under the file tree 
   NvimTreeGitStaged = { fg = C.green },
   NvimTreeCursorLine = { bg = C.bg },
   NvimTreeGitNew = { fg = C.green },

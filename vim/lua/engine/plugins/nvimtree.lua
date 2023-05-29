@@ -4,6 +4,11 @@ local config = {
   setup = {
     open_on_tab = true,
     update_cwd = true,
+    sort_by = "name",
+    root_dirs = {},
+    sync_root_with_cwd = true,
+    reload_on_bufenter = false,
+    on_attach = "default",
     update_focused_file = {
       enable = true,
       update_cwd = false,
@@ -29,6 +34,13 @@ local config = {
     },
     filters = {
       dotfiles = true,
+    },
+    git = {
+      enable = true,
+      ignore = false,
+      show_on_dirs = true,
+      show_on_open_dirs = true,
+      timeout = 200,
     },
   },
   ignore = { ".git", "node_modules", ".cache", ".idea" },

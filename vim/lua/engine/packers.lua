@@ -93,7 +93,7 @@ return {
     "ms-jpq/coq.artifacts",
     branch = "artifacts",
   },
-  { "github/copilot.vim" },
+  -- { "github/copilot.vim" },
   {
     "folke/which-key.nvim",
     config = function()

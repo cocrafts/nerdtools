@@ -1,7 +1,7 @@
 let mapleader = ","
 
 set scrolloff = 5
-"set relativenumber
+set relativenumber
 set idearefactormode = keep
 set ideajoin
 set highlightedyank

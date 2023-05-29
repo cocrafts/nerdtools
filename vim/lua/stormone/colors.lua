@@ -3,7 +3,6 @@ return {
   fg = "#abb2bf",
   bg = "#1e222a",
   darker_bg = "#1b1f27",
-  -- bg = "#1f2227",
   alt_bg = "#282c34",
   dark = "#282c34",
   accent = "#BBBBBB",
