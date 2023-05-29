@@ -9,7 +9,7 @@
 
     - name: Create symlink to neovim configure
       file:
-        src: ~/nerdtools/vim/
+        src: ~/nerdtools/nvim/
         dest: ~/.config/nvim
         state: link
 
