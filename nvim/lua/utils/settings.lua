@@ -5,7 +5,7 @@ local globals = {
 
 local opts = {
 	timeout = true,
-	timeoutlen = 0,  -- time to wait for mapped sequence to complete
+	timeoutlen = 100, -- time to wait for mapped sequence to complete
 	-- use tab
 	expandtab = true, -- convert tabs to spaces
 	shiftwidth = 2,  -- number of spaces inserted for each indentation

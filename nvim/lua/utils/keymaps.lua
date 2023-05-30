@@ -1,15 +1,10 @@
 local key = require("utils.key")
 
 key.mode_keys("i", {
-	-- MacOS movement
-	["S4"] = "<ESC>_i", -- cmd+left to start of line
-	["S5"] = "ESC$a",  -- cmd+right to end of line
+
 })
 
 key.mode_keys("n", {
-	-- MacOS word movement
-	["S4"] = "_i", -- cmd+left to start of line
-	["S5"] = "$a", -- cmd+right to end of line
 	-- Hop, fast navigation
 	["sc"] = ":HopChar2<CR>",
 	["sw"] = ":HopWord<CR>",
@@ -30,7 +25,6 @@ key.mode_keys("n", {
 
 	["H"] = "Hzz",
 	["L"] = "Lzz",
-	["K"] = ":LspHover<CR>",
 })
 
 key.mode_keys("v", {
