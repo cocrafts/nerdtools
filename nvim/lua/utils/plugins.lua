@@ -40,7 +40,7 @@ return {
 		"nvim-lualine/lualine.nvim",
 		event = "VimEnter",
 		config = function()
-			require("core.plugins.lualine").configure()
+			require("core.lualine").configure()
 		end
 	},
 	{ "folke/lazy.nvim",       tag = "stable" },
@@ -83,6 +83,14 @@ return {
 		},
 		config = function()
 			require("core.plugins.treesitter").configure()
+		end,
+	},
+	{
+		"lewis6991/gitsigns.nvim",
+		event = "User FileOpened",
+		cmd = { "Gitsigns" },
+		config = function()
+			require("core.plugins.gitsigns").configure()
 		end,
 	},
 }
