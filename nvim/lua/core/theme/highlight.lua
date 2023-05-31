@@ -1,16 +1,25 @@
 local colors = require("core.theme.colors")
 
 return {
-	NonText = { fg = colors.dim },   -- whitespaces
-	SpecialKey = { fg = colors.dim }, -- whitespaces
-	Whitespace = { fg = colors.dim }, -- whitespaces
+	NonText = { fg = colors.gray },   -- whitespaces
+	SpecialKey = { fg = colors.gray }, -- whitespaces
+	Whitespace = { fg = colors.gray }, -- whitespaces
+	FidgetTitle = { fg = colors.blue },
+
 	Keyword = { fg = colors.keywords },
 	Comment = { fg = colors.comments, style = "italic" },
 	Number = { fg = colors.numbers },
 	Function = { fg = colors.functions },
 	Identifier = { fg = colors.variables },
-	String = { fg = colors.strings, style = "italic" },
+	String = { fg = colors.strings },
 	Type = { fg = colors.types },
+	PreProc = { fg = colors.procs },
+	Special = { fg = colors.functions },
+
+	rustMacro = { fg = colors.functions },
+	rustStorage = { fg = colors.keywords, style = "italic" },
+	rustModPathSep = { fg = colors.fg },
+
 	IndentBlanklineIndent = { fg = colors.dim },
 	IndentBlanklineIndent1 = { fg = "#E06C75" },
 	IndentBlanklineIndent2 = { fg = "#E5C07B" },

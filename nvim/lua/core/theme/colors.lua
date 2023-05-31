@@ -1,12 +1,15 @@
 return {
+	fg = "#abb2bf",
 	dim = "#242533",
-	gray = "#2d2e40",
+	gray = "#37384f",
 	none = "NONE",
-	keywords = "#B877DB",
+	keywords = "#aa6fca",
 	comments = "#323748",
 	numbers = "#FF9668",
+	procs = "#d6a786",
 	functions = "#E95678",
-	variables = "#FFD88C",
-	strings = "#64D1A9",
-	types = "#64D1A9"
+	variables = "#DBBE7F",
+	strings = "#e6a98a",
+	types = "#64D1A9",
+	blue = "#BAACFF",
 }

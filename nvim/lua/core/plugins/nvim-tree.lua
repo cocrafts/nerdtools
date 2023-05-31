@@ -95,12 +95,12 @@ local options = {
 		},
 		special_files = { "Cargo.toml", "Makefile", "README.md", "readme.md" },
 		symlink_destination = true,
-		update_focused_file = {
-			enable = true,
-			debounce_delay = 15,
-			update_root = true,
-			ignore_list = {},
-		},
+		-- update_focused_file = {
+		-- 	enable = true,
+		-- 	debounce_delay = 15,
+		-- 	update_root = true,
+		-- 	ignore_list = {},
+		-- },
 	},
 }
 
