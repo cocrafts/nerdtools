@@ -50,7 +50,6 @@ return {
 		end
 	},
 	{ "folke/lazy.nvim",       tag = "stable" },
-	{ "folke/neodev.nvim",     lazy = true },
 	{
 		"folke/which-key.nvim",
 		config = function()
@@ -63,6 +62,7 @@ return {
 			require("core.plugins.tokyonight").configure()
 		end
 	},
+	{ "lukas-reineke/onedark.nvim" },
 	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
 	{ "nvim-lua/plenary.nvim",                    lazy = true },
 	{
@@ -108,5 +108,28 @@ return {
 		config = function()
 			require("core.plugins.bufferline").configure()
 		end
-	}
+	},
+	{
+		"windwp/nvim-autopairs",
+		event = "InsertEnter",
+		config = function()
+			require("core.plugins.autopairs").configure()
+		end,
+		dependencies = { "nvim-treesitter/nvim-treesitter", "hrsh7th/nvim-cmp" },
+	},
+	{
+		"numToStr/Comment.nvim",
+		config = function()
+			require("core.plugins.comment").configure()
+		end,
+		keys = { { "gc", mode = { "n", "v" } }, { "gb", mode = { "n", "v" } } },
+		event = "User FileOpened",
+	},
+	{
+		"lukas-reineke/indent-blankline.nvim",
+		config = function()
+			require("core.plugins.indent-blankline").configure()
+		end,
+		event = "User FileOpened",
+	},
 }

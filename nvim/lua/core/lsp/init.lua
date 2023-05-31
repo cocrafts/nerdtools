@@ -48,6 +48,7 @@ M.configure = function()
 
 	lsp.ensure_installed({
 		"eslint",
+		"graphql",
 		"tsserver",
 		"rust_analyzer",
 	})
@@ -73,6 +74,7 @@ M.configure = function()
 
 	require("core.lsp.rust").configure()
 	require("core.lsp.tsserver").configure(lspconfig)
+	require("core.lsp.graphql").configure(lspconfig)
 	require("fidget").setup(fidgets)
 end
 

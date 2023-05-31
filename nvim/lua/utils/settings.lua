@@ -34,4 +34,11 @@ for k, v in pairs(opts) do
 	vim.opt[k] = v
 end
 
+vim.opt.list = true
+vim.opt.listchars = {
+	tab = "--",
+	eol = "¬",
+	space = "·",
+}
+
 return opts
