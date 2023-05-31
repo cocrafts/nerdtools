@@ -8,10 +8,12 @@ M.configure = function()
 	cmp.setup({
 		sources = {
 			{ name = "path" },
+			{ name = "treesitter" },
+			{ name = "crates" },
 			{ name = "nvim_lsp" },
 			{ name = "cmdline" },
-			{ name = "buffer",  keyword_length = 3 },
-			{ name = "luasnip", keyword_length = 2 },
+			{ name = "buffer",    keyword_length = 3 },
+			{ name = "luasnip",   keyword_length = 2 },
 		},
 		mapping = {
 			-- `Enter` key to confirm completion

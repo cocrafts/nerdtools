@@ -15,6 +15,13 @@ return {
 			{ "williamboman/mason-lspconfig.nvim" },
 			{ "jose-elias-alvarez/typescript.nvim" },
 			{ "simrat39/rust-tools.nvim" },
+			{
+				"saecki/crates.nvim",
+				requires = { "nvim-lua/plenary.nvim" },
+				config = function()
+					require("crates").setup()
+				end
+			},
 			{ "simrat39/inlay-hints.nvim" },
 			{ "hrsh7th/nvim-cmp" }, -- Autocompletion
 			{ "hrsh7th/cmp-buffer" },
