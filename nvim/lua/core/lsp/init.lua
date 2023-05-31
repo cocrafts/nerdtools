@@ -13,7 +13,7 @@ local hint_opts = {
 		}
 	},
 	eol = {
-		right_align = false,   -- whether to align to the extreme right or not	
+		right_align = false,   -- whether to align to the extreme right or not
 		right_align_padding = 7, -- padding from the right if right_align is true
 		parameter = {
 			separator = ", ",
@@ -33,7 +33,7 @@ local hint_opts = {
 local fidget_opts = {
 	text = {
 		done = "",
-	}
+	},
 }
 
 M.configure = function()

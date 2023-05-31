@@ -8,7 +8,7 @@ M.configure = function(hints)
 			on_attach = function(client, bufnr)
 				hints.on_attach(client, bufnr)
 
-				vim.keymap.set("n", "<leader>ci", "<cmd>TypescriptAddMissingImports<CR>", { buffer = bufnr })
+				vim.keymap.set("n", "<leader>vi", "<cmd>TypescriptAddMissingImports<CR>", { buffer = bufnr })
 			end,
 		},
 	})

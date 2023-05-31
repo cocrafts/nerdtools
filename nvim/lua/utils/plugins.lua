@@ -57,12 +57,13 @@ return {
 			require("core.plugins.tokyonight").configure()
 		end
 	},
-	{ "nvim-telescope/telescope-fzf-native.nvim", build = "make", lazy = true },
+	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
 	{ "nvim-lua/plenary.nvim",                    lazy = true },
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
 		dependencies = { "telescope-fzf-native.nvim" },
+		cmd = "Telescope",
 		lazy = true,
 		config = function()
 			require("core.plugins.telescope").configure()
@@ -93,4 +94,12 @@ return {
 			require("core.plugins.gitsigns").configure()
 		end,
 	},
+	{
+		"akinsho/bufferline.nvim",
+		branch = "main",
+		event = "User FileOpened",
+		config = function()
+			require("core.plugins.bufferline").configure()
+		end
+	}
 }

@@ -20,8 +20,8 @@ key.mode_keys("n", {
 	["<C-k>"] = "<C-w>k",
 	["<C-l>"] = "<C-w>l",
 
-	["<TAB>"] = ":BufferNext<CR>",
-	["<S-Tab>"] = ":BufferPrevious<CR>",
+	["<TAB>"] = ":BufferLineCycleNext<CR>",
+	["<S-Tab>"] = ":BufferLineCyclePrev<CR>",
 
 	["H"] = "Hzz",
 	["L"] = "Lzz",
