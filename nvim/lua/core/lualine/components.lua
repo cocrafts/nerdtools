@@ -37,9 +37,9 @@ return {
 		"diff",
 		source = diff_source,
 		symbols = {
-			added = icons.git.LineAdded,
-			modified = icons.git.LineModified,
-			removed = icons.git.LineRemoved,
+			added = icons.git.LineAdded .. " ",
+			modified = icons.git.LineModified .. " ",
+			removed = icons.git.LineRemoved .. " ",
 		},
 		padding = { left = 2, right = 1 },
 		diff_color = {
