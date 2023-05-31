@@ -6,11 +6,6 @@ local globals = {
 local opts = {
 	timeout = true,
 	timeoutlen = 100, -- time to wait for mapped sequence to complete
-	-- use tab
-	autoindent = true,
-	expandtab = true, -- convert tabs to spaces
-	tabstop = 2,      -- insert 2 spaces for a tab
-	shiftwidth = 2,   -- number of spaces inserted for each indentation
 	-- utilities
 	title = true,     -- show buffer name in window title
 	undofile = true,  -- enable persistent undo
@@ -33,6 +28,14 @@ local opts = {
 	},
 }
 
+local defer_opts = {
+	-- use tab
+	autoindent = true,
+	expandtab = true, -- convert tabs to spaces
+	tabstop = 2,     -- insert 2 spaces for a tab
+	shiftwidth = 2,  -- number of spaces inserted for each indentation
+}
+
 for k, v in pairs(globals) do
 	vim.g[k] = v
 end
@@ -40,5 +43,11 @@ end
 for k, v in pairs(opts) do
 	vim.opt[k] = v
 end
+
+vim.defer_fn(function()
+	for k, v in pairs(defer_opts) do
+		vim.opt[k] = v
+	end -- vim.cmd('set autoindent expandtab tabstop=2 shiftwidth=2')
+end, 0)
 
 return opts
