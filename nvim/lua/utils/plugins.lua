@@ -13,7 +13,6 @@ return {
 			},
 			{ "j-hui/fidget.nvim" }, -- lsp loading status
 			{ "williamboman/mason-lspconfig.nvim" },
-			{ "jose-elias-alvarez/typescript.nvim" },
 			{ "simrat39/rust-tools.nvim" },
 			{
 				"saecki/crates.nvim",
@@ -22,7 +21,7 @@ return {
 					require("crates").setup()
 				end
 			},
-			{ "simrat39/inlay-hints.nvim" },
+			{ "lvimuser/lsp-inlayhints.nvim" },
 			{ "hrsh7th/nvim-cmp" }, -- Autocompletion
 			{ "hrsh7th/cmp-buffer" },
 			{ "hrsh7th/cmp-path" },
@@ -76,6 +75,7 @@ return {
 			require("core.plugins.telescope").configure()
 		end,
 	},
+	{ "HiPhish/nvim-ts-rainbow2",   lazy = true },
 	{ "nvim-treesitter/playground", lazy = true },
 	{
 		"nvim-treesitter/nvim-treesitter",

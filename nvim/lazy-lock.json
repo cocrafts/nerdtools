@@ -9,8 +9,8 @@
   "crates.nvim": { "branch": "main", "commit": "3648f8787656d7572740560331553abdaa8cb982" },
   "fidget.nvim": { "branch": "main", "commit": "0ba1e16d07627532b6cae915cc992ecac249fb97" },
   "gitsigns.nvim": { "branch": "main", "commit": "f868d82a36f7f7f5e110eb0a9659993984f59875" },
-  "inlay-hints.nvim": { "branch": "main", "commit": "006b0898f5d3874e8e528352103733142e705834" },
   "lazy.nvim": { "branch": "main", "commit": "ebdd0499551765e6a7aba220cc8ae4e0cdb6be69" },
+  "lsp-inlayhints.nvim": { "branch": "main", "commit": "3700e6458fb1702c12a7e33037fb17f649679552" },
   "lsp-zero.nvim": { "branch": "v2.x", "commit": "9c9201eb3a3aace6746e3b85ca38adb4f73d4857" },
   "lualine.nvim": { "branch": "master", "commit": "05d78e9fd0cdfb4545974a5aa14b1be95a86e9c9" },
   "mason-lspconfig.nvim": { "branch": "main", "commit": "f0ce33f4794a2364eb08d09d09380e8b04ec5e6a" },
@@ -20,6 +20,7 @@
   "nvim-lspconfig": { "branch": "master", "commit": "9166622781a39a829878d1fd24c174529d996838" },
   "nvim-tree.lua": { "branch": "master", "commit": "e2a4c9d09d205ebe5f071264f43f73a0077c43a3" },
   "nvim-treesitter": { "branch": "master", "commit": "23dfae4db84f71e2ddb56c024845b322035182ee" },
+  "nvim-ts-rainbow2": { "branch": "master", "commit": "5becf2cec4b8e06b6df745cf515ac35c6c2e6308" },
   "packer.nvim": { "branch": "master", "commit": "1d0cf98a561f7fd654c970c49f917d74fafe1530" },
   "playground": { "branch": "master", "commit": "2b81a018a49f8e476341dfcb228b7b808baba68b" },
   "plenary.nvim": { "branch": "master", "commit": "499e0743cf5e8075cd32af68baa3946a1c76adf1" },
@@ -27,6 +28,5 @@
   "telescope-fzf-native.nvim": { "branch": "main", "commit": "9bc8237565ded606e6c366a71c64c0af25cd7a50" },
   "telescope.nvim": { "branch": "0.1.x", "commit": "533c7fb1b3fb412a16e1c1c9cf6d2b1ac130f1b7" },
   "tokyonight.nvim": { "branch": "main", "commit": "161114bd39b990995e08dbf941f6821afbdcd666" },
-  "typescript.nvim": { "branch": "main", "commit": "f66d4472606cb24615dfb7dbc6557e779d177624" },
   "which-key.nvim": { "branch": "main", "commit": "e271c28118998c93a14d189af3395812a1aa646c" }
 }

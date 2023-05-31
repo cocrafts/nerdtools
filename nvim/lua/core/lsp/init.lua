@@ -1,36 +1,40 @@
 local M = {}
 
-local hint_opts = {
-	renderer = "inlay-hints/render/eol",
-	hints = {
-		parameter = {
+local hints = {
+	inlay_hints = {
+		parameter_hints = {
 			show = true,
-			highlight = "Comment",
+			prefix = "<- ",
+			separator = ", ",
+			remove_colon_start = false,
+			remove_colon_end = true,
 		},
-		type = {
+		type_hints = {
+			-- type and other hints
 			show = true,
-			highlight = "Comment",
-		}
-	},
-	eol = {
-		right_align = false,   -- whether to align to the extreme right or not
-		right_align_padding = 7, -- padding from the right if right_align is true
-		parameter = {
+			prefix = "",
 			separator = ", ",
-			format = function(hints)
-				return string.format(" <- (%s)", hints)
-			end,
+			remove_colon_start = false,
+			remove_colon_end = false,
 		},
-		type = {
-			separator = ", ",
-			format = function(hints)
-				return string.format(" » (%s)", hints)
-			end,
-		},
+		only_current_line = false,
+		-- separator between types and parameter hints. Note that type hints are
+		-- shown before parameter
+		labels_separator = "  ",
+		-- whether to align to the length of the longest line in the file
+		max_len_align = false,
+		-- padding from the left if max_len_align is true
+		max_len_align_padding = 1,
+		-- highlight group
+		highlight = "LspInlayHint",
+		-- virt_text priority
+		priority = 0,
 	},
+	enabled_at_startup = true,
+	debug_mode = false,
 }
 
-local fidget_opts = {
+local fidgets = {
 	text = {
 		done = "",
 	},
@@ -39,9 +43,8 @@ local fidget_opts = {
 M.configure = function()
 	local lsp = require("lsp-zero").preset({})
 	local lspconfig = require("lspconfig")
-	local hints = require("inlay-hints")
 
-	hints.setup(hint_opts)
+	require("lsp-inlayhints").setup(hints)
 
 	lsp.ensure_installed({
 		"eslint",
@@ -66,13 +69,11 @@ M.configure = function()
 		vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
 	end)
 
-	lsp.skip_server_setup({ "rust_analyzer" })
-	lsp.skip_server_setup({ "tsserver" })
 	lsp.setup()
 
-	require("core.lsp.rust").configure(hints)
-	require("core.lsp.typescript").configure(hints)
-	require("fidget").setup(fidget_opts)
+	require("core.lsp.rust").configure()
+	require("core.lsp.tsserver").configure(lspconfig)
+	require("fidget").setup(fidgets)
 end
 
 return M

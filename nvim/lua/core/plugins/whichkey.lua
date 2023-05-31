@@ -49,12 +49,9 @@ local config = {
 			p = { "<cmd>TSPlaygroundToggle<CR>", "Playground" },
 		},
 		p = {
-			name = "Packer",
-			c = { "<cmd>PackerCompile<CR>", "Compile" },
-			i = { "<cmd>PackerInstall<CR>", "Install" },
-			s = { "<cmd>PackerSync<CR>", "Sync" },
-			S = { "<cmd>PackerStatus<CR>", "Status" },
-			u = { "<cmd>PackerUpdate<CR>", "Update" },
+			name = "Package Manager",
+			l = { "<cmd>Lazy<CR>", "Lazy" },
+			m = { "<cmd>Mason<CR>", "Mason" },
 		},
 		f = {
 			name = "Finder",

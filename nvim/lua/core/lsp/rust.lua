@@ -5,9 +5,9 @@ M.configure = function(hints)
 
 	rustools.setup({
 		tools = {
-			on_initialized = function()
-				hints.set_all()
-			end,
+			inlay_hints = {
+				auto = false,
+			},
 		},
 		hover_actions = {
 			border = {
@@ -25,11 +25,9 @@ M.configure = function(hints)
 			auto_focus = false, -- whether the hover action window gets automatically focused
 		},
 		server = {
-			on_attach = function(client, bufnr)
-				hints.on_attach(client, bufnr)
-
+			on_attach = function(_, bufnr)
 				vim.keymap.set("n", "<C-space>", rustools.hover_actions.hover_actions, { buffer = bufnr })
-				vim.keymap.set("n", "<Leader>a", rustools.code_action_group.code_action_group, { buffer = bufnr })
+				vim.keymap.set("n", "<leader>a", rustools.code_action_group.code_action_group, { buffer = bufnr })
 			end,
 		},
 	})
