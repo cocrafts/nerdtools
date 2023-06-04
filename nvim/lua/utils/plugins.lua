@@ -75,6 +75,15 @@ return {
 		end,
 	},
 	{
+		"zbirenbaum/neodim",
+		event = "LspAttach",
+		config = function()
+			require("neodim").setup({
+				alpha = 0.3,
+			})
+		end,
+	},
+	{
 		"folke/which-key.nvim",
 		config = function()
 			require("core.plugins.whichkey").configure()
@@ -115,6 +124,24 @@ return {
 		},
 		config = function()
 			require("core.plugins.treesitter").configure()
+		end,
+	},
+	{ "f-person/git-blame.nvim" },
+	{
+		"sindrets/diffview.nvim",
+		requires = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("core.plugins.diffview").configure()
+		end,
+	},
+	{
+		"TimUntersberger/neogit",
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"sindrets/diffview.nvim"
+		},
+		config = function()
+			require("core.plugins.neogit").configure()
 		end,
 	},
 	{
