@@ -1,6 +1,30 @@
 local M = {}
+local builtin = require("telescope.builtin")
 
 local options = {
+	pickers = {
+		git_status = {
+			theme = "dropdown",
+		},
+		git_branches = {
+			theme = "dropdown",
+		},
+		git_commits = {
+			theme = "dropdown",
+		},
+		git_bcommits = {
+			theme = "dropdown",
+		},
+		find_files = {
+			theme = "dropdown",
+		},
+		oldfiles = {
+			theme = "dropdown",
+		},
+		colorscheme = {
+			theme = "dropdown",
+		},
+	},
 	extensions = {
 		fzf = {
 			fuzzy = true,                -- false will only do exact matching
@@ -17,6 +41,15 @@ M.configure = function()
 	---@diagnostic disable-next-line: redundant-parameter
 	telescope.setup(options)
 	telescope.load_extension("fzf")
+end
+
+M.find_project_files = function(opts)
+	opts = opts or {}
+	local ok = pcall(builtin.git_files, opts)
+
+	if not ok then
+		builtin.find_files(opts)
+	end
 end
 
 return M
