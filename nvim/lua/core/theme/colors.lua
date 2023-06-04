@@ -1,5 +1,5 @@
 return {
-	fg = "#abb2bf",
+	fg = "#ABB2BF",
 	dim = "#242533",
 	gray = "#37384f",
 	none = "NONE",

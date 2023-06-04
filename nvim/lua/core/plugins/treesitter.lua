@@ -25,10 +25,11 @@ M.configure = function()
 			query = {
 				'rainbow-parens',
 				html = "rainbow-tags",
+				javascript = "rainbow-tag-react",
+				tsx = "rainbow-tags",
 			},
 			strategy = {
 				rainbow.strategy.global,
-				commonlisp = rainbow.strategy['local'],
 			},
 		},
 		highlight = { enabled = true },

@@ -53,7 +53,6 @@ M.configure = function()
 		"tsserver",
 		"lua_ls",
 		"rust_analyzer",
-		"rustfmt",
 	})
 
 	lsp.on_attach(function(_, bufnr)

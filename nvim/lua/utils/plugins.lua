@@ -69,6 +69,12 @@ return {
 	{ "folke/lazy.nvim",       tag = "stable" },
 	{ "folke/neodev.nvim",     lazy = true },
 	{
+		"folke/twilight.nvim",
+		config = function()
+			vim.cmd(":TwilightEnable")
+		end,
+	},
+	{
 		"folke/which-key.nvim",
 		config = function()
 			require("core.plugins.whichkey").configure()
@@ -136,6 +142,18 @@ return {
 		dependencies = { "nvim-treesitter/nvim-treesitter", "hrsh7th/nvim-cmp" },
 	},
 	{
+		"Pocco81/auto-save.nvim",
+		config = function()
+			require("auto-save").setup()
+		end,
+	},
+	{
+		"ethanholz/nvim-lastplace",
+		config = function()
+			require("nvim-lastplace").setup({})
+		end,
+	},
+	{
 		"numToStr/Comment.nvim",
 		config = function()
 			require("core.plugins.comment").configure()
@@ -149,5 +167,25 @@ return {
 			require("core.plugins.indent-blankline").configure()
 		end,
 		event = "User FileOpened",
+	},
+	{
+		"phaazon/hop.nvim",
+		config = function()
+			require("hop").setup({})
+		end,
+	},
+	{
+		"abecodes/tabout.nvim",
+		config = function()
+			require("tabout").setup({})
+		end,
+	},
+	{
+		"brenoprata10/nvim-highlight-colors",
+		config = function()
+			require("nvim-highlight-colors").setup({
+				render = "foreground",
+			})
+		end,
 	},
 }

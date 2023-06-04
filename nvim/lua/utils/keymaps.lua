@@ -6,6 +6,8 @@ key.mode_keys("i", {
 
 key.mode_keys("n", {
 	-- Hop, fast navigation
+	["ss"] = ":HopWordBC<CR>",
+	["sf"] = ":HopWordAC<CR>",
 	["sc"] = ":HopChar2<CR>",
 	["sw"] = ":HopWord<CR>",
 	["sp"] = ":HopPattern<CR>",
