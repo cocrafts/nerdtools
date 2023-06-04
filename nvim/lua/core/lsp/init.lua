@@ -50,11 +50,12 @@ M.configure = function()
 		"eslint",
 		"graphql",
 		"tsserver",
+		"lua_ls",
 		"rust_analyzer",
+		"rustfmt",
 	})
 
 	lsp.on_attach(function(_, bufnr)
-		local key = require("utils.key")
 		local opts = { buffer = bufnr, remap = false }
 
 		lsp.default_keymaps({ buffer = bufnr })
@@ -68,13 +69,17 @@ M.configure = function()
 		vim.keymap.set("n", "<leader>vr", function() vim.lsp.buf.rename() end, opts)
 		vim.keymap.set("n", "<leader>ve", function() vim.lsp.buf.references() end, opts)
 		vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+
+		vim.cmd(":LspLensOn")
 	end)
 
 	lsp.setup()
 
 	require("core.lsp.rust").configure()
 	require("core.lsp.tsserver").configure(lspconfig)
+	require("core.lsp.eslint").configure(lspconfig)
 	require("core.lsp.graphql").configure(lspconfig)
+	require("core.lsp.lua").configure(lspconfig)
 	require("fidget").setup(fidgets)
 end
 
