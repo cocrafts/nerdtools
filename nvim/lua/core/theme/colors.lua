@@ -3,7 +3,7 @@ return {
 	dim = "#242533",
 	gray = "#37384f",
 	none = "NONE",
-	keywords = "#aa6fca",
+	keywords = "#b877db",
 	comments = "#323748",
 	numbers = "#FF9668",
 	procs = "#d6a786",

@@ -11,10 +11,13 @@ return {
 	Number = { fg = colors.numbers },
 	Function = { fg = colors.functions },
 	Identifier = { fg = colors.variables },
+	Statement = { fg = colors.keywords },
 	String = { fg = colors.strings },
 	Type = { fg = colors.types },
 	PreProc = { fg = colors.procs },
 	Special = { fg = colors.functions },
+
+	luaFunction = { fg = colors.keywords },
 
 	rustMacro = { fg = colors.functions },
 	rustStorage = { fg = colors.keywords, style = "italic" },
