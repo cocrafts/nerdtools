@@ -45,6 +45,7 @@ M.configure = function()
 	local lspconfig = require("lspconfig")
 
 	require("lsp-inlayhints").setup(hints)
+	require("neodev").setup({})
 
 	lsp.ensure_installed({
 		"eslint",
@@ -57,6 +58,8 @@ M.configure = function()
 
 	lsp.on_attach(function(_, bufnr)
 		local opts = { buffer = bufnr, remap = false }
+
+		require("lsp_signature").on_attach({}, bufnr)
 
 		lsp.default_keymaps({ buffer = bufnr })
 		vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
@@ -79,7 +82,7 @@ M.configure = function()
 	require("core.lsp.tsserver").configure(lspconfig)
 	require("core.lsp.eslint").configure(lspconfig)
 	require("core.lsp.graphql").configure(lspconfig)
-	require("core.lsp.lua").configure(lspconfig)
+	require("core.lsp.lua-ls").configure(lspconfig)
 	require("fidget").setup(fidgets)
 end
 

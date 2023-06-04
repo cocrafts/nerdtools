@@ -19,8 +19,19 @@ return {
 				requires = { "nvim-lua/plenary.nvim" },
 				config = function()
 					require("crates").setup()
-				end
+				end,
 			},
+			{
+				"L3MON4D3/LuaSnip",
+				dependencies = { "friendly-snippets" },
+				build = "make install_jsregexp",
+				event = "InsertEnter",
+				config = function()
+					require("luasnip.loaders.from_lua").lazy_load()
+					require("luasnip.loaders.from_snipmate").lazy_load()
+				end,
+			},
+			{ "ray-x/lsp_signature.nvim" },
 			{ "lvimuser/lsp-inlayhints.nvim" },
 			{ "hrsh7th/nvim-cmp" }, -- Autocompletion
 			{ "hrsh7th/cmp-buffer" },
@@ -28,7 +39,7 @@ return {
 			{ "hrsh7th/cmp-cmdline" },
 			{ "hrsh7th/cmp-nvim-lsp" },
 			{ "saadparwaiz1/cmp_luasnip" },
-			{ "L3MON4D3/LuaSnip" },
+			{ "rafamadriz/friendly-snippets", lazy = true },
 		},
 		config = function()
 			require("core.lsp").configure()
@@ -39,34 +50,35 @@ return {
 		"VidocqH/lsp-lens.nvim",
 		config = function()
 			require("lsp-lens").setup({})
-		end
+		end,
 	},
 	{
 		"nvim-tree/nvim-tree.lua",
 		requires = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("core.plugins.nvim-tree").configure()
-		end
+		end,
 	},
 	{
 		"nvim-lualine/lualine.nvim",
 		event = "VimEnter",
 		config = function()
 			require("core.lualine").configure()
-		end
+		end,
 	},
 	{ "folke/lazy.nvim",       tag = "stable" },
+	{ "folke/neodev.nvim",     lazy = true },
 	{
 		"folke/which-key.nvim",
 		config = function()
 			require("core.plugins.whichkey").configure()
-		end
+		end,
 	},
 	{
 		"folke/tokyonight.nvim",
 		config = function()
 			require("core.plugins.tokyonight").configure()
-		end
+		end,
 	},
 	{ "lukas-reineke/onedark.nvim" },
 	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
@@ -113,7 +125,7 @@ return {
 		event = "User FileOpened",
 		config = function()
 			require("core.plugins.bufferline").configure()
-		end
+		end,
 	},
 	{
 		"windwp/nvim-autopairs",
