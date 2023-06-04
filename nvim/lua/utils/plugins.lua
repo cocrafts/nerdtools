@@ -42,17 +42,6 @@ return {
 		end
 	},
 	{
-		"glepnir/lspsaga.nvim",
-		event = "LspAttach",
-		dependencies = {
-			{ "nvim-tree/nvim-web-devicons" },
-			{ "nvim-treesitter/nvim-treesitter" },
-		},
-		config = function()
-			require("core.lsp.saga").configure()
-		end
-	},
-	{
 		"nvim-tree/nvim-tree.lua",
 		requires = { "nvim-tree/nvim-web-devicons" },
 		config = function()

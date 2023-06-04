@@ -7,9 +7,17 @@ M.configure = function()
 	configs.setup({
 		ensure_installed = {
 			"typescript",
+			"tsx",
+			"graphql",
 			"rust",
+			"zig",
 			"lua",
-			"vim"
+			"vim",
+			"gitignore",
+			"toml",
+			"json",
+			"markdown",
+			"markdown_inline",
 		},
 		auto_install = true,
 		rainbow = {
