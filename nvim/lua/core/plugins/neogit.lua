@@ -3,7 +3,6 @@ local icons = require("utils.icons")
 
 local options = {
 	signs = {
-		-- { CLOSED, OPENED }
 		section = {
 			icons.ui.TriangleShortArrowRight,
 			icons.ui.TriangleShortArrowDown,

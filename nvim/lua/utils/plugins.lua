@@ -79,7 +79,7 @@ return {
 		event = "LspAttach",
 		config = function()
 			require("neodim").setup({
-				alpha = 0.3,
+				alpha = 0.4,
 			})
 		end,
 	},
