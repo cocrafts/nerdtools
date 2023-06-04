@@ -4,6 +4,7 @@ local globals = {
 }
 
 local opts = {
+	guifont = "OperatorMonoLig Nerd Font Mono:h14",
 	timeout = true,
 	timeoutlen = 100, -- time to wait for mapped sequence to complete
 	-- utilities
@@ -31,7 +32,6 @@ local opts = {
 local defer_opts = {
 	-- use tab
 	autoindent = true,
-	expandtab = true, -- convert tabs to spaces
 	tabstop = 2,     -- insert 2 spaces for a tab
 	shiftwidth = 2,  -- number of spaces inserted for each indentation
 }
@@ -47,7 +47,7 @@ end
 vim.defer_fn(function()
 	for k, v in pairs(defer_opts) do
 		vim.opt[k] = v
-	end -- vim.cmd('set autoindent expandtab tabstop=2 shiftwidth=2')
+	end --
 end, 0)
 
 return opts
