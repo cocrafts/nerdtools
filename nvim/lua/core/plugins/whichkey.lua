@@ -31,7 +31,7 @@ local config = {
 		["c"] = { "<cmd>BufferKill<CR>", "Close Buffer" },
 		["e"] = { "<cmd>NvimTreeToggle<CR>", "Explorer" },
 		["o"] = { "<cmd>Telescope find_files<CR>", "File search" },
-		["i"] = { "<cmd>Telescope live_grep theme=get_ivy<CR>", "Live grep search" },
+		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep search" },
 		["u"] = { "<cmd>Telescope oldfiles<CR>", "Recent files" },
 		b = {
 			name = "Buffer",
@@ -117,6 +117,13 @@ local config = {
 			r = { "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename" },
 			s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
 			S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace symbols" },
+		},
+		k = {
+			name = "Konsole",
+			k = { "<cmd>ToggleTerm direction=float<CR>", "Terminal float" },
+			l = { "<cmd>ToggleTerm direction=vertical<CR>", "Terminal left" },
+			j = { "<cmd>ToggleTerm direction=horizontal<CR>", "Terminal bottom" },
+			h = { "<cmd>ToggleTerm direction=tab<CR>", "Terminal tab" },
 		}
 	},
 	vmaps = {

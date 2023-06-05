@@ -2,7 +2,7 @@ local globals = {
 	mapleader = " ",
 	localmapleader = " ",
 	gitblame_message_template = "<author> • <date> • <summary> ",
-	gitblame_message_when_not_committed = "Let the world know about this! ",
+	gitblame_message_when_not_committed = "",
 }
 
 local opts = {

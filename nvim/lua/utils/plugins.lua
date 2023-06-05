@@ -79,7 +79,7 @@ return {
 		event = "LspAttach",
 		config = function()
 			require("neodim").setup({
-				alpha = 0.4,
+				alpha = 0.3,
 			})
 		end,
 	},
@@ -158,6 +158,13 @@ return {
 		event = "User FileOpened",
 		config = function()
 			require("core.plugins.bufferline").configure()
+		end,
+	},
+	{
+		"akinsho/toggleterm.nvim",
+		version = "*",
+		config = function()
+			require("core.plugins.toggleterm").configure()
 		end,
 	},
 	{
