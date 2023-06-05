@@ -1,6 +1,8 @@
 local globals = {
 	mapleader = " ",
 	localmapleader = " ",
+	neovide_cursor_vfx_mode = "pixiedust",
+	neovide_remember_window_size = true,
 	gitblame_message_template = "<author> • <date> • <summary> ",
 	gitblame_message_when_not_committed = "",
 }
