@@ -50,9 +50,6 @@ M.configure = function()
 			width = 100000,
 			height = 100000,
 		},
-		on_open = function()
-			vim.cmd "startinsert!"
-		end,
 		count = 99,
 	})
 

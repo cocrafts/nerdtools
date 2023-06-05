@@ -3,9 +3,6 @@ local builtin = require("telescope.builtin")
 
 local options = {
 	pickers = {
-		git_status = {
-			theme = "dropdown",
-		},
 		git_branches = {
 			theme = "dropdown",
 		},
