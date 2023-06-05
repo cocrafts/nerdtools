@@ -19,7 +19,7 @@ local options = {
 	},
 	open_mapping = [[<c-\>]],
 	winbar = {
-		enabled = true,
+		enabled = false,
 		name_formater = function(term)
 			return term.name
 		end,
