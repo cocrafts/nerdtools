@@ -73,16 +73,10 @@ local config = {
 			H = { "<cmd>Telescope highlights<CR>", "Find highlight groups" },
 			r = { "<cmd>Telescope registers<CR>", "Registers" },
 			k = { "<cmd>Telescope keymaps<CR>", "Keymaps" },
-			t = { "<cmd>Telescope colorscheme<CR>", "Colorsheme" },
 			c = { "<cmd>Telescope commands<CR>", "Commands" },
+			C = { "<cmd>Telescope colorscheme<CR>", "Colorsheme" },
 			m = { "<cmd>Telescope man_pages<CR>", "Man pages" },
 			s = { "<cmd>Telescope resume<CR>", "Resume last search" },
-		},
-		G = {
-			name = "Git Fugitive",
-			s = { "<cmd>G<CR>", "Status" },
-			c = { "<cmd>G commit<CR>", "Commit" },
-			p = { "<cmd>G push<CR>", "Push" },
 		},
 		g = {
 			name = "Git",
@@ -117,8 +111,8 @@ local config = {
 			r = { "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename" },
 			s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
 			S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace symbols" },
-			L = { "<cmd>TwilightEnable<CR>", "Light on" },
-			l = { "<cmd>TwilightDisable<CR>", "Light off" },
+			l = { "<cmd>TwilightEnable<CR>", "Light on" },
+			L = { "<cmd>TwilightDisable<CR>", "Light off" },
 		},
 		k = {
 			name = "Terminal",
