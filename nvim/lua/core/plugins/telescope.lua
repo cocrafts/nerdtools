@@ -17,6 +17,7 @@ local options = {
 		},
 		oldfiles = {
 			theme = "dropdown",
+			cwd_only = true,
 		},
 		colorscheme = {
 			theme = "dropdown",
