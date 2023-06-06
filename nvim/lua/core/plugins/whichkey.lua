@@ -111,8 +111,8 @@ local config = {
 			r = { "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename" },
 			s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
 			S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace symbols" },
-			l = { "<cmd>TwilightEnable<CR>", "Light on" },
-			L = { "<cmd>TwilightDisable<CR>", "Light off" },
+			O = { "<cmd>TwilightEnable<CR>", "Light on" },
+			o = { "<cmd>TwilightDisable<CR>", "Light off" },
 		},
 		k = {
 			name = "Terminal",

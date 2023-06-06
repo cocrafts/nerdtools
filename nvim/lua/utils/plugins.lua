@@ -68,7 +68,12 @@ return {
 	},
 	{ "folke/lazy.nvim",       tag = "stable" },
 	{ "folke/neodev.nvim",     lazy = true },
-	{ "folke/twilight.nvim" },
+	{
+		"folke/twilight.nvim",
+		config = function()
+			vim.cmd(":TwilightEnable")
+		end,
+	},
 	{
 		"zbirenbaum/neodim",
 		event = "LspAttach",
