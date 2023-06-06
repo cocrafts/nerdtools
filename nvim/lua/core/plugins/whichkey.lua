@@ -111,8 +111,8 @@ local config = {
 			r = { "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename" },
 			s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
 			S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace symbols" },
-			O = { "<cmd>TwilightEnable<CR>", "Light on" },
-			o = { "<cmd>TwilightDisable<CR>", "Light off" },
+			O = { "<cmd>TwilightEnable<CR>", "Twilight on" },
+			o = { "<cmd>TwilightDisable<CR>", "Twilight off" },
 		},
 		k = {
 			name = "Terminal",
@@ -120,6 +120,9 @@ local config = {
 			l = { "<cmd>ToggleTerm direction=vertical<CR>", "Terminal left" },
 			j = { "<cmd>ToggleTerm direction=horizontal<CR>", "Terminal bottom" },
 			h = { "<cmd>ToggleTerm direction=tab<CR>", "Terminal tab" },
+		},
+		j = {
+			name = "Jumps",
 		}
 	},
 	vmaps = {

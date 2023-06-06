@@ -40,6 +40,14 @@ local fidgets = {
 	},
 }
 
+local get_opts = function(bufnr, desc)
+	return {
+		desc = desc,
+		buffer = bufnr,
+		remap = false,
+	}
+end
+
 M.configure = function()
 	local lsp = require("lsp-zero").preset({})
 	local lspconfig = require("lspconfig")
@@ -61,16 +69,20 @@ M.configure = function()
 		require("lsp_signature").on_attach({}, bufnr)
 
 		lsp.default_keymaps({ buffer = bufnr })
-		vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-		vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-		vim.keymap.set("n", "[d", function() vim.diagnostic.goto_prev() end, opts)
-		vim.keymap.set("n", "]d", function() vim.diagnostic.goto_next() end, opts)
-		vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-		vim.keymap.set("n", "<leader>vs", function() vim.lsp.buf.workspace_symbol() end, opts)
-		vim.keymap.set("n", "<leader>va", function() vim.lsp.buf.code_action() end, opts)
-		vim.keymap.set("n", "<leader>vr", function() vim.lsp.buf.rename() end, opts)
-		vim.keymap.set("n", "<leader>ve", function() vim.lsp.buf.references() end, opts)
-		vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+		vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, get_opts(bufnr, "Preview signature"))
+		vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, get_opts(bufnr, "Goto definition"))
+		vim.keymap.set("n", "gD", function() vim.lsp.buf.implementation() end, get_opts(bufnr, "Goto definition"))
+		vim.keymap.set("n", "gs", function() vim.lsp.buf.incoming_calls() end, get_opts(bufnr, "Incoming calls"))
+		vim.keymap.set("n", "gS", function() vim.lsp.buf.outgoing_calls() end, get_opts(bufnr, "Outgoing calls"))
+		vim.keymap.set("n", "[d", function() vim.diagnostic.goto_prev() end, get_opts(bufnr, "Previous diagnostic"))
+		vim.keymap.set("n", "]d", function() vim.diagnostic.goto_next() end, get_opts(bufnr, "Next diagnostic"))
+		vim.keymap.set("n", "<leader>jd", function() vim.diagnostic.open_float() end, get_opts(bufnr, "Diagnostic"))
+		vim.keymap.set("n", "<leader>js", function() vim.lsp.buf.workspace_symbol() end, get_opts(bufnr, "Workspace symbols"))
+		vim.keymap.set("n", "<leader>ja", function() vim.lsp.buf.code_action() end, get_opts(bufnr, "Code action"))
+		vim.keymap.set("n", "<leader>jr", function() vim.lsp.buf.rename() end, get_opts(bufnr, "Rename"))
+		vim.keymap.set("n", "<leader>je", function() vim.lsp.buf.references() end, get_opts(bufnr, "References"))
+		vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, get_opts(bufnr, "Signature help"))
+		vim.keymap.set("i", "<C-l>", function() vim.lsp.buf.format() end, get_opts(bufnr, "Format code"))
 
 		vim.cmd(":LspLensOn")
 	end)
