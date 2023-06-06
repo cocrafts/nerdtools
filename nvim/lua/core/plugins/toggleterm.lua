@@ -28,7 +28,7 @@ local options = {
 
 function _G.set_terminal_keymaps()
   local opts = {buffer = 0}
-  vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
+  -- vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
   vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
   vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
   vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
@@ -45,12 +45,13 @@ M.configure = function()
 		cmd = "lazygit",
 		hidden = true,
 		direction = "float",
-		float_opts = {
-			border = "none",
-			width = 100000,
-			height = 100000,
-		},
 		count = 99,
+		on_open = function(term)
+			vim.cmd("startinsert!")
+		end,
+		on_close = function()
+			vim.cmd("startinsert!")
+		end,
 	})
 
 	function LAZYGIT_TOGGLE()
