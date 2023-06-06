@@ -3,7 +3,7 @@ local colors = require("core.theme.colors")
 return {
 	NonText = { fg = colors.gray },   -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces
-	Whitespace = { fg = colors.gray }, -- whitespaces
+	Whitespace = { fg = colors.dim }, -- whitespaces
 	FidgetTitle = { fg = colors.blue },
 
 	Keyword = { fg = colors.keywords },
