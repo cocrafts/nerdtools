@@ -5,7 +5,7 @@ return {
 	CursorLineNR = { fg = colors.comments }, -- current line number
 	LineNR = { fg = colors.dim }, -- line numbers
 	GitBlame = { fg = "#434A68", bg = colors.cursor },
-	MsgArea = { fg = colors.gray, bg = colors.bg },
+	MsgArea = { fg = colors.fg, bg = colors.bg },
 
 	NonText = { fg = colors.gray },   -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces

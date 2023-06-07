@@ -27,6 +27,8 @@ key.mode_keys("n", {
 
 	["H"] = "Hzz",
 	["L"] = "Lzz",
+	["f"] = "<cmd>lua require('gitsigns').next_hunk()<CR>",
+	["F"] = "<cmd>lua require('gitsigns').prev_hunk()<CR>",
 })
 
 key.mode_keys("v", {
