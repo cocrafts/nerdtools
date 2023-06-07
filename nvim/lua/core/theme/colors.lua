@@ -1,7 +1,10 @@
 return {
+	bg = "#1A1B26",
+	darkest = "#16161e",
 	fg = "#ABB2BF",
 	dim = "#242533",
 	gray = "#37384f",
+	cursor = "#1E202F",
 	none = "NONE",
 	keywords = "#b877db",
 	comments = "#323748",

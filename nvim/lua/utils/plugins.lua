@@ -135,16 +135,6 @@ return {
 		end,
 	},
 	{
-		"TimUntersberger/neogit",
-		requires = {
-			"nvim-lua/plenary.nvim",
-			"sindrets/diffview.nvim"
-		},
-		config = function()
-			require("core.plugins.neogit").configure()
-		end,
-	},
-	{
 		"lewis6991/gitsigns.nvim",
 		event = "User FileOpened",
 		cmd = { "Gitsigns" },

@@ -9,7 +9,6 @@ local options = {
 		"startify",
 		"dashboard",
 		"lazy",
-		"neogitstatus",
 		"NvimTree",
 		"Trouble",
 		"text",

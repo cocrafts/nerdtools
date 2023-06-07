@@ -1,6 +1,12 @@
 local colors = require("core.theme.colors")
 
 return {
+	CursorLine = { bg = colors.cursor },
+	CursorLineNR = { fg = colors.comments }, -- current line number
+	LineNR = { fg = colors.dim }, -- line numbers
+	GitBlame = { fg = "#434A68", bg = colors.cursor },
+	MsgArea = { fg = colors.gray, bg = colors.bg },
+
 	NonText = { fg = colors.gray },   -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces
 	Whitespace = { fg = colors.dim }, -- whitespaces
