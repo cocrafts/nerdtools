@@ -22,23 +22,38 @@
     - name: Install Homebrew
       shell: yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       args:
-        creates: /usr/local/bin/brew
-
-    - name: Install official git
-      shell: brew install git
-      args:
-        creates: /usr/local/Cellar/git/
-
-    - name: Install Fzf
-      shell: |
-        brew install fzf
-        $(brew --prefix)/opt/fzf/install
-      args:
-        creates: /usr/local/bin/fzf
+        creates: /opt/homebrew/bin/brew
 
     - name: Install Terraform
       shell: |
         brew tap hashicorp/tap
         brew install hashicorp/tap/terraform
       args:
-        creates: /usr/local/bin/terraform
+        creates: /opt/homebrew/bin/terraform
+
+    - name: Install official git
+      shell: brew install git
+      args:
+        creates: /opt/homebrew/bin/git
+
+    - name: Install lazygit
+      shell: brew install lazygit
+      args:
+        creates: /opt/homebrew/bin/lazygit
+
+    - name: Install ripgrep
+      shell: brew install ripgrep
+      args:
+        creates: /opt/homebrew/bin/rg
+
+    - name: Install zoxide
+      shell: brew install zoxide
+      args:
+        creates: /opt/homebrew/bin/zoxide
+
+    - name: Install Fzf
+      shell: |
+        brew install fzf
+        $(brew --prefix)/opt/fzf/install
+      args:
+        creates: /opt/homebrew/bin/fzf
