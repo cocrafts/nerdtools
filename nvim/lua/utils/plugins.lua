@@ -109,6 +109,12 @@ return {
 					require("telescope").load_extension("env")
 				end,
 			},
+			{
+				"jvgrootveld/telescope-zoxide",
+				config = function()
+					require("telescope").load_extension("zoxide")
+				end,
+			},
 		},
 		cmd = "Telescope",
 		lazy = true,

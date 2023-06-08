@@ -12,10 +12,12 @@ key.mode_keys("n", {
 	["sw"] = ":HopWord<CR>",
 	["sp"] = ":HopPattern<CR>",
 	["sl"] = ":HopLine<CR>",
+
 	-- Search and replace
 	["sR"] = ":lua require('spectre').open()<CR>",
 	["sF"] = ":lua require('spectre').open_file_search()<CR>",
 	["sW"] = ":lua require('spectre').open_visual({ select_word = true })<CR>",
+
 	-- Window movement
 	["<C-h>"] = "<C-w>h",
 	["<C-j>"] = "<C-w>j",

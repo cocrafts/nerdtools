@@ -34,6 +34,7 @@ local config = {
 		["O"] = { "<cmd>Telescope git_status<CR>", "Open changed file" },
 		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep search" },
 		["u"] = { "<cmd>Telescope oldfiles<CR>", "Recent files" },
+		["z"] = { "<cmd>Telescope zoxide list<CR>", "Zoxide list" },
 		b = {
 			name = "Buffer",
 			j = { "<cmd>BufferLinePick<CR>", "Jump" },
