@@ -29,6 +29,7 @@ local config = {
 		["q"] = { "<cmd>q!<cr>", "quit" },
 		["/"] = { "<Plug>(comment_toggle_linewise_current)", "Comment toggle current line" },
 		["c"] = { "<cmd>BufferKill<CR>", "Close Buffer" },
+		["x"] = { "<cmd>Telescope neoclip theme=dropdown<CR>", "Clipboard history" },
 		["e"] = { "<cmd>NvimTreeToggle<CR>", "Explorer" },
 		["o"] = { "<cmd>Telescope find_files<CR>", "File search" },
 		["O"] = { "<cmd>Telescope git_status<CR>", "Open changed file" },

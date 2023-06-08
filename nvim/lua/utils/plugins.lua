@@ -98,6 +98,20 @@ return {
 	{ "lukas-reineke/onedark.nvim" },
 	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
 	{ "nvim-lua/plenary.nvim",                    lazy = true },
+	{ "kkharji/sqlite.lua", module = "sqlite" },
+	{
+		"AckslD/nvim-neoclip.lua",
+		requires = {
+			{ "nvim-telescope/telescope.nvim" },
+			{ "kkharji/sqlite.lua" },
+		},
+		config = function()
+			require("neoclip").setup({
+				enable_persistent_history = true,
+			})
+			require("telescope").load_extension("neoclip")
+		end,
+	},
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
