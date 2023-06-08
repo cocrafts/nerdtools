@@ -78,6 +78,7 @@ local config = {
 			C = { "<cmd>Telescope colorscheme<CR>", "Colorsheme" },
 			m = { "<cmd>Telescope man_pages<CR>", "Man pages" },
 			s = { "<cmd>Telescope resume<CR>", "Resume last search" },
+			e = { "<cmd>Telescope env<CR>", "Search environtment variables" },
 		},
 		g = {
 			name = "Git",
@@ -95,8 +96,8 @@ local config = {
 			b = { "<cmd>Telescope git_branches<CR>", "Checkout branch" },
 			u = { "<cmd>Telescope git_commits<CR>", "Checkout commit" },
 			U = { "<cmd>Telescope git_bcommits<CR>", "Checkout commit (current file)" },
-			h = { ":DiffviewFileHistory %<CR>", "File history %" },
-			H = { ":DiffviewFileHistory<CR>", "File history" },
+			f = { ":DiffviewFileHistory %<CR>", "File history %" },
+			F = { ":DiffviewFileHistory<CR>", "File history" },
 			d = { ":DiffviewOpen<CR>", "Git diff" },
 			q = { ":DiffviewClose<CR>", "Close Git diff" },
 		},

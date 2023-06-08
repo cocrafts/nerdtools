@@ -101,7 +101,15 @@ return {
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
-		dependencies = { "telescope-fzf-native.nvim" },
+		dependencies = {
+			{ "telescope-fzf-native.nvim" },
+			{
+				"LinArcX/telescope-env.nvim",
+				config = function()
+					require("telescope").load_extension("env")
+				end,
+			},
+		},
 		cmd = "Telescope",
 		lazy = true,
 		config = function()
