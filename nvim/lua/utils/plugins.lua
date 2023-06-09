@@ -226,6 +226,12 @@ return {
 		end,
 	},
 	{
+		"RRethy/vim-illuminate",
+		config = function()
+			require("core.plugins.illuminate").configure()
+		end,
+	},
+	{
 		"brenoprata10/nvim-highlight-colors",
 		config = function()
 			require("nvim-highlight-colors").setup({
