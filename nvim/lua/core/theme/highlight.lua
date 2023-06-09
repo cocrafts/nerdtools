@@ -2,17 +2,24 @@ local colors = require("core.theme.colors")
 
 return {
 	CursorLine = { bg = colors.cursor },
-	CursorLineNR = { fg = colors.comments }, -- current line number
-	LineNR = { fg = colors.dim }, -- line numbers
 	GitBlame = { fg = "#434A68", bg = colors.cursor },
 	MsgArea = { fg = colors.fg, bg = colors.bg },
 
+	LineNR = { fg = colors.dim }, -- line numbers
+	CursorLineNR = { fg = colors.blue }, -- current line number
+	NormalMode = { fg = colors.blue },
+	InsertMode = { fg = colors.green },
+	VisualMode = { fg = colors.purple },
+	CommandMode = { fg = colors.types },
+	ReplaceMode = { fg = colors.red },
+	SelectMode = { fg = colors.purple },
+
 	NvimTreeEndOfBuffer = { fg = colors.darkest, bg = colors.darkest }, -- space under the file tree 
+	FidgetTitle = { fg = colors.blue },
 
 	NonText = { fg = colors.gray },   -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces
 	Whitespace = { fg = colors.dim }, -- whitespaces
-	FidgetTitle = { fg = colors.blue },
 
 	Keyword = { fg = colors.keywords },
 	Comment = { fg = colors.comments, style = "italic" },

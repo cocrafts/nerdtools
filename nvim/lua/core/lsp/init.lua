@@ -1,4 +1,5 @@
 local M = {}
+local icons = require("utils.icons")
 
 local hints = {
 	inlay_hints = {
@@ -36,7 +37,20 @@ local hints = {
 
 local fidgets = {
 	text = {
-		done = "",
+		done = icons.kind.Module,
+	},
+	fmt = {
+		fidget = function(name, spinner)
+			return string.format("%s %s ", spinner, name)
+		end,
+		task = function(name, message, percent)
+			return string.format(
+				"%s • %s%s ",
+				name,
+				message,
+				percent and string.format(" (%s%%)", percent) or ""
+			)
+		end,
 	},
 }
 
@@ -77,6 +91,7 @@ M.configure = function()
 		vim.keymap.set("n", "[d", function() vim.diagnostic.goto_prev() end, get_opts(bufnr, "Previous diagnostic"))
 		vim.keymap.set("n", "]d", function() vim.diagnostic.goto_next() end, get_opts(bufnr, "Next diagnostic"))
 		vim.keymap.set("n", "<leader>jd", function() vim.diagnostic.open_float() end, get_opts(bufnr, "Diagnostic"))
+		---@diagnostic disable-next-line: missing-parameter
 		vim.keymap.set("n", "<leader>js", function() vim.lsp.buf.workspace_symbol() end, get_opts(bufnr, "Workspace symbols"))
 		vim.keymap.set("n", "<leader>ja", function() vim.lsp.buf.code_action() end, get_opts(bufnr, "Code action"))
 		vim.keymap.set("n", "<leader>jr", function() vim.lsp.buf.rename() end, get_opts(bufnr, "Rename"))

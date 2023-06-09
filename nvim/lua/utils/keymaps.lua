@@ -24,6 +24,9 @@ key.mode_keys("n", {
 	["<C-k>"] = "<C-w>k",
 	["<C-l>"] = "<C-w>l",
 
+	["<C-x>"] = ":split<CR>",
+	["<C-v>"] = ":vsplit<CR>",
+
 	["<TAB>"] = ":BufferLineCycleNext<CR>",
 	["<S-Tab>"] = ":BufferLineCyclePrev<CR>",
 

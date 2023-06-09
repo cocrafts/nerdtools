@@ -234,6 +234,15 @@ return {
 		end,
 	},
 	{
+		"mawkler/modicator.nvim",
+		dependencies = { "folke/tokyonight.nvim" },
+		config = function()
+			require("modicator").setup({
+				show_warnings = true,
+			})
+		end,
+	},
+	{
 		"kylechui/nvim-surround",
 		event = "VeryLazy",
 		config = function()

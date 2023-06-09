@@ -5,7 +5,7 @@ local globals = {
 	neovide_remember_window_size = true,
 	gitblame_highlight_group = "GitBlame",
 	gitblame_date_format = "%r",
-	gitblame_message_template = " <author> • <date> • <summary> ",
+	gitblame_message_template = " <author>, <date> • <summary> ",
 	gitblame_message_when_not_committed = "",
 }
 
@@ -26,7 +26,8 @@ local opts = {
 	number = true, -- show line numbers
 	relativenumber = true, -- show relative numbers
 	numberwidth = 3,
-
+	termguicolors = true,
+	-- invisible characters
 	list = true,
 	listchars = {
 		tab = "--",

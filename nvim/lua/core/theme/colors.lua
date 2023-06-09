@@ -14,5 +14,9 @@ return {
 	variables = "#DBBE7F",
 	strings = "#e6a98a",
 	types = "#64D1A9",
-	blue = "#BAACFF",
+	purple = "#c678dd",
+	green = "#98be65",
+	blue = "#51afef",
+	red = "#ec5f67",
+	orange = "#FF8800",
 }
