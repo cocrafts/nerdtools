@@ -7,6 +7,8 @@ return {
 	GitBlame = { fg = "#434A68", bg = colors.cursor },
 	MsgArea = { fg = colors.fg, bg = colors.bg },
 
+	NvimTreeEndOfBuffer = { fg = colors.darkest, bg = colors.darkest }, -- space under the file tree 
+
 	NonText = { fg = colors.gray },   -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces
 	Whitespace = { fg = colors.dim }, -- whitespaces
