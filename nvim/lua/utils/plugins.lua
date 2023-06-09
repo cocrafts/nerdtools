@@ -108,6 +108,14 @@ return {
 			{ "LinArcX/telescope-env.nvim" },
 			{ "jvgrootveld/telescope-zoxide" },
 			{
+				"sudormrfbin/cheatsheet.nvim",
+				dependencies = {
+					{ "nvim-telescope/telescope.nvim" },
+					{ "nvim-lua/popup.nvim" },
+					{ "nvim-lua/plenary.nvim" },
+				},
+			},
+			{
 				"AckslD/nvim-neoclip.lua",
 				dependencies = {
 					{ "nvim-telescope/telescope.nvim" },

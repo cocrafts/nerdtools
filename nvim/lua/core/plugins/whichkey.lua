@@ -82,6 +82,7 @@ local config = {
 			C = { "<cmd>Telescope colorscheme<CR>", "Colorsheme" },
 			m = { "<cmd>Telescope man_pages<CR>", "Man pages" },
 			s = { "<cmd>Telescope resume<CR>", "Resume last search" },
+			j = { "<cmd>Cheatsheet<CR>", "Cheatsheet" },
 			e = { "<cmd>Telescope env<CR>", "Search environtment variables" },
 		},
 		g = {
