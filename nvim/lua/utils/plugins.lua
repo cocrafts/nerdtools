@@ -16,7 +16,7 @@ return {
 			{ "simrat39/rust-tools.nvim" },
 			{
 				"saecki/crates.nvim",
-				requires = { "nvim-lua/plenary.nvim" },
+				dependencies = { "nvim-lua/plenary.nvim" },
 				config = function()
 					require("crates").setup()
 				end,
@@ -54,7 +54,7 @@ return {
 	},
 	{
 		"nvim-tree/nvim-tree.lua",
-		requires = { "nvim-tree/nvim-web-devicons" },
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("core.plugins.nvim-tree").configure()
 		end,
@@ -101,7 +101,7 @@ return {
 	{ "kkharji/sqlite.lua", module = "sqlite" },
 	{
 		"AckslD/nvim-neoclip.lua",
-		requires = {
+		dependencies = {
 			{ "nvim-telescope/telescope.nvim" },
 			{ "kkharji/sqlite.lua" },
 		},
@@ -117,18 +117,8 @@ return {
 		branch = "0.1.x",
 		dependencies = {
 			{ "telescope-fzf-native.nvim" },
-			{
-				"LinArcX/telescope-env.nvim",
-				config = function()
-					require("telescope").load_extension("env")
-				end,
-			},
-			{
-				"jvgrootveld/telescope-zoxide",
-				config = function()
-					require("telescope").load_extension("zoxide")
-				end,
-			},
+			{ "LinArcX/telescope-env.nvim" },
+			{ "jvgrootveld/telescope-zoxide" },
 		},
 		cmd = "Telescope",
 		lazy = true,
@@ -157,7 +147,7 @@ return {
 	{ "f-person/git-blame.nvim" },
 	{
 		"sindrets/diffview.nvim",
-		requires = { "nvim-tree/nvim-web-devicons" },
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("core.plugins.diffview").configure()
 		end,

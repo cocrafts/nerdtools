@@ -38,7 +38,9 @@ M.configure = function()
 
 	---@diagnostic disable-next-line: redundant-parameter
 	telescope.setup(options)
+	telescope.load_extension("env")
 	telescope.load_extension("fzf")
+	telescope.load_extension("zoxide")
 end
 
 M.find_project_files = function(opts)
