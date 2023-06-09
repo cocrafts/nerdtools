@@ -101,25 +101,26 @@ return {
 	{ "nvim-lua/plenary.nvim",                    lazy = true },
 	{ "kkharji/sqlite.lua", module = "sqlite" },
 	{
-		"AckslD/nvim-neoclip.lua",
-		dependencies = {
-			{ "nvim-telescope/telescope.nvim" },
-			{ "kkharji/sqlite.lua" },
-		},
-		config = function()
-			require("neoclip").setup({
-				enable_persistent_history = true,
-			})
-			require("telescope").load_extension("neoclip")
-		end,
-	},
-	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
 		dependencies = {
 			{ "telescope-fzf-native.nvim" },
 			{ "LinArcX/telescope-env.nvim" },
 			{ "jvgrootveld/telescope-zoxide" },
+			{
+				"AckslD/nvim-neoclip.lua",
+				dependencies = {
+					{ "nvim-telescope/telescope.nvim" },
+					{ "kkharji/sqlite.lua" },
+				},
+			},
+			{
+				"nvim-telescope/telescope-frecency.nvim",
+				dependencies = {
+					{ "nvim-tree/nvim-web-devicons" },
+					{ "kkharji/sqlite.lua" },
+				},
+			},
 		},
 		cmd = "Telescope",
 		lazy = true,

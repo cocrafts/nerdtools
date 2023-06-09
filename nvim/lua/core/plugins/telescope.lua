@@ -35,12 +35,17 @@ local options = {
 
 M.configure = function()
 	local telescope = require("telescope")
+	local neoclip = require("neoclip")
 
 	---@diagnostic disable-next-line: redundant-parameter
 	telescope.setup(options)
+	neoclip.setup({ enable_persistent_history = true })
+
 	telescope.load_extension("env")
 	telescope.load_extension("fzf")
 	telescope.load_extension("zoxide")
+	telescope.load_extension("neoclip")
+	telescope.load_extension("frecency")
 end
 
 M.find_project_files = function(opts)

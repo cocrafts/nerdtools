@@ -65,12 +65,14 @@ local config = {
 		},
 		f = {
 			name = "Finder",
-			f = {
+			g = {
 				function()
 					require("core.plugins.telescope").find_project_files { previewer = true, theme = "get_ivy" }
 				end,
 				"Find File",
 			},
+			f = { "<cmd>Telescope frecency workspace=CWD<CR>", "Frecency workspace search" },
+			F = { "<cmd>Telescope frecency<CR>", "Frecency search" },
 			l = { "<cmd>NvimTreeFindFile<CR>", "Locate file" },
 			h = { "<cmd>Telescope help_tags<CR>", "Help tags" },
 			H = { "<cmd>Telescope highlights<CR>", "Find highlight groups" },
