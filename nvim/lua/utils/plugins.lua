@@ -184,6 +184,7 @@ return {
 		end,
 		dependencies = { "nvim-treesitter/nvim-treesitter", "hrsh7th/nvim-cmp" },
 	},
+	{ "wakatime/vim-wakatime" },
 	{
 		"Pocco81/auto-save.nvim",
 		config = function()
