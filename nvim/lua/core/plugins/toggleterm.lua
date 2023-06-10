@@ -58,7 +58,7 @@ M.configure = function()
 
 	require("toggleterm").setup(options)
 	vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
-	vim.api.nvim_set_keymap("n", "<leader>G", "<cmd>lua LAZYGIT_TOGGLE()<CR>", { desc = "Lazygit", noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<leader>gg", "<cmd>lua LAZYGIT_TOGGLE()<CR>", { desc = "Lazygit", noremap = true, silent = true })
 end
 
 return M
