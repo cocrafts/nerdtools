@@ -18,5 +18,4 @@ local file_pattern = "*.lua"
 local log = s("cl", { t("Console.log") })
 table.insert(snippets, log)
 
-
 return snippets, autosnippet

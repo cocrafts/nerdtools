@@ -14,6 +14,7 @@ return {
 	ReplaceMode = { fg = colors.red },
 	SelectMode = { fg = colors.purple },
 
+	MatchParen = { fg = colors.bg, bg = colors.fg },
 	NvimTreeEndOfBuffer = { fg = colors.darkest, bg = colors.darkest }, -- space under the file tree 
 	FidgetTitle = { fg = colors.blue },
 

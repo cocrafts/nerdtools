@@ -28,7 +28,9 @@ return {
 				build = "make install_jsregexp",
 				event = "InsertEnter",
 				config = function()
-					require("luasnip.loaders.from_lua").lazy_load()
+					require("luasnip.loaders.from_lua").lazy_load({
+						paths = { "./snippets" }
+					})
 					require("luasnip.loaders.from_snipmate").lazy_load()
 				end,
 			},

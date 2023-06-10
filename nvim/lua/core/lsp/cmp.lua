@@ -6,12 +6,12 @@ local max_width = 0
 local duplicates_default = 0
 
 local sources = {
-	{ name = "path" },
-	{ name = "treesitter" },
-	{ name = "crates" },
-	{ name = "nvim_lsp" },
-	{ name = "buffer",    keyword_length = 3 },
-	{ name = "luasnip",   keyword_length = 2 },
+	{ name = "luasnip", priority = 20, keyword_length = 2 },
+	{ name = "crates", priority = 19 },
+	{ name = "path", priority = 10 },
+	{ name = "treesitter", priority = 8 },
+	{ name = "nvim_lsp", priority = 9 },
+	{ name = "buffer", priority = 7, keyword_length = 3 },
 }
 
 local source_names = {
@@ -51,14 +51,21 @@ local cmdlines = {
 	},
 }
 
+local has_words_before = function()
+  unpack = unpack or table.unpack
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
 M.configure = function()
 	local cmp = require("cmp")
+	local luasnip = require("luasnip")
 	local cmp_types = require("cmp.types.cmp")
 	local cmp_window = require("cmp.config.window")
+	local cmp_mapping = require("cmp.config.mapping")
 	local action = require("lsp-zero").cmp_action()
 	local ConfirmBehavior = cmp_types.ConfirmBehavior
 
-	---@diagnostic disable-next-line: redundant-parameter
 	cmp.setup({
 		sources = sources,
 		window = {
@@ -71,6 +78,12 @@ M.configure = function()
 		},
 		completion = {
 			keyword_length = 1,
+			completeopt = "menu,menuone,noinsert",
+		},
+		snippet = {
+			expand = function(args)
+				luasnip.lsp_expand(args.body)
+			end,
 		},
 		formatting = {
 			fields = { "kind", "abbr", "menu" },
@@ -112,18 +125,39 @@ M.configure = function()
 					end
 				end
 				vim_item.menu = source_names[entry.source.name]
+				---@diagnostic disable-next-line: assign-type-mismatch
 				vim_item.dup = duplicates[entry.source.name] or duplicates_default
 				return vim_item
 			end,
 		},
-		mapping = {
+		mapping = cmp_mapping.preset.insert {
 			-- `Enter` key to confirm completion
-			['<CR>'] = cmp.mapping.confirm({ select = false }),
+			["<CR>"] = cmp.mapping.confirm({ select = false }),
+			["<Tab>"] = cmp_mapping(function(fallback)
+				if cmp.visible() then
+					cmp.confirm()
+				elseif luasnip.expand_or_jumpable() then
+					luasnip.expand_or_jump()
+				elseif has_words_before() then
+					cmp.complete()
+				else
+					fallback()
+				end
+			end, { "i", "s" }),
+			["<S-Tab>"] = cmp_mapping(function(fallback)
+				if cmp.visible() then
+					cmp.select_prev_item()
+				elseif luasnip.jumpable(-1) then
+					luasnip.jump(-1)
+				else
+					fallback()
+				end
+			end, { "i", "s" }),
 			-- Ctrl+Space to trigger completion menu
-			['<C-Space>'] = cmp.mapping.complete(),
+			["<C-Space>"] = cmp.mapping.complete(),
 			-- Navigate between snippet placeholder
-			['<C-f>'] = action.luasnip_jump_forward(),
-			['<C-b>'] = action.luasnip_jump_backward(),
+			["<C-f>"] = action.luasnip_jump_forward(),
+			["<C-b>"] = action.luasnip_jump_backward(),
 		},
 	})
 
