@@ -71,6 +71,16 @@ local config = {
 				end,
 				"Find File",
 			},
+			i = {
+				function()
+					require("telescope").extensions.live_grep_args.live_grep_args({
+						prompt_title = "Live grep (full)",
+						search_dirs = { "node_modules" },
+						theme = "get_ivy",
+					})
+				end,
+				"Live grep (full)",
+			},
 			f = { "<cmd>Telescope frecency workspace=CWD<CR>", "Frecency workspace search" },
 			F = { "<cmd>Telescope frecency<CR>", "Frecency search" },
 			l = { "<cmd>NvimTreeFindFile<CR>", "Locate file" },

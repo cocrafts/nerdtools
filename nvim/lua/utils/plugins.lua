@@ -104,6 +104,7 @@ return {
 		branch = "0.1.x",
 		dependencies = {
 			{ "telescope-fzf-native.nvim" },
+			{ "nvim-telescope/telescope-live-grep-args.nvim" },
 			{ "LinArcX/telescope-env.nvim" },
 			{ "jvgrootveld/telescope-zoxide" },
 			{
