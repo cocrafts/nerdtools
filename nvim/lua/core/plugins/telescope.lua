@@ -4,23 +4,22 @@ local builtin = require("telescope.builtin")
 local options = {
 	pickers = {
 		git_branches = {
-			theme = "dropdown",
+
 		},
 		git_commits = {
-			theme = "dropdown",
+
 		},
 		git_bcommits = {
-			theme = "dropdown",
+
 		},
 		find_files = {
-			theme = "dropdown",
+
 		},
 		oldfiles = {
-			theme = "dropdown",
 			cwd_only = true,
 		},
 		colorscheme = {
-			theme = "dropdown",
+
 		},
 	},
 	extensions = {

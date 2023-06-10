@@ -31,11 +31,27 @@ local config = {
 		["c"] = { "<cmd>BufferKill<CR>", "Close Buffer" },
 		["x"] = { "<cmd>Telescope neoclip theme=dropdown<CR>", "Clipboard history" },
 		["e"] = { "<cmd>NvimTreeToggle<CR>", "Explorer" },
-		["o"] = { "<cmd>Telescope find_files<CR>", "File search" },
-		["O"] = { "<cmd>Telescope git_status<CR>", "Open changed file" },
-		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep search" },
-		["u"] = { "<cmd>Telescope oldfiles<CR>", "Recent files" },
 		["z"] = { "<cmd>Telescope zoxide list<CR>", "Zoxide list" },
+		["u"] = { "<cmd>Telescope oldfiles<CR>", "Recent files" },
+		["U"] = { "<cmd>Telescope git_status<CR>", "Open changed file" },
+		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep search" },
+		["I"] = {
+			function()
+				require("telescope").extensions.live_grep_args.live_grep_args({
+					prompt_title = "Live grep (full)",
+					search_dirs = { "node_modules" },
+					theme = "get_ivy",
+				})
+			end,
+			"Live grep (full)",
+		},
+		["o"] = { "<cmd>Telescope find_files<CR>", "File search" },
+		["O"] = {
+			function()
+				require("core.plugins.telescope").find_project_files { previewer = true, theme = "get_ivy" }
+			end,
+			"Find File",
+		},
 		b = {
 			name = "Buffer",
 			j = { "<cmd>BufferLinePick<CR>", "Jump" },
@@ -65,22 +81,6 @@ local config = {
 		},
 		f = {
 			name = "Finder",
-			g = {
-				function()
-					require("core.plugins.telescope").find_project_files { previewer = true, theme = "get_ivy" }
-				end,
-				"Find File",
-			},
-			i = {
-				function()
-					require("telescope").extensions.live_grep_args.live_grep_args({
-						prompt_title = "Live grep (full)",
-						search_dirs = { "node_modules" },
-						theme = "get_ivy",
-					})
-				end,
-				"Live grep (full)",
-			},
 			f = { "<cmd>Telescope frecency workspace=CWD<CR>", "Frecency workspace search" },
 			F = { "<cmd>Telescope frecency<CR>", "Frecency search" },
 			l = { "<cmd>NvimTreeFindFile<CR>", "Locate file" },
