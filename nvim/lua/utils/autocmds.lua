@@ -27,7 +27,18 @@ local definitions = {
 				require("lsp-inlayhints").on_attach(client, bufnr)
 			end,
 		}
-	}
+	},
+	{
+		"TextYankPost",
+		{
+			group = "_general_settings",
+			pattern = "*",
+			desc = "Highlight text on yank",
+			callback = function()
+				vim.highlight.on_yank { higroup = "Search", timeout = 100 }
+			end,
+		},
+	},
 }
 
 for _, entry in ipairs(definitions) do
@@ -35,7 +46,7 @@ for _, entry in ipairs(definitions) do
 	local opts = entry[2]
 
 	if type(opts.group) == "string" and opts.group ~= "" then
-		local exists, _ = pcall(vim.api.nvim_get_autocomds, { group = opts.group })
+		local exists, _ = pcall(vim.api.nvim_get_autocmds, { group = opts.group })
 
 		if not exists then
 			vim.api.nvim_create_augroup(opts.group, {})

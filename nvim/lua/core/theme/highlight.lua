@@ -21,6 +21,7 @@ return {
 	NonText = { fg = colors.gray },   -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces
 	Whitespace = { fg = colors.dim }, -- whitespaces
+	Search = { fg = colors.darkest, bg = colors.blue },
 
 	Keyword = { fg = colors.keywords },
 	Comment = { fg = colors.comments, style = "italic" },
