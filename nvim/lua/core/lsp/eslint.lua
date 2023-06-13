@@ -5,7 +5,7 @@ M.configure = function(lspconfig)
 		on_attach = function(_, bufnr)
 			vim.api.nvim_create_autocmd("BufWritePre", {
 				buffer = bufnr,
-				command = "EslintFixAll",
+				command = "silent! EslintFixAll",
 			})
 		end,
 	})
