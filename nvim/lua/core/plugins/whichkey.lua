@@ -34,7 +34,7 @@ local config = {
 		["z"] = { "<cmd>Telescope zoxide list<CR>", "Zoxide list" },
 		["u"] = { "<cmd>Telescope oldfiles<CR>", "Recent files" },
 		["U"] = { "<cmd>Telescope git_status<CR>", "Open changed file" },
-		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep search" },
+		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep lite" },
 		["I"] = {
 			function()
 				require("telescope").extensions.live_grep_args.live_grep_args({
@@ -43,7 +43,7 @@ local config = {
 					theme = "get_ivy",
 				})
 			end,
-			"Live grep (full)",
+			"Live grep",
 		},
 		["o"] = { "<cmd>Telescope find_files<CR>", "File search" },
 		["O"] = {
