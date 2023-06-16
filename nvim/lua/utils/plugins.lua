@@ -171,6 +171,12 @@ return {
 		end,
 	},
 	{
+		'lewis6991/satellite.nvim',
+		config = function()
+			require("core.plugins.satellite").configure()
+		end
+	},
+	{
 		"akinsho/bufferline.nvim",
 		branch = "main",
 		event = "User FileOpened",
