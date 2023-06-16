@@ -30,7 +30,7 @@ local opts = {
 	-- invisible characters
 	list = true,
 	listchars = {
-		tab = "--",
+		tab = " ",
 		eol = "¬",
 		space = "·",
 	},
