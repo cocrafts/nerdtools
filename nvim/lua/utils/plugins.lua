@@ -12,7 +12,7 @@ return {
 					pcall(vim.cmd, 'MasonUpdate')
 				end,
 			},
-			{ "j-hui/fidget.nvim" }, -- lsp loading status
+			{ "j-hui/fidget.nvim", version = "legacy" }, -- lsp loading status
 			{ "williamboman/mason-lspconfig.nvim" },
 			{ "simrat39/rust-tools.nvim" },
 			{
@@ -198,6 +198,20 @@ return {
 		"Pocco81/auto-save.nvim",
 		config = function()
 			require("auto-save").setup()
+		end,
+	},
+	{
+		"rmagatti/auto-session",
+		config = function()
+			require("auto-session").setup({
+				log_level = "error",
+				auto_session_suppress_dirs = {
+					"/",
+					"~/",
+					"~/Projects",
+					"~/Downloads",
+				},
+			})
 		end,
 	},
 	{

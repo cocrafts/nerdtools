@@ -99,6 +99,7 @@ M.configure = function()
 		vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, get_opts(bufnr, "Signature help"))
 		vim.keymap.set("i", "<C-l>", function() vim.lsp.buf.format() end, get_opts(bufnr, "Format code"))
 
+		vim.cmd("set autoindent tabstop=2 shiftwidth=2") -- force 2 space tabs
 		vim.cmd(":LspLensOn")
 	end)
 

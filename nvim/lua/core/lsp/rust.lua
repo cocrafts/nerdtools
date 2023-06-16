@@ -26,8 +26,6 @@ M.configure = function(hints)
 		},
 		server = {
 			on_attach = function(_, bufnr)
-				vim.cmd("set autoindent tabstop=2 shiftwidth=2") -- force 2 space tabs
-
 				vim.keymap.set("n", "<C-space>", rustools.hover_actions.hover_actions, { buffer = bufnr })
 				vim.keymap.set("n", "<leader>a", rustools.code_action_group.code_action_group, { buffer = bufnr })
 			end,

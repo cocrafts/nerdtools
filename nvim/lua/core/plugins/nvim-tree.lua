@@ -16,6 +16,9 @@ local options = {
 	on_attach = "default",
 	remove_keymaps = false,
 	select_prompts = false,
+	filters = {
+		dotfiles = true,
+	},
 	view = {
 		adaptive_size = false,
 		centralize_selection = true,
