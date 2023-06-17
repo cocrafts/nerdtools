@@ -120,7 +120,6 @@ return {
 	},
 	encoding = {
 		"o:encoding",
-		fmt = string.upper,
 		color = {},
 		cond = conditions.hide_in_width,
 	},
@@ -137,5 +136,12 @@ return {
 		padding = { left = 0, right = 0 },
 		color = "SLProgress",
 		cond = nil,
+	},
+	dot = {
+		function()
+			return "█"
+		end,
+		padding = { right = 1, left = 0 },
+		color = { fg = "#3a4161" },
 	},
 }

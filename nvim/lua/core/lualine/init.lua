@@ -13,7 +13,9 @@ local options = {
 		globalstatus = true,
 		icons_enabled = true,
 		component_separators = { left = "", right = "" },
-		section_separators = { left = "", right = "" },
+		-- section_separators = { left = "", right = "" },
+		section_separators = { left = "", right = "" },
+		-- section_separators = { left = "", right = "" },
 		disabled_filetypes = { "alpha" },
 	},
 	sections = {
@@ -36,7 +38,7 @@ local options = {
 			components.location,
 		},
 		lualine_z = {
-			components.progress,
+			components.encoding,
 		},
 	},
 	inactive_sections = {
@@ -59,7 +61,7 @@ local options = {
 			components.location,
 		},
 		lualine_z = {
-			components.progress,
+			components.encoding,
 		},
 	},
 }
