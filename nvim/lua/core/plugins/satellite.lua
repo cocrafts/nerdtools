@@ -1,7 +1,7 @@
 local M = {}
 
 local options = {
-	windblend = 50,
+	winblend = 92,
 	zindex = 40,
 	width = 2,
 	handlers = {

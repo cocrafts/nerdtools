@@ -17,6 +17,7 @@ return {
 	MatchParen = { fg = colors.bg, bg = colors.fg },
 	NvimTreeEndOfBuffer = { fg = colors.darkest, bg = colors.darkest }, -- space under the file tree 
 	FidgetTitle = { fg = colors.blue },
+	ScrollView = { bg = colors.fg },
 
 	NonText = { fg = colors.gray },   -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces
