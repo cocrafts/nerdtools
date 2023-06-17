@@ -113,7 +113,7 @@ end
 
 local options = {
 	mode = "buffers",              -- set to "tabs" to only show tabpages instead
-	numbers = "none",              -- can be "none" | "ordinal" | "buffer_id" | "both" | function
+	numbers = "ordinal",              -- can be "none" | "ordinal" | "buffer_id" | "both" | function
 	close_command = function(bufnr) -- can be a string | function, see "Mouse actions"
 		M.buf_kill("bd", bufnr, false)
 	end,
@@ -187,7 +187,7 @@ local options = {
 	persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
 	-- can also be a table containing 2 custom separators
 	-- [focused and unfocused]. eg: { '|', '|' }
-	separator_style = "thin",
+	separator_style = "thin", -- "slant" | "slope" | "thick" | "thin" | { 'any', 'any' },
 	enforce_regular_tabs = false,
 	always_show_bufferline = true,
 	hover = {
@@ -211,6 +211,17 @@ M.configure = function()
 	-- can't be set in settings.lua because default tabline would flash before bufferline is loaded
 	vim.opt.showtabline = 2
 	vim.opt.termguicolors = true
+
+	vim.api.nvim_set_keymap("n", "<C-1>", "<cmd>lua require('bufferline').go_to(1, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-2>", "<cmd>lua require('bufferline').go_to(2, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-3>", "<cmd>lua require('bufferline').go_to(3, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-4>", "<cmd>lua require('bufferline').go_to(4, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-5>", "<cmd>lua require('bufferline').go_to(5, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-6>", "<cmd>lua require('bufferline').go_to(6, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-7>", "<cmd>lua require('bufferline').go_to(7, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-8>", "<cmd>lua require('bufferline').go_to(8, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-9>", "<cmd>lua require('bufferline').go_to(9, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("n", "<C-0>", "<cmd>lua require('bufferline').go_to(0, true)<CR>", { noremap = true, silent = true })
 
 	require("bufferline").setup({
 		options = options,
