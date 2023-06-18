@@ -39,7 +39,7 @@ local opts = {
 local settings = {
 	theme = {
 		name = "tokyonight",
-		variant = "tokyonight-night"
+		variant = "tokyonight-night",
 	},
 }
 

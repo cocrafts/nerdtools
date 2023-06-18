@@ -4,9 +4,9 @@
 -- 	vim.api.nvim_command "syntax reset"
 -- end
 
-local utils = require("core.themes.utils")
-local lsp = require("core.themes.lsp")
-local highlight = require("core.themes.highlight")
+local utils = require("themes.utils")
+local lsp = require("themes.lsp")
+local highlight = require("themes.highlight")
 
 local skeletons = {
 	lsp,
