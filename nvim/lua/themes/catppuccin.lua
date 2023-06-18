@@ -1,5 +1,26 @@
 local M = {}
-local colors = require("themes.colors")
+local colors = {
+	bg = "#1A1B26",
+	darkest = "#16161e",
+	fg = "#ABB2BF",
+	dim = "#242533",
+	gray = "#37384f",
+	cursor = "#1E202F",
+	none = "NONE",
+	keywords = "#b877db",
+	comments = "#323748",
+	numbers = "#FF9668",
+	procs = "#d6a786",
+	functions = "#E95678",
+	variables = "#DBBE7F",
+	strings = "#e6a98a",
+	types = "#64D1A9",
+	purple = "#c678dd",
+	green = "#98be65",
+	blue = "#51afef",
+	red = "#ec5f67",
+	orange = "#FF8800",
+}
 
 M.options = {
 	name = "catppuccin",
