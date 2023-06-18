@@ -1,5 +1,5 @@
 local M = {}
-local settings = require("utils.settings")
+local theme = require("utils.config").theme
 
 M.configure = function()
 	local snip = require("luasnip")
@@ -14,7 +14,7 @@ M.configure = function()
 		ext_opts = {
 			[types.choiceNode] = {
 				active = {
-					virt_text = { { "*", settings.theme.variant } },
+					virt_text = { { "*", theme.options.variant } },
 				},
 			},
 		},

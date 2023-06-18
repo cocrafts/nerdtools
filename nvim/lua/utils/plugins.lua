@@ -1,13 +1,7 @@
-local settings = require("utils.settings")
-
-local onedark = { "lukas-reineke/onedark.nvim" }
-local tokyonight = { "folke/tokyonight.nvim" }
-local catppuccin = { "catppuccin/nvim", as = "catppuccin" }
-
-local plugins = {
-	onedark,
-	tokyonight,
-	catppuccin,
+return {
+	{ "folke/tokyonight.nvim" },
+	{ "lukas-reineke/onedark.nvim" },
+	{ "catppuccin/nvim" },
 	{ "LazyVim/LazyVim" },
 	{
 		"VonHeikemen/lsp-zero.nvim",
@@ -271,7 +265,10 @@ local plugins = {
 	},
 	{
 		"mawkler/modicator.nvim",
-		dependencies = { tokyonight },
+		dependencies = {
+			"folke/tokyonight.nvim",
+			"catppuccin/nvim",
+		},
 		config = function()
 			require("modicator").setup({
 				show_warnings = true,
@@ -286,11 +283,3 @@ local plugins = {
 		end,
 	},
 }
-
-if settings.theme.name == "tokyonight" then
-	catppuccin.config = function()
-		require("core.plugins.tokyonight").configure()
-	end
-end
-
-return plugins

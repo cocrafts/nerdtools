@@ -36,13 +36,6 @@ local opts = {
 	},
 }
 
-local settings = {
-	theme = {
-		name = "tokyonight",
-		variant = "tokyonight-night",
-	},
-}
-
 local defer_opts = {
 	-- use tab
 	autoindent = true,
@@ -63,5 +56,3 @@ vim.defer_fn(function()
 		vim.opt[k] = v
 	end
 end, 0)
-
-return settings
