@@ -1,11 +1,12 @@
 local M = {}
+local settings = require("utils.settings")
 
 M.configure = function()
 	local snip = require("luasnip")
 	local types = require("luasnip.util.types")
 
 	require("luasnip.loaders.from_lua").lazy_load({ paths = "./lua/snippets" })
-	
+
 	snip.config.set_config({
 		history = true,
 		updateevents = "TextChanged,TextChangedI",
@@ -13,7 +14,7 @@ M.configure = function()
 		ext_opts = {
 			[types.choiceNode] = {
 				active = {
-					virt_text = { { "*", "tokyonight-night" } },
+					virt_text = { { "*", settings.theme.variant } },
 				},
 			},
 		},

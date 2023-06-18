@@ -14,16 +14,16 @@ local opts = {
 	timeout = true,
 	timeoutlen = 100, -- time to wait for mapped sequence to complete
 	-- utilities
-	title = true, -- show buffer name in window title
-	undofile = true, -- enable persistent undo
+	title = true,     -- show buffer name in window title
+	undofile = true,  -- enable persistent undo
 	cursorline = true, -- highlight current line
-	hlsearch = true, -- highlight all matches on previous search pattern
+	hlsearch = true,  -- highlight all matches on previous search pattern
 	incsearch = true,
 	ignorecase = true, -- ignore case when search
 	smartcase = true,
 	mouse = "a",
 	-- line numbers
-	number = true, -- show line numbers
+	number = true,        -- show line numbers
 	relativenumber = true, -- show relative numbers
 	numberwidth = 3,
 	termguicolors = true,
@@ -36,10 +36,17 @@ local opts = {
 	},
 }
 
+local settings = {
+	theme = {
+		name = "tokyonight",
+		variant = "tokyonight-night"
+	},
+}
+
 local defer_opts = {
 	-- use tab
 	autoindent = true,
-	tabstop = 2, -- insert 2 spaces for a tab
+	tabstop = 2,   -- insert 2 spaces for a tab
 	shiftwidth = 2, -- number of spaces inserted for each indentation
 }
 
@@ -57,4 +64,4 @@ vim.defer_fn(function()
 	end
 end, 0)
 
-return opts
+return settings

@@ -1,10 +1,11 @@
 local M = {}
 local icons = require("utils.icons")
+local settings = require("utils.settings")
 local components = require("core.lualine.components")
 
 local options = {
 	active = true,
-	style = "tokyonight-night",
+	style = settings.theme.variant,
 	tabline = nil,
 	extensions = nil,
 	on_config_done = nil,

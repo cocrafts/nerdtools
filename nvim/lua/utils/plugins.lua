@@ -1,5 +1,14 @@
-return {
-	{ "wbthomason/packer.nvim" },
+local settings = require("utils.settings")
+
+local onedark = { "lukas-reineke/onedark.nvim" }
+local tokyonight = { "folke/tokyonight.nvim" }
+local catppuccin = { "catppuccin/nvim", as = "catppuccin" }
+
+local plugins = {
+	onedark,
+	tokyonight,
+	catppuccin,
+	{ "LazyVim/LazyVim" },
 	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v2.x",
@@ -9,10 +18,10 @@ return {
 				"williamboman/mason.nvim",
 				build = function()
 					---@diagnostic disable-next-line: param-type-mismatch
-					pcall(vim.cmd, 'MasonUpdate')
+					pcall(vim.cmd, "MasonUpdate")
 				end,
 			},
-			{ "j-hui/fidget.nvim", version = "legacy" }, -- lsp loading status
+			{ "j-hui/fidget.nvim",                version = "legacy" }, -- lsp loading status
 			{ "williamboman/mason-lspconfig.nvim" },
 			{ "simrat39/rust-tools.nvim" },
 			{
@@ -66,8 +75,8 @@ return {
 			require("core.lualine").configure()
 		end,
 	},
-	{ "folke/lazy.nvim",       tag = "stable" },
-	{ "folke/neodev.nvim",     lazy = true },
+	{ "folke/lazy.nvim",   tag = "stable" },
+	{ "folke/neodev.nvim", lazy = true },
 	{
 		"folke/twilight.nvim",
 		config = function()
@@ -89,16 +98,9 @@ return {
 			require("core.plugins.whichkey").configure()
 		end,
 	},
-	{
-		"folke/tokyonight.nvim",
-		config = function()
-			require("core.plugins.tokyonight").configure()
-		end,
-	},
-	{ "lukas-reineke/onedark.nvim" },
-	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
+	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true,      build = "make" },
 	{ "nvim-lua/plenary.nvim",                    lazy = true },
-	{ "kkharji/sqlite.lua", module = "sqlite" },
+	{ "kkharji/sqlite.lua",                       module = "sqlite" },
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
@@ -171,10 +173,10 @@ return {
 		end,
 	},
 	{
-		'lewis6991/satellite.nvim',
+		"lewis6991/satellite.nvim",
 		config = function()
 			require("core.plugins.satellite").configure()
-		end
+		end,
 	},
 	{
 		"akinsho/bufferline.nvim",
@@ -269,7 +271,7 @@ return {
 	},
 	{
 		"mawkler/modicator.nvim",
-		dependencies = { "folke/tokyonight.nvim" },
+		dependencies = { tokyonight },
 		config = function()
 			require("modicator").setup({
 				show_warnings = true,
@@ -284,3 +286,11 @@ return {
 		end,
 	},
 }
+
+if settings.theme.name == "tokyonight" then
+	catppuccin.config = function()
+		require("core.plugins.tokyonight").configure()
+	end
+end
+
+return plugins

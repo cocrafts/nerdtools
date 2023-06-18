@@ -1,4 +1,4 @@
-local colors = require("core.theme.colors")
+local colors = require("core.themes.colors")
 
 return {
 	CursorLine = { bg = colors.cursor },
