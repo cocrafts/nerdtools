@@ -35,25 +35,6 @@ local hints = {
 	debug_mode = false,
 }
 
-local fidgets = {
-	text = {
-		done = icons.kind.Module,
-	},
-	fmt = {
-		fidget = function(name, spinner)
-			return string.format("%s %s ", spinner, name)
-		end,
-		task = function(name, message, percent)
-			return string.format(
-				"%s • %s%s ",
-				name,
-				message,
-				percent and string.format(" (%s%%)", percent) or ""
-			)
-		end,
-	},
-}
-
 local get_opts = function(bufnr, desc)
 	return {
 		desc = desc,
@@ -110,7 +91,6 @@ M.configure = function()
 	require("core.lsp.eslint").configure(lspconfig)
 	require("core.lsp.graphql").configure(lspconfig)
 	require("core.lsp.lua-ls").configure(lspconfig)
-	require("fidget").setup(fidgets)
 end
 
 return M

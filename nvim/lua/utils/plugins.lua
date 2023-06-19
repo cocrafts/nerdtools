@@ -15,7 +15,6 @@ return {
 					pcall(vim.cmd, "MasonUpdate")
 				end,
 			},
-			{ "j-hui/fidget.nvim",                version = "legacy" }, -- lsp loading status
 			{ "williamboman/mason-lspconfig.nvim" },
 			{ "simrat39/rust-tools.nvim" },
 			{
@@ -81,6 +80,17 @@ return {
 		"folke/twilight.nvim",
 		config = function()
 			vim.cmd(":TwilightEnable")
+		end,
+	},
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+			"rcarriga/nvim-notify",
+		},
+		config = function()
+			require("core.plugins.noice").configure()
 		end,
 	},
 	{
