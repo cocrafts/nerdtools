@@ -55,11 +55,24 @@ return {
 			require("lsp-lens").setup({})
 		end,
 	},
+	-- {
+	-- 	"nvim-tree/nvim-tree.lua",
+	-- 	dependencies = { "nvim-tree/nvim-web-devicons" },
+	-- 	config = function()
+	-- 		require("core.plugins.nvim-tree").configure()
+	-- 	end,
+	-- },
 	{
-		"nvim-tree/nvim-tree.lua",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
+		"nvim-neo-tree/neo-tree.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-tree/nvim-web-devicons",
+			"MunifTanjim/nui.nvim",
+		},
+		branch = "v2.x",
+		cmd = "Neotree",
 		config = function()
-			require("core.plugins.nvim-tree").configure()
+			require("core.plugins.neo-tree").configure()
 		end,
 	},
 	{
