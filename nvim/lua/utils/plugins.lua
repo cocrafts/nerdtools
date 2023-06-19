@@ -55,13 +55,6 @@ return {
 			require("lsp-lens").setup({})
 		end,
 	},
-	-- {
-	-- 	"nvim-tree/nvim-tree.lua",
-	-- 	dependencies = { "nvim-tree/nvim-web-devicons" },
-	-- 	config = function()
-	-- 		require("core.plugins.nvim-tree").configure()
-	-- 	end,
-	-- },
 	{
 		"nvim-neo-tree/neo-tree.nvim",
 		dependencies = {
@@ -213,20 +206,6 @@ return {
 		"Pocco81/auto-save.nvim",
 		config = function()
 			require("auto-save").setup()
-		end,
-	},
-	{
-		"rmagatti/auto-session",
-		config = function()
-			require("auto-session").setup({
-				log_level = "error",
-				auto_session_suppress_dirs = {
-					"/",
-					"~/",
-					"~/Projects",
-					"~/Downloads",
-				},
-			})
 		end,
 	},
 	{

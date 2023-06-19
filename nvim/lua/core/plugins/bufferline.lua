@@ -5,7 +5,7 @@ local is_ft = function(b, ft)
 	return vim.bo[b].filetype == ft
 end
 
-local diagnostics_indicator = function(num, _, diagnostics, _)
+local diagnostics_indicator = function(_, _, diagnostics, _)
 	local result = {}
 	local symbols = {
 		error = icons.diagnostics.Error,
