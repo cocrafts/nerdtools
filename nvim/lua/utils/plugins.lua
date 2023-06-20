@@ -2,6 +2,7 @@ return {
 	{ "folke/tokyonight.nvim" },
 	{ "lukas-reineke/onedark.nvim" },
 	{ "catppuccin/nvim" },
+
 	{ "LazyVim/LazyVim" },
 	{
 		"VonHeikemen/lsp-zero.nvim",
@@ -87,7 +88,6 @@ return {
 		event = "VeryLazy",
 		dependencies = {
 			"MunifTanjim/nui.nvim",
-			"rcarriga/nvim-notify",
 		},
 		config = function()
 			require("core.plugins.noice").configure()

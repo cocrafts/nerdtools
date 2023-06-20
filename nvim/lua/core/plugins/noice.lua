@@ -1,4 +1,5 @@
 local M = {}
+local icons = require("utils.icons")
 
 M.configure = function()
 	require("noice").setup {
@@ -8,6 +9,20 @@ M.configure = function()
 				["vim.lsp.util.convert_input_to_markdown_lines"] = true,
 				["vim.lsp.util.stylize_markdown"] = true,
 				["cmp.entry.get_documentation"] = true,
+			},
+			progress = {
+				enabled = true,
+				format = {
+					{ "{data.progress.percentage} ", hl_group = "NoiceLspProgressTitle" },
+					{ "{spinner} ", hl_group = "NoiceLspProgressSpinner" },
+					{ "{data.progress.title} ", hl_group = "NoiceLspProgressTitle" },
+					{ "{data.progress.client} ", hl_group = "NoiceLspProgressClient" },
+				},
+				format_done = {
+					{ icons.ui.FolderEmpty .. " ", hl_group = "NoiceLspProgressSpinner" },
+					{ "{data.progress.title} ", hl_group = "NoiceLspProgressTitle" },
+					{ "{data.progress.client} ", hl_group = "NoiceLspProgressClient" },
+				}
 			},
 		},
 		-- you can enable a preset for easier configuration
