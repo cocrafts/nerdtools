@@ -30,7 +30,6 @@ local config = {
 		["/"] = { "<Plug>(comment_toggle_linewise_current)", "Comment toggle current line" },
 		["c"] = { "<cmd>BufferKill<CR>", "Close Buffer" },
 		["x"] = { "<cmd>Telescope neoclip theme=dropdown<CR>", "Clipboard history" },
-		-- ["e"] = { "<cmd>NvimTreeToggle<CR>", "Explorer" },
 		["e"] = {
 			function()
 				require("neo-tree.command").execute({ toggle = true, dir = vim.loop.cwd() })

@@ -2,8 +2,6 @@ return {
 	{ "folke/tokyonight.nvim" },
 	{ "lukas-reineke/onedark.nvim" },
 	{ "catppuccin/nvim" },
-
-	{ "LazyVim/LazyVim" },
 	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v2.x",
