@@ -77,12 +77,7 @@ return {
 	},
 	{ "folke/lazy.nvim",   tag = "stable" },
 	{ "folke/neodev.nvim", lazy = true },
-	{
-		"folke/twilight.nvim",
-		config = function()
-			vim.cmd(":TwilightEnable")
-		end,
-	},
+	{ "folke/twilight.nvim" },
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
