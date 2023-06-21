@@ -1,5 +1,18 @@
 local M = {}
 local icons = require("utils.icons")
+local uv = vim.loop
+
+M.open = function(path) 
+	if uv.os_uname().sysname == "Darwin" then
+		os.execute('open "' .. path .. '"')
+	elseif uv.os_uname().sysname == "Linux" then
+		os.execute('xdg-open "' .. path .. '"')
+	elseif uv.os_uname().sysname == "Windows" then
+		os.execute('start "" "' .. path .. '"')
+	else
+		error("Unsupported operating system")
+	end
+end
 
 M.configure = function()
 	local tree = require("neo-tree")
@@ -16,6 +29,13 @@ M.configure = function()
 			width = 32,
 			mappings = {
 				["<space>"] = "none",
+				["o"] = {
+					command = function(state)
+						local node = state.tree:get_node()
+						M.open(node.path)
+					end,
+					nowait = true
+				},
 			},
 		},
 		source_selector = {
