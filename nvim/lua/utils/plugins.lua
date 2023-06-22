@@ -206,12 +206,6 @@ return {
 	},
 	{ "wakatime/vim-wakatime" },
 	{
-		"Pocco81/auto-save.nvim",
-		config = function()
-			require("auto-save").setup()
-		end,
-	},
-	{
 		"ethanholz/nvim-lastplace",
 		config = function()
 			require("nvim-lastplace").setup({})
