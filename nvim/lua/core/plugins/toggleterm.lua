@@ -47,12 +47,18 @@ end
 M.configure = function()
 	local Terminal  = require('toggleterm.terminal').Terminal
 	function LAZYGIT_TOGGLE()
+		local width = math.floor(vim.o.columns * 0.98)
+		local height = math.floor(vim.o.lines * 0.94)
 		local lazygit = Terminal:new({
 			cmd = "lazygit",
 			hidden = true,
 			direction = "float",
 			count = 99,
 			shade_terminals = false,
+			float_opts = {
+				width = width,
+				height = height,
+			},
 			on_open = function(term)
 				vim.cmd("startinsert!")
 			end,

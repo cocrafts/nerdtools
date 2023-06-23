@@ -38,7 +38,11 @@ M.options = {
 		lsp = {
 			LspInlayHint = { fg = colors.gray, bg = colors.none },
 		},
-		gui = {
+		telescope = {
+			TelescopeNormal = { bg = colors.bg },
+			TelescopeBorder = { bg = colors.bg, fg = colors.green },
+		},
+			gui = {
 			CursorLine = { bg = colors.cursor },
 			GitBlame = { fg = "#434A68", bg = colors.cursor },
 			MsgArea = { fg = colors.fg, bg = colors.bg },
@@ -53,7 +57,6 @@ M.options = {
 			SelectMode = { fg = colors.purple },
 
 			MatchParen = { fg = colors.bg, bg = colors.fg },
-			NvimTreeEndOfBuffer = { fg = colors.darkest, bg = colors.darkest }, -- space under the file tree 
 			ScrollView = { bg = colors.fg },
 
 			NonText = { fg = colors.gray },   -- whitespaces

@@ -2,6 +2,15 @@ local M = {}
 local builtin = require("telescope.builtin")
 
 local options = {
+	defaults = {
+		layout_strategy = "horizontal",
+		layout_config = {
+			horizontal = {
+				width = 0.98,
+				height = 0.98,
+			},
+		},
+	},
 	pickers = {
 		git_branches = {
 
@@ -29,6 +38,9 @@ local options = {
 			override_file_sorter = true, -- override the file sorter
 			case_mode = "smart_case",    -- or "ignore_case" or "respect_case"
 		},
+		frecency = {
+			show_scores = false,
+		}
 	},
 }
 
