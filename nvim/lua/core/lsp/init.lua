@@ -73,10 +73,6 @@ M.configure = function()
 		vim.keymap.set("n", "]d", function() vim.diagnostic.goto_next() end, get_opts(bufnr, "Next diagnostic"))
 		vim.keymap.set("n", "<leader>jd", function() vim.diagnostic.open_float() end, get_opts(bufnr, "Diagnostic"))
 		---@diagnostic disable-next-line: missing-parameter
-		vim.keymap.set("n", "<leader>js", function() vim.lsp.buf.workspace_symbol() end, get_opts(bufnr, "Workspace symbols"))
-		vim.keymap.set("n", "<leader>ja", function() vim.lsp.buf.code_action() end, get_opts(bufnr, "Code action"))
-		vim.keymap.set("n", "<leader>jr", function() vim.lsp.buf.rename() end, get_opts(bufnr, "Rename"))
-		vim.keymap.set("n", "<leader>je", function() vim.lsp.buf.references() end, get_opts(bufnr, "References"))
 		vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, get_opts(bufnr, "Signature help"))
 		vim.keymap.set("i", "<C-l>", function() vim.lsp.buf.format() end, get_opts(bufnr, "Format code"))
 
