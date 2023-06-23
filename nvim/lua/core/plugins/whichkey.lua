@@ -45,18 +45,17 @@ local config = {
 				require("telescope").extensions.live_grep_args.live_grep_args({
 					prompt_title = "Live grep (full)",
 					search_dirs = { "node_modules" },
-					theme = "get_ivy",
 				})
 			end,
 			"Live grep",
 		},
-		["o"] = { "<cmd>Telescope find_files<CR>", "File search" },
-		["O"] = {
+		["o"] = {
 			function()
 				require("core.plugins.telescope").find_project_files { previewer = true, theme = "get_ivy" }
 			end,
 			"Find File",
 		},
+		["O"] = { "<cmd>Telescope find_files<CR>", "File search" },
 		b = {
 			name = "Buffer",
 			j = { "<cmd>BufferLinePick<CR>", "Jump" },
@@ -86,8 +85,9 @@ local config = {
 		},
 		f = {
 			name = "Finder",
-			f = { "<cmd>Telescope frecency workspace=CWD<CR>", "Frecency workspace search" },
-			F = { "<cmd>Telescope frecency<CR>", "Frecency search" },
+			f = { "<cmd>Telescope resume<CR>", "Resume last search" },
+			s = { "<cmd>Telescope frecency workspace=CWD<CR>", "Frecency workspace search" },
+			S = { "<cmd>Telescope frecency<CR>", "Frecency search" },
 			h = { "<cmd>Telescope help_tags<CR>", "Help tags" },
 			H = { "<cmd>Telescope highlights<CR>", "Find highlight groups" },
 			r = { "<cmd>Telescope registers<CR>", "Registers" },
@@ -95,7 +95,6 @@ local config = {
 			c = { "<cmd>Telescope commands<CR>", "Commands" },
 			C = { "<cmd>Telescope colorscheme<CR>", "Colorsheme" },
 			m = { "<cmd>Telescope man_pages<CR>", "Man pages" },
-			s = { "<cmd>Telescope resume<CR>", "Resume last search" },
 			j = { "<cmd>Cheatsheet<CR>", "Cheatsheet" },
 			e = { "<cmd>Telescope env<CR>", "Search environtment variables" },
 		},
@@ -124,13 +123,19 @@ local config = {
 			name = "LSP",
 			a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
 			A = { "<cmd>lua vim.lsp.codelens.run()<CR>", "CodeLens Action" },
-			d = { "<cmd>Telescope diagnostics bufnr=0<CR>", "Document Dianogstics" },
+			e = { "<cmd>Telescope diagnostics bufnr=0<CR>", "Document Dianogstics" },
 			f = { "<cmd>lua vim.lsp.buf.formatting()<CR>", "Format" },
-			i = { "<cmd>LspInfo<CR>", "Info" },
-			I = { "<cmd>LspInstallInfo<CR>", "Installer Info" },
+			l = { "<cmd>LspInfo<CR>", "Info" },
+			L = { "<cmd>LspInstallInfo<CR>", "Installer Info" },
 			j = { "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", "Next Dianogstics" },
 			k = { "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", "Previous Dianogstics" },
 			r = { "<cmd>lua vim.lsp.buf.rename()<CR>", "Rename" },
+			i = { "<cmd>Telescope lsp_references<CR>", "References" },
+			I = { "<cmd>Telescope lsp_implementations<CR>", "Implementations" },
+			d = { "<cmd>Telescope lsp_definitions<CR>", "Definitions" },
+			D = { "<cmd>Telescope lsp_type_definitions<CR>", "Type definitions" },
+			c = { "<cmd>Telescope lsp_incoming_calls<CR>", "Incoming calls" },
+			C = { "<cmd>Telescope lsp_outgoing_calls<CR>", "Outgoing calls" },
 			s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
 			S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace symbols" },
 			o = { "<cmd>TwilightEnable<CR>", "Twilight on" },
