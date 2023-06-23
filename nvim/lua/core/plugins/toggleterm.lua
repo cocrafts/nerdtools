@@ -8,7 +8,14 @@ local options = {
 			return vim.o.columns * 0.4
 		end
 	end,
-	-- direction = "float",
+	hide_numbers = true,
+	shade_filetypes = {},
+	shade_terminals = true,
+	shading_factor = 1, -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+	start_in_insert = true,
+	insert_mappings = true, -- whether or not the open mapping applies in insert mode
+	persist_size = false,
+	close_on_exit = true,
 	float_opts = {
 		border = "curved",
 		winblend = 0,
@@ -45,6 +52,7 @@ M.configure = function()
 			hidden = true,
 			direction = "float",
 			count = 99,
+			shade_terminals = false,
 			on_open = function(term)
 				vim.cmd("startinsert!")
 			end,
