@@ -1,5 +1,5 @@
 local wezterm = require("wezterm")
-local action = wezterm.action
+local act = wezterm.action
 
 local config = {}
 local colors = {
@@ -19,7 +19,6 @@ config.initial_cols = 100
 
 config.color_scheme = "tokyonight_night"
 config.font_size = 14.4
-config.use_cap_height_to_scale_fallback_fonts = true
 config.font = wezterm.font_with_fallback {
 	{
 		family = "OperatorMonoLig Nerd Font Mono",
@@ -47,7 +46,24 @@ config.keys = {
 	{
 		key = "K",
 		mods = "CMD|SHIFT",
-		action = action.ClearScrollback "ScrollbackAndViewport",
+		action = act.ClearScrollback "ScrollbackAndViewport",
+	},
+	{
+		key = "s",
+		mods = "CMD",
+		action = act.Multiple {
+			act.SendKey { key = " " },
+			act.SendKey { key = "w" },
+		}
+	},
+	{
+		key = "d",
+		mods = "CMD",
+		action = act.Multiple {
+			act.SendKey { key = "y" },
+			act.SendKey { key = "y" },
+			act.SendKey { key = "p" },
+		}
 	},
 }
 
