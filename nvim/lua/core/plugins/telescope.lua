@@ -40,7 +40,11 @@ local options = {
 		},
 		frecency = {
 			show_scores = false,
-		}
+			show_unindexed = false,
+		},
+		recent_files = {
+			only_cwd = true,
+		},
 	},
 }
 
@@ -57,6 +61,7 @@ M.configure = function()
 	telescope.load_extension("zoxide")
 	telescope.load_extension("neoclip")
 	telescope.load_extension("frecency")
+	telescope.load_extension("recent_files")
 end
 
 M.find_project_files = function(opts)

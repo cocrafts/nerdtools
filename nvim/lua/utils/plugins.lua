@@ -112,6 +112,7 @@ return {
 			{ "nvim-telescope/telescope-live-grep-args.nvim" },
 			{ "LinArcX/telescope-env.nvim" },
 			{ "jvgrootveld/telescope-zoxide" },
+			{ "smartpde/telescope-recent-files" },
 			{
 				"sudormrfbin/cheatsheet.nvim",
 				dependencies = {
@@ -236,10 +237,36 @@ return {
 		event = "User FileOpened",
 	},
 	{
-		"phaazon/hop.nvim",
-		config = function()
-			require("hop").setup({})
-		end,
+		"folke/flash.nvim",
+		event = "VeryLazy",
+		opts = {},
+		keys = {
+			{
+				"s",
+				mode = { "n", "x", "o" },
+				function()
+					-- default options: exact mode, multi window, all directions, with a backdrop
+					require("flash").jump()
+				end,
+				desc = "Flash",
+			},
+			{
+				"S",
+				mode = { "n", "o", "x" },
+				function()
+					require("flash").treesitter()
+				end,
+				desc = "Flash Treesitter",
+			},
+			{
+				"r",
+				mode = "o",
+				function()
+					require("flash").remote()
+				end,
+				desc = "Remote Flash",
+			},
+		},
 	},
 	{
 		"abecodes/tabout.nvim",

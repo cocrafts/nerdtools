@@ -37,7 +37,7 @@ local config = {
 			"Explorer",
 		},
 		["z"] = { "<cmd>Telescope zoxide list<CR>", "Zoxide list" },
-		["u"] = { "<cmd>Telescope oldfiles<CR>", "Recent files" },
+		["u"] = { "<cmd>lua require('telescope').extensions.recent_files.pick()<CR>", "Recent files" },
 		["U"] = { "<cmd>Telescope git_status<CR>", "Open changed file" },
 		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep lite" },
 		["I"] = {
