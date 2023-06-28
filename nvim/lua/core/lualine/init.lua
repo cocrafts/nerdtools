@@ -24,6 +24,7 @@ local options = {
 			components.mode,
 		},
 		lualine_b = {
+			components.cwd,
 			components.branch,
 		},
 		lualine_c = {

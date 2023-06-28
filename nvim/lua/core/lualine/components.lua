@@ -27,6 +27,7 @@ return {
 		"b:gitsigns_head",
 		icon = icons.git.Branch,
 		color = { gui = "bold" },
+		padding = { left = 0, right = 1 },
 	},
 	filename = {
 		"filename",
@@ -143,5 +144,10 @@ return {
 		end,
 		padding = { right = 1, left = 0 },
 		color = { fg = "#3a4161" },
+	},
+	cwd = {
+		function()
+			return string.match(vim.fn.getcwd(), "[^/]+$")
+		end,
 	},
 }
