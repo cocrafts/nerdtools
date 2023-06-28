@@ -6,12 +6,12 @@ local max_width = 0
 local duplicates_default = 0
 
 local sources = {
-	{ name = "luasnip", priority = 20, keyword_length = 2 },
 	{ name = "crates", priority = 19 },
 	{ name = "path", priority = 10 },
-	{ name = "treesitter", priority = 8 },
 	{ name = "nvim_lsp", priority = 9 },
-	{ name = "buffer", priority = 7, keyword_length = 3 },
+	{ name = "luasnip", priority = 8, keyword_length = 2 },
+	{ name = "treesitter", priority = 7 },
+	{ name = "buffer", priority = 6, keyword_length = 3 },
 }
 
 local source_names = {
