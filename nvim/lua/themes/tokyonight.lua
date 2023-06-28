@@ -7,8 +7,8 @@ local colors = {
 	gray = "#37384f",
 	cursor = "#1E202F",
 	none = "NONE",
-	keywords = "#b877db",
-	comments = "#323748",
+	keywords = "#B877DB",
+	comments = "#37384f",
 	numbers = "#FF9668",
 	procs = "#d6a786",
 	functions = "#E95678",
@@ -42,7 +42,7 @@ M.options = {
 			TelescopeNormal = { bg = colors.bg },
 			TelescopeBorder = { bg = colors.bg, fg = colors.green },
 		},
-			gui = {
+		gui = {
 			CursorLine = { bg = colors.cursor },
 			GitBlame = { fg = "#434A68", bg = colors.cursor },
 			MsgArea = { fg = colors.fg, bg = colors.bg },
@@ -61,7 +61,7 @@ M.options = {
 
 			NonText = { fg = colors.gray },   -- whitespaces
 			SpecialKey = { fg = colors.gray }, -- whitespaces
-			Whitespace = { fg = colors.dim }, -- whitespaces
+			Whitespace = { fg = colors.gray }, -- whitespaces
 			Search = { fg = colors.darkest, bg = colors.blue },
 
 			Keyword = { fg = colors.keywords },
@@ -81,6 +81,7 @@ M.options = {
 			rustStorage = { fg = colors.keywords, style = "italic" },
 			rustModPathSep = { fg = colors.fg },
 
+			IndentBlanklineContextChar = { fg = colors.fg },
 			IndentBlanklineIndent = { fg = colors.dim },
 			IndentBlanklineIndent1 = { fg = "#E06C75" },
 			IndentBlanklineIndent2 = { fg = "#E5C07B" },
