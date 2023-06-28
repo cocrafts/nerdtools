@@ -10,6 +10,8 @@ local globals = {
 }
 
 local opts = {
+	spell = true,
+	spelllang = "en_us",
 	guifont = "OperatorMonoLig Nerd Font Mono:h14",
 	timeout = true,
 	timeoutlen = 100, -- time to wait for mapped sequence to complete
@@ -56,3 +58,6 @@ vim.defer_fn(function()
 		vim.opt[k] = v
 	end
 end, 0)
+
+vim.api.nvim_set_option("t_Cs", "\27[4:3m")
+vim.api.nvim_set_option("t_Ce", "\27[4:0m")

@@ -8,7 +8,8 @@ plugins=(
 	zsh-syntax-highlighting
 )
 
-alias vim="neovide"
+alias vide="neovide"
+alias nvim="env TERM=wezterm nvim"
 source $ZSH/oh-my-zsh.sh
 source ~/nerdtools/zsh/keybindings.sh
 

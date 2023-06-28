@@ -80,7 +80,7 @@ M.configure = function()
 				enable_character_fade = true,
 			},
 			indent = {
-				indent_size = 1,
+				indent_size = 2,
 				padding = 1,
 				with_marker = true,
 				indent_marker = "│",
