@@ -10,6 +10,7 @@ theme.options.highlight.system = {
 
 	NeoTreeNormal = { bg = colors.explorer_bg },
 	NeoTreeNormalNC = { bg = colors.explorer_bg },
+	NeoTreeEndOfBuffer = { fg = colors.explorer_bg },
 	NeoTreeWinSeparator = { fg = colors.explorer_bg, bg = colors.explorer_bg },
 }
 

@@ -19,6 +19,7 @@ config.initial_cols = 100
 
 config.color_scheme = "tokyonight_night"
 config.font_size = 14.4
+config.line_height = 1.1
 config.font = wezterm.font_with_fallback {
 	{
 		family = "OperatorMonoLig Nerd Font Mono",

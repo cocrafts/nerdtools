@@ -47,6 +47,7 @@ M.options = {
 			GitBlame = { fg = "#434A68", bg = colors.cursor },
 			MsgArea = { fg = colors.fg, bg = colors.bg },
 
+			Normal = { bg = colors.bg },
 			LineNR = { fg = colors.dim }, -- line numbers
 			CursorLineNR = { fg = colors.blue }, -- current line number
 			NormalMode = { fg = colors.blue },
