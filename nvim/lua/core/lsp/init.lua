@@ -55,6 +55,7 @@ M.configure = function()
 		"graphql",
 		"tsserver",
 		"lua_ls",
+		"ruby_ls",
 		"rust_analyzer",
 	})
 

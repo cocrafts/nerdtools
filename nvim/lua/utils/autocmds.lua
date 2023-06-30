@@ -55,3 +55,5 @@ for _, entry in ipairs(definitions) do
 
 	vim.api.nvim_create_autocmd(event, opts)
 end
+
+vim.api.nvim_command('autocmd BufRead,BufNewFile Podfile set filetype=ruby')

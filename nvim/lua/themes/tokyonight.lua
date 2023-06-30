@@ -66,7 +66,7 @@ M.options = {
 			Whitespace = { fg = colors.gray }, -- whitespaces
 			Search = { fg = colors.darkest, bg = colors.blue },
 
-			IndentBlanklineContextChar = { fg = colors.fg },
+			-- IndentBlanklineContextChar = { fg = colors.fg },
 			IndentBlanklineIndent = { fg = colors.dim },
 			IndentBlanklineIndent1 = { fg = "#E06C75" },
 			IndentBlanklineIndent2 = { fg = "#E5C07B" },

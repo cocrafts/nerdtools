@@ -18,7 +18,7 @@ config.initial_rows = 50
 config.initial_cols = 100
 
 config.color_scheme = "tokyonight_night"
-config.font_size = 14.4
+config.font_size = 14.5
 config.line_height = 1.1
 config.font = wezterm.font_with_fallback {
 	{
@@ -27,7 +27,7 @@ config.font = wezterm.font_with_fallback {
 	},
 	{
 		family = "Symbols Nerd Font Mono",
-		scale = 0.5,
+		scale = 0.6,
 		weight = "Book"
 	},
 }
@@ -66,7 +66,7 @@ config.keys = {
 			act.SendKey { key = "y" },
 			act.SendKey { key = "p" },
 		}
-	},
+	}
 }
 
 config.colors = {
