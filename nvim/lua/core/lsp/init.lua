@@ -5,7 +5,7 @@ local hints = {
 	inlay_hints = {
 		parameter_hints = {
 			show = true,
-			prefix = " <- ",
+			prefix = " 󰁍 ",
 			separator = ", ",
 			remove_colon_start = false,
 			remove_colon_end = true,
@@ -61,8 +61,6 @@ M.configure = function()
 
 	lsp.on_attach(function(_, bufnr)
 		local opts = { buffer = bufnr, remap = false }
-
-		require("lsp_signature").on_attach({}, bufnr)
 
 		lsp.default_keymaps({ buffer = bufnr })
 		vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, get_opts(bufnr, "Preview signature"))

@@ -32,7 +32,6 @@ return {
 					require("core.plugins.luasnip").configure()
 				end,
 			},
-			{ "ray-x/lsp_signature.nvim" },
 			{ "lvimuser/lsp-inlayhints.nvim" },
 			{ "hrsh7th/nvim-cmp" }, -- Autocompletion
 			{ "hrsh7th/cmp-buffer" },
