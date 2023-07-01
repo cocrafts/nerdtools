@@ -132,3 +132,8 @@ Calc
 TMUX
 treesitter
 Ctrl
+neovide
+cmd
+prev
+ESC
+gitsigns
