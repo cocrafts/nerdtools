@@ -64,6 +64,15 @@ local config = {
 			h = { "<cmd>BufferLineCloseLeft<CR>", "Close all to the left" },
 			l = { "<cmd>BufferLineCloseRight<CR>", "Close all to the right" },
 		},
+		d = {
+			name = "Diagnostics",
+			o = { "<cmd>TroubleToggle<CR>", "Toggle" },
+			l = { "<cmd>TroubleToggle loclist<CR>", "Loc list" },
+			f = { "<cmd>TroubleToggle quickfix<CR>", "Quick fix" },
+			w = { "<cmd>TroubleToggle workspace_diagnostics<CR>", "Workspace diagnostics" },
+			d = { "<cmd>TroubleToggle document_diagnostics<CR>", "Document diagnostics" },
+			r = { "<cmd>TroubleToggle lsp_references<CR>", "References" },
+		},
 		T = {
 			name = "Treesitter",
 			i = { ":InspectTree<CR>", "Inspect tree" },

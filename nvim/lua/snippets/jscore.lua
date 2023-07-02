@@ -167,6 +167,7 @@ for (let {} = 0; {} < {}; {}++) {{
 		}
 	)
 ) --}}}
+
 cs( -- [while] JS While Loop snippet{{{
 	"while",
 	fmt(
@@ -174,13 +175,27 @@ cs( -- [while] JS While Loop snippet{{{
 while ({}) {{
   {}
 }}
-  ]],
+		]],
 		{
 			i(1, ""),
 			i(2, "// TODO:"),
 		}
 	)
 ) --}}}
+
+cs(
+	"im",
+	fmt(
+		[[
+import {{ {2} }}	from '{1}';
+		]],
+	{
+		i(1, ""),
+		i(2, "")
+	}
+	)
+)
+
 cs("cl", { t("console.log("), i(1, ""), t(")") }, { "jcl", "jj" }) -- console.log
 
 return {

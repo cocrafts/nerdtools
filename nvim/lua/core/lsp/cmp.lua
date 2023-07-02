@@ -7,8 +7,8 @@ local duplicates_default = 0
 
 local sources = {
 	{ name = "crates", priority = 19 },
+	{ name = "nvim_lsp", priority = 12 },
 	{ name = "path", priority = 10 },
-	{ name = "nvim_lsp", priority = 9 },
 	{ name = "luasnip", priority = 8, keyword_length = 2 },
 	{ name = "treesitter", priority = 7 },
 	{ name = "buffer", priority = 6, keyword_length = 3 },

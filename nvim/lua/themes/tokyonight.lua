@@ -58,7 +58,7 @@ M.options = {
 			SelectMode = { fg = colors.purple },
 			SpellBad = { style = "underdotted" },
 
-			MatchParen = { fg = colors.bg, bg = colors.fg },
+			MatchParen = { fg = colors.fg, bg = colors.blue },
 			ScrollView = { bg = colors.fg },
 
 			NonText = { fg = colors.gray },   -- whitespaces

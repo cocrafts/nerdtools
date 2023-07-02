@@ -1,11 +1,10 @@
 local M = {}
-local icons = require("utils.icons")
 
 local hints = {
 	inlay_hints = {
 		parameter_hints = {
 			show = true,
-			prefix = " 󰁍 ",
+			prefix = " <- ",
 			separator = ", ",
 			remove_colon_start = false,
 			remove_colon_end = true,
@@ -60,8 +59,6 @@ M.configure = function()
 	})
 
 	lsp.on_attach(function(_, bufnr)
-		local opts = { buffer = bufnr, remap = false }
-
 		lsp.default_keymaps({ buffer = bufnr })
 		vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, get_opts(bufnr, "Preview signature"))
 		vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, get_opts(bufnr, "Goto definition"))
