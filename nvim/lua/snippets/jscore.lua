@@ -189,10 +189,39 @@ cs(
 		[[
 import {{ {2} }}	from '{1}';
 		]],
-	{
-		i(1, ""),
-		i(2, "")
-	}
+		{
+			i(1, ""),
+			i(2, ""),
+		}
+	)
+)
+
+cs(
+	"rc",
+	fmt(
+		[[
+import {{ type FC }} from 'react';
+import {{ StyleSheet, Text, View }} from 'react-native';
+
+export const {1}: FC = () => {{
+	return (
+		<View style={{styles.container}}>
+			<Text>{2}</Text>
+		</View>
+	);
+}};
+
+const styles = StyleSheet.create({{
+	container: {{
+		{2}
+	}}
+}});
+		]],
+		{
+			i(1, ""),
+			i(2, "Component"),
+			i(3, ""),
+		}
 	)
 )
 
