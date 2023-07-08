@@ -25,7 +25,7 @@ local config = {
 		nowait = true,
 	},
 	nmaps = {
-		["w"] = { "<cmd>w!<cr>", "save" },
+		["w"] = { "<cmd>up<cr>", "save" },
 		["q"] = { "<cmd>q!<cr>", "quit" },
 		["/"] = { "<Plug>(comment_toggle_linewise_current)", "Comment toggle current line" },
 		["c"] = { "<cmd>BufferKill<CR>", "Close Buffer" },
@@ -147,6 +147,7 @@ local config = {
 			C = { "<cmd>Telescope lsp_outgoing_calls<CR>", "Outgoing calls" },
 			s = { "<cmd>Telescope lsp_document_symbols<CR>", "Document Symbols" },
 			S = { "<cmd>Telescope lsp_workspace_symbols<CR>", "Workspace symbols" },
+			p = { "<cmd>Telescope package_info<CR>", "Package actions" },
 			o = { "<cmd>TwilightEnable<CR>", "Twilight on" },
 			O = { "<cmd>TwilightDisable<CR>", "Twilight off" },
 		},
