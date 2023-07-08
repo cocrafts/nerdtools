@@ -213,14 +213,17 @@ export const {1}: FC = () => {{
 
 const styles = StyleSheet.create({{
 	container: {{
-		{2}
+		{3}
 	}}
 }});
+
+export default {4};
 		]],
 		{
 			i(1, ""),
-			i(2, "Component"),
+			rep(1),
 			i(3, ""),
+			rep(1),
 		}
 	)
 )
