@@ -19,6 +19,9 @@ M.configure = function()
 			"markdown",
 			"markdown_inline",
 		},
+		autotag = {
+			enable = true,
+		},
 		auto_install = true,
 		rainbow = {
 			enable = true,

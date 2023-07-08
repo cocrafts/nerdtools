@@ -219,6 +219,7 @@ return {
 		end,
 		dependencies = { "nvim-treesitter/nvim-treesitter", "hrsh7th/nvim-cmp" },
 	},
+	{ "windwp/nvim-ts-autotag" },
 	{ "wakatime/vim-wakatime" },
 	{
 		"ethanholz/nvim-lastplace",
