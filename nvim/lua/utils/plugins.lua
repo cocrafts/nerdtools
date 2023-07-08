@@ -220,15 +220,6 @@ return {
 		dependencies = { "nvim-treesitter/nvim-treesitter", "hrsh7th/nvim-cmp" },
 	},
 	{ "wakatime/vim-wakatime" },
-	-- {
-	-- 	"Pocco81/auto-save.nvim",
-	-- 	config = function()
-	-- 		require("auto-save").setup({
-	-- 			trigger_events = { "InsertLeave" },
-	-- 			debounce_delay = 5000,
-	-- 		})
-	-- 	end,
-	-- },
 	{
 		"ethanholz/nvim-lastplace",
 		config = function()
@@ -281,12 +272,6 @@ return {
 				desc = "Remote Flash",
 			},
 		},
-	},
-	{
-		"abecodes/tabout.nvim",
-		config = function()
-			require("tabout").setup({})
-		end,
 	},
 	{
 		"RRethy/vim-illuminate",
