@@ -45,6 +45,9 @@ local options = {
 		recent_files = {
 			only_cwd = true,
 		},
+		package_info = {
+			theme = "dropdown",
+		},
 	},
 }
 
@@ -62,6 +65,7 @@ M.configure = function()
 	telescope.load_extension("neoclip")
 	telescope.load_extension("frecency")
 	telescope.load_extension("recent_files")
+	telescope.load_extension("package_info")
 end
 
 M.find_project_files = function(opts)

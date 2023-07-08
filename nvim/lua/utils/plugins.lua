@@ -92,6 +92,15 @@ return {
 		end,
 	},
 	{
+		"vuki656/package-info.nvim",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+		},
+		config = function()
+			require("core.plugins.package-info").configure()
+		end,
+	},
+	{
 		"zbirenbaum/neodim",
 		event = "LspAttach",
 		config = function()
