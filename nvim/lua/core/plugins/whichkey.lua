@@ -42,9 +42,11 @@ local config = {
 		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep lite" },
 		["I"] = {
 			function()
+				local path = vim.api.nvim_buf_get_name(0)
+				local directory = path:match("(.-)[^/]*$")
 				require("telescope").extensions.live_grep_args.live_grep_args({
 					prompt_title = "Live grep (full)",
-					search_dirs = { "node_modules" },
+					search_dirs = { directory },
 				})
 			end,
 			"Live grep",
