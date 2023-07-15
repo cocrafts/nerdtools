@@ -47,15 +47,20 @@ M.configure = function()
 	local lspconfig = require("lspconfig")
 
 	require("lsp-inlayhints").setup(hints)
-	require("neodev").setup({})
+	require("neodev").setup()
 
-	lsp.ensure_installed({
-		"eslint",
-		"graphql",
-		"tsserver",
-		"lua_ls",
-		"ruby_ls",
-		"rust_analyzer",
+	require("mason").setup()
+	require("mason-lspconfig").setup({
+		ensure_installed = {
+			"gopls",
+			"eslint",
+			"graphql",
+			"tsserver",
+			"jsonls",
+			"lua_ls",
+			"ruby_ls",
+			"rust_analyzer",
+		}
 	})
 
 	lsp.on_attach(function(_, bufnr)
@@ -79,8 +84,10 @@ M.configure = function()
 
 	lsp.setup()
 
+	require("core.lsp.go").configure(lspconfig)
 	require("core.lsp.rust").configure()
 	require("core.lsp.tsserver").configure(lspconfig)
+	require("core.lsp.json").configure(lspconfig)
 	require("core.lsp.eslint").configure(lspconfig)
 	require("core.lsp.graphql").configure(lspconfig)
 	require("core.lsp.lua-ls").configure(lspconfig)

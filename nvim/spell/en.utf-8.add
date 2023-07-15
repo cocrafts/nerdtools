@@ -197,3 +197,6 @@ src
 polyfill
 color2k
 hljs
+translateX
+translateY
+timestamp
