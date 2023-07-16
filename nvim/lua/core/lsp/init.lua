@@ -84,6 +84,7 @@ M.configure = function()
 
 	lsp.setup()
 
+	require("core.lsp.null-ls").configure()
 	require("core.lsp.go").configure(lspconfig)
 	require("core.lsp.rust").configure()
 	require("core.lsp.tsserver").configure(lspconfig)

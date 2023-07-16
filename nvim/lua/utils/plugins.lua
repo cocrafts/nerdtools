@@ -7,6 +7,7 @@ return {
 		branch = "v2.x",
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
+			{ "jose-elias-alvarez/null-ls.nvim" },
 			{
 				"williamboman/mason.nvim",
 				build = function()
