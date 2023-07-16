@@ -48,20 +48,7 @@ M.configure = function()
 
 	require("lsp-inlayhints").setup(hints)
 	require("neodev").setup()
-
-	require("mason").setup()
-	require("mason-lspconfig").setup({
-		ensure_installed = {
-			"gopls",
-			"eslint",
-			"graphql",
-			"tsserver",
-			"jsonls",
-			"lua_ls",
-			"ruby_ls",
-			"rust_analyzer",
-		}
-	})
+	require("core.lsp.mason").configure()
 
 	lsp.on_attach(function(_, bufnr)
 		lsp.default_keymaps({ buffer = bufnr })
