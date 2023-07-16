@@ -1,7 +1,7 @@
 local M = {}
 
 M.configure = function(lspconfig)
-	lspconfig.jsonls.setup({})
+	lspconfig.jsonls.setup {}
 end
 
 return M

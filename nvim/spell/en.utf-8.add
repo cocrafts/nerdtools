@@ -200,3 +200,17 @@ hljs
 translateX
 translateY
 timestamp
+tabline
+bufferline
+lazygit
+toggleterm
+autocmd
+TermOpen
+keymaps
+parens
+toml
+gitignore
+zig
+tsx
+Debounced
+cr

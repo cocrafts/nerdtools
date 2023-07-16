@@ -66,7 +66,7 @@ M.configure = function()
 	local action = require("lsp-zero").cmp_action()
 	local ConfirmBehavior = cmp_types.ConfirmBehavior
 
-	cmp.setup({
+	cmp.setup {
 		sources = sources,
 		window = {
 			completion = cmp_window.bordered(),
@@ -159,7 +159,7 @@ M.configure = function()
 			["<C-f>"] = action.luasnip_jump_forward(),
 			["<C-b>"] = action.luasnip_jump_backward(),
 		},
-	})
+	}
 
 	for _, option in ipairs(cmdlines) do
 		cmp.setup.cmdline(option.type, {

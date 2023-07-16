@@ -229,10 +229,10 @@ M.configure = function()
 	vim.api.nvim_set_keymap("n", "<C-9>", "<cmd>lua require('bufferline').go_to(9, true)<CR>", { noremap = true, silent = true })
 	vim.api.nvim_set_keymap("n", "<C-0>", "<cmd>lua require('bufferline').go_to(0, true)<CR>", { noremap = true, silent = true })
 
-	require("bufferline").setup({
+	require("bufferline").setup {
 		options = options,
 		highlights = highlights,
-	})
+	}
 end
 
 return M

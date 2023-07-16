@@ -4,7 +4,7 @@ M.configure = function()
 	local configs = require("nvim-treesitter.configs")
 	local rainbow = require("ts-rainbow")
 
-	configs.setup({
+	configs.setup {
 		ensure_installed = {
 			"typescript",
 			"tsx",
@@ -93,7 +93,7 @@ M.configure = function()
 		playground = {
 			enable = false,
 			disable = {},
-			updatetime = 25,      -- Debounced time for highlighting nodes in the playground from source code
+			updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
 			persist_queries = false, -- Whether the query persists across vim sessions
 			keybindings = {
 				toggle_query_editor = "o",
@@ -108,7 +108,7 @@ M.configure = function()
 				show_help = "?",
 			},
 		},
-	})
+	}
 end
 
 return M

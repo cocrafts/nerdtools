@@ -1,7 +1,7 @@
 local M = {}
 
 M.configure = function()
-	require("illuminate").configure({
+	require("illuminate").configure {
 		providers = {
 			"lsp",
 			"treesitter",
@@ -9,7 +9,7 @@ M.configure = function()
 		},
 		delay = 100,
 		under_cursor = true,
-	})
+	}
 end
 
 return M

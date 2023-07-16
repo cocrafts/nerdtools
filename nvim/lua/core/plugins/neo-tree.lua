@@ -2,7 +2,7 @@ local M = {}
 local icons = require("utils.icons")
 local uv = vim.loop
 
-M.open = function(path) 
+M.open = function(path)
 	if uv.os_uname().sysname == "Darwin" then
 		os.execute('open "' .. path .. '"')
 	elseif uv.os_uname().sysname == "Linux" then
@@ -17,7 +17,7 @@ end
 M.configure = function()
 	local tree = require("neo-tree")
 
-	tree.setup({
+	tree.setup {
 		close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
 		popup_border_style = "rounded",
 		enable_git_status = true,
@@ -151,7 +151,7 @@ M.configure = function()
 				StaticMethod = { icon = icons.kind.Method, hl = 'Function' },
 			}
 		},
-	})
+	}
 end
 
 return M

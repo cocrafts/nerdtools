@@ -4,7 +4,7 @@ M.configure = function()
 	local nls = require("null-ls")
 	local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 
-	nls.setup({
+	nls.setup {
 		sources = {
 			nls.builtins.formatting.stylua,
 			nls.builtins.formatting.zigfmt,
@@ -33,7 +33,7 @@ M.configure = function()
 				})
 			end
 		end,
-	})
+	}
 end
 
 return M
