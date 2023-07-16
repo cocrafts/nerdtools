@@ -73,12 +73,12 @@ return {
 			require("core.lualine").configure()
 		end,
 	},
-	{ "folke/lazy.nvim",   tag = "stable" },
-	{ "folke/neodev.nvim", lazy = true },
+	{ "folke/lazy.nvim",    tag = "stable" },
+	{ "folke/neodev.nvim",  lazy = true },
 	{ "folke/twilight.nvim" },
 	{
 		"folke/trouble.nvim",
-		 dependencies = {
+		dependencies = {
 			"nvim-tree/nvim-web-devicons",
 		},
 	},
