@@ -17,12 +17,13 @@ M.configure = function()
 				"--base-formatter=gofumpt",
 			},
 		}),
+		nls.builtins.diagnostics.revive,
 		nls.builtins.diagnostics.eslint,
 		nls.builtins.diagnostics.stylelint,
 		nls.builtins.completion.spell,
 	}
 
-	table.insert(sources, gnls.gotest())
+	-- table.insert(sources, gnls.gotest())
 	table.insert(sources, gnls.gotest_action())
 	table.insert(sources, gnls.golangci_lint())
 
