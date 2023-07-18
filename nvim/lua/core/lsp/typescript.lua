@@ -4,6 +4,10 @@ M.configure = function()
 	local typescript = require("typescript")
 
 	typescript.setup {
+		disable_commands = true,
+		go_to_source_definition = {
+			fallback = true, -- fall back to standard LSP definition on failure
+		},
 		server = {
 			on_attach = function(client, bufnr)
 				vim.lsp.buf.inlay_hint(bufnr, true)
