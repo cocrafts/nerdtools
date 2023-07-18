@@ -17,6 +17,18 @@ return {
 			},
 			{ "williamboman/mason-lspconfig.nvim" },
 			{ "simrat39/rust-tools.nvim" },
+			{ "jose-elias-alvarez/typescript.nvim" },
+			{
+				"ray-x/go.nvim",
+				dependencies = {
+					"ray-x/guihua.lua",
+					"neovim/nvim-lspconfig",
+					"nvim-treesitter/nvim-treesitter",
+				},
+				event = { "CmdlineEnter" },
+				ft = { "go", "gomod", "gowork", "gotmpl" },
+				build = ':lua require("go.install").update_all_sync()'
+			},
 			{
 				"saecki/crates.nvim",
 				dependencies = { "nvim-lua/plenary.nvim" },
@@ -46,17 +58,6 @@ return {
 			require("core.lsp").configure()
 			require("core.lsp.cmp").configure()
 		end,
-	},
-	{
-		"ray-x/go.nvim",
-		dependencies = {
-			"ray-x/guihua.lua",
-			"neovim/nvim-lspconfig",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		event = { "CmdlineEnter" },
-		ft = { "go", "gomod", "gowork", "gotmpl" },
-		build = ':lua require("go.install").update_all_sync()'
 	},
 	{
 		"VidocqH/lsp-lens.nvim",
@@ -93,16 +94,16 @@ return {
 			"nvim-tree/nvim-web-devicons",
 		},
 	},
-	{
-		"folke/noice.nvim",
-		event = "VeryLazy",
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-		},
-		config = function()
-			require("core.plugins.noice").configure()
-		end,
-	},
+	-- {
+	-- 	"folke/noice.nvim",
+	-- 	event = "VeryLazy",
+	-- 	dependencies = {
+	-- 		"MunifTanjim/nui.nvim",
+	-- 	},
+	-- 	config = function()
+	-- 		require("core.plugins.noice").configure()
+	-- 	end,
+	-- },
 	{
 		"vuki656/package-info.nvim",
 		dependencies = {
