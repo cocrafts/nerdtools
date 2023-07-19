@@ -2,7 +2,7 @@ local M = {}
 
 M.configure = function()
 	require("satellite").setup({
-		winblend = 92,
+		winblend = 36,
 		zindex = 40,
 		width = 2,
 		handlers = {
