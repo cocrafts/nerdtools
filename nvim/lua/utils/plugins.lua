@@ -94,16 +94,16 @@ return {
 			"nvim-tree/nvim-web-devicons",
 		},
 	},
-	-- {
-	-- 	"folke/noice.nvim",
-	-- 	event = "VeryLazy",
-	-- 	dependencies = {
-	-- 		"MunifTanjim/nui.nvim",
-	-- 	},
-	-- 	config = function()
-	-- 		require("core.plugins.noice").configure()
-	-- 	end,
-	-- },
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			"MunifTanjim/nui.nvim",
+		},
+		config = function()
+			require("core.plugins.noice").configure()
+		end,
+	},
 	{
 		"vuki656/package-info.nvim",
 		dependencies = {
