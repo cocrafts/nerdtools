@@ -16,6 +16,16 @@
         executable: /bin/zsh
         creates: ~/.nvm/versions/node
 
+    - name: Install rbenv
+      shell: brew install rbenv
+      args:
+        creates: /opt/homebrew/bin/rbenv
+
+    - name: Install ruby-build
+      shell: brew install ruby-build
+      args:
+        creates: /opt/homebrew/bin/ruby-build
+
     - name: Install typescript
       shell: npm i -g typescript
 
