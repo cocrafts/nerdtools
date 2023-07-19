@@ -2,8 +2,14 @@
   hosts: local
 
   tasks:
+    - name: Create symlink to wezterm configure
+      file:
+        src: ~/nerdtools/wezterm/
+        dest: ~/.config/wezterm
+        state: link
+
     - name: Install NeoVim
-      shell: brew install neovim
+      shell: brew install --HEAD neovim
       args:
         creates: /usr/local/bin/nvim
 
