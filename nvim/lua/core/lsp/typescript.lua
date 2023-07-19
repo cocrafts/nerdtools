@@ -3,7 +3,7 @@ local M = {}
 M.configure = function()
 	local typescript = require("typescript")
 
-	typescript.setup {
+	typescript.setup({
 		disable_commands = true,
 		go_to_source_definition = {
 			fallback = true, -- fall back to standard LSP definition on failure
@@ -38,7 +38,7 @@ M.configure = function()
 				},
 			},
 		},
-	}
+	})
 end
 
 return M

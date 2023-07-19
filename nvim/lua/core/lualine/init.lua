@@ -4,7 +4,7 @@ local theme = require("utils.config").theme
 local components = require("core.lualine.components")
 
 M.configure = function()
-	require("lualine").setup {
+	require("lualine").setup({
 		active = true,
 		style = theme.options.variant,
 		tabline = nil,
@@ -67,7 +67,7 @@ M.configure = function()
 				components.encoding,
 			},
 		},
-	}
+	})
 end
 
 return M

@@ -5,7 +5,7 @@ M.configure = function()
 	local telescope = require("telescope")
 	local neoclip = require("neoclip")
 
-	telescope.setup {
+	telescope.setup({
 		defaults = {
 			layout_strategy = "horizontal",
 			layout_config = {
@@ -16,31 +16,21 @@ M.configure = function()
 			},
 		},
 		pickers = {
-			git_branches = {
-
-			},
-			git_commits = {
-
-			},
-			git_bcommits = {
-
-			},
-			find_files = {
-
-			},
+			git_branches = {},
+			git_commits = {},
+			git_bcommits = {},
+			find_files = {},
 			oldfiles = {
 				cwd_only = true,
 			},
-			colorscheme = {
-
-			},
+			colorscheme = {},
 		},
 		extensions = {
 			fzf = {
-				fuzzy = true,                -- false will only do exact matching
+				fuzzy = true, -- false will only do exact matching
 				override_generic_sorter = true, -- override the generic sorter
 				override_file_sorter = true, -- override the file sorter
-				case_mode = "smart_case",    -- or "ignore_case" or "respect_case"
+				case_mode = "smart_case", -- or "ignore_case" or "respect_case"
 			},
 			frecency = {
 				show_scores = false,
@@ -53,9 +43,9 @@ M.configure = function()
 				theme = "dropdown",
 			},
 		},
-	}
+	})
 
-	neoclip.setup { enable_persistent_history = true }
+	neoclip.setup({ enable_persistent_history = true })
 	telescope.load_extension("env")
 	telescope.load_extension("fzf")
 	telescope.load_extension("zoxide")

@@ -27,7 +27,7 @@ return {
 				},
 				event = { "CmdlineEnter" },
 				ft = { "go", "gomod", "gowork", "gotmpl" },
-				build = ':lua require("go.install").update_all_sync()'
+				build = ':lua require("go.install").update_all_sync()',
 			},
 			{
 				"saecki/crates.nvim",
@@ -85,8 +85,8 @@ return {
 			require("core.lualine").configure()
 		end,
 	},
-	{ "folke/lazy.nvim",    tag = "stable" },
-	{ "folke/neodev.nvim",  lazy = true },
+	{ "folke/lazy.nvim", tag = "stable" },
+	{ "folke/neodev.nvim", lazy = true },
 	{ "folke/twilight.nvim" },
 	{
 		"folke/trouble.nvim",
@@ -128,9 +128,9 @@ return {
 			require("core.plugins.whichkey").configure()
 		end,
 	},
-	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true,      build = "make" },
-	{ "nvim-lua/plenary.nvim",                    lazy = true },
-	{ "kkharji/sqlite.lua",                       module = "sqlite" },
+	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
+	{ "nvim-lua/plenary.nvim", lazy = true },
+	{ "kkharji/sqlite.lua", module = "sqlite" },
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
@@ -169,7 +169,7 @@ return {
 			require("core.plugins.telescope").configure()
 		end,
 	},
-	{ "HiPhish/nvim-ts-rainbow2",   lazy = true },
+	{ "HiPhish/nvim-ts-rainbow2", lazy = true },
 	{ "nvim-treesitter/playground", lazy = true },
 	{
 		"nvim-treesitter/nvim-treesitter",

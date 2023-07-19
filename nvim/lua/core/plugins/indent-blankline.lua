@@ -2,7 +2,7 @@ local M = {}
 local icons = require("utils.icons")
 
 M.configure = function()
-	require("indent_blankline").setup {
+	require("indent_blankline").setup({
 		enabled = true,
 		buftype_exclude = { "terminal", "nofile" },
 		filetype_exclude = {
@@ -25,7 +25,7 @@ M.configure = function()
 		show_trailing_blankline_indent = false,
 		show_first_indent_level = true,
 		use_treesitter = true,
-	}
+	})
 end
 
 return M

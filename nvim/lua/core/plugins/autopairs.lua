@@ -3,7 +3,7 @@ local M = {}
 M.configure = function()
 	local autopairs = require("nvim-autopairs")
 
-	autopairs.setup {
+	autopairs.setup({
 		active = true,
 		on_config_done = nil,
 		---@usage  modifies the function or method delimiter by file types
@@ -45,7 +45,7 @@ M.configure = function()
 			highlight = "Search",
 			highlight_grey = "Comment",
 		},
-	}
+	})
 end
 
 return M

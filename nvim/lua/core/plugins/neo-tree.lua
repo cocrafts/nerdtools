@@ -17,7 +17,7 @@ end
 M.configure = function()
 	local tree = require("neo-tree")
 
-	tree.setup {
+	tree.setup({
 		close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
 		popup_border_style = "rounded",
 		enable_git_status = true,
@@ -34,7 +34,7 @@ M.configure = function()
 						local node = state.tree:get_node()
 						M.open(node.path)
 					end,
-					nowait = true
+					nowait = true,
 				},
 			},
 		},
@@ -42,8 +42,8 @@ M.configure = function()
 			winbar = false, -- bar to swap between Files, Buffer, Git
 			status_line = true,
 			padding = 0,
-    	show_scrolled_off_parent_node = true,
-      show_separator_on_edge = false,
+			show_scrolled_off_parent_node = true,
+			show_separator_on_edge = false,
 		},
 		filesystem = {
 			follow_current_file = true,
@@ -61,18 +61,14 @@ M.configure = function()
 				hide_by_name = {
 					"node_modules",
 				},
-				hide_by_pattern = {
-
-				},
+				hide_by_pattern = {},
 				always_show = {
 					".gitignored",
 				},
 				never_show = {
 					".DS_Store",
 				},
-				never_show_by_pattern = {
-
-				},
+				never_show_by_pattern = {},
 			},
 		},
 		default_component_configs = {
@@ -104,16 +100,16 @@ M.configure = function()
 			git_status = {
 				symbols = {
 					-- Change type
-					added     = "", -- or "✚", but this is redundant info if you use git_status_colors on the name
-					modified  = "", -- or "", but this is redundant info if you use git_status_colors on the name
-					deleted   = "✖",-- this can only be used in the git_status source
-					renamed   = "",-- this can only be used in the git_status source
+					added = "", -- or "✚", but this is redundant info if you use git_status_colors on the name
+					modified = "", -- or "", but this is redundant info if you use git_status_colors on the name
+					deleted = "✖", -- this can only be used in the git_status source
+					renamed = "", -- this can only be used in the git_status source
 					-- Status type
 					untracked = icons.git.Untracked,
-					ignored   = icons.git.FileIgnored,
-					unstaged  = icons.git.FileUnstaged,
-					staged    = icons.git.FileStaged,
-					conflict  = icons.git.FileUnmerged,
+					ignored = icons.git.FileIgnored,
+					unstaged = icons.git.FileUnstaged,
+					staged = icons.git.FileStaged,
+					conflict = icons.git.FileUnmerged,
 				},
 			},
 			diagnostics = {
@@ -148,10 +144,10 @@ M.configure = function()
 				Struct = { icon = icons.kind.Struct, hl = "Type" },
 				Operator = { icon = icons.kind.Operator, hl = "Operator" },
 				TypeParameter = { icon = icons.kind.TypeParameter, hl = "Type" },
-				StaticMethod = { icon = icons.kind.Method, hl = 'Function' },
-			}
+				StaticMethod = { icon = icons.kind.Method, hl = "Function" },
+			},
 		},
-	}
+	})
 end
 
 return M

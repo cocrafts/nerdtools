@@ -3,7 +3,7 @@ local icons = require("utils.icons")
 local colors = require("themes.colors")
 
 M.configure = function()
-	require("package-info").setup {
+	require("package-info").setup({
 		colors = {
 			up_to_date = colors.blue,
 			outdated = colors.gray,
@@ -15,7 +15,7 @@ M.configure = function()
 				outdated = " " .. icons.git.FileUnstaged .. " ",
 			},
 		},
-	}
+	})
 end
 
 return M

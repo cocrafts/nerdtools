@@ -5,21 +5,21 @@ local plugins = require("utils.plugins")
 if not vim.loop.fs_stat(lazypath) then
 	print("Installing lazy.nvim....")
 
-	vim.fn.system {
+	vim.fn.system({
 		"git",
 		"clone",
 		"--filter=blob:none",
 		"https://github.com/folke/lazy.nvim.git",
 		"--branch=stable", -- latest stable release
 		lazypath,
-	}
+	})
 
 	print("Done.")
 end
 
 vim.opt.rtp:prepend(lazypath)
 
-require("lazy").setup {
+require("lazy").setup({
 	spec = plugins,
 	defaults = {
 		lazy = false,
@@ -38,5 +38,4 @@ require("lazy").setup {
 			},
 		},
 	},
-}
-
+})

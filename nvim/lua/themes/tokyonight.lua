@@ -61,7 +61,7 @@ M.options = {
 			MatchParen = { fg = colors.fg, bg = colors.blue },
 			ScrollView = { bg = colors.fg },
 
-			NonText = { fg = colors.gray },   -- whitespaces
+			NonText = { fg = colors.gray }, -- whitespaces
 			SpecialKey = { fg = colors.gray }, -- whitespaces
 			Whitespace = { fg = colors.gray }, -- whitespaces
 			Search = { fg = colors.darkest, bg = colors.blue },
@@ -92,7 +92,7 @@ M.options = {
 			rustMacro = { fg = colors.functions },
 			rustStorage = { fg = colors.keywords, style = "italic" },
 			rustModPathSep = { fg = colors.fg },
-		}
+		},
 	},
 }
 

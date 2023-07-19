@@ -2,7 +2,7 @@ local M = {}
 local icons = require("utils.icons")
 
 M.configure = function()
-	require("noice").setup {
+	require("noice").setup({
 		lsp = {
 			-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 			override = {
@@ -22,7 +22,7 @@ M.configure = function()
 					{ icons.ui.FolderEmpty .. " ", hl_group = "NoiceLspProgressSpinner" },
 					{ "{data.progress.title} ", hl_group = "NoiceLspProgressTitle" },
 					{ "{data.progress.client} ", hl_group = "NoiceLspProgressClient" },
-				}
+				},
 			},
 		},
 		-- you can enable a preset for easier configuration
@@ -33,7 +33,7 @@ M.configure = function()
 			inc_rename = false, -- enables an input dialog for inc-rename.nvim
 			lsp_doc_border = false, -- add a border to hover docs and signature help
 		},
-	}
+	})
 end
 
 return M

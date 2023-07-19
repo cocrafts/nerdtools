@@ -2,7 +2,7 @@ local M = {}
 
 M.configure = function()
 	require("mason").setup()
-	require("mason-lspconfig").setup {
+	require("mason-lspconfig").setup({
 		ensure_installed = {
 			"gopls",
 			"eslint",
@@ -12,8 +12,8 @@ M.configure = function()
 			"lua_ls",
 			"ruby_ls",
 			"rust_analyzer",
-		}
-	}
+		},
+	})
 end
 
 return M

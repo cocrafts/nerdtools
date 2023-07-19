@@ -28,7 +28,7 @@ M.configure = function()
 	table.insert(sources, gnls.gotest_action())
 	table.insert(sources, gnls.golangci_lint())
 
-	nls.setup {
+	nls.setup({
 		sources = sources,
 		debounce = 1000,
 		default_timeout = 5000,
@@ -48,7 +48,7 @@ M.configure = function()
 				})
 			end
 		end,
-	}
+	})
 end
 
 return M

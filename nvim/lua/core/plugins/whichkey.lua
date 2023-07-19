@@ -53,7 +53,7 @@ local config = {
 		},
 		["o"] = {
 			function()
-				require("core.plugins.telescope").find_project_files { previewer = true, theme = "get_ivy" }
+				require("core.plugins.telescope").find_project_files({ previewer = true, theme = "get_ivy" })
 			end,
 			"Find File",
 		},
@@ -162,11 +162,9 @@ local config = {
 		},
 		j = {
 			name = "Jumps",
-		}
+		},
 	},
-	vmaps = {
-
-	},
+	vmaps = {},
 }
 
 M.configure = function()

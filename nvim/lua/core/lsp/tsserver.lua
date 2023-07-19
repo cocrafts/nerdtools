@@ -1,11 +1,11 @@
 local M = {}
 
 M.configure = function(lspconfig)
-	lspconfig.tsserver.setup {
+	lspconfig.tsserver.setup({
 		settings = {
 			typescript = {
 				inlayHints = {
-					includeInlayParameterNameHints = 'all',
+					includeInlayParameterNameHints = "all",
 					includeInlayParameterNameHintsWhenArgumentMatchesName = false,
 					includeInlayFunctionParameterTypeHints = true,
 					includeInlayVariableTypeHints = true,
@@ -13,11 +13,11 @@ M.configure = function(lspconfig)
 					includeInlayPropertyDeclarationTypeHints = true,
 					includeInlayFunctionLikeReturnTypeHints = true,
 					includeInlayEnumMemberValueHints = true,
-				}
+				},
 			},
 			javascript = {
 				inlayHints = {
-					includeInlayParameterNameHints = 'all',
+					includeInlayParameterNameHints = "all",
 					includeInlayParameterNameHintsWhenArgumentMatchesName = false,
 					includeInlayFunctionParameterTypeHints = true,
 					includeInlayVariableTypeHints = true,
@@ -25,10 +25,10 @@ M.configure = function(lspconfig)
 					includeInlayPropertyDeclarationTypeHints = true,
 					includeInlayFunctionLikeReturnTypeHints = true,
 					includeInlayEnumMemberValueHints = true,
-				}
-			}
-		}
-	}
+				},
+			},
+		},
+	})
 end
 
 return M

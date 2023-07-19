@@ -3,7 +3,7 @@ local M = {}
 M.configure = function(lspconfig)
 	local default_workspace = {
 		library = {
-			vim.fn.expand "$VIMRUNTIME",
+			vim.fn.expand("$VIMRUNTIME"),
 			require("neodev.config").types(),
 			"${3rd}/busted/library",
 			"${3rd}/luassert/library",
@@ -11,10 +11,10 @@ M.configure = function(lspconfig)
 		},
 
 		maxPreload = 5000,
-		preloadFileSize = 10000
+		preloadFileSize = 10000,
 	}
 
-	lspconfig.lua_ls.setup {
+	lspconfig.lua_ls.setup({
 		Lua = {
 			telemetry = { enable = false },
 			runtime = {
@@ -25,10 +25,10 @@ M.configure = function(lspconfig)
 			},
 		},
 		dianogstics = {
-			globals = { "vim", "reload", },
+			globals = { "vim", "reload" },
 		},
 		workspace = default_workspace,
-	}
+	})
 end
 
 return M

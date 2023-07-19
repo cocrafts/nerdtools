@@ -2,7 +2,7 @@ local M = {}
 local icons = require("utils.icons")
 
 M.configure = function()
-	require("gitsigns").setup {
+	require("gitsigns").setup({
 		signs = {
 			add = {
 				hl = "GitSignsAdd",
@@ -64,7 +64,7 @@ M.configure = function()
 			col = 1,
 		},
 		yadm = { enable = false },
-	}
+	})
 end
 
 return M

@@ -52,9 +52,9 @@ local cmdlines = {
 }
 
 local has_words_before = function()
-  unpack = unpack or table.unpack
-  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+	unpack = unpack or table.unpack
+	local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+	return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
 
 M.configure = function()
@@ -66,7 +66,7 @@ M.configure = function()
 	local action = require("lsp-zero").cmp_action()
 	local ConfirmBehavior = cmp_types.ConfirmBehavior
 
-	cmp.setup {
+	cmp.setup({
 		sources = sources,
 		window = {
 			completion = cmp_window.bordered(),
@@ -130,7 +130,7 @@ M.configure = function()
 				return vim_item
 			end,
 		},
-		mapping = cmp_mapping.preset.insert {
+		mapping = cmp_mapping.preset.insert({
 			-- `Enter` key to confirm completion
 			["<CR>"] = cmp.mapping.confirm({ select = false }),
 			["<Tab>"] = cmp_mapping(function(fallback)
@@ -158,8 +158,8 @@ M.configure = function()
 			-- Navigate between snippet placeholder
 			["<C-f>"] = action.luasnip_jump_forward(),
 			["<C-b>"] = action.luasnip_jump_backward(),
-		},
-	}
+		}),
+	})
 
 	for _, option in ipairs(cmdlines) do
 		cmp.setup.cmdline(option.type, {

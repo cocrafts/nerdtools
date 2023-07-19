@@ -1,7 +1,7 @@
 local M = {}
 
 M.configure = function()
-	require("Comment").setup {
+	require("Comment").setup({
 		active = true,
 		on_config_done = nil,
 		---Add a space b/w comment and the line
@@ -65,7 +65,7 @@ M.configure = function()
 		---Post-hook, called after commenting is done
 		---@type function|nil
 		post_hook = nil,
-	}
+	})
 end
 
 return M

@@ -98,7 +98,7 @@ cs( -- {regexSnippet} LuaSnippet{{{
 	fmt(
 		[=[
 cs( -- {}
-{{ trig = "{}", regTrig = true, hidden = true }}, fmt([[ 
+{{ trig = "{}", regTrig = true, hidden = true }}, fmt([[
 {}
 ]], {{
   {}
@@ -142,7 +142,7 @@ cs("{}", fmt( -- {}
 cs( -- choice_node_snippet luaSnip choice node{{{
 	"choice_node_snippet",
 	fmt(
-		[[ 
+		[[
 c({}, {{ {} }}),
 ]],
 		{
@@ -156,7 +156,7 @@ c({}, {{ {} }}),
 cs( -- [function] Lua function snippet{{{
 	"function",
 	fmt(
-		[[ 
+		[[
 function {}({})
   {}
 end
@@ -172,7 +172,7 @@ end
 cs( -- [local_function] Lua function snippet{{{
 	"local_function",
 	fmt(
-		[[ 
+		[[
 local function {}({})
   {}
 end
@@ -188,7 +188,7 @@ end
 cs( -- [local] Lua local variable snippet{{{
 	"local",
 	fmt(
-		[[ 
+		[[
 local {} = {}
   ]],
 		{ i(1, ""), i(2, "") }

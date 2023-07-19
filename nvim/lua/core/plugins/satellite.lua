@@ -1,7 +1,7 @@
 local M = {}
 
 M.configure = function()
-	require("satellite").setup {
+	require("satellite").setup({
 		winblend = 92,
 		zindex = 40,
 		width = 2,
@@ -11,7 +11,7 @@ M.configure = function()
 			},
 			diagnostic = {
 				enable = true,
-				signs = {'-', '=', '≡'},
+				signs = { "-", "=", "≡" },
 				min_severity = vim.diagnostic.severity.HINT,
 			},
 			gitsigns = {
@@ -27,7 +27,7 @@ M.configure = function()
 				show_builtins = false, -- shows the builtin marks like [ ] < >
 			},
 		},
-	}
+	})
 end
 
 return M

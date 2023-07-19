@@ -3,7 +3,7 @@ local M = {}
 M.configure = function(hints)
 	local rustools = require("rust-tools")
 
-	rustools.setup {
+	rustools.setup({
 		tools = {
 			inlay_hints = {
 				auto = false,
@@ -30,7 +30,7 @@ M.configure = function(hints)
 				vim.keymap.set("n", "<leader>a", rustools.code_action_group.code_action_group, { buffer = bufnr })
 			end,
 		},
-	}
+	})
 end
 
 return M

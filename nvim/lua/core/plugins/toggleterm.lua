@@ -2,20 +2,21 @@ local M = {}
 
 function _G.set_terminal_keymaps()
 	local opts = { buffer = 0 }
-	vim.keymap.set('t', 'jk', [[<C-\><C-n>]], opts)
-	vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], opts)
-	vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], opts)
-	vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
-	vim.keymap.set('t', '<C-l>', [[<Cmd>TermExec cmd="clear"<CR>]], opts)
-	vim.keymap.set('t', '<C-w>', [[<Cmd>TermExec cmd="exit"<CR>]], opts)
+
+	vim.keymap.set("t", "jk", [[<C-\><C-n>]], opts)
+	vim.keymap.set("t", "<C-h>", [[<Cmd>wincmd h<CR>]], opts)
+	vim.keymap.set("t", "<C-j>", [[<Cmd>wincmd j<CR>]], opts)
+	vim.keymap.set("t", "<C-k>", [[<Cmd>wincmd k<CR>]], opts)
+	vim.keymap.set("t", "<C-l>", [[<Cmd>TermExec cmd="clear"<CR>]], opts)
+	vim.keymap.set("t", "<C-w>", [[<Cmd>TermExec cmd="exit"<CR>]], opts)
 end
 
 M.configure = function()
-	local Terminal = require('toggleterm.terminal').Terminal
+	local Terminal = require("toggleterm.terminal").Terminal
 	function LAZYGIT_TOGGLE()
 		local width = math.floor(vim.o.columns * 0.98)
 		local height = math.floor(vim.o.lines * 0.94)
-		local lazygit = Terminal:new {
+		local lazygit = Terminal:new({
 			cmd = "lazygit",
 			hidden = true,
 			direction = "float",
@@ -31,12 +32,12 @@ M.configure = function()
 			on_close = function()
 				vim.cmd("startinsert!")
 			end,
-		}
+		})
 
 		lazygit:toggle()
 	end
 
-	require("toggleterm").setup {
+	require("toggleterm").setup({
 		size = function(term)
 			if term.direction == "horizontal" then
 				return 20
@@ -67,11 +68,15 @@ M.configure = function()
 				return term.name
 			end,
 		},
-	}
+	})
 
-	vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
-	vim.api.nvim_set_keymap("n", "<leader>G", "<cmd>lua LAZYGIT_TOGGLE()<CR>",
-		{ desc = "Lazygit", noremap = true, silent = true })
+	vim.cmd("autocmd! TermOpen term://* lua set_terminal_keymaps()")
+	vim.api.nvim_set_keymap(
+		"n",
+		"<leader>G",
+		"<cmd>lua LAZYGIT_TOGGLE()<CR>",
+		{ desc = "Lazygit", noremap = true, silent = true }
+	)
 end
 
 return M

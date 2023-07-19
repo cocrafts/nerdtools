@@ -29,13 +29,17 @@ local custom_filter = function(buf, buf_nums)
 		return is_ft(b, "log")
 	end, buf_nums or {})
 
-	if vim.tbl_isempty(logs) then return true end
+	if vim.tbl_isempty(logs) then
+		return true
+	end
 
 	local tab_num = vim.fn.tabpagenr()
-	local last_tab = vim.fn.tabpagenr "$"
+	local last_tab = vim.fn.tabpagenr("$")
 	local is_log = is_ft(buf, "log")
 
-	if last_tab == 1 then return true end
+	if last_tab == 1 then
+		return true
+	end
 	return (tab_num == last_tab and is_log) or (tab_num ~= last_tab and not is_log)
 end
 
@@ -69,7 +73,9 @@ function M.buf_kill(kill_command, bufnr, force)
 			vim.ui.input({
 				prompt = string.format([[%s. Close it anyway? [y]es or [n]o (default: no): ]], warning),
 			}, function(choice)
-				if choice ~= nil and choice:match "ye?s?" then M.buf_kill(kill_command, bufnr, true) end
+				if choice ~= nil and choice:match("ye?s?") then
+					M.buf_kill(kill_command, bufnr, true)
+				end
 			end)
 			return
 		end
@@ -112,17 +118,17 @@ function M.buf_kill(kill_command, bufnr, force)
 end
 
 local options = {
-	mode = "buffers",              -- set to "tabs" to only show tabpages instead
-	numbers = "ordinal",              -- can be "none" | "ordinal" | "buffer_id" | "both" | function
+	mode = "buffers", -- set to "tabs" to only show tabpages instead
+	numbers = "ordinal", -- can be "none" | "ordinal" | "buffer_id" | "both" | function
 	close_command = function(bufnr) -- can be a string | function, see "Mouse actions"
 		M.buf_kill("bd", bufnr, false)
 	end,
 	right_mouse_command = "vert sbuffer %d", -- can be a string | function, see "Mouse actions"
-	left_mouse_command = "buffer %d",       -- can be a string | function, see "Mouse actions"
-	middle_mouse_command = nil,             -- can be a string | function, see "Mouse actions
+	left_mouse_command = "buffer %d", -- can be a string | function, see "Mouse actions"
+	middle_mouse_command = nil, -- can be a string | function, see "Mouse actions
 	indicator = {
-		icon = icons.ui.BoldLineLeft,         -- this should be omitted if indicator style is not 'icon'
-		style = "icon",                       -- can also be 'underline'|'none',
+		icon = icons.ui.BoldLineLeft, -- this should be omitted if indicator style is not 'icon'
+		style = "icon", -- can also be 'underline'|'none',
 	},
 	buffer_close_icon = icons.ui.Close,
 	modified_icon = icons.ui.Circle,
@@ -135,7 +141,7 @@ local options = {
 	--- some limitations that will *NOT* be fixed.
 	name_formatter = function(buf) -- buf contains a "name", "path" and "bufnr"
 		-- remove extension from markdown files for example
-		if buf.name:match "%.md" then
+		if buf.name:match("%.md") then
 			return vim.fn.fnamemodify(buf.name, ":t:r")
 		end
 	end,
@@ -218,21 +224,71 @@ M.configure = function()
 	vim.opt.showtabline = 2
 	vim.opt.termguicolors = true
 
-	vim.api.nvim_set_keymap("n", "<C-1>", "<cmd>lua require('bufferline').go_to(1, true)<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-2>", "<cmd>lua require('bufferline').go_to(2, true)<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-3>", "<cmd>lua require('bufferline').go_to(3, true)<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-4>", "<cmd>lua require('bufferline').go_to(4, true)<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-5>", "<cmd>lua require('bufferline').go_to(5, true)<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-6>", "<cmd>lua require('bufferline').go_to(6, true)<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-7>", "<cmd>lua require('bufferline').go_to(7, true)<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-8>", "<cmd>lua require('bufferline').go_to(8, true)<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-9>", "<cmd>lua require('bufferline').go_to(9, true)<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("n", "<C-0>", "<cmd>lua require('bufferline').go_to(0, true)<CR>", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-1>",
+		"<cmd>lua require('bufferline').go_to(1, true)<CR>",
+		{ noremap = true, silent = true }
+	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-2>",
+		"<cmd>lua require('bufferline').go_to(2, true)<CR>",
+		{ noremap = true, silent = true }
+	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-3>",
+		"<cmd>lua require('bufferline').go_to(3, true)<CR>",
+		{ noremap = true, silent = true }
+	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-4>",
+		"<cmd>lua require('bufferline').go_to(4, true)<CR>",
+		{ noremap = true, silent = true }
+	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-5>",
+		"<cmd>lua require('bufferline').go_to(5, true)<CR>",
+		{ noremap = true, silent = true }
+	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-6>",
+		"<cmd>lua require('bufferline').go_to(6, true)<CR>",
+		{ noremap = true, silent = true }
+	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-7>",
+		"<cmd>lua require('bufferline').go_to(7, true)<CR>",
+		{ noremap = true, silent = true }
+	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-8>",
+		"<cmd>lua require('bufferline').go_to(8, true)<CR>",
+		{ noremap = true, silent = true }
+	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-9>",
+		"<cmd>lua require('bufferline').go_to(9, true)<CR>",
+		{ noremap = true, silent = true }
+	)
+	vim.api.nvim_set_keymap(
+		"n",
+		"<C-0>",
+		"<cmd>lua require('bufferline').go_to(0, true)<CR>",
+		{ noremap = true, silent = true }
+	)
 
-	require("bufferline").setup {
+	require("bufferline").setup({
 		options = options,
 		highlights = highlights,
-	}
+	})
 end
 
 return M
