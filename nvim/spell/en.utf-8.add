@@ -267,3 +267,6 @@ ideavimrc
 nerdtools
 nerdtools
 nerdtools
+stylelint
+gopls
+zls

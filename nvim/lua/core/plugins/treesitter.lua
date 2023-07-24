@@ -2,9 +2,12 @@ local M = {}
 
 M.configure = function()
 	local configs = require("nvim-treesitter.configs")
-	local rainbow = require("ts-rainbow")
 
 	configs.setup({
+		on_config_done = nil,
+		sync_install = false,
+		auto_install = true,
+		modules = {},
 		ensure_installed = {
 			"typescript",
 			"tsx",
@@ -16,26 +19,16 @@ M.configure = function()
 			"gitignore",
 			"toml",
 			"json",
+			"html",
 			"markdown",
 			"markdown_inline",
 		},
+		ignore_install = {},
 		autotag = {
 			enable = true,
 		},
-		auto_install = true,
-		rainbow = {
-			enable = true,
-			query = {
-				"rainbow-parens",
-				html = "rainbow-tags",
-				javascript = "rainbow-tag-react",
-				tsx = "rainbow-tags",
-			},
-			strategy = {
-				rainbow.strategy.global,
-			},
-		},
 		highlight = { enabled = true },
+		-- rainbow = { enable = true },
 		indent = { enable = true },
 		incremental_selection = {
 			enable = true,

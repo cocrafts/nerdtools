@@ -8,12 +8,14 @@ M.configure = function()
 			"eslint",
 			"graphql",
 			"tsserver",
+			"stylelint_lsp",
 			"jsonls",
 			"html",
 			"cssls",
 			"lua_ls",
 			"ruby_ls",
 			"rust_analyzer",
+			"zls",
 		},
 	})
 end

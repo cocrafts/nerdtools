@@ -21,7 +21,6 @@ M.configure = function()
 		nls.builtins.diagnostics.eslint,
 		nls.builtins.diagnostics.stylelint,
 		nls.builtins.completion.spell,
-		require("typescript.extensions.null-ls.code-actions"),
 	}
 
 	-- table.insert(sources, gnls.gotest())

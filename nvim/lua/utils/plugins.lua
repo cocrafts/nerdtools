@@ -17,7 +17,6 @@ return {
 			},
 			{ "williamboman/mason-lspconfig.nvim" },
 			{ "simrat39/rust-tools.nvim" },
-			{ "jose-elias-alvarez/typescript.nvim" },
 			{
 				"ray-x/go.nvim",
 				dependencies = {
@@ -169,20 +168,17 @@ return {
 			require("core.plugins.telescope").configure()
 		end,
 	},
-	{ "HiPhish/nvim-ts-rainbow2", lazy = true },
+	{
+		"hiphish/rainbow-delimiters.nvim",
+		config = function()
+			require("core.plugins.rainbow").configure()
+		end,
+	},
 	{ "nvim-treesitter/playground", lazy = true },
 	{
 		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
 		event = "User FileOpened",
-		cmd = {
-			"TSInstall",
-			"TSUninstall",
-			"TSUpdate",
-			"TSUpdateSync",
-			"TSInstallInfo",
-			"TSInstallSync",
-			"TSInstallFromGrammar",
-		},
 		config = function()
 			require("core.plugins.treesitter").configure()
 		end,
