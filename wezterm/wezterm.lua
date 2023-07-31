@@ -20,17 +20,17 @@ config.initial_cols = 100
 config.color_scheme = "tokyonight_night"
 config.font_size = 14.5
 config.line_height = 1.1
-config.font = wezterm.font_with_fallback {
+config.font = wezterm.font_with_fallback({
 	{
 		family = "OperatorMonoLig Nerd Font Mono",
-		weight = "Book"
+		weight = "Book",
 	},
 	{
 		family = "Symbols Nerd Font Mono",
 		scale = 0.6,
-		weight = "Book"
+		weight = "Book",
 	},
-}
+})
 
 config.adjust_window_size_when_changing_font_size = false
 config.hide_tab_bar_if_only_one_tab = true
@@ -48,25 +48,25 @@ config.keys = {
 	{
 		key = "K",
 		mods = "CMD|SHIFT",
-		action = act.ClearScrollback "ScrollbackAndViewport",
+		action = act.ClearScrollback("ScrollbackAndViewport"),
 	},
 	{
 		key = "s",
 		mods = "CMD",
-		action = act.Multiple {
-			act.SendKey { key = " " },
-			act.SendKey { key = "w" },
-		}
+		action = act.Multiple({
+			act.SendKey({ key = " " }),
+			act.SendKey({ key = "w" }),
+		}),
 	},
 	{
 		key = "d",
 		mods = "CMD",
-		action = act.Multiple {
-			act.SendKey { key = "y" },
-			act.SendKey { key = "y" },
-			act.SendKey { key = "p" },
-		}
-	}
+		action = act.Multiple({
+			act.SendKey({ key = "y" }),
+			act.SendKey({ key = "y" }),
+			act.SendKey({ key = "p" }),
+		}),
+	},
 }
 
 config.colors = {

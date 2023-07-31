@@ -95,7 +95,7 @@ M.configure = function()
 
 	require("core.lsp.null-ls").configure()
 	require("core.lsp.rust").configure()
-	require("core.lsp.tsserver").configure(lspconfig)
+	require("core.lsp.typescript-tools").configure()
 	require("core.lsp.go").configure(lspconfig)
 	require("core.lsp.html").configure(lspconfig)
 	require("core.lsp.json").configure(lspconfig)

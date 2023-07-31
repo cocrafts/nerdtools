@@ -16,7 +16,12 @@ return {
 				end,
 			},
 			{ "williamboman/mason-lspconfig.nvim" },
+			{ "jparise/vim-graphql" },
 			{ "simrat39/rust-tools.nvim" },
+			{
+				"pmizio/typescript-tools.nvim",
+				dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+			},
 			{
 				"ray-x/go.nvim",
 				dependencies = {
