@@ -6,7 +6,7 @@ M.configure = function(lspconfig)
 		lsp_gofumpt = true,
 		lsp_keymaps = false,
 		lsp_inlay_hints = {
-			enabled = true,
+			enabled = false,
 		},
 	})
 
