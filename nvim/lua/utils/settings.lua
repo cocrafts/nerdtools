@@ -12,7 +12,7 @@ local globals = {
 local opts = {
 	spell = true,
 	spelllang = "en_us",
-	guifont = "OperatorMonoLig Nerd Font Mono:h14",
+	guifont = "OperatorMonoLig Nerd Font Mono:h13.8",
 	timeout = true,
 	timeoutlen = 100, -- time to wait for mapped sequence to complete
 	-- utilities
@@ -37,6 +37,10 @@ local opts = {
 		space = "·",
 	},
 }
+
+if vim.g.neovide then
+	opts["linespace"] = 2
+end
 
 local defer_opts = {
 	-- use tab
