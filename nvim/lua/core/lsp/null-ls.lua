@@ -8,6 +8,7 @@ M.configure = function()
 		nls.builtins.formatting.stylua,
 		nls.builtins.formatting.zigfmt,
 		nls.builtins.formatting.rustfmt,
+		nls.builtins.formatting.csharpier,
 		nls.builtins.formatting.shfmt,
 		nls.builtins.formatting.gofumpt,
 		nls.builtins.formatting.goimports_reviser,

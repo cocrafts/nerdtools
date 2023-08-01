@@ -8,6 +8,7 @@ M.configure = function()
 			"eslint",
 			"graphql",
 			"tsserver",
+			"omnisharp",
 			"stylelint_lsp",
 			"jsonls",
 			"html",
