@@ -1,5 +1,10 @@
 local M = {}
 
+-- Configure instruction:use this instruction: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#omnisharp
+-- 1. Install dotnet-sdk: https://dotnet.microsoft.com/download
+-- 2. Download roslyn release: https://github.com/OmniSharp/omnisharp-roslyn/releases
+-- 3. chmod 755 ./run for downloaded roslyn build
+
 M.configure = function(lspconfig)
 	lspconfig.omnisharp.setup({
 		cmd = { "/Users/le/Sources/omnisharp/run", "--languageserver", "--hostPID", tostring(vim.fn.getpid()) },
