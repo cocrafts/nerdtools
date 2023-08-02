@@ -16,6 +16,7 @@ return {
 				end,
 			},
 			{ "williamboman/mason-lspconfig.nvim" },
+			{ "Hoffs/omnisharp-extended-lsp.nvim" },
 			{ "jparise/vim-graphql" },
 			{ "simrat39/rust-tools.nvim" },
 			{
