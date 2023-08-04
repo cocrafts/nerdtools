@@ -65,12 +65,6 @@ return {
 		end,
 	},
 	{
-		"VidocqH/lsp-lens.nvim",
-		config = function()
-			require("lsp-lens").setup({})
-		end,
-	},
-	{
 		"nvim-neo-tree/neo-tree.nvim",
 		dependencies = {
 			"nvim-lua/plenary.nvim",

@@ -88,7 +88,6 @@ M.configure = function()
 		end, get_opts(bufnr, "Format code"))
 
 		vim.cmd("set autoindent tabstop=2 shiftwidth=2") -- force 2 space tabs
-		vim.cmd(":LspLensOn")
 	end)
 
 	lsp.setup()
