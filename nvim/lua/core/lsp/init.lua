@@ -1,3 +1,4 @@
+local config = require("utils.config")
 local M = {}
 
 local hints = {
@@ -45,10 +46,12 @@ end
 M.configure = function()
 	local lsp = require("lsp-zero").preset({})
 	local lspconfig = require("lspconfig")
-
-	require("lsp-inlayhints").setup(hints)
 	require("neodev").setup()
 	require("core.lsp.mason").configure()
+
+	if config.use_inlay_hints then
+		require("lsp-inlayhints").setup(hints)
+	end
 
 	lsp.on_attach(function(_, bufnr)
 		lsp.default_keymaps({ buffer = bufnr })

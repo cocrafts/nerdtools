@@ -1,3 +1,5 @@
+local config = require("utils.config")
+
 local definitions = {
 	{
 		{ "BufRead", "BufWinEnter", "BufNewFile" },
@@ -29,6 +31,7 @@ local definitions = {
 				require("lsp-inlayhints").on_attach(client, bufnr)
 			end,
 		},
+		config.use_inlay_hints == false,
 	},
 	{
 		"TextYankPost",
@@ -46,16 +49,16 @@ local definitions = {
 for _, entry in ipairs(definitions) do
 	local event = entry[1]
 	local opts = entry[2]
+	local disabled = entry[3]
 
-	if type(opts.group) == "string" and opts.group ~= "" then
+	if not disabled and type(opts.group) == "string" and opts.group ~= "" then
 		local exists, _ = pcall(vim.api.nvim_get_autocmds, { group = opts.group })
 
 		if not exists then
 			vim.api.nvim_create_augroup(opts.group, {})
+			vim.api.nvim_create_autocmd(event, opts)
 		end
 	end
-
-	vim.api.nvim_create_autocmd(event, opts)
 end
 
 vim.api.nvim_command("autocmd BufRead,BufNewFile Podfile set filetype=ruby")
