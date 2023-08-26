@@ -4,6 +4,7 @@ local M = {}
 -- 1. Install dotnet-sdk: https://dotnet.microsoft.com/download
 -- 2. Download roslyn release: https://github.com/OmniSharp/omnisharp-roslyn/releases
 -- 3. chmod 755 ./run for downloaded roslyn build
+-- 4. Also make sure mono installed: https://www.mono-project.com/download/stable/
 
 M.configure = function(lspconfig)
 	lspconfig.omnisharp.setup({
