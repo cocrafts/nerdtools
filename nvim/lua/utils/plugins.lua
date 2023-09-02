@@ -113,15 +113,6 @@ return {
 		end,
 	},
 	{
-		"zbirenbaum/neodim",
-		event = "LspAttach",
-		config = function()
-			require("neodim").setup({
-				alpha = 0.3,
-			})
-		end,
-	},
-	{
 		"folke/which-key.nvim",
 		config = function()
 			require("core.plugins.whichkey").configure()

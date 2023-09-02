@@ -7,7 +7,6 @@ M.configure = function()
 			"gopls",
 			"eslint",
 			"graphql",
-			"tsserver",
 			"omnisharp",
 			"stylelint_lsp",
 			"jsonls",

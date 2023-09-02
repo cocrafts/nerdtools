@@ -53,6 +53,12 @@ M.configure = function()
 		require("lsp-inlayhints").setup(hints)
 	end
 
+	if config.use_live_diagnostic then
+		vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+			update_in_insert = true,
+		})
+	end
+
 	lsp.on_attach(function(_, bufnr)
 		lsp.default_keymaps({ buffer = bufnr })
 		vim.keymap.set("n", "K", function()
@@ -97,7 +103,7 @@ M.configure = function()
 
 	require("core.lsp.null-ls").configure()
 	require("core.lsp.rust").configure()
-	require("core.lsp.typescript-tools").configure(lspconfig)
+	require("core.lsp.typescript-tools").configure()
 	require("core.lsp.csharp").configure(lspconfig)
 	require("core.lsp.go").configure(lspconfig)
 	require("core.lsp.html").configure(lspconfig)
