@@ -15,15 +15,16 @@ M.open = function(path)
 end
 
 M.configure = function()
-	local tree = require("neo-tree")
+	local neotree = require("neo-tree")
 
-	tree.setup({
-		close_if_last_window = false, -- Close Neo-tree if it is the last window left in the tab
+	neotree.setup({
+		close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
 		popup_border_style = "rounded",
 		enable_git_status = true,
 		enable_diagnostics = true,
+		enable_normal_mode_for_inputs = true, -- Enable normal mode for input dialogs.
 		open_files_do_not_replace_types = { "terminal", "trouble", "qf", "Outline" }, -- when opening files, do not use windows containing these filetypes or buftypes
-		sort_case_insensitive = false, -- used when sorting files and directories in the tree
+		sort_case_insensitive = true, -- used when sorting files and directories in the tree
 		window = {
 			position = "left",
 			width = 32,
@@ -47,7 +48,7 @@ M.configure = function()
 		},
 		filesystem = {
 			follow_current_file = true,
-			group_empty_dirs = true,
+			group_empty_dirs = false,
 			-- "open_default", netrw disabled, opening a directory opens neo-tree in whatever position is specified in window.position
 			-- "open_current", netrw disabled, opening a directory opens within the window like netrw would, regardless of window.position
 			-- "disabled", netrw left alone, neo-tree does not handle opening dirs

@@ -71,7 +71,7 @@ return {
 			"nvim-tree/nvim-web-devicons",
 			"MunifTanjim/nui.nvim",
 		},
-		branch = "v2.x",
+		branch = "v3.x",
 		cmd = "Neotree",
 		config = function()
 			require("core.plugins.neo-tree").configure()
