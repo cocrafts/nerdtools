@@ -51,6 +51,48 @@ config.keys = {
 		action = act.ClearScrollback("ScrollbackAndViewport"),
 	},
 	{
+		key = "I",
+		mods = "CMD|SHIFT",
+		action = act.SplitPane({
+			direction = "Up",
+			size = { Percent = 24 },
+		}),
+	},
+	{
+		key = "J",
+		mods = "CMD|SHIFT",
+		action = act.SplitPane({
+			direction = "Down",
+			size = { Percent = 24 },
+		}),
+	},
+	{
+		key = "H",
+		mods = "CMD|SHIFT",
+		action = act.SplitPane({
+			direction = "Left",
+			size = { Percent = 36 },
+		}),
+	},
+	{
+		key = "L",
+		mods = "CMD|SHIFT",
+		action = act.SplitPane({
+			direction = "Right",
+			size = { Percent = 36 },
+		}),
+	},
+	{
+		key = "O",
+		mods = "CMD|SHIFT",
+		action = act.PaneSelect({}),
+	},
+	{
+		key = "w",
+		mods = "CMD|SHIFT",
+		action = act.CloseCurrentPane({ confirm = false }),
+	},
+	{
 		key = "s",
 		mods = "CMD",
 		action = act.Multiple({
