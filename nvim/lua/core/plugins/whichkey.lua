@@ -29,6 +29,7 @@ local config = {
 		["q"] = { "<cmd>q!<cr>", "quit" },
 		["/"] = { "<Plug>(comment_toggle_linewise_current)", "Comment toggle current line" },
 		["c"] = { "<cmd>BufferKill<CR>", "Close Buffer" },
+		["C"] = { "<cmd>BufferLineCloseOthers<CR>", "Close other Buffers" },
 		["x"] = { "<cmd>Telescope neoclip theme=dropdown<CR>", "Clipboard history" },
 		["e"] = {
 			function()
