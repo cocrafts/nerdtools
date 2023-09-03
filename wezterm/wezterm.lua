@@ -88,8 +88,8 @@ config.keys = {
 		action = act.PaneSelect({}),
 	},
 	{
-		key = "w",
-		mods = "CMD|SHIFT",
+		key = "e",
+		mods = "CMD",
 		action = act.CloseCurrentPane({ confirm = false }),
 	},
 	{

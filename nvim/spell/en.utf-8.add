@@ -336,3 +336,6 @@ testnet
 KEYSTORE
 sortBy
 RPC
+LayoutCard
+SearchBar
+ModalContainer
