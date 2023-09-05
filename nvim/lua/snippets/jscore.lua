@@ -200,7 +200,7 @@ cs(
 	"rc",
 	fmt(
 		[[
-import {{ type FC }} from 'react';
+import type {{ FC }} from 'react';
 import {{ StyleSheet, Text, View }} from 'react-native';
 
 export const {1}: FC = () => {{
@@ -211,14 +211,13 @@ export const {1}: FC = () => {{
 	);
 }};
 
+export default {4};
+
 const styles = StyleSheet.create({{
 	container: {{
-		{3}
+		flex: 1,{3}
 	}}
-}});
-
-export default {4};
-		]],
+}});]],
 		{
 			i(1, ""),
 			rep(1),
