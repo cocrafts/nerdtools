@@ -47,7 +47,9 @@ M.configure = function()
 			show_separator_on_edge = false,
 		},
 		filesystem = {
-			follow_current_file = true,
+			follow_current_file = {
+				enabled = true,
+			},
 			group_empty_dirs = false,
 			-- "open_default", netrw disabled, opening a directory opens neo-tree in whatever position is specified in window.position
 			-- "open_current", netrw disabled, opening a directory opens within the window like netrw would, regardless of window.position
