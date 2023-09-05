@@ -14,6 +14,7 @@ M.configure = function()
 			tsserver_format_options = {
 				allowIncompleteCompletions = false,
 				allowRenameOfImportPath = false,
+				convertTabsToSpaces = false,
 			},
 		},
 	})

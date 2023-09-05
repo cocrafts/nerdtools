@@ -19,7 +19,8 @@ M.configure = function()
 			},
 		}),
 		nls.builtins.diagnostics.revive,
-		nls.builtins.diagnostics.eslint,
+		nls.builtins.formatting.eslint_d,
+		nls.builtins.diagnostics.eslint_d,
 		nls.builtins.diagnostics.stylelint,
 		nls.builtins.completion.spell,
 	}

@@ -5,7 +5,6 @@ M.configure = function()
 	require("mason-lspconfig").setup({
 		ensure_installed = {
 			"gopls",
-			"eslint",
 			"graphql",
 			"omnisharp",
 			"stylelint_lsp",
