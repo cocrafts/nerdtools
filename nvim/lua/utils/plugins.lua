@@ -4,7 +4,7 @@ return {
 	{ "catppuccin/nvim" },
 	{
 		"VonHeikemen/lsp-zero.nvim",
-		branch = "v2.x",
+		branch = "dev-v3",
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 			{ "jose-elias-alvarez/null-ls.nvim" },
