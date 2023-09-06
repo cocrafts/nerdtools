@@ -1,5 +1,4 @@
 local M = {}
-local icons = require("utils.icons")
 local theme = require("utils.config").theme
 local components = require("core.lualine.components")
 

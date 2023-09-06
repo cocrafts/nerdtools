@@ -8,7 +8,7 @@ local colors = {
 	cursor = "#1E202F",
 	none = "NONE",
 	keywords = "#B877DB",
-	comments = "#37384f",
+	comments = "#3c3d57",
 	numbers = "#FF9668",
 	procs = "#d6a786",
 	functions = "#E95678",
@@ -21,6 +21,10 @@ local colors = {
 	red = "#ec5f67",
 	orange = "#FF8800",
 }
+
+if vim.g.neovide then
+	colors["gray"] = "#27283a"
+end
 
 M.options = {
 	name = "tokyonight",
@@ -48,7 +52,7 @@ M.options = {
 			MsgArea = { fg = colors.fg, bg = colors.bg },
 
 			Normal = { bg = colors.bg },
-			LineNR = { fg = colors.dim }, -- line numbers
+			LineNR = { fg = colors.dim },     -- line numbers
 			CursorLineNR = { fg = colors.blue }, -- current line number
 			NormalMode = { fg = colors.blue },
 			InsertMode = { fg = colors.green },
