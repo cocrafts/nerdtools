@@ -88,6 +88,11 @@ config.keys = {
 		action = act.PaneSelect({}),
 	},
 	{
+		key = "o",
+		mods = "CMD",
+		action = act.ActivatePaneDirection("Next"),
+	},
+	{
 		key = "e",
 		mods = "CMD",
 		action = act.CloseCurrentPane({ confirm = false }),
