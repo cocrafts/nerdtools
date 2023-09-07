@@ -73,15 +73,15 @@ return {
 	},
 	lsp = {
 		function()
-			local buf_clients = vim.lsp.get_active_clients({ bufnr = 0 })
+			local buf_clients = vim.lsp.get_clients({ bufnr = 0 })
 			if #buf_clients == 0 then
-				return "LSP Inactive"
+				return " lsp inactive"
 			end
 
-			local buf_ft = vim.bo.filetype
 			local buf_client_names = {}
 			local copilot_active = false
 
+			-- add client
 			for _, client in pairs(buf_clients) do
 				if client.name ~= "copilot" then
 					table.insert(buf_client_names, client.name)
@@ -92,8 +92,8 @@ return {
 				end
 			end
 
-			local unique_client_names = vim.fn.uniq(buf_client_names)
-			local language_servers = "[" .. table.concat(unique_client_names, ", ") .. "]"
+			local unique_client_names = table.concat(buf_client_names, ":")
+			local language_servers = string.format("%s %s", icons.diagnostics.Hint, unique_client_names)
 
 			if copilot_active then
 				language_servers = language_servers .. "%#SLCopilot#" .. " " .. icons.git.Octoface .. "%*"
