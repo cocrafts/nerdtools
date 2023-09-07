@@ -38,7 +38,6 @@ local opts = {
 if vim.g.neovide then
 	opts["guifont"] = "Operator Mono Lig, Symbols Nerd Font Mono:h13.8"
 	opts["linespace"] = 4
-
 	globals["neovide_cursor_vfx_mode"] = "pixiedust"
 	globals["neovide_remember_window_size"] = true
 end

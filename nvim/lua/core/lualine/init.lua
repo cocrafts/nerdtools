@@ -14,9 +14,9 @@ M.configure = function()
 			globalstatus = true,
 			icons_enabled = true,
 			component_separators = { left = "", right = "" },
-			-- section_separators = vim.g.neovide and { left = "", right = "" } or { left = "", right = "" },
+			section_separators = vim.g.neovide and { left = "", right = "" } or { left = "", right = "" },
 			-- section_separators = { left = "", right = "" },
-			section_separators = { left = "", right = "" },
+			-- section_separators = { left = "", right = "" },
 			disabled_filetypes = { "alpha" },
 		},
 		sections = {
