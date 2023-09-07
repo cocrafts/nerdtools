@@ -98,6 +98,13 @@ config.keys = {
 		action = act.CloseCurrentPane({ confirm = false }),
 	},
 	{
+		key = "N",
+		mods = "CMD|SHIFT",
+		action = wezterm.action_callback(function(win, pane)
+			pane:move_to_new_window()
+		end),
+	},
+	{
 		key = "s",
 		mods = "CMD",
 		action = act.Multiple({
