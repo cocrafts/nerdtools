@@ -26,7 +26,7 @@ M.configure = function()
 				width = width,
 				height = height,
 			},
-			on_open = function(term)
+			on_open = function()
 				vim.cmd("startinsert!")
 			end,
 			on_close = function()

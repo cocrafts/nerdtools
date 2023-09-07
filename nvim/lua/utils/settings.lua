@@ -1,8 +1,6 @@
 local globals = {
 	mapleader = " ",
 	localmapleader = " ",
-	neovide_cursor_vfx_mode = "pixiedust",
-	neovide_remember_window_size = true,
 	gitblame_highlight_group = "GitBlame",
 	gitblame_date_format = "%r",
 	gitblame_message_template = " <author>, <date> • <summary> ",
@@ -12,7 +10,6 @@ local globals = {
 local opts = {
 	spell = true,
 	spelllang = "en_us",
-	guifont = "OperatorMonoLig Nerd Font Mono:h13.8",
 	timeout = true,
 	timeoutlen = 100, -- time to wait for mapped sequence to complete
 	-- utilities
@@ -32,14 +29,18 @@ local opts = {
 	-- invisible characters
 	list = true,
 	listchars = {
-		tab = " ",
+		tab = " ",
 		eol = "¬",
 		space = "·",
 	},
 }
 
 if vim.g.neovide then
+	opts["guifont"] = "Operator Mono Lig, Symbols Nerd Font Mono:h13.8"
 	opts["linespace"] = 4
+
+	globals["neovide_cursor_vfx_mode"] = "pixiedust"
+	globals["neovide_remember_window_size"] = true
 end
 
 local defer_opts = {

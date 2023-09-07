@@ -1,5 +1,6 @@
 local M = {}
 local builtin = require("telescope.builtin")
+local icons = require("utils.icons")
 
 M.configure = function()
 	local telescope = require("telescope")
@@ -7,6 +8,8 @@ M.configure = function()
 
 	telescope.setup({
 		defaults = {
+			prompt_prefix = string.format(" %s  ", icons.ui.Search),
+			selection_caret = string.format("%s ", icons.ui.PointArrow),
 			layout_strategy = "horizontal",
 			layout_config = {
 				horizontal = {
@@ -27,10 +30,10 @@ M.configure = function()
 		},
 		extensions = {
 			fzf = {
-				fuzzy = true, -- false will only do exact matching
+				fuzzy = true,               -- false will only do exact matching
 				override_generic_sorter = true, -- override the generic sorter
 				override_file_sorter = true, -- override the file sorter
-				case_mode = "smart_case", -- or "ignore_case" or "respect_case"
+				case_mode = "smart_case",   -- or "ignore_case" or "respect_case"
 			},
 			frecency = {
 				show_scores = false,

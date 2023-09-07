@@ -17,7 +17,7 @@ end
 return {
 	mode = {
 		function()
-			return " " .. icons.ui.Ellipsis .. " "
+			return " " .. icons.ui.Target .. " "
 		end,
 		padding = { left = 0, right = 0 },
 		color = {},
@@ -147,7 +147,7 @@ return {
 	},
 	cwd = {
 		function()
-			return string.match(vim.fn.getcwd(), "[^/]+$")
+			return string.match(vim.fn.getcwd() or "/", "[^/]+$")
 		end,
 	},
 }

@@ -22,13 +22,13 @@ config.font_size = 14.5
 config.line_height = 1.2
 config.font = wezterm.font_with_fallback({
 	{
-		family = "OperatorMonoLig Nerd Font Mono",
+		family = "Operator Mono Lig",
 		weight = "Book",
 	},
 	{
 		family = "Symbols Nerd Font Mono",
 		scale = 0.6,
-		weight = "Book",
+		-- weight = "Book",
 	},
 })
 
@@ -119,6 +119,16 @@ config.keys = {
 			act.SendKey({ key = "y" }),
 			act.SendKey({ key = "y" }),
 			act.SendKey({ key = "p" }),
+		}),
+	},
+	{
+		key = "/",
+		mods = "CMD",
+		action = act.Multiple({
+			act.SendKey({ key = "g" }),
+			act.SendKey({ key = "c" }),
+			act.SendKey({ key = "c" }),
+			act.SendKey({ key = "j" }),
 		}),
 	},
 }
