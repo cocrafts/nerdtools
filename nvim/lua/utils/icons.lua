@@ -110,7 +110,7 @@ return {
 		Lock = "",
 		NewFile = "",
 		Note = "",
-		Package = "",
+		Package = "󰏗",
 		Pencil = "󰏫",
 		Plus = "",
 		Project = "",
@@ -150,7 +150,7 @@ return {
 		Tag = "",
 		Watch = "",
 		Smiley = "",
-		Package = "",
+		Package = "󰏗",
 		CircuitBoard = "",
 	},
 }

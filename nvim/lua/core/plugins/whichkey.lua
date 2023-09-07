@@ -1,11 +1,12 @@
 local M = {}
+local icons = require("utils.icons")
 
 local config = {
 	setup = {
 		icons = {
-			breadcrumb = "»",
-			separator = "",
-			group = " ",
+			breadcrumb = icons.ui.DoubleChevronRight,
+			separator = icons.ui.BoldArrowRight,
+			group = icons.ui.Package .. " ",
 		},
 	},
 	nopts = {

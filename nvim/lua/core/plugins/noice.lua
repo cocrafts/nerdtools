@@ -19,9 +19,9 @@ M.configure = function()
 					{ "{data.progress.client} ",     hl_group = "NoiceLspProgressClient" },
 				},
 				format_done = {
-					{ icons.ui.EmptyFolder .. " ", hl_group = "NoiceLspProgressSpinner" },
-					{ "{data.progress.title} ",    hl_group = "NoiceLspProgressTitle" },
-					{ "{data.progress.client} ",   hl_group = "NoiceLspProgressClient" },
+					{ icons.kind.Variable .. " ", hl_group = "NoiceLspProgressSpinner" },
+					{ "{data.progress.title} ",   hl_group = "NoiceLspProgressTitle" },
+					{ "{data.progress.client} ",  hl_group = "NoiceLspProgressClient" },
 				},
 			},
 		},
