@@ -28,7 +28,6 @@ config.font = wezterm.font_with_fallback({
 	{
 		family = "Symbols Nerd Font Mono",
 		scale = 0.6,
-		-- weight = "Book",
 	},
 })
 

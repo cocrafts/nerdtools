@@ -2,7 +2,6 @@ local M = {}
 
 M.configure = function()
 	local nls = require("null-ls")
-	local gnls = require("go.null_ls")
 	local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 	local sources = {
 		nls.builtins.formatting.stylua,
@@ -10,24 +9,18 @@ M.configure = function()
 		nls.builtins.formatting.rustfmt,
 		nls.builtins.formatting.csharpier,
 		nls.builtins.formatting.shfmt,
-		nls.builtins.formatting.gofumpt,
-		nls.builtins.formatting.goimports_reviser,
+		nls.builtins.diagnostics.revive,
 		nls.builtins.formatting.golines.with({
 			extra_args = {
 				"--max-len=180",
 				"--base-formatter=gofumpt",
 			},
 		}),
-		nls.builtins.diagnostics.revive,
 		nls.builtins.formatting.eslint_d,
 		nls.builtins.diagnostics.eslint_d,
 		nls.builtins.diagnostics.stylelint,
 		nls.builtins.completion.spell,
 	}
-
-	-- table.insert(sources, gnls.gotest())
-	table.insert(sources, gnls.gotest_action())
-	table.insert(sources, gnls.golangci_lint())
 
 	nls.setup({
 		sources = sources,
