@@ -24,13 +24,6 @@
       args:
         creates: /opt/homebrew/bin/brew
 
-    - name: Install Terraform
-      shell: |
-        brew tap hashicorp/tap
-        brew install hashicorp/tap/terraform
-      args:
-        creates: /opt/homebrew/bin/terraform
-
     - name: Install official git
       shell: brew install git
       args:

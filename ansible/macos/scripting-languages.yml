@@ -26,9 +26,6 @@
       args:
         creates: /opt/homebrew/bin/ruby-build
 
-    - name: Install typescript
-      shell: npm i -g typescript
-
     - name: Install eslint, json, html, css lsp
       shell: npm i -g vscode-langservers-extracted
 
