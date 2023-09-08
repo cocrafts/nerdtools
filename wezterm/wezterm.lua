@@ -99,7 +99,7 @@ config.keys = {
 	{
 		key = "N",
 		mods = "CMD|SHIFT",
-		action = wezterm.action_callback(function(win, pane)
+		action = wezterm.action_callback(function(_, pane)
 			pane:move_to_new_window()
 		end),
 	},

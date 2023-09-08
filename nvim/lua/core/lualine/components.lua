@@ -17,7 +17,7 @@ end
 return {
 	mode = {
 		function()
-			return " " .. icons.ui.Target .. " "
+			return string.format("  %s ", icons.ui.Target)
 		end,
 		padding = { left = 0, right = 0 },
 		color = {},
