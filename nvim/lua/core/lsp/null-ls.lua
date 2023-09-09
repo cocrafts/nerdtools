@@ -1,5 +1,6 @@
 local M = {}
 local config = require("utils.config")
+local null = require("utils.null")
 
 local conf_path = function(suffix)
 	return vim.fn.expand(string.format("~/nerdtools/conf/%s", suffix))
@@ -23,6 +24,7 @@ M.configure = function()
 
 		nls.builtins.formatting.eslint_d,
 		nls.builtins.diagnostics.eslint_d,
+		null.formatting.jq,
 
 		nls.builtins.formatting.shfmt,
 		nls.builtins.diagnostics.stylelint,
