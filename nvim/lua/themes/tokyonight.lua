@@ -57,8 +57,8 @@ M.options = {
 			NeoTreeGitModified = { fg = colors.blue, style = "bold" },
 			NeoTreeGitUntracked = { fg = colors.green, style = "bold" },
 			-- git symbol
-			NeoTreeGitStaged = { fg = colors.green, style = "bold" },
-			NeoTreeGitUnstaged = { fg = colors.gray, style = "bold" },
+			NeoTreeGitStaged = { fg = colors.gray, style = "bold" },
+			NeoTreeGitUnstaged = { fg = colors.green, style = "bold" },
 		},
 		gui = {
 			CursorLine = { bg = colors.cursor },
@@ -74,7 +74,6 @@ M.options = {
 			CommandMode = { fg = colors.types },
 			ReplaceMode = { fg = colors.red },
 			SelectMode = { fg = colors.purple },
-			SpellBad = { style = "underdotted" },
 
 			MatchParen = { fg = colors.fg, bg = colors.blue },
 			ScrollView = { bg = colors.fg },

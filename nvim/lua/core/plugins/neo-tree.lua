@@ -87,9 +87,9 @@ M.configure = function()
 				highlight = "NeoTreeIndentMarker",
 			},
 			icon = {
-				folder_closed = "",
-				folder_open = "",
-				folder_empty = "ﰊ",
+				folder_closed = icons.ui.Folder,
+				folder_open = icons.ui.FolderOpen,
+				folder_empty = icons.ui.EmptyFolder,
 			},
 			modified = {
 				symbol = icons.git.LineModified,
