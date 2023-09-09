@@ -1,5 +1,8 @@
 local M = {}
-local colors = {
+local helper = require("utils.helper")
+local base_colors = require("themes.color")
+
+local colors = helper.mergeTables({
 	bg = "#1A1B26",
 	darkest = "#16161e",
 	fg = "#ABB2BF",
@@ -21,7 +24,7 @@ local colors = {
 	blue = "#51afef",
 	red = "#ec5f67",
 	orange = "#FF8800",
-}
+}, {})
 
 if vim.g.neovide then
 	colors["gray"] = "#27283a"
@@ -42,23 +45,6 @@ M.options = {
 	highlight = {
 		lsp = {
 			LspInlayHint = { fg = colors.gray, bg = colors.none },
-		},
-		telescope = {
-			TelescopeNormal = { bg = colors.bg },
-			TelescopeBorder = { bg = colors.bg, fg = colors.green },
-		},
-		neo_tree = {
-			NeoTreeDirectoryName = { fg = colors.white },
-			-- git file name
-			NeoTreeGitAdded = { fg = colors.types, style = "bold" },
-			NeoTreeGitConflict = { fg = colors.red, style = "bold" },
-			NeoTreeGitDeleted = { fg = colors.comments, style = "bold" },
-			NeoTreeGitIgnored = { fg = colors.gray, style = "bold" },
-			NeoTreeGitModified = { fg = colors.blue, style = "bold" },
-			NeoTreeGitUntracked = { fg = colors.green, style = "bold" },
-			-- git symbol
-			NeoTreeGitStaged = { fg = colors.gray, style = "bold" },
-			NeoTreeGitUnstaged = { fg = colors.green, style = "bold" },
 		},
 		gui = {
 			CursorLine = { bg = colors.cursor },

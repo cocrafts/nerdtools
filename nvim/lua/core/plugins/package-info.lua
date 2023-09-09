@@ -1,6 +1,6 @@
 local M = {}
 local icons = require("utils.icons")
-local colors = require("themes.colors")
+local colors = require("themes.color")
 
 M.configure = function()
 	require("package-info").setup({

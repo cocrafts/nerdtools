@@ -34,6 +34,12 @@ M.configure = function()
 				numhl = "GitSignsChangeNr",
 				linehl = "GitSignsChangeLn",
 			},
+			untracked = {
+				hl = "GitSignsChange",
+				text = icons.ui.BoldLineLeft,
+				numhl = "GitSignsUntrackedNr",
+				linehl = "GitSignsUntrackedLn",
+			},
 		},
 		signcolumn = true,
 		numhl = false,

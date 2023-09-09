@@ -19,6 +19,7 @@ M.configure = function()
 
 		nls.builtins.formatting.eslint_d,
 		nls.builtins.diagnostics.eslint_d,
+		nls.builtins.diagnostics.typos,
 		null.formatting.jq,
 
 		nls.builtins.formatting.shfmt,
