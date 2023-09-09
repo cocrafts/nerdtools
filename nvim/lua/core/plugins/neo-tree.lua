@@ -22,9 +22,9 @@ M.configure = function()
 		popup_border_style = "rounded",
 		enable_git_status = true,
 		enable_diagnostics = true,
-		enable_normal_mode_for_inputs = false, -- Enable normal mode for input dialogs.
+		enable_normal_mode_for_inputs = false,                                      -- Enable normal mode for input dialogs.
 		open_files_do_not_replace_types = { "terminal", "trouble", "qf", "Outline" }, -- when opening files, do not use windows containing these filetypes or buftypes
-		sort_case_insensitive = true, -- used when sorting files and directories in the tree
+		sort_case_insensitive = true,                                               -- used when sorting files and directories in the tree
 		window = {
 			position = "left",
 			width = 32,
@@ -57,7 +57,7 @@ M.configure = function()
 			hijack_netrw_behavior = "open_default",
 			use_libuv_file_watcher = true, -- This will use the OS level file watchers to detect changes instead of relying on nvim autocmd events.
 			filtered_items = {
-				visible = false, -- when true, they will just be displayed differently than normal items
+				visible = false,          -- when true, they will just be displayed differently than normal items
 				hide_dotfiles = true,
 				hide_gitignored = true,
 				hide_hidden = true, -- for Windows only
@@ -103,15 +103,15 @@ M.configure = function()
 			git_status = {
 				symbols = {
 					-- Change type
-					added = "", -- or "✚", but this is redundant info if you use git_status_colors on the name
-					modified = "", -- or "", but this is redundant info if you use git_status_colors on the name
-					deleted = "✖", -- this can only be used in the git_status source
-					renamed = "", -- this can only be used in the git_status source
+					added = "",                    -- or "✚", but this is redundant info if you use git_status_colors on the name
+					modified = "",                 -- or "", but this is redundant info if you use git_status_colors on the name
+					deleted = icons.misc.CircleCrossed, -- this can only be used in the git_status source
+					renamed = icons.misc.CircleEdit, -- this can only be used in the git_status source
 					-- Status type
-					untracked = icons.git.Untracked,
-					ignored = icons.git.FileIgnored,
-					unstaged = icons.git.FileUnstaged,
-					staged = icons.git.FileStaged,
+					untracked = icons.misc.Dot,
+					ignored = icons.misc.Dot,
+					unstaged = icons.misc.Dot,
+					staged = icons.misc.Dot,
 					conflict = icons.git.FileUnmerged,
 				},
 			},

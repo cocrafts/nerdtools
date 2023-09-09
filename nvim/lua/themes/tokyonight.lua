@@ -15,6 +15,7 @@ local colors = {
 	variables = "#DBBE7F",
 	strings = "#e6a98a",
 	types = "#64D1A9",
+	white = "#FFFFFF",
 	purple = "#c678dd",
 	green = "#98be65",
 	blue = "#51afef",
@@ -45,6 +46,19 @@ M.options = {
 		telescope = {
 			TelescopeNormal = { bg = colors.bg },
 			TelescopeBorder = { bg = colors.bg, fg = colors.green },
+		},
+		neo_tree = {
+			NeoTreeDirectoryName = { fg = colors.white },
+			-- git file name
+			NeoTreeGitAdded = { fg = colors.types, style = "bold" },
+			NeoTreeGitConflict = { fg = colors.red, style = "bold" },
+			NeoTreeGitDeleted = { fg = colors.comments, style = "bold" },
+			NeoTreeGitIgnored = { fg = colors.gray, style = "bold" },
+			NeoTreeGitModified = { fg = colors.blue, style = "bold" },
+			NeoTreeGitUntracked = { fg = colors.green, style = "bold" },
+			-- git symbol
+			NeoTreeGitStaged = { fg = colors.green, style = "bold" },
+			NeoTreeGitUnstaged = { fg = colors.gray, style = "bold" },
 		},
 		gui = {
 			CursorLine = { bg = colors.cursor },

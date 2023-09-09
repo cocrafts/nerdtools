@@ -2,6 +2,8 @@ local M = {}
 
 M.configure = function()
 	require("satellite").setup({
+		excluded_filetypes = {},
+		current_only = true,
 		winblend = 36,
 		zindex = 40,
 		width = 2,
@@ -16,7 +18,7 @@ M.configure = function()
 			},
 			gitsigns = {
 				enable = true,
-				signs = { -- can only be a single character (multibyte is okay)
+				signs = { -- can only be a single character (multi-byte is okay)
 					add = "│",
 					change = "│",
 					delete = "-",

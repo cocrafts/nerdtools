@@ -31,6 +31,7 @@ M.configure = function()
 			end,
 			on_close = function()
 				vim.cmd("startinsert!")
+				require("neo-tree.sources.manager").refresh() -- refresh neo-tree, keep it sync with updates
 			end,
 		})
 
