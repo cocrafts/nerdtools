@@ -1,33 +1,36 @@
 local M = {}
 
 M.configure = function(lspconfig)
-	local default_workspace = {
-		library = {
-			vim.fn.expand("$VIMRUNTIME"),
-			require("neodev.config").types(),
-			"${3rd}/busted/library",
-			"${3rd}/luassert/library",
-			"${3rd}/luv/library",
-		},
-
-		maxPreload = 5000,
-		preloadFileSize = 10000,
-	}
-
 	lspconfig.lua_ls.setup({
-		Lua = {
-			telemetry = { enable = false },
-			runtime = {
-				version = "LuaJIT",
-				special = {
-					reload = "require",
-				},
-			},
-		},
-		dianogstics = {
-			globals = { "vim", "reload" },
-		},
-		workspace = default_workspace,
+		on_init = function(client)
+			local path = client.workspace_folders[1].name
+			if not vim.loop.fs_stat(path .. ".luarc.json") and not vim.loop.fs_stat(path .. "./luarc.jsonc") then
+				client.config.settings = vim.tbl_deep_extend("force", client.config.settings, {
+					Lua = {
+						telemetry = { enable = false },
+						runtime = {
+							version = "LuaJIT",
+						},
+					},
+					workspace = {
+						library = {
+							vim.fn.expand("$VIMRUNTIME"),
+							require("neodev.config").types(),
+							"${3rd}/busted/library",
+							"${3rd}/luassert/library",
+							"${3rd}/luv/library",
+						},
+						maxPreload = 5000,
+						preloadFileSize = 10000,
+						checkThirdParty = false,
+					},
+				})
+
+				client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+			end
+
+			return true
+		end,
 	})
 end
 
