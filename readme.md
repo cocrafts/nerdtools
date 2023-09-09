@@ -17,7 +17,6 @@
 - brew install jq
 - npm install -g eslint_d
 - npm install -g write-good
-- npm install -g cspell (optional)
 - cargo install typos-cli or brew install typos-cli (https://github.com/crate-ci/typos)
 
 ### Other notes:
