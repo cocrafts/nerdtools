@@ -8,8 +8,6 @@ local globals = {
 }
 
 local opts = {
-	spell = true,
-	spelllang = "en_us",
 	timeout = true,
 	timeoutlen = 100, -- time to wait for mapped sequence to complete
 	-- utilities

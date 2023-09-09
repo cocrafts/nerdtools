@@ -26,6 +26,9 @@
       args:
         creates: /opt/homebrew/bin/ruby-build
 
+    - name: Install cspell 
+      shell: npm i -g cspell
+
     - name: Install eslint, json, html, css lsp
       shell: npm i -g vscode-langservers-extracted
 
