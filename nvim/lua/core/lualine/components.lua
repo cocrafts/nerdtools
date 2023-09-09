@@ -120,7 +120,9 @@ return {
 		padding = 1,
 	},
 	encoding = {
-		"o:encoding",
+		function()
+			return string.format("%s ", vim.o.encoding)
+		end,
 		color = {},
 		cond = conditions.hide_in_width,
 	},
