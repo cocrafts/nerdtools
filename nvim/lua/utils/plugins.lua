@@ -84,8 +84,8 @@ return {
 			require("core.lualine").configure()
 		end,
 	},
-	{ "folke/lazy.nvim", tag = "stable" },
-	{ "folke/neodev.nvim", lazy = true },
+	{ "folke/lazy.nvim",    tag = "stable" },
+	{ "folke/neodev.nvim",  lazy = true },
 	{ "folke/twilight.nvim" },
 	{
 		"folke/trouble.nvim",
@@ -118,9 +118,9 @@ return {
 			require("core.plugins.whichkey").configure()
 		end,
 	},
-	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
-	{ "nvim-lua/plenary.nvim", lazy = true },
-	{ "kkharji/sqlite.lua", module = "sqlite" },
+	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true,      build = "make" },
+	{ "nvim-lua/plenary.nvim",                    lazy = true },
+	{ "kkharji/sqlite.lua",                       module = "sqlite" },
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
@@ -130,6 +130,7 @@ return {
 			{ "LinArcX/telescope-env.nvim" },
 			{ "jvgrootveld/telescope-zoxide" },
 			{ "smartpde/telescope-recent-files" },
+			{ "nvim-telescope/telescope-ui-select.nvim" },
 			{
 				"sudormrfbin/cheatsheet.nvim",
 				dependencies = {
@@ -304,7 +305,7 @@ return {
 		"kylechui/nvim-surround",
 		event = "VeryLazy",
 		config = function()
-			require("nvim-surround").setup({})
+			require("nvim-surround").setup()
 		end,
 	},
 }

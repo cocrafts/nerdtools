@@ -45,6 +45,11 @@ M.configure = function()
 			package_info = {
 				theme = "dropdown",
 			},
+			["ui-select"] = {
+				require("telescope.themes").get_dropdown({
+					-- more opts
+				}),
+			},
 		},
 	})
 
@@ -56,6 +61,7 @@ M.configure = function()
 	telescope.load_extension("frecency")
 	telescope.load_extension("recent_files")
 	telescope.load_extension("package_info")
+	telescope.load_extension("ui-select")
 end
 
 M.find_project_files = function(opts)
