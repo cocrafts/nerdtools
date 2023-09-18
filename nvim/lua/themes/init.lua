@@ -29,7 +29,8 @@ theme.options.highlight.system = {
 	TelescopeBorder = { bg = colors.bg, fg = colors.green },
 
 	-- Gitsign
-	GitSignsChange = { fg = colors.green },
+	GitSignsAdd = { fg = colors.green },
+	GitSignsChange = { fg = colors.blue },
 }
 
 for _, group in pairs(theme.options.highlight) do
