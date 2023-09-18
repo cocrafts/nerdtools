@@ -6,8 +6,8 @@ M.configure = function()
 	local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 	local sources = {
 		nls.builtins.formatting.stylua,
-		-- nls.builtins.formatting.zigfmt,
-		-- nls.builtins.formatting.rustfmt,
+		nls.builtins.formatting.zigfmt,
+		nls.builtins.formatting.rustfmt,
 		nls.builtins.formatting.csharpier,
 		nls.builtins.diagnostics.revive,
 		nls.builtins.formatting.golines.with({

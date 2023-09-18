@@ -46,6 +46,7 @@ end
 M.configure = function()
 	local lsp = require("lsp-zero").preset({})
 	local lspconfig = require("lspconfig")
+
 	require("neodev").setup()
 	require("core.lsp.mason").configure()
 
@@ -95,8 +96,6 @@ M.configure = function()
 		vim.keymap.set("n", "<C-;>", function()
 			vim.lsp.buf.format()
 		end, get_opts(bufnr, "Format code"))
-
-		vim.cmd("set autoindent tabstop=2 shiftwidth=2") -- force 2 space tabs
 	end)
 
 	lsp.setup()
@@ -106,6 +105,7 @@ M.configure = function()
 	require("core.lsp.typescript-tools").configure()
 	require("core.lsp.csharp").configure(lspconfig)
 	require("core.lsp.go").configure()
+	require("core.lsp.zls").configure(lspconfig)
 	require("core.lsp.html").configure(lspconfig)
 	require("core.lsp.json").configure(lspconfig)
 	require("core.lsp.graphql").configure(lspconfig)

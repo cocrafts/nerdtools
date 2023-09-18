@@ -1,6 +1,5 @@
 local M = {}
 local helper = require("utils.helper")
-local base_colors = require("themes.color")
 
 local colors = helper.mergeTables({
 	bg = "#1A1B26",
