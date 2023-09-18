@@ -30,3 +30,9 @@
         src: ~/nerdtools/conf/revive.toml
         dest: ~/revive.toml
         state: link
+
+    - name: Create revive.toml symlink for Golang
+      file:
+        src: ~/nerdtools/conf/zls.json
+        dest: "~/Library/Application\ Support/zls.json"
+        state: link
