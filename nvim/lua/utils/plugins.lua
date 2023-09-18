@@ -4,7 +4,7 @@ return {
 	{ "catppuccin/nvim" },
 	{
 		"VonHeikemen/lsp-zero.nvim",
-		branch = "dev-v3",
+		branch = "v3.x",
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 			{ "jose-elias-alvarez/null-ls.nvim" },
@@ -158,12 +158,6 @@ return {
 		lazy = true,
 		config = function()
 			require("core.plugins.telescope").configure()
-		end,
-	},
-	{
-		"hiphish/rainbow-delimiters.nvim",
-		config = function()
-			require("core.plugins.rainbow").configure()
 		end,
 	},
 	{ "nvim-treesitter/playground", lazy = true },
