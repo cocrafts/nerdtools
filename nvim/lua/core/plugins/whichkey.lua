@@ -41,17 +41,42 @@ local config = {
 		["z"] = { "<cmd>Telescope zoxide list<CR>", "Zoxide list" },
 		["u"] = { "<cmd>lua require('telescope').extensions.recent_files.pick()<CR>", "Recent files" },
 		["U"] = { "<cmd>Telescope git_status<CR>", "Open changed file" },
-		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep lite" },
+		["i"] = {
+			function()
+				require("telescope-live-grep-args.shortcuts").grep_word_under_cursor({ postfix = " --iglob *" })
+			end,
+			"Live grep (lite)",
+		},
 		["I"] = {
 			function()
 				local path = vim.api.nvim_buf_get_name(0)
 				local directory = path:match("(.-)[^/]*$")
 				require("telescope").extensions.live_grep_args.live_grep_args({
-					prompt_title = "Live grep (full)",
+					prompt_title = string.format("Grep under: %s", directory),
 					search_dirs = { directory },
 				})
 			end,
 			"Live grep",
+		},
+		["F"] = {
+			function()
+				local word_under_cursor = vim.fn.expand("<cword>")
+				require("telescope").extensions.live_grep_args.live_grep_args({
+					prompt_title = "Live grep (full)",
+					default_text = word_under_cursor,
+					vimgrep_arguments = {
+						"rg",
+						"--color=never",
+						"--no-heading",
+						"--with-filename",
+						"--line-number",
+						"--column",
+						"--smart-case",
+						"--hidden",
+					},
+				})
+			end,
+			"Live grep (full)",
 		},
 		["o"] = {
 			function()
@@ -109,7 +134,7 @@ local config = {
 			C = { "<cmd>Telescope colorscheme<CR>", "Colorsheme" },
 			m = { "<cmd>Telescope man_pages<CR>", "Man pages" },
 			j = { "<cmd>Cheatsheet<CR>", "Cheatsheet" },
-			e = { "<cmd>Telescope env<CR>", "Search environtment variables" },
+			e = { "<cmd>Telescope env<CR>", "Search environment variables" },
 		},
 		g = {
 			name = "Git",
