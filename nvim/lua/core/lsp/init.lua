@@ -61,6 +61,8 @@ M.configure = function()
 	end
 
 	lsp.on_attach(function(_, bufnr)
+		local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+
 		lsp.default_keymaps({ buffer = bufnr })
 		vim.keymap.set("n", "K", function()
 			vim.lsp.buf.hover()
@@ -96,6 +98,10 @@ M.configure = function()
 		vim.keymap.set("n", "<C-;>", function()
 			vim.lsp.buf.format()
 		end, get_opts(bufnr, "Format code"))
+
+		if filetype == "rust" then
+			vim.cmd("set autoindent tabstop=2 shiftwidth=2")
+		end
 	end)
 
 	lsp.setup()
