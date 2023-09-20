@@ -15,9 +15,11 @@
 
 ### For nvim user
 - brew install jq
+- brew install llvm -- for clang
 - npm install -g eslint_d
 - npm install -g write-good
 - cargo install typos-cli or brew install typos-cli (https://github.com/crate-ci/typos)
+- cargo install neocmakelsp -- for .cmake files
 
 ### Other notes:
 - For Kitty, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.
