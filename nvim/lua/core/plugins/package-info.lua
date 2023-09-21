@@ -11,8 +11,8 @@ M.configure = function()
 		icons = {
 			enable = true,
 			style = {
-				up_to_date = " " .. icons.git.FileStaged .. " ",
-				outdated = " " .. icons.git.FileUnstaged .. " ",
+				up_to_date = " " .. icons.ui.Target .. " ",
+				outdated = " " .. icons.ui.Target .. " ",
 			},
 		},
 	})
