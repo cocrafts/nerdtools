@@ -47,7 +47,7 @@ M.options = {
 		},
 		gui = {
 			CursorLine = { bg = colors.cursor },
-			GitBlame = { fg = "#434A68", bg = colors.cursor },
+			BlameLine = { fg = "#434A68", bg = colors.cursor },
 			MsgArea = { fg = colors.fg, bg = colors.bg },
 
 			Normal = { bg = colors.bg },
