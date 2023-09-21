@@ -101,6 +101,8 @@ M.configure = function()
 
 		if filetype == "rust" then
 			vim.cmd("set autoindent tabstop=2 shiftwidth=2")
+		elseif filetype == "json" then
+			vim.cmd("set expandtab shiftwidth=2")
 		end
 	end)
 
