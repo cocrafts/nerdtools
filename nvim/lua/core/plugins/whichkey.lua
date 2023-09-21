@@ -41,12 +41,7 @@ local config = {
 		["z"] = { "<cmd>Telescope zoxide list<CR>", "Zoxide list" },
 		["u"] = { "<cmd>lua require('telescope').extensions.recent_files.pick()<CR>", "Recent files" },
 		["U"] = { "<cmd>Telescope git_status<CR>", "Open changed file" },
-		["i"] = {
-			function()
-				require("telescope-live-grep-args.shortcuts").grep_word_under_cursor({ postfix = " --iglob *" })
-			end,
-			"Live grep (lite)",
-		},
+		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep (lite)" },
 		["I"] = {
 			function()
 				local path = vim.api.nvim_buf_get_name(0)
