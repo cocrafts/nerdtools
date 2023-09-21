@@ -238,6 +238,7 @@ return {
 		event = "User FileOpened",
 	},
 	{
+		-- quick jump/search like vim-sneak
 		"folke/flash.nvim",
 		event = "VeryLazy",
 		opts = {},
@@ -270,12 +271,14 @@ return {
 		},
 	},
 	{
+		-- highlight other uses of the word under the cursor using regex matching
 		"RRethy/vim-illuminate",
 		config = function()
 			require("core.plugins.illuminate").configure()
 		end,
 	},
 	{
+		-- highlight/preview color code
 		"brenoprata10/nvim-highlight-colors",
 		config = function()
 			require("nvim-highlight-colors").setup({
