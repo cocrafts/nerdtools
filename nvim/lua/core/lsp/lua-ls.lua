@@ -1,13 +1,19 @@
+local config = require("utils.config")
 local M = {}
 
 M.configure = function(lspconfig)
 	lspconfig.lua_ls.setup({
 		on_init = function(client)
 			local path = client.workspace_folders[1].name
-			if not vim.loop.fs_stat(path .. ".luarc.json") and not vim.loop.fs_stat(path .. "./luarc.jsonc") then
+			if not vim.loop.fs_stat(path .. "/.luarc.json") and not vim.loop.fs_stat(path .. "/.luarc.jsonc") then
 				client.config.settings = vim.tbl_deep_extend("force", client.config.settings, {
 					Lua = {
-						telemetry = { enable = false },
+						diagnostics = {
+							enable = false,
+						},
+						format = {
+							enable = false,
+						},
 						runtime = {
 							version = "LuaJIT",
 						},
@@ -16,9 +22,6 @@ M.configure = function(lspconfig)
 						library = {
 							vim.fn.expand("$VIMRUNTIME"),
 							require("neodev.config").types(),
-							"${3rd}/busted/library",
-							"${3rd}/luassert/library",
-							"${3rd}/luv/library",
 						},
 						maxPreload = 5000,
 						preloadFileSize = 10000,
