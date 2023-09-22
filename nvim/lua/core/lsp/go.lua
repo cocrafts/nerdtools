@@ -1,5 +1,6 @@
 local M = {}
 local icons = require("utils.icons")
+local config = require("utils.config")
 
 M.configure = function()
 	require("go").setup({
@@ -10,20 +11,22 @@ M.configure = function()
 		lsp_gofumpt = true,
 		lsp_keymaps = false,
 		lsp_codelens = true,
-		lsp_diag_hdlr = true, -- hook lsp diag handler
-		lsp_diag_virtual_text = { space = 0, prefix = icons.ui.Block }, -- virtual text setup
-		lsp_diag_signs = true,
-		lsp_diag_update_in_insert = true,
+		diagnostic = {
+			hdlr = true, -- hook lsp diag handler
+			signs = false,
+			-- set to true: use gopls to format,
+			-- false if you want to use other formatter tool(e.g. efm, nulls)
+			underline = true,
+			virtual_text = { space = 0, prefix = icons.ui.Block }, -- virtual text setup
+			update_in_insert = config.use_live_diagnostic,
+		},
 		lsp_document_formatting = false,
-		-- set to true: use gopls to format,
-		-- false if you want to use other formatter tool(e.g. efm, nulls)
-		lsp_diag_underline = true,
 		lsp_inlay_hints = {
 			enabled = true,
 		},
 		gocoverage_sign = icons.ui.Block,
 		sign_priority = 5, -- change to a higher number to override other signs
-		trouble = true, -- true: use trouble to open quickfix
+		trouble = false, -- true: use trouble to open quickfix
 		luasnip = true,
 	})
 end
