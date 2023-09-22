@@ -11,13 +11,18 @@ M.configure = function()
 			search = {
 				enable = true,
 			},
+			cursor = {
+				enable = false,
+				overlap = false,
+				priority = 0,
+			},
 			diagnostic = {
-				enable = true,
+				enable = false,
 				signs = { "-", "=", "≡" },
-				min_severity = vim.diagnostic.severity.HINT,
+				min_severity = vim.diagnostic.severity.ERROR,
 			},
 			gitsigns = {
-				enable = true,
+				enable = false,
 				signs = { -- can only be a single character (multi-byte is okay)
 					add = "│",
 					change = "│",
@@ -25,8 +30,15 @@ M.configure = function()
 				},
 			},
 			marks = {
-				enable = true,
+				enable = false,
 				show_builtins = false, -- shows the builtin marks like [ ] < >
+				overlap = false,
+				priority = 1,
+			},
+			quickfix = {
+				enable = false,
+				overlap = false,
+				priority = 0,
 			},
 		},
 	})
