@@ -28,7 +28,7 @@ local definitions = {
 
 				local bufnr = args.buf
 				local client = vim.lsp.get_client_by_id(args.data.client_id)
-				require("lsp-inlayhints").on_attach(client, bufnr)
+				require("lsp-inlayhints").on_attach(client or {}, bufnr)
 			end,
 		},
 		config.use_inlay_hints == false,

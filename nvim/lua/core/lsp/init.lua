@@ -108,7 +108,12 @@ M.configure = function()
 
 	lsp.setup()
 
-	require("core.lsp.null-ls").configure()
+	if config.use_null_ls then
+		require("core.lsp.null-ls").configure()
+	else
+		require("core.lsp.guard").configure()
+	end
+
 	require("core.lsp.go").configure()
 	require("core.lsp.rust").configure()
 	require("core.lsp.typescript-tools").configure()

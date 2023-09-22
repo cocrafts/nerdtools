@@ -1,6 +1,6 @@
 {
-	"$schema": "https://raw.githubusercontent.com/zigtools/zls/master/schema.json",
-	"enable_ast_check_diagnostics": true,
-	"enable_inlay_hints": true,
-	"enable_autofix": true
+  "$schema": "https://raw.githubusercontent.com/zigtools/zls/master/schema.json",
+  "enable_ast_check_diagnostics": true,
+  "enable_inlay_hints": true,
+  "enable_autofix": true
 }
