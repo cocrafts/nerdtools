@@ -19,7 +19,12 @@ M.configure = function()
 
 		nls.builtins.formatting.eslint_d,
 		nls.builtins.diagnostics.eslint_d,
-		nls.builtins.diagnostics.typos,
+		nls.builtins.diagnostics.typos.with({
+			extra_args = {
+				"--config",
+				vim.fn.expand("~/nerdtools/conf/typos.toml"),
+			},
+		}),
 		null.formatting.jq,
 
 		nls.builtins.formatting.shfmt,
