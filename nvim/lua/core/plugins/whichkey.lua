@@ -90,9 +90,15 @@ local config = {
 		},
 		d = {
 			name = "Diagnostics",
+			f = {
+				function()
+					vim.diagnostic.open_float()
+				end,
+				"Open float",
+			},
+			F = { "<cmd>TroubleToggle quickfix<CR>", "Quick fix" },
 			o = { "<cmd>TroubleToggle<CR>", "Toggle" },
 			l = { "<cmd>TroubleToggle loclist<CR>", "Loc list" },
-			f = { "<cmd>TroubleToggle quickfix<CR>", "Quick fix" },
 			w = { "<cmd>TroubleToggle workspace_diagnostics<CR>", "Workspace diagnostics" },
 			d = { "<cmd>TroubleToggle document_diagnostics<CR>", "Document diagnostics" },
 			r = { "<cmd>TroubleToggle lsp_references<CR>", "References" },
@@ -157,7 +163,7 @@ local config = {
 			a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
 			A = { "<cmd>lua vim.lsp.codelens.run()<CR>", "CodeLens Action" },
 			e = { "<cmd>Telescope diagnostics bufnr=0<CR>", "Document Dianogstics" },
-			f = { "<cmd>lua vim.lsp.buf.formatting()<CR>", "Format" },
+			f = { "<cmd>lua vim.lsp.buf.format()<CR>", "Format" },
 			l = { "<cmd>LspInfo<CR>", "Info" },
 			L = { "<cmd>LspInstallInfo<CR>", "Installer Info" },
 			j = { "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", "Next Dianogstics" },

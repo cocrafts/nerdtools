@@ -44,6 +44,8 @@ M.options = {
 	highlight = {
 		lsp = {
 			LspInlayHint = { fg = colors.gray, bg = colors.none },
+			NormalFloat = { bg = colors.bg },
+			FloatBorder = { fg = colors.green, bg = colors.bg },
 		},
 		gui = {
 			CursorLine = { bg = colors.cursor },
@@ -51,7 +53,7 @@ M.options = {
 			MsgArea = { fg = colors.fg, bg = colors.bg },
 
 			Normal = { bg = colors.bg },
-			LineNR = { fg = colors.dim },     -- line numbers
+			LineNR = { fg = colors.dim }, -- line numbers
 			CursorLineNR = { fg = colors.blue }, -- current line number
 			NormalMode = { fg = colors.blue },
 			InsertMode = { fg = colors.green },
