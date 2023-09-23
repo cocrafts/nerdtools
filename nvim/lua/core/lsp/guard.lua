@@ -147,7 +147,7 @@ M.configure = function()
 		stdin = true,
 	})
 
-	ft("shfmt"):fmt({
+	ft("sh"):fmt({
 		cmd = "shfmt",
 		stdin = true,
 	})
