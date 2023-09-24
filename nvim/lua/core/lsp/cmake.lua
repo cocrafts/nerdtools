@@ -1,7 +1,8 @@
+local coq = require("core.coq")
 local M = {}
 
 M.configure = function(lspconfig)
-	lspconfig.neocmake.setup({})
+	lspconfig.neocmake.setup(coq.lsp_ensure_capabilities({}))
 end
 
 return M

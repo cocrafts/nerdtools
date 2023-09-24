@@ -12,6 +12,9 @@ return {
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 			{ "jose-elias-alvarez/null-ls.nvim" },
+			{ "ms-jpq/coq_nvim", branch = "coq" },
+			{ "ms-jpq/coq.artifacts", branch = "artifacts" },
+			{ "ms-jpq/coq.thirdparty", branch = "3p" },
 			{ "nvimdev/guard.nvim" },
 			{
 				"williamboman/mason.nvim",
@@ -46,6 +49,7 @@ return {
 					require("crates").setup()
 				end,
 			},
+			{ "lvimuser/lsp-inlayhints.nvim" },
 			{
 				"L3MON4D3/LuaSnip",
 				dependencies = { "friendly-snippets" },
@@ -55,7 +59,6 @@ return {
 					require("core.luasnip").configure()
 				end,
 			},
-			{ "lvimuser/lsp-inlayhints.nvim" },
 			{ "hrsh7th/nvim-cmp" }, -- Autocompletion
 			{ "hrsh7th/cmp-buffer" },
 			{ "hrsh7th/cmp-path" },
@@ -218,7 +221,7 @@ return {
 		config = function()
 			require("core.autopairs").configure()
 		end,
-		dependencies = { "nvim-treesitter/nvim-treesitter", "hrsh7th/nvim-cmp" },
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
 	},
 	{ "windwp/nvim-ts-autotag" },
 	{ "wakatime/vim-wakatime" },

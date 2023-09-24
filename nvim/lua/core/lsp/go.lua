@@ -1,13 +1,14 @@
-local M = {}
 local config = require("utils.config")
+local coq = require("core.coq")
 local icons = require("utils.icons")
+local M = {}
 
-M.configure = function()
+M.configure = function(lspconfig)
 	require("go").setup({
 		goimport = "goimports_reviser",
 		fillstruct = "gopls",
 		gofmt = "gofumpt",
-		lsp_cfg = true,
+		lsp_cfg = false,
 		lsp_gofumpt = true,
 		lsp_keymaps = false,
 		lsp_codelens = true,
@@ -29,6 +30,9 @@ M.configure = function()
 		trouble = false, -- true: use trouble to open quickfix
 		luasnip = true,
 	})
+
+	local lsp_config = require("go.lsp").config()
+	lspconfig.gopls.setup(coq.lsp_ensure_capabilities(lsp_config))
 end
 
 return M

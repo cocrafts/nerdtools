@@ -30,10 +30,10 @@ M.configure = function()
 		},
 		extensions = {
 			fzf = {
-				fuzzy = true,               -- false will only do exact matching
+				fuzzy = true, -- false will only do exact matching
 				override_generic_sorter = true, -- override the generic sorter
 				override_file_sorter = true, -- override the file sorter
-				case_mode = "smart_case",   -- or "ignore_case" or "respect_case"
+				case_mode = "smart_case", -- or "ignore_case" or "respect_case"
 			},
 			frecency = {
 				show_scores = false,
@@ -53,7 +53,32 @@ M.configure = function()
 		},
 	})
 
-	neoclip.setup({ enable_persistent_history = true })
+	neoclip.setup({
+		enable_persistent_history = true,
+		keys = {
+			telescope = {
+				i = {
+					select = "<cr>",
+					paste = "<c-j>",
+					paste_behind = "<c-k>",
+					replay = "<c-q>", -- replay a macro
+					delete = "<c-d>", -- delete an entry
+					edit = "<c-e>", -- edit an entry
+					custom = {},
+				},
+				n = {
+					select = "<cr>",
+					paste = "j",
+					paste_behind = "k",
+					replay = "q",
+					delete = "d",
+					edit = "e",
+					custom = {},
+				},
+			},
+		},
+	})
+
 	telescope.load_extension("env")
 	telescope.load_extension("fzf")
 	telescope.load_extension("zoxide")
