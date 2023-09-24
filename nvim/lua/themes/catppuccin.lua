@@ -1,10 +1,10 @@
 local M = {}
-local helper = require("utils.helper")
 local base_colors = require("themes.colors")
+local helper = require("utils.helper")
 
-local colors = helper.mergeTables({
+local colors = helper.mergeTables(base_colors, {
 	dim = "#2d2d45",
-}, base_colors)
+})
 
 M.options = {
 	name = "catppuccin",

@@ -1,29 +1,10 @@
 local M = {}
+local base_colors = require("themes.color")
 local helper = require("utils.helper")
 
-local colors = helper.mergeTables({
-	bg = "#1A1B26",
-	darkest = "#16161e",
-	fg = "#ABB2BF",
-	dim = "#242533",
-	gray = "#37384f",
-	cursor = "#1E202F",
-	none = "NONE",
-	keywords = "#B877DB",
-	comments = "#3c3d57",
-	numbers = "#FF9668",
-	procs = "#d6a786",
+local colors = helper.mergeTables(base_colors, {
 	functions = "#E95678",
-	variables = "#DBBE7F",
-	strings = "#e6a98a",
-	types = "#64D1A9",
-	white = "#FFFFFF",
-	purple = "#c678dd",
-	green = "#98be65",
-	blue = "#51afef",
-	red = "#ec5f67",
-	orange = "#FF8800",
-}, {})
+})
 
 if vim.g.neovide then
 	colors["gray"] = "#27283a"
