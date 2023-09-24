@@ -1,5 +1,5 @@
-local utils = require("themes.utils")
 local colors = require("themes.color")
+local utils = require("themes.utils")
 local theme = require("utils.config").theme
 
 theme.configure()
@@ -27,6 +27,11 @@ theme.options.highlight.system = {
 	-- Telescope
 	TelescopeNormal = { bg = colors.bg },
 	TelescopeBorder = { bg = colors.bg, fg = colors.green },
+
+	-- Cmp
+	CmpNormal = { bg = colors.bg },
+	CmpFloatBorder = { bg = colors.bg, fg = colors.green },
+	CmpCursorLine = { fg = colors.green },
 
 	-- Gitsign
 	GitSignsAdd = { fg = colors.green },

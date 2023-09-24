@@ -17,6 +17,10 @@ M.configure = function()
 	local ConfirmBehavior = cmp_types.ConfirmBehavior
 	local max_width = 0
 	local duplicates_default = 0
+	local bordered_window = cmp_window.bordered({
+		winhighlight = "Normal:CmpNormal,FloatBorder:CmpFloatBorder,CursorLine:CmpCursorLine,Search:None",
+		scrollbar = false,
+	})
 	local duplicates = {
 		buffer = 1,
 		path = 1,
@@ -131,8 +135,8 @@ M.configure = function()
 			{ name = "buffer", priority = 6, keyword_length = 3 },
 		},
 		window = {
-			completion = cmp_window.bordered(),
-			documentation = cmp_window.bordered(),
+			completion = bordered_window,
+			documentation = bordered_window,
 		},
 		--- @class cmp.CompletionConfig
 		completion = {
