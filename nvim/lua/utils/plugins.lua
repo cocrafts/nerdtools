@@ -12,6 +12,7 @@ return {
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 			{ "jose-elias-alvarez/null-ls.nvim" },
+			{ "ms-jpq/coq_nvim" },
 			{ "nvimdev/guard.nvim" },
 			{
 				"williamboman/mason.nvim",
@@ -218,7 +219,7 @@ return {
 		config = function()
 			require("core.autopairs").configure()
 		end,
-		dependencies = { "nvim-treesitter/nvim-treesitter", "hrsh7th/nvim-cmp" },
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
 	},
 	{ "windwp/nvim-ts-autotag" },
 	{ "wakatime/vim-wakatime" },

@@ -1,8 +1,8 @@
-local config = require("utils.config")
+local coq = require("coq")
 local M = {}
 
 M.configure = function(lspconfig)
-	lspconfig.lua_ls.setup({
+	lspconfig.lua_ls.setup(coq.lsp_ensure_capabilities({
 		on_init = function(client)
 			local path = client.workspace_folders[1].name
 			if not vim.loop.fs_stat(path .. "/.luarc.json") and not vim.loop.fs_stat(path .. "/.luarc.jsonc") then
@@ -34,7 +34,7 @@ M.configure = function(lspconfig)
 
 			return true
 		end,
-	})
+	}))
 end
 
 return M

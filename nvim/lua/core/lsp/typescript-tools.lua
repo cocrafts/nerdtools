@@ -1,8 +1,8 @@
-local config = require("utils.config")
+local coq = require("coq")
 local M = {}
 
 M.configure = function()
-	require("typescript-tools").setup({
+	require("typescript-tools").setup(coq.lsp_ensure_capabilities({
 		settings = {
 			separate_diagnostic_server = true,
 			publish_diagnostic_on = "change",
@@ -17,7 +17,7 @@ M.configure = function()
 				convertTabsToSpaces = false,
 			},
 		},
-	})
+	}))
 end
 
 return M
