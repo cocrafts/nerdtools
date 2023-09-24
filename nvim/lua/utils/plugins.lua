@@ -66,8 +66,8 @@ return {
 		},
 		config = function()
 			require("core.lsp").configure()
-			require("core.mason").configure()
 			require("core.cmp").configure()
+			require("core.mason").configure()
 		end,
 	},
 	{
