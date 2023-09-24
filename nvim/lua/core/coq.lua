@@ -1,6 +1,8 @@
+local config = require("utils.config")
 local icons = require("utils.icons")
+local M = {}
 
-return {
+M.settings = {
 	auto_start = "shut-up",
 	keymap = {
 		pre_select = true,
@@ -29,3 +31,13 @@ return {
 		},
 	},
 }
+
+M.lsp_ensure_capabilities = function(options)
+	if config.use_cmp then
+		return options
+	end
+
+	return require("coq").lsp_ensure_capabilities(options)
+end
+
+return M

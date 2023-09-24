@@ -1,4 +1,4 @@
-local coq = require("coq")
+local coq = require("core.coq")
 local M = {}
 
 -- Configure instruction:use this instruction: https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#omnisharp

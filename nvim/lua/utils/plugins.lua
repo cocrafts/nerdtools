@@ -12,9 +12,9 @@ return {
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 			{ "jose-elias-alvarez/null-ls.nvim" },
-			{ "ms-jpq/coq_nvim",                branch = "coq" },
-			{ "ms-jpq/coq.artifacts",           branch = "artifacts" },
-			{ "ms-jpq/coq.thirdparty",          branch = "3p" },
+			{ "ms-jpq/coq_nvim", branch = "coq" },
+			{ "ms-jpq/coq.artifacts", branch = "artifacts" },
+			{ "ms-jpq/coq.thirdparty", branch = "3p" },
 			{ "nvimdev/guard.nvim" },
 			{
 				"williamboman/mason.nvim",
@@ -59,12 +59,12 @@ return {
 					require("core.luasnip").configure()
 				end,
 			},
-			-- { "hrsh7th/nvim-cmp" }, -- Autocompletion
-			-- { "hrsh7th/cmp-buffer" },
-			-- { "hrsh7th/cmp-path" },
-			-- { "hrsh7th/cmp-cmdline" },
-			-- { "hrsh7th/cmp-nvim-lsp" },
-			-- { "saadparwaiz1/cmp_luasnip" },
+			{ "hrsh7th/nvim-cmp" }, -- Autocompletion
+			{ "hrsh7th/cmp-buffer" },
+			{ "hrsh7th/cmp-path" },
+			{ "hrsh7th/cmp-cmdline" },
+			{ "hrsh7th/cmp-nvim-lsp" },
+			{ "saadparwaiz1/cmp_luasnip" },
 			{ "rafamadriz/friendly-snippets", lazy = true },
 		},
 		config = function()
@@ -93,8 +93,8 @@ return {
 			require("core.lualine").configure()
 		end,
 	},
-	{ "folke/lazy.nvim",    tag = "stable" },
-	{ "folke/neodev.nvim",  lazy = true },
+	{ "folke/lazy.nvim", tag = "stable" },
+	{ "folke/neodev.nvim", lazy = true },
 	{ "folke/twilight.nvim" },
 	{
 		"folke/trouble.nvim",
@@ -127,9 +127,9 @@ return {
 			require("core.whichkey").configure()
 		end,
 	},
-	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true,      build = "make" },
-	{ "nvim-lua/plenary.nvim",                    lazy = true },
-	{ "kkharji/sqlite.lua",                       module = "sqlite" },
+	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
+	{ "nvim-lua/plenary.nvim", lazy = true },
+	{ "kkharji/sqlite.lua", module = "sqlite" },
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",

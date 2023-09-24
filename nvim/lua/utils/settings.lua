@@ -1,4 +1,4 @@
-local coq_settings = require("utils.coq")
+local config = require("utils.config")
 
 local globals = {
 	mapleader = " ",
@@ -8,8 +8,11 @@ local globals = {
 	gitblame_message_template = " <author>, <date> • <summary> ",
 	gitblame_message_when_not_committed = "",
 	zig_fmt_autosave = 0,
-	coq_settings = coq_settings,
 }
+
+if config.use_cmp == false then
+	globals.coq_settings = require("core.coq").settings
+end
 
 local opts = {
 	timeout = true,

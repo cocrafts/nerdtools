@@ -1,4 +1,4 @@
-local coq = require("coq")
+local coq = require("core.coq")
 local M = {}
 
 M.configure = function(lspconfig)

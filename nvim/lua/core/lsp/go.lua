@@ -1,5 +1,5 @@
 local config = require("utils.config")
-local coq = require("coq")
+local coq = require("core.coq")
 local icons = require("utils.icons")
 local M = {}
 
