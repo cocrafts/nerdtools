@@ -135,7 +135,10 @@ M.configure = function()
 			documentation = cmp_window.bordered(),
 		},
 		--- @class cmp.CompletionConfig
-		completion = {},
+		completion = {
+			keyword_length = 1,
+			completeopt = "menu,menuone,noinsert",
+		},
 		confirm_opts = {
 			behavior = ConfirmBehavior.Replace,
 			select = false,
