@@ -6,7 +6,8 @@ M.configure = function()
 		ensure_installed = {
 			"gopls",
 			"graphql",
-			"omnisharp",
+			"efm",
+			-- "omnisharp",
 			"stylelint_lsp",
 			"jsonls",
 			"html",

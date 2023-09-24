@@ -17,10 +17,27 @@ local definitions = {
 		},
 	},
 	{
+		"BufWritePost",
+		{
+			group = "LspFormattingGroup",
+			desc = "Format file on save",
+			callback = function(args)
+				local efm = vim.lsp.get_clients({ name = "efm" })
+				if vim.tbl_isempty(efm) then
+					return
+				end
+				vim.lsp.buf.format({ name = "efm" })
+				vim.api.nvim_buf_call(args.buf, function()
+					vim.cmd("w")
+				end)
+			end,
+		},
+	},
+	{
 		"LspAttach",
 		{
 			group = "LspAttach_inlayhints",
-			desc = "Inlay Hints if possible",
+			desc = "Inlay-Hints if possible",
 			callback = function(args)
 				if not (args.data and args.data.client_id) then
 					return

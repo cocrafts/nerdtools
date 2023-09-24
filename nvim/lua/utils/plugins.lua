@@ -3,6 +3,10 @@ return {
 	{ "lukas-reineke/onedark.nvim" },
 	{ "catppuccin/nvim" },
 	{
+		"creativenull/efmls-configs-nvim",
+		dependencies = { "neovim/nvim-lspconfig" },
+	},
+	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v3.x",
 		dependencies = {

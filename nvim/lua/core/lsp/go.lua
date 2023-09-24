@@ -1,6 +1,6 @@
 local M = {}
-local icons = require("utils.icons")
 local config = require("utils.config")
+local icons = require("utils.icons")
 
 M.configure = function()
 	require("go").setup({

@@ -98,7 +98,7 @@ M.configure = function()
 	if config.use_null_ls then
 		require("core.lsp.null-ls").configure()
 	else
-		require("core.lsp.guard").configure()
+		require("core.lsp.efm").configure(lspconfig)
 	end
 
 	require("core.lsp.go").configure()
