@@ -1,3 +1,4 @@
+local colors = require("themes.color")
 local M = {}
 
 function _G.set_terminal_keymaps()
@@ -54,13 +55,16 @@ M.configure = function()
 		insert_mappings = true, -- whether or not the open mapping applies in insert mode
 		persist_size = false,
 		close_on_exit = true,
+		highlights = {
+			Normal = { guibg = colors.bg },
+			FloatBorder = {
+				guibg = colors.bg,
+				guifg = colors.green,
+			},
+		},
 		float_opts = {
 			border = "curved",
 			winblend = 0,
-			highlights = {
-				border = "Normal",
-				background = "Normal",
-			},
 		},
 		open_mapping = [[<c-\>]],
 		winbar = {
