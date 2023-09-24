@@ -3,7 +3,7 @@ local commands = {
 	{
 		name = "BufferKill",
 		fn = function()
-			require("core.plugins.bufferline").buf_kill("bd")
+			require("core.bufferline").buf_kill("bd")
 		end,
 	},
 }

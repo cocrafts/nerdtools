@@ -48,7 +48,6 @@ M.configure = function()
 	local lspconfig = require("lspconfig")
 
 	require("neodev").setup()
-	require("core.lsp.mason").configure()
 
 	if config.use_inlay_hints then
 		require("lsp-inlayhints").setup(hints)

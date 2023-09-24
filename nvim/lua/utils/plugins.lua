@@ -52,7 +52,7 @@ return {
 				build = "make install_jsregexp",
 				event = "InsertEnter",
 				config = function()
-					require("core.plugins.luasnip").configure()
+					require("core.luasnip").configure()
 				end,
 			},
 			{ "lvimuser/lsp-inlayhints.nvim" },
@@ -66,7 +66,8 @@ return {
 		},
 		config = function()
 			require("core.lsp").configure()
-			require("core.lsp.cmp").configure()
+			require("core.mason").configure()
+			require("core.cmp").configure()
 		end,
 	},
 	{
@@ -79,7 +80,7 @@ return {
 		branch = "v3.x",
 		cmd = "Neotree",
 		config = function()
-			require("core.plugins.neo-tree").configure()
+			require("core.neo-tree").configure()
 		end,
 	},
 	{
@@ -105,7 +106,7 @@ return {
 			"MunifTanjim/nui.nvim",
 		},
 		config = function()
-			require("core.plugins.noice").configure()
+			require("core.noice").configure()
 		end,
 	},
 	{
@@ -114,13 +115,13 @@ return {
 			"MunifTanjim/nui.nvim",
 		},
 		config = function()
-			require("core.plugins.package-info").configure()
+			require("core.package-info").configure()
 		end,
 	},
 	{
 		"folke/which-key.nvim",
 		config = function()
-			require("core.plugins.whichkey").configure()
+			require("core.whichkey").configure()
 		end,
 	},
 	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
@@ -162,7 +163,7 @@ return {
 		cmd = "Telescope",
 		lazy = true,
 		config = function()
-			require("core.plugins.telescope").configure()
+			require("core.telescope").configure()
 		end,
 	},
 	{ "nvim-treesitter/playground", lazy = true },
@@ -171,7 +172,7 @@ return {
 		build = ":TSUpdate",
 		event = "User FileOpened",
 		config = function()
-			require("core.plugins.treesitter").configure()
+			require("core.treesitter").configure()
 		end,
 	},
 	{ "f-person/git-blame.nvim" },
@@ -179,7 +180,7 @@ return {
 		"sindrets/diffview.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
-			require("core.plugins.diffview").configure()
+			require("core.diffview").configure()
 		end,
 	},
 	{
@@ -187,13 +188,13 @@ return {
 		event = "User FileOpened",
 		cmd = { "Gitsigns" },
 		config = function()
-			require("core.plugins.gitsigns").configure()
+			require("core.gitsigns").configure()
 		end,
 	},
 	{
 		"lewis6991/satellite.nvim",
 		config = function()
-			require("core.plugins.satellite").configure()
+			require("core.satellite").configure()
 		end,
 	},
 	{
@@ -201,21 +202,21 @@ return {
 		branch = "main",
 		event = "User FileOpened",
 		config = function()
-			require("core.plugins.bufferline").configure()
+			require("core.bufferline").configure()
 		end,
 	},
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",
 		config = function()
-			require("core.plugins.toggleterm").configure()
+			require("core.toggleterm").configure()
 		end,
 	},
 	{
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
 		config = function()
-			require("core.plugins.autopairs").configure()
+			require("core.autopairs").configure()
 		end,
 		dependencies = { "nvim-treesitter/nvim-treesitter", "hrsh7th/nvim-cmp" },
 	},
@@ -230,7 +231,7 @@ return {
 	{
 		"numToStr/Comment.nvim",
 		config = function()
-			require("core.plugins.comment").configure()
+			require("core.comment").configure()
 		end,
 		keys = { { "gc", mode = { "n", "v" } }, { "gb", mode = { "n", "v" } } },
 		event = "User FileOpened",
@@ -238,7 +239,7 @@ return {
 	{
 		"lukas-reineke/indent-blankline.nvim",
 		config = function()
-			require("core.plugins.indent-blankline").configure()
+			require("core.indent-blankline").configure()
 		end,
 		event = "User FileOpened",
 	},
@@ -279,7 +280,7 @@ return {
 		-- highlight other uses of the word under the cursor using regex matching
 		"RRethy/vim-illuminate",
 		config = function()
-			require("core.plugins.illuminate").configure()
+			require("core.illuminate").configure()
 		end,
 	},
 	{
