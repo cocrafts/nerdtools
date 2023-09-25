@@ -31,7 +31,7 @@ theme.options.highlight.system = {
 	-- Cmp
 	CmpNormal = { bg = colors.bg },
 	CmpFloatBorder = { bg = colors.bg, fg = colors.green },
-	CmpCursorLine = { fg = colors.green },
+	CmpCursorLine = { bg = colors.cursor },
 
 	-- Gitsign
 	GitSignsAdd = { fg = colors.green },

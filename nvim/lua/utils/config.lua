@@ -3,6 +3,6 @@ return {
 	use_inlay_hints = true,
 	use_live_diagnostic = false,
 	use_null_ls = false,
-	use_cmp = false,
+	use_cmp = true,
 	theme = require("themes.tokyonight"),
 }
