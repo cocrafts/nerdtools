@@ -100,8 +100,9 @@ M.configure = function()
 		require("core.lsp.efm").configure(lspconfig)
 	end
 
-	require("core.lsp.rust").configure()
 	require("core.lsp.typescript-tools").configure()
+	require("core.lsp.rust").configure()
+	require("core.lsp.toml").configure(lspconfig)
 	require("core.lsp.go").configure(lspconfig)
 	require("core.lsp.bash").configure(lspconfig)
 	require("core.lsp.clang").configure(lspconfig)

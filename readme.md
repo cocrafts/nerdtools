@@ -19,6 +19,7 @@
 - cargo install typos-cli or brew install typos-cli (typos)
 - cargo install neocmakelsp (for .cmake)
 - cargo install selene (lua linter, lighting fast)
+- cargo install --features lsp --locked taplo-cli (for toml)
 - npm install -g eslint_d
 - npm install -g write-good
 - npm i -g bash-language-server

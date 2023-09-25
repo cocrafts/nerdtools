@@ -23,7 +23,7 @@ M.configure = function(lspconfig)
 		},
 		lsp_document_formatting = false,
 		lsp_inlay_hints = {
-			enabled = true,
+			enabled = false,
 		},
 		gocoverage_sign = icons.ui.Block,
 		sign_priority = 5, -- change to a higher number to override other signs
