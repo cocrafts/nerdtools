@@ -4,11 +4,11 @@ local icons = require("utils.icons")
 M.configure = function()
 	require("noice").setup({
 		cmdline = {
-			view = "cmdline",
 			format = {
 				cmdline = {
+					title = "",
 					pattern = "^:",
-					icon = "  " .. icons.ui.DoubleChevronRight,
+					icon = icons.ui.DoubleChevronRight,
 					lang = "vim",
 				},
 				search_down = {
@@ -33,6 +33,11 @@ M.configure = function()
 					icon = "  ",
 					lang = "lua",
 				},
+			},
+		},
+		views = {
+			cmdline_popup = {
+				border = { style = "none" },
 			},
 		},
 		lsp = {
