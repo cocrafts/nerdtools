@@ -2,10 +2,10 @@
   hosts: local
 
   tasks:
-    - name: Install NeoVim
-      shell: brew install --HEAD neovim
-      args:
-        creates: /usr/local/bin/nvim
+    # - name: Install NeoVim
+    #   shell: brew install --HEAD neovim
+    #   args:
+    #     creates: /usr/local/bin/nvim
 
     - name: Create symlink to neovim configure
       file:
@@ -19,9 +19,15 @@
         dest: ~/.ideavimrc
         force: yes
 
-    - name: Create symlink to wezterm configure
+    - name: Create symlink to Alacritty configure
       file:
-        src: ~/nerdtools/wezterm/
+        src: ~/nerdtools/conf/alacritty/
+        dest: ~/.config/alacritty
+        state: link
+
+    - name: Create symlink to Wezterm configure
+      file:
+        src: ~/nerdtools/conf/wezterm/
         dest: ~/.config/wezterm
         state: link
 
