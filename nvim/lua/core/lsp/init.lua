@@ -1,11 +1,12 @@
 local config = require("utils.config")
+local icons = require("utils.icons")
 local M = {}
 
 local hints = {
 	inlay_hints = {
 		parameter_hints = {
 			show = true,
-			prefix = " <- ",
+			prefix = string.format(" %s ", icons.kind.Number),
 			separator = ", ",
 			remove_colon_start = false,
 			remove_colon_end = true,

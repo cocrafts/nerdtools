@@ -8,4 +8,14 @@ M.mergeTables = function(t1, t2)
 	return t1
 end
 
+M.valueExists = function(item, items)
+	for _, value in ipairs(items) do
+		if item == value then
+			return true
+		end
+	end
+
+	return false
+end
+
 return M

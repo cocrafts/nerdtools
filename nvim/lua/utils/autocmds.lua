@@ -1,4 +1,5 @@
 local config = require("utils.config")
+local helper = require("utils.helper")
 
 local definitions = {
 	{
@@ -45,7 +46,12 @@ local definitions = {
 
 				local bufnr = args.buf
 				local client = vim.lsp.get_client_by_id(args.data.client_id)
-				require("lsp-inlayhints").on_attach(client or {}, bufnr)
+				local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+				local is_ignored = helper.valueExists(filetype, { "go", "rust" })
+
+				if client ~= nil and is_ignored == false then
+					require("lsp-inlayhints").on_attach(client, bufnr)
+				end
 			end,
 		},
 		config.use_inlay_hints == false,

@@ -180,6 +180,18 @@ local config = {
 			p = { "<cmd>Telescope package_info<CR>", "Package actions" },
 			o = { "<cmd>TwilightEnable<CR>", "Twilight on" },
 			O = { "<cmd>TwilightDisable<CR>", "Twilight off" },
+			h = {
+				function()
+					require("lsp-inlayhints").toggle()
+				end,
+				"Toggle Inlay-hints",
+			},
+			H = {
+				function()
+					require("lsp-inlayhints").reset()
+				end,
+				"Reset Inlay-hints",
+			},
 		},
 		k = {
 			name = "Terminal",
