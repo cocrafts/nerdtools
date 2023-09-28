@@ -49,6 +49,7 @@ return {
 					require("crates").setup()
 				end,
 			},
+			{ "szebniok/tree-sitter-wgsl" },
 			{ "lvimuser/lsp-inlayhints.nvim" },
 			{
 				"L3MON4D3/LuaSnip",
@@ -241,6 +242,7 @@ return {
 	},
 	{
 		"lukas-reineke/indent-blankline.nvim",
+		version = "2.20.8",
 		config = function()
 			require("core.indent-blankline").configure()
 		end,

@@ -20,6 +20,7 @@
 - cargo install neocmakelsp (for .cmake)
 - cargo install selene (lua linter, lighting fast)
 - cargo install --features lsp --locked taplo-cli (for toml)
+- cargo install --git https://github.com/wgsl-analyzer/wgsl-analyzer wgsl_analyzer
 - npm install -g eslint_d
 - npm install -g write-good
 - npm i -g bash-language-server
