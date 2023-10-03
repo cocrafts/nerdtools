@@ -43,7 +43,6 @@ M.options = {
 			ReplaceMode = { fg = colors.red },
 			SelectMode = { fg = colors.purple },
 
-			MatchParen = { fg = colors.fg, bg = colors.blue },
 			ScrollView = { bg = colors.fg },
 
 			NonText = { fg = colors.gray }, -- whitespaces

@@ -31,6 +31,7 @@ config.font = wezterm.font_with_fallback({
 	},
 })
 
+config.force_reverse_video_cursor = true
 config.adjust_window_size_when_changing_font_size = false
 config.hide_tab_bar_if_only_one_tab = true
 config.tab_bar_at_bottom = true
