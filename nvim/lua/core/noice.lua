@@ -1,8 +1,10 @@
 local M = {}
+local config = require("utils.config")
 local icons = require("utils.icons")
 
 M.configure = function()
-	require("noice").setup({
+	---@class NoiceConfig?
+	local options = {
 		cmdline = {
 			format = {
 				cmdline = {
@@ -43,7 +45,7 @@ M.configure = function()
 		lsp = {
 			-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
 			override = {
-				["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+				-- ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
 				-- ["vim.lsp.util.stylize_markdown"] = true,
 				-- ["cmp.entry.get_documentation"] = true,
 			},
@@ -70,7 +72,11 @@ M.configure = function()
 			inc_rename = false, -- enables an input dialog for inc-rename.nvim
 			lsp_doc_border = true, -- add a border to hover docs and signature help
 		},
-	})
+	}
+
+	if config.use_noice then
+		require("noice").setup(options)
+	end
 end
 
 return M
