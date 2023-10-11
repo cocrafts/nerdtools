@@ -139,8 +139,9 @@ local config = {
 		},
 		g = {
 			name = "Git",
-			j = { "<cmd>lua require('gitsigns').next_hunk()<CR>", "Next hunk" },
-			J = { "<cmd>lua require('gitsigns').prev_hunk()<CR>", "Previous hunk" },
+			j = { "<cmd>Telescope advanced_git_search diff_commit_file<CR>", "File affected commits" },
+			l = { "<cmd>Telescope advanced_git_search search_log_content<CR>", "Search log contents" },
+			L = { "<cmd>Telescope advanced_git_search diff_commit_line<CR>", "Line affected commits" },
 			p = { "<cmd>lua require('gitsigns').preview_hunk()<CR>", "Preview hunk" },
 			r = { "<cmd>lua require('gitsigns').reset_hunk()<CR>", "Reset hunk" },
 			R = { "<cmd>lua require('gitsigns').reset_buffer()<CR>", "Reset buffer" },

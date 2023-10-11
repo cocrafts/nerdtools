@@ -141,6 +141,7 @@ return {
 			{ "jvgrootveld/telescope-zoxide" },
 			{ "smartpde/telescope-recent-files" },
 			{ "nvim-telescope/telescope-ui-select.nvim" },
+			{ "aaronhallaert/advanced-git-search.nvim" },
 			{
 				"sudormrfbin/cheatsheet.nvim",
 				dependencies = {

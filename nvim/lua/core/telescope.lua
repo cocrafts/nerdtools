@@ -35,6 +35,9 @@ M.configure = function()
 				override_file_sorter = true, -- override the file sorter
 				case_mode = "smart_case", -- or "ignore_case" or "respect_case"
 			},
+			advanced_git_search = {
+				diff_plugin = "diffview",
+			},
 			frecency = {
 				show_scores = false,
 				show_unindexed = false,
@@ -81,6 +84,7 @@ M.configure = function()
 
 	telescope.load_extension("env")
 	telescope.load_extension("fzf")
+	telescope.load_extension("advanced_git_search")
 	telescope.load_extension("noice")
 	telescope.load_extension("zoxide")
 	telescope.load_extension("neoclip")
