@@ -16,8 +16,6 @@ M.initialize = function()
 			"--branch=stable", -- latest stable release
 			lazypath,
 		})
-
-		print("Done.")
 	end
 
 	vim.opt.rtp:prepend(lazypath)
