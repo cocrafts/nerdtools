@@ -14,6 +14,7 @@ M.configure = function()
 			"cssls",
 			"lua_ls",
 			"ruby_ls",
+			"pyright",
 			"rust_analyzer",
 			"zls",
 		},

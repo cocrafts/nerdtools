@@ -24,6 +24,8 @@
 - npm install -g eslint_d
 - npm install -g write-good
 - npm i -g bash-language-server
+- pip3 install ruff
+- pip3 install mypy
 
 ### Other notes:
 - For Kitty, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.
