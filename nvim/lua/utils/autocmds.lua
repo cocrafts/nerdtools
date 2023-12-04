@@ -85,3 +85,12 @@ for _, entry in ipairs(definitions) do
 end
 
 vim.api.nvim_command("autocmd BufRead,BufNewFile Podfile set filetype=ruby")
+vim.filetype.add({
+	filename = {
+		["tsconfig.json"] = "jsonc",
+		[".yamlfmt"] = "yaml",
+	},
+	pattern = {
+		["%.env%.[%w_.-]+"] = "sh",
+	},
+})
