@@ -1,6 +1,7 @@
 local M = {}
 local builtin = require("telescope.builtin")
 local icons = require("utils.icons")
+local themes = require("telescope.themes")
 
 M.configure = function()
 	local telescope = require("telescope")
@@ -102,5 +103,18 @@ M.find_project_files = function(opts)
 		builtin.find_files(opts)
 	end
 end
+
+M.layouts = {
+	full_cursor = function(height)
+		return themes.get_cursor({
+			layout_config = {
+				width = function(_, max_columns, _)
+					return max_columns - 6
+				end,
+				height = height or 12,
+			},
+		})
+	end,
+}
 
 return M
