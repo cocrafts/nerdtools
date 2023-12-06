@@ -1,5 +1,7 @@
+local builtin = require("telescope.builtin")
 local config = require("utils.config")
 local icons = require("utils.icons")
+local themes = require("telescope.themes")
 local M = {}
 
 local hints = {
@@ -68,10 +70,24 @@ M.configure = function()
 			vim.lsp.buf.hover()
 		end, get_opts(bufnr, "Preview signature"))
 		vim.keymap.set("n", "gd", function()
-			vim.lsp.buf.definition()
+			builtin.lsp_definitions(themes.get_cursor({
+				layout_config = {
+					width = function(_, max_columns, _)
+						return max_columns - 6
+					end,
+					height = 12,
+				},
+			}))
 		end, get_opts(bufnr, "Goto definition"))
 		vim.keymap.set("n", "gD", function()
-			vim.lsp.buf.implementation()
+			builtin.lsp_implementations(themes.get_cursor({
+				layout_config = {
+					width = function(_, max_columns, _)
+						return max_columns - 6
+					end,
+					height = 12,
+				},
+			}))
 		end, get_opts(bufnr, "Goto definition"))
 		vim.keymap.set("n", "gs", function()
 			vim.lsp.buf.incoming_calls()
