@@ -98,12 +98,6 @@ return {
 	{ "folke/neodev.nvim", lazy = true },
 	{ "folke/twilight.nvim" },
 	{
-		"folke/trouble.nvim",
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-		},
-	},
-	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
 		dependencies = {

@@ -96,12 +96,7 @@ local config = {
 				end,
 				"Open float",
 			},
-			F = { "<cmd>TroubleToggle quickfix<CR>", "Quick fix" },
-			o = { "<cmd>TroubleToggle<CR>", "Toggle" },
-			l = { "<cmd>TroubleToggle loclist<CR>", "Loc list" },
-			w = { "<cmd>TroubleToggle workspace_diagnostics<CR>", "Workspace diagnostics" },
-			d = { "<cmd>TroubleToggle document_diagnostics<CR>", "Document diagnostics" },
-			r = { "<cmd>TroubleToggle lsp_references<CR>", "References" },
+			c = { "<cmd>lua vim.diagnostic.reset()<CR>", "Clear dianogstics" },
 		},
 		T = {
 			name = "Treesitter",
