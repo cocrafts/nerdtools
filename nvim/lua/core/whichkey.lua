@@ -75,7 +75,11 @@ local config = {
 		},
 		["o"] = {
 			function()
-				require("core.telescope").find_project_files({ previewer = true, theme = "get_ivy" })
+				require("core.telescope").find_project_files({
+					previewer = true,
+					theme = "get_ivy",
+					show_untracked = true,
+				})
 			end,
 			"Find File",
 		},
