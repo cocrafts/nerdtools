@@ -14,6 +14,8 @@
 - you may want manually install: [starship prompt](https://starship.rs/guide/#%F0%9F%9A%80-installation) 
 
 ### For nvim user
+- brew install fd
+- brew install ripgrep
 - brew install jq
 - brew install llvm --with-toolchain (clang, clang-tidy, clang-format)
 - cargo install typos-cli or brew install typos-cli (typos)
