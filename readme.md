@@ -32,3 +32,8 @@
 ### Other notes:
 - For Kitty, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.
 - For Wezterm [Configure undercurl](https://wezfurlong.org/wezterm/faq.html?h=undercurl#how-do-i-enable-undercurl-curly-underlines) style for Wezterm.
+
+### For Ubuntu, install these dependency manually (at least for now):
+- nvm install 18.17.1
+- npm i -g pm2 @metacraft/cli
+- curl -sS https://starship.rs/install.sh | sh

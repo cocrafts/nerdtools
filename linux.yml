@@ -4,3 +4,4 @@
 
 - import_playbook: ansible/linux/essentials.yml
 - import_playbook: ansible/linux/zsh.yml
+- import_playbook: ansible/linux/scripting-languages.yml

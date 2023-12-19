@@ -1,0 +1,8 @@
+- name: Setup scripting languages
+  hosts: local
+
+  tasks:
+    - name: Download nvm installation
+      shell: yes | /bin/bash -c "$(curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh)"
+      args:
+        creates: ~/.nvm/nvm.sh
