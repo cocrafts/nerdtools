@@ -1,5 +1,5 @@
 - name: Configure fancy NeoVim
-  hosts: local
+  hosts: ec2
 
   tasks:
     # - name: Install NeoVim
@@ -40,5 +40,5 @@
     - name: Create zls.json for Zig
       file:
         src: ~/nerdtools/conf/zls.json
-        dest: "~/Library/Application\ Support/zls.json"
+        dest: "~/.config/zls.json"
         state: link

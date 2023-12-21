@@ -6,3 +6,9 @@
       shell: yes | /bin/bash -c "$(curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh)"
       args:
         creates: ~/.nvm/nvm.sh
+
+    - name: Install Ruby deps
+      shell: |
+        brew install rbenv ruby-build
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/rbenv

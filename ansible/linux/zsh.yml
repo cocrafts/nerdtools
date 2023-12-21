@@ -29,10 +29,8 @@
         dest: ~/.zshrc
         force: no
 
-    - name: Register current user
-      shell: whoami
-      register: current_user
-
-    - name: Change default shell to zsh
-      become: true
-      shell: "chsh -s $(which zsh) {{ current_user.stdout }}"
+    - name: Install starship
+      shell: |
+        brew install starship
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/starship

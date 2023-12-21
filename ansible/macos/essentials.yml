@@ -44,9 +44,15 @@
       args:
         creates: /opt/homebrew/bin/zoxide
 
-    - name: Install Fzf
+    - name: Install fzf
       shell: |
         brew install fzf
         $(brew --prefix)/opt/fzf/install
       args:
         creates: /opt/homebrew/bin/fzf
+
+    - name: Install fd
+      shell: |
+        brew install fd
+      args:
+        crates: /opt/homebrew/bin/fd

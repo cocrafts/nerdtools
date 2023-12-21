@@ -10,20 +10,24 @@
         - ~/Sources
         - ~/Projects
 
-    - name: Clone nerdtools
-      git:
-        repo: https://github.com/cocrafts/nerdtools.git
-        dest: ~/nerdtools
-        clone: yes
+    - name: Install lazygit
+      shell: brew install lazygit
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/lazygit
 
-    - name: Install packages
-      become: true
-      apt:
-        name: "{{item}}"
-        state: present
-        update_cache: yes
-      with_items:
-        - build-essential
-        - zsh
-        - fzf
-        - zoxide
+    - name: Install ripgrep
+      shell: brew install ripgrep
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/rg
+
+    - name: Install zoxide
+      shell: brew install zoxide
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/zoxide
+
+    - name: Install Fzf
+      shell: |
+        brew install fzf
+        $(brew --prefix)/opt/fzf/install
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/fzf
