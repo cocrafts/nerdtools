@@ -1,5 +1,8 @@
 - name: Setup scripting languages
-  hosts: local
+  hosts: ec2
+  vars:
+    node_version: "18.16.0"
+
 
   tasks:
     - name: Download nvm installation
@@ -7,8 +10,15 @@
       args:
         creates: ~/.nvm/nvm.sh
 
-    - name: Install Ruby deps
+    - name: Install Node.js latest version
       shell: |
-        brew install rbenv ruby-build
+          source ~/.nvm/nvm.sh
+          nvm install {{node_version}}
+          nvm alias default {{node_version}}
+          nvm use {{node_version}}
       args:
-        creates: /home/linuxbrew/.linuxbrew/bin/rbenv
+        executable: /usr/bin/zsh
+        creates: ~/.nvm/versions/node
+
+    - name: Install npm packages
+      shell: ~/.nvm/versions/node/v{{node_version}}/bin/npm i -g vscode-langservers-extracted graphql-language-service-cli bash-language-server eslint_d write-good pm2 @metacraft/cli

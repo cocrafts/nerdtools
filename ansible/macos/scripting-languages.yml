@@ -27,7 +27,4 @@
         creates: /opt/homebrew/bin/ruby-build
 
     - name: Install eslint, json, html, css lsp
-      shell: npm i -g vscode-langservers-extracted
-
-    - name: Install graphql lsp
-      shell: npm i -g graphql-language-service-cli
+      shell: npm i -g vscode-langservers-extracted graphql-language-service-cli bash-language-server eslint_d write-good pm2 @metacraft/cli

@@ -56,3 +56,9 @@
         brew install fd
       args:
         crates: /opt/homebrew/bin/fd
+
+    - name: Install jq
+      shell: |
+        brew install jq
+      args:
+        crates: /opt/homebrew/bin/jq

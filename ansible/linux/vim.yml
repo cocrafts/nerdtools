@@ -2,11 +2,6 @@
   hosts: ec2
 
   tasks:
-    - name: Install NeoVim
-      shell: brew install --HEAD neovim
-      args:
-        creates: /home/linuxbrew/.linuxbrew/bin/nvim
-
     - name: Create symlink to neovim configure
       file:
         src: ~/nerdtools/nvim/
