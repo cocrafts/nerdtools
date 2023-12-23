@@ -1,5 +1,5 @@
 - name: Configure fancy NeoVim
-  hosts: ec2
+  hosts: local
 
   tasks:
     - name: Create symlink to neovim configure

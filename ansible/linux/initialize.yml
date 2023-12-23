@@ -1,5 +1,5 @@
 - name: Initialize before setup
-  hosts: ec2
+  hosts: local
   vars_prompt:
     - name: ansible_become_pass
       prompt: "user's password? required to run installations"

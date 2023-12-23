@@ -15,11 +15,6 @@
 
 ### For nvim user
 - brew install llvm --with-toolchain (clang, clang-tidy, clang-format)
-- cargo install typos-cli or brew install typos-cli (typos)
-- cargo install neocmakelsp (for .cmake)
-- cargo install selene (lua linter, lighting fast)
-- cargo install --features lsp --locked taplo-cli (for toml)
-- cargo install --git https://github.com/wgsl-analyzer/wgsl-analyzer wgsl_analyzer
 - pip3 install ruff
 - pip3 install mypy
 - pip3 install jsonls

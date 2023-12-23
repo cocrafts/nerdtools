@@ -1,5 +1,5 @@
 - name: Setup essential tools
-  hosts: ec2
+  hosts: local
   vars:
     brew_bin: "/home/linuxbrew/.linuxbrew/bin/"
 

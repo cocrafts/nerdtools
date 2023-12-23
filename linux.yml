@@ -1,9 +1,10 @@
 ---
 - name: Run all local playbooks
-  hosts: ec2
+  hosts: local
 
 - import_playbook: ansible/linux/initialize.yml
 - import_playbook: ansible/linux/essentials.yml
 - import_playbook: ansible/linux/zsh.yml
+- import_playbook: ansible/rust.yml
 - import_playbook: ansible/linux/scripting-languages.yml
 - import_playbook: ansible/linux/vim.yml

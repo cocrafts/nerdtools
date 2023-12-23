@@ -1,5 +1,5 @@
 - name: Setup scripting languages
-  hosts: ec2
+  hosts: local
   vars:
     node_version: "18.16.0"
 

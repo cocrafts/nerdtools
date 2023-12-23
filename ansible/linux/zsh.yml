@@ -1,5 +1,5 @@
 - name: Setup essential tools
-  hosts: ec2
+  hosts: local
 
   tasks:
     - name: Clone oh-my-zsh
