@@ -31,3 +31,8 @@
         $(brew --prefix)/opt/fzf/install
       args:
         creates: /home/linuxbrew/.linuxbrew/bin/fzf
+
+    - name: Install fd
+      shell: brew install fd
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/fd
