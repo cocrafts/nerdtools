@@ -22,12 +22,8 @@
 - cargo install --git https://github.com/wgsl-analyzer/wgsl-analyzer wgsl_analyzer
 - pip3 install ruff
 - pip3 install mypy
-
-### For Linux user, we may need to manually install those libraries
-- brew install efm-langserver
-- brew install lua-language-server
-- conda install jsonls
-- conda install pyright
+- pip3 install jsonls
+- pip3 install pyright
 
 ### Other notes:
 - For Kitty, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.

@@ -3,7 +3,6 @@
   vars:
     node_version: "18.16.0"
 
-
   tasks:
     - name: Download nvm installation
       shell: yes | /bin/bash -c "$(curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh)"
@@ -21,4 +20,8 @@
         creates: ~/.nvm/versions/node
 
     - name: Install npm packages
-      shell: ~/.nvm/versions/node/v{{node_version}}/bin/npm i -g vscode-langservers-extracted graphql-language-service-cli bash-language-server eslint_d write-good pm2 @metacraft/cli
+      shell: |
+        node --version
+        ~/.nvm/versions/node/v{{node_version}}/bin/npm i -g vscode-langservers-extracted graphql-language-service-cli bash-language-server eslint_d write-good pm2 @metacraft/cli
+      args:
+        creates: ~/.nvm/versions/node

@@ -72,3 +72,13 @@
       shell: "{{brew_bin}}/brew install jq"
       args:
         creates: "{{brew_bin}}/jq"
+
+    - name: Install efm-langserver
+      shell: "{{brew_bin}}/brew install efm-langserver"
+      args:
+        creates: "{{brew_bin}}/efm-langserver"
+
+    - name: Install lua-language-server
+      shell: "{{brew_bin}}/brew install lua-language-server"
+      args:
+        creates: "{{brew_bin}}/lua-language-server"
