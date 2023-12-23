@@ -20,6 +20,8 @@
         name:
           - build-essential
           - procps
+          - python3
+          - python3-pip
           - curl
           - ripgrep
           - zoxide
