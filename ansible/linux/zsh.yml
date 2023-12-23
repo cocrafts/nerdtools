@@ -2,6 +2,11 @@
   hosts: ec2
 
   tasks:
+    - name: Install zsh
+      shell: brew install zsh
+      args:
+        creates: /home/linuxbrew/.linuxbrew/bin/zsh
+
     - name: Clone oh-my-zsh
       git:
         repo: https://github.com/robbyrussell/oh-my-zsh.git

@@ -29,6 +29,12 @@
 - pip3 install ruff
 - pip3 install mypy
 
+### For Linux user, we may need to manually install those libraries
+- brew install efm-langserver
+- brew install lua-language-server
+- conda install jsonls
+- conda install pyright
+
 ### Other notes:
 - For Kitty, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.
 - For Wezterm [Configure undercurl](https://wezfurlong.org/wezterm/faq.html?h=undercurl#how-do-i-enable-undercurl-curly-underlines) style for Wezterm.

@@ -83,12 +83,12 @@ config.keys = {
 		}),
 	},
 	{
-		key = "O",
+		key = "o",
 		mods = "CMD|SHIFT",
 		action = act.PaneSelect({}),
 	},
 	{
-		key = "o",
+		key = "O",
 		mods = "CMD",
 		action = act.ActivatePaneDirection("Next"),
 	},
