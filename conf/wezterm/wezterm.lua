@@ -14,18 +14,21 @@ if wezterm.config_builder then
 	config = wezterm.config_builder()
 end
 
-config.initial_rows = 50
-config.initial_cols = 100
-
 config.color_scheme = "tokyonight_night"
 
 -- https://wezfurlong.org/wezterm/config/lua/wezterm/target_triple.html
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	config.font_size = 11.5
 	config.line_height = 1.1
+
+	config.initial_rows = 70
+	config.initial_cols = 150
 else
 	config.font_size = 14.5
 	config.line_height = 1.2
+
+	config.initial_rows = 50
+	config.initial_cols = 100
 end
 
 config.font = wezterm.font_with_fallback({
