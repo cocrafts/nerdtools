@@ -22,8 +22,3 @@
       git:
         repo: https://github.com/lukechilds/zsh-nvm
         dest: ~/.oh-my-zsh/custom/plugins/zsh-nvm
-
-    - name: Install starship shell prompt
-      shell: brew install starship
-      args:
-        creates: /usr/local/bin/starship

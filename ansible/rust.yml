@@ -4,7 +4,7 @@
     cargo_bin: "~/.cargo/bin"
 
   tasks:
-    - name: check if cargo is installed
+    - name: Check if cargo is installed
       shell: command -v cargo
       register: cargo_exists
       ignore_errors: yes
@@ -13,20 +13,25 @@
       when: cargo_exists is failed
       get_url:
         url: https://sh.rustup.rs
-        dest: ~/Sources/sh.rustup.rs
+        dest: ~/sh.rustup.rs
         mode: '0755'
         force: 'yes'
       tags:
         - rust
 
-    - name: install rust/cargo
+    - name: Install rust/cargo
       when: cargo_exists is failed
-      shell: ~/Sources/sh.rustup.rs -y
+      shell: ~/sh.rustup.rs -y
       tags:
         - rust
-
-    - name: Install cargo deps
+ 
+    - name: Install lsp cargo deps
       shell: "{{cargo_bin}}/cargo install typos-cli neocmakelsp selene"
+
+    - name: Install starship
+      shell: "{{cargo_bin}}/cargo install starship --locked"
+      args:
+        creates: /usr/local/bin/starship
 
     - name: Install taplo-cli (for Toml)
       shell: "{{cargo_bin}}/cargo install --features lsp --locked taplo-cli"

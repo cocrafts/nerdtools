@@ -5,5 +5,7 @@
 - import_playbook: ansible/macos/initialize.yml
 - import_playbook: ansible/macos/essentials.yml
 - import_playbook: ansible/macos/zsh.yml
+- import_playbook: ansible/rust.yml
+- import_playbook: ansible/go.yml
 - import_playbook: ansible/macos/vim.yml
 - import_playbook: ansible/macos/scripting-languages.yml
