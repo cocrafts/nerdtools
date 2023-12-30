@@ -31,6 +31,7 @@ return {
 				"pmizio/typescript-tools.nvim",
 				dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
 			},
+			{ "lbrayner/vim-rzip" },
 			{
 				"ray-x/go.nvim",
 				dependencies = {
