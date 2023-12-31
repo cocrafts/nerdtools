@@ -1,6 +1,6 @@
-local icons = require("utils.icons")
 local colors = require("core.lualine.colors")
 local conditions = require("core.lualine.conditions")
+local icons = require("utils.icons")
 
 local diff_source = function()
 	local gitsigns = vim.b.gitsigns_status_dict
@@ -113,8 +113,8 @@ return {
 		color = {},
 	},
 	spaces = {
-		function()
-			local shiftwidth = vim.api.nvim_buf_get_option(0, "shiftwidth")
+		function(args)
+			local shiftwidth = vim.api.nvim_get_option_value("shiftwidth", { buf = args.buf })
 			return icons.ui.Tab .. " " .. shiftwidth
 		end,
 		padding = 1,

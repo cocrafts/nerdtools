@@ -63,7 +63,7 @@ M.configure = function()
 	end
 
 	lsp.on_attach(function(_, bufnr)
-		local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+		local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
 
 		lsp.default_keymaps({ buffer = bufnr })
 		vim.keymap.set("n", "K", function()
