@@ -19,6 +19,7 @@
 - pip3 install mypy
 - pip3 install jsonls
 - pip3 install pyright
+- https://github.com/TheZoraiz/ascii-image-converter (needed to display image)
 
 ### Other notes:
 - For Kitty, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.
