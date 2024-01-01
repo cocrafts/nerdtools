@@ -2,10 +2,7 @@ return {
 	{ "folke/tokyonight.nvim" },
 	{ "lukas-reineke/onedark.nvim" },
 	{ "catppuccin/nvim" },
-	{
-		"creativenull/efmls-configs-nvim",
-		dependencies = { "neovim/nvim-lspconfig" },
-	},
+	{ "creativenull/efmls-configs-nvim" },
 	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v3.x",
@@ -246,12 +243,11 @@ return {
 		event = "User FileOpened",
 	},
 	{
-		"lukas-reineke/indent-blankline.nvim",
-		version = "2.20.8",
+		"shellRaining/hlchunk.nvim",
+		event = { "UIEnter" },
 		config = function()
-			require("core.indent-blankline").configure()
+			require("core.hlchunk").configure()
 		end,
-		event = "User FileOpened",
 	},
 	{
 		-- quick jump/search like vim-sneak
