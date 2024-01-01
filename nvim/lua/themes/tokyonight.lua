@@ -26,7 +26,6 @@ M.options = {
 	highlight = {
 		syntax = {
 			Keyword = { fg = colors.keywords },
-			Comment = { fg = colors.comments, style = "italic" },
 			Number = { fg = colors.numbers },
 			Function = { fg = colors.functions },
 			Identifier = { fg = colors.variables },
@@ -35,12 +34,6 @@ M.options = {
 			Type = { fg = colors.types },
 			PreProc = { fg = colors.procs },
 			Special = { fg = colors.functions },
-
-			luaFunction = { fg = colors.keywords },
-
-			rustMacro = { fg = colors.functions },
-			rustStorage = { fg = colors.keywords, style = "italic" },
-			rustModPathSep = { fg = colors.fg },
 		},
 	},
 }

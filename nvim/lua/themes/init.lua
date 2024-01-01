@@ -35,6 +35,16 @@ highlight.gui = {
 	Search = { fg = colors.darkest, bg = colors.blue },
 }
 
+highlight.hi = {
+	Comment = { fg = colors.comments, style = "italic" },
+
+	luaFunction = { fg = colors.keywords },
+
+	rustMacro = { fg = colors.functions },
+	rustStorage = { fg = colors.keywords, style = "italic" },
+	rustModPathSep = { fg = colors.fg },
+}
+
 highlight.system = {
 	PanelHeading = { bg = colors.buffer_bg },
 	BufferLineFill = { bg = colors.explorer_bg },

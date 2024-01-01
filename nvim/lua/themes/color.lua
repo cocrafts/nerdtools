@@ -1,5 +1,5 @@
 return {
-	buffer_bg = "#0c0c0f",
+	buffer_bg = "#121219",
 	explorer_bg = "#16161e",
 	float_border = "#98be65",
 
