@@ -1,6 +1,7 @@
 return {
 	buffer_bg = "#0c0c0f",
 	explorer_bg = "#16161e",
+	float_border = "#98be65",
 
 	bg = "#1A1B26",
 	darkest = "#16161e",

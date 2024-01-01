@@ -10,6 +10,7 @@ if vim.g.neovide then
 	colors["gray"] = "#27283a"
 end
 
+M.colors = colors
 M.options = {
 	name = "tokyonight",
 	variant = "tokyonight-night",
@@ -23,33 +24,6 @@ M.options = {
 		hide_inactive_statusline = true,
 	},
 	highlight = {
-		lsp = {
-			LspInlayHint = { fg = colors.gray, bg = colors.none },
-			NormalFloat = { bg = colors.bg },
-			FloatBorder = { fg = colors.green, bg = colors.bg },
-		},
-		gui = {
-			CursorLine = { bg = colors.cursor },
-			BlameLine = { fg = "#434A68", bg = colors.cursor },
-			MsgArea = { fg = colors.fg, bg = colors.bg },
-
-			Normal = { bg = colors.bg },
-			LineNR = { fg = colors.dim }, -- line numbers
-			CursorLineNR = { fg = colors.blue }, -- current line number
-			NormalMode = { fg = colors.blue },
-			InsertMode = { fg = colors.green },
-			VisualMode = { fg = colors.purple },
-			CommandMode = { fg = colors.types },
-			ReplaceMode = { fg = colors.red },
-			SelectMode = { fg = colors.purple },
-
-			ScrollView = { bg = colors.fg },
-
-			NonText = { fg = colors.gray }, -- whitespaces
-			SpecialKey = { fg = colors.gray }, -- whitespaces
-			Whitespace = { fg = colors.gray }, -- whitespaces
-			Search = { fg = colors.darkest, bg = colors.blue },
-		},
 		syntax = {
 			Keyword = { fg = colors.keywords },
 			Comment = { fg = colors.comments, style = "italic" },

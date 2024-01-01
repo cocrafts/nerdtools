@@ -1,8 +1,12 @@
 local M = {}
 
 M.mergeTables = function(t1, t2)
-	for i = 1, #t2 do
-		table.insert(t1, t2[i])
+	if t1 == nil then
+		return t2
+	end
+
+	for k, v in pairs(t2) do
+		t1[k] = v
 	end
 
 	return t1

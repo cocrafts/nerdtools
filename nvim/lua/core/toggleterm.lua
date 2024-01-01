@@ -1,4 +1,5 @@
-local colors = require("themes.color")
+local theme = require("utils.config").theme
+local colors = theme.colors
 local M = {}
 
 function _G.set_terminal_keymaps()
@@ -59,7 +60,7 @@ M.configure = function()
 			Normal = { guibg = colors.bg },
 			FloatBorder = {
 				guibg = colors.bg,
-				guifg = colors.green,
+				guifg = colors.float_border,
 			},
 		},
 		float_opts = {
