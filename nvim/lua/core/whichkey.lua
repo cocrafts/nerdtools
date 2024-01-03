@@ -1,5 +1,6 @@
 local M = {}
 local icons = require("utils.icons")
+local telescope_helpers = require("core.telescope").helpers
 
 local config = {
 	setup = {
@@ -75,7 +76,7 @@ local config = {
 		},
 		["o"] = {
 			function()
-				require("core.telescope").find_project_files({
+				telescope_helpers.find_project_files({
 					previewer = true,
 					theme = "get_ivy",
 					show_untracked = true,
