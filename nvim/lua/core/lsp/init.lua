@@ -67,7 +67,10 @@ M.configure = function()
 
 		lsp.default_keymaps({ buffer = bufnr })
 		vim.keymap.set("n", "K", function()
-			vim.lsp.buf.hover()
+			local winid = require("ufo").peekFoldedLinesUnderCursor()
+			if not winid then
+				vim.lsp.buf.hover()
+			end
 		end, get_opts(bufnr, "Preview signature"))
 		vim.keymap.set("n", "gd", function()
 			builtin.lsp_definitions(layouts.full_cursor())

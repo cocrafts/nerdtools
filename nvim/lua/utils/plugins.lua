@@ -87,6 +87,15 @@ return {
 		end,
 	},
 	{
+		"kevinhwang91/nvim-ufo",
+		dependencies = {
+			{ "kevinhwang91/promise-async" },
+		},
+		config = function()
+			require("core.fold").configure()
+		end,
+	},
+	{
 		"samodostal/image.nvim",
 		dependencies = {
 			{ "m00qek/baleia.nvim", tag = "v1.3.0" },

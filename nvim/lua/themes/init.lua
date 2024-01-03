@@ -10,6 +10,8 @@ highlight.lsp = {
 	LspInlayHint = { fg = colors.gray, bg = colors.none },
 	NormalFloat = { bg = colors.bg },
 	FloatBorder = { fg = colors.float_border, bg = colors.bg },
+
+	Folded = { bg = colors.fold },
 }
 
 highlight.gui = {
