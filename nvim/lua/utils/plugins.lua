@@ -82,13 +82,8 @@ return {
 		branch = "v3.x",
 		cmd = "Neotree",
 		config = function()
-			require("core.neo-tree").configure()
-		end,
-	},
-	{
-		"nvim-tree/nvim-web-devicons",
-		config = function()
 			require("core.devicons").configure()
+			require("core.neo-tree").configure()
 		end,
 	},
 	{

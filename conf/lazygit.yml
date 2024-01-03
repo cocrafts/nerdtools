@@ -8,7 +8,7 @@ gui:
     editPreset: 'nvim'
   theme:
     activeBorderColor:
-      - '#FF8800'
+      - '#f9e2af'
       - bold
     inactiveBorderColor:
       - '#98be65'

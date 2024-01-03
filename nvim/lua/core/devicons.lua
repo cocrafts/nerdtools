@@ -7,7 +7,7 @@ M.configure = function()
 		color_icons = true,
 		override = {
 			toml = {
-				icon = "",
+				icon = "",
 				color = colors.orange,
 			},
 		},
