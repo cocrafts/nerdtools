@@ -17,7 +17,7 @@ M.configure = function()
 	local Terminal = require("toggleterm.terminal").Terminal
 	function LAZYGIT_TOGGLE()
 		local width = math.floor(vim.o.columns * 0.98)
-		local height = math.floor(vim.o.lines * 0.94)
+		local height = math.floor(vim.o.lines * 0.96)
 		local lazygit = Terminal:new({
 			cmd = "lazygit",
 			hidden = true,
@@ -60,7 +60,7 @@ M.configure = function()
 			Normal = { guibg = colors.bg },
 			FloatBorder = {
 				guibg = colors.bg,
-				guifg = colors.float_border,
+				guifg = colors.bg,
 			},
 		},
 		float_opts = {
