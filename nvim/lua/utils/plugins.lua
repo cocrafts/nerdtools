@@ -86,6 +86,12 @@ return {
 		end,
 	},
 	{
+		"nvim-tree/nvim-web-devicons",
+		config = function()
+			require("core.devicons").configure()
+		end,
+	},
+	{
 		"samodostal/image.nvim",
 		dependencies = {
 			{ "m00qek/baleia.nvim", tag = "v1.3.0" },

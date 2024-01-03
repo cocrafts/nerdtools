@@ -216,6 +216,7 @@ local highlights = {
 	},
 	buffer_selected = {
 		bold = true,
+		italic = false,
 	},
 }
 

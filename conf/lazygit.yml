@@ -4,6 +4,8 @@ gui:
   showCommandLog: false # use @ key to toggle it on
   showListFooter: false # for seeing the '5 of 20' message in list panels
   nerdFontsVersion: "" # nerd fonts version to use ("2" or "3"); empty means don't show nerd font icons
+  os:
+    editPreset: 'nvim'
   theme:
     activeBorderColor:
       - '#FF8800'
