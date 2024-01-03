@@ -88,9 +88,7 @@ return {
 	},
 	{
 		"kevinhwang91/nvim-ufo",
-		dependencies = {
-			{ "kevinhwang91/promise-async" },
-		},
+		dependencies = { "kevinhwang91/promise-async" },
 		config = function()
 			require("core.fold").configure()
 		end,
@@ -117,18 +115,14 @@ return {
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-		},
+		dependencies = { "MunifTanjim/nui.nvim" },
 		config = function()
 			require("core.noice").configure()
 		end,
 	},
 	{
 		"vuki656/package-info.nvim",
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-		},
+		dependencies = { "MunifTanjim/nui.nvim" },
 		config = function()
 			require("core.package-info").configure()
 		end,
@@ -156,23 +150,23 @@ return {
 			{
 				"sudormrfbin/cheatsheet.nvim",
 				dependencies = {
-					{ "nvim-telescope/telescope.nvim" },
-					{ "nvim-lua/popup.nvim" },
-					{ "nvim-lua/plenary.nvim" },
+					"nvim-telescope/telescope.nvim",
+					"nvim-lua/popup.nvim",
+					"nvim-lua/plenary.nvim",
 				},
 			},
 			{
 				"AckslD/nvim-neoclip.lua",
 				dependencies = {
-					{ "nvim-telescope/telescope.nvim" },
-					{ "kkharji/sqlite.lua" },
+					"nvim-telescope/telescope.nvim",
+					"kkharji/sqlite.lua",
 				},
 			},
 			{
 				"nvim-telescope/telescope-frecency.nvim",
 				dependencies = {
-					{ "nvim-tree/nvim-web-devicons" },
-					{ "kkharji/sqlite.lua" },
+					"nvim-tree/nvim-web-devicons",
+					"kkharji/sqlite.lua",
 				},
 			},
 		},
@@ -244,6 +238,7 @@ return {
 			require("nvim-lastplace").setup({})
 		end,
 	},
+	{ "JoosepAlviste/nvim-ts-context-commentstring" },
 	{
 		"numToStr/Comment.nvim",
 		config = function()
