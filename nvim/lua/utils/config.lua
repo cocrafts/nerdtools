@@ -5,5 +5,6 @@ return {
 	use_null_ls = false,
 	use_cmp = true,
 	use_noice = true,
+	use_wgsl = false,
 	theme = require("themes.tokyonight"),
 }

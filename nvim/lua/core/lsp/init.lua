@@ -106,6 +106,10 @@ M.configure = function()
 		require("core.lsp.efm").configure(lspconfig)
 	end
 
+	if config.use_wgsl then
+		require("core.lsp.wgsl").configure(lspconfig)
+	end
+
 	require("core.lsp.typescript-tools").configure()
 	require("core.lsp.rust").configure()
 	require("core.lsp.toml").configure(lspconfig)
@@ -113,7 +117,6 @@ M.configure = function()
 	require("core.lsp.bash").configure(lspconfig)
 	require("core.lsp.clang").configure(lspconfig)
 	require("core.lsp.cmake").configure(lspconfig)
-	require("core.lsp.wgsl").configure(lspconfig)
 	require("core.lsp.csharp").configure(lspconfig)
 	require("core.lsp.zls").configure(lspconfig)
 	require("core.lsp.html").configure(lspconfig)

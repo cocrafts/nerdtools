@@ -50,7 +50,7 @@ M.configure = function()
 			if domain_indent ~= nil then
 				return domain_indent
 			else
-				return { "treesitter", "indent" }
+				return ""
 			end
 		end,
 	})
