@@ -8,10 +8,10 @@ gui:
     editPreset: 'nvim'
   theme:
     activeBorderColor:
-      - '#f9e2af'
+      - '#98be65'
       - bold
     inactiveBorderColor:
-      - '#98be65'
+      - '#45475a'
     optionsTextColor:
       - '#89b4fa'
     selectedLineBgColor:
