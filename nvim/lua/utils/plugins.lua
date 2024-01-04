@@ -208,13 +208,19 @@ return {
 		end,
 	},
 	{
-		"akinsho/bufferline.nvim",
-		branch = "main",
-		event = "User FileOpened",
+		"ThePrimeagen/harpoon",
 		config = function()
-			require("core.bufferline").configure()
+			require("core.harpoon").configure()
 		end,
 	},
+	-- {
+	-- 	"akinsho/bufferline.nvim",
+	-- 	branch = "main",
+	-- 	event = "User FileOpened",
+	-- 	config = function()
+	-- 		require("core.bufferline").configure()
+	-- 	end,
+	-- },
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",

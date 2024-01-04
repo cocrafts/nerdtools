@@ -159,6 +159,14 @@ local config = {
 			d = { ":DiffviewOpen<CR>", "Git diff" },
 			q = { ":DiffviewClose<CR>", "Close Git diff" },
 		},
+		[";"] = { "<cmd>lua require('harpoon.mark').add_file()<CR>", "Add to harpoon" },
+		["J"] = { "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", "Jumps menu" },
+		["j"] = {
+			function()
+				require("telescope").extensions.harpoon.marks(helper.layouts.full_cursor())
+			end,
+			"Jumps telescope",
+		},
 		l = {
 			name = "LSP",
 			a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
@@ -200,9 +208,6 @@ local config = {
 			l = { "<cmd>ToggleTerm direction=vertical<CR>", "Terminal left" },
 			j = { "<cmd>ToggleTerm direction=horizontal<CR>", "Terminal bottom" },
 			h = { "<cmd>ToggleTerm direction=tab<CR>", "Terminal tab" },
-		},
-		j = {
-			name = "Jumps",
 		},
 	},
 	vmaps = {},

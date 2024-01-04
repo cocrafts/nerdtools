@@ -12,8 +12,18 @@ key.mode_keys("n", {
 	["<C-x>"] = ":split<CR>",
 	["<C-v>"] = ":vsplit<CR>",
 
-	["<TAB>"] = ":BufferLineCycleNext<CR>",
-	["<S-Tab>"] = ":BufferLineCyclePrev<CR>",
+	["<TAB>"] = "<cmd>lua require('harpoon.ui').nav_next()<CR>",
+	["<S-TAB>"] = "<cmd>lua require('harpoon.ui').nav_prev()<CR>",
+
+	["<C-1>"] = "<cmd>lua require('harpoon.ui').nav_file(1)<CR>",
+	["<C-2>"] = "<cmd>lua require('harpoon.ui').nav_file(2)<CR>",
+	["<C-3>"] = "<cmd>lua require('harpoon.ui').nav_file(3)<CR>",
+	["<C-4>"] = "<cmd>lua require('harpoon.ui').nav_file(4)<CR>",
+	["<C-5>"] = "<cmd>lua require('harpoon.ui').nav_file(5)<CR>",
+	["<C-6>"] = "<cmd>lua require('harpoon.ui').nav_file(6)<CR>",
+	["<C-7>"] = "<cmd>lua require('harpoon.ui').nav_file(7)<CR>",
+	["<C-8>"] = "<cmd>lua require('harpoon.term').gotoTerminal(2)<CR>",
+	["<C-9>"] = "<cmd>lua require('harpoon.term').gotoTerminal(1)<CR>",
 
 	["H"] = "Hzz",
 	["L"] = "Lzz",
