@@ -28,6 +28,12 @@ M.configure = function()
 				width = width,
 				height = height,
 			},
+			highlights = {
+				FloatBorder = {
+					guibg = colors.bg,
+					guifg = colors.bg,
+				},
+			},
 			on_open = function()
 				vim.cmd("startinsert!")
 			end,
@@ -60,7 +66,7 @@ M.configure = function()
 			Normal = { guibg = colors.bg },
 			FloatBorder = {
 				guibg = colors.bg,
-				guifg = colors.bg,
+				guifg = colors.float_border,
 			},
 		},
 		float_opts = {
