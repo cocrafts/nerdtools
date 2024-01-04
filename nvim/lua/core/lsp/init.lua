@@ -1,8 +1,7 @@
 local builtin = require("telescope.builtin")
 local config = require("utils.config")
+local helper = require("utils.helper")
 local icons = require("utils.icons")
-local layouts = require("core.telescope").layouts
-local telescope_helpers = require("core.telescope").helpers
 local M = {}
 
 local hints = {
@@ -74,10 +73,10 @@ M.configure = function()
 			end
 		end, get_opts(bufnr, "Preview signature"))
 		vim.keymap.set("n", "gd", function()
-			telescope_helpers.open_lsp_definitions()
+			helper.open_lsp_definitions()
 		end, get_opts(bufnr, "Goto definition"))
 		vim.keymap.set("n", "gD", function()
-			builtin.lsp_implementations(layouts.full_cursor())
+			builtin.lsp_implementations(helper.layouts.full_cursor())
 		end, get_opts(bufnr, "Goto definition"))
 		vim.keymap.set("n", "gs", function()
 			vim.lsp.buf.incoming_calls()
