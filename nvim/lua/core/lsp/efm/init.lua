@@ -21,6 +21,7 @@ local languages = {
 	lua = { stylua, selene },
 	python = { mypy_lint, ruff_lint, ruff_format },
 	json = { jq_format, jq_lint },
+	jsonc = { jq_format, jq_lint },
 	vue = { eslint_d_format, eslint_d_lint },
 	typescript = { eslint_d_format, eslint_d_lint },
 	typescriptreact = { eslint_d_format, eslint_d_lint },
