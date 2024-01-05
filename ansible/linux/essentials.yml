@@ -35,6 +35,7 @@
           - neovim
           - fd-find
           - jq
+          - shellcheck
 
     - name: Install lazygit
       shell: |

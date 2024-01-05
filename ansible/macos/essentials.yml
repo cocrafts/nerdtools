@@ -62,3 +62,9 @@
         brew install jq
       args:
         crates: /opt/homebrew/bin/jq
+
+    - name: Install shellcheck
+      shell: |
+        brew install shellcheck
+      args:
+        crates: /opt/homebrew/bin/shellcheck
