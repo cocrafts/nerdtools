@@ -38,14 +38,6 @@ local hints = {
 	debug_mode = false,
 }
 
-local get_opts = function(bufnr, desc)
-	return {
-		desc = desc,
-		buffer = bufnr,
-		remap = false,
-	}
-end
-
 M.configure = function()
 	local lsp = require("lsp-zero").preset({})
 	local lspconfig = require("lspconfig")
@@ -64,38 +56,50 @@ M.configure = function()
 
 	lsp.on_attach(function(_, bufnr)
 		local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
-
-		lsp.default_keymaps({ buffer = bufnr })
-		vim.keymap.set("n", "K", function()
-			local winid = require("ufo").peekFoldedLinesUnderCursor()
-			if not winid then
-				vim.lsp.buf.hover()
-			end
-		end, get_opts(bufnr, "Preview signature"))
-		vim.keymap.set("n", "gd", function()
-			helper.open_lsp_definitions()
-		end, get_opts(bufnr, "Goto definition"))
-		vim.keymap.set("n", "gD", function()
-			builtin.lsp_implementations(helper.layouts.full_cursor())
-		end, get_opts(bufnr, "Goto definition"))
-		vim.keymap.set("n", "gs", function()
-			vim.lsp.buf.incoming_calls()
-		end, get_opts(bufnr, "Incoming calls"))
-		vim.keymap.set("n", "gS", function()
-			vim.lsp.buf.outgoing_calls()
-		end, get_opts(bufnr, "Outgoing calls"))
-		vim.keymap.set("n", "[d", function()
-			vim.diagnostic.goto_prev()
-		end, get_opts(bufnr, "Previous diagnostic"))
-		vim.keymap.set("n", "]d", function()
-			vim.diagnostic.goto_next()
-		end, get_opts(bufnr, "Next diagnostic"))
+		local mapkey = function(mode, key, desc, cb)
+			vim.keymap.set(mode, key, cb, {
+				desc = desc,
+				buffer = bufnr,
+				remap = false,
+			})
+		end
 
 		if filetype == "rust" then
 			vim.cmd("set autoindent tabstop=2 shiftwidth=2")
 		elseif filetype == "json" then
 			vim.cmd("set expandtab shiftwidth=2")
 		end
+
+		mapkey("n", "K", "Preview signature", function()
+			local winid = require("ufo").peekFoldedLinesUnderCursor()
+			if not winid then
+				vim.lsp.buf.hover()
+			end
+		end)
+
+		mapkey("n", "gd", "Goto definition", function()
+			helper.open_lsp_definitions()
+		end)
+
+		mapkey("n", "gD", "Goto implementations", function()
+			builtin.lsp_implementations(helper.layouts.full_cursor())
+		end)
+
+		mapkey("n", "gs", "Incoming calls", function()
+			vim.lsp.buf.incoming_calls()
+		end)
+
+		mapkey("n", "gS", "Outgoing calls", function()
+			vim.lsp.buf.outgoing_calls()
+		end)
+
+		mapkey("n", "[d", "Previous diagnostic", function()
+			vim.diagnostic.goto_prev()
+		end)
+
+		mapkey("n", "]d", "Next diagnostic", function()
+			vim.diagnostic.goto_next()
+		end)
 	end)
 
 	lsp.setup()
