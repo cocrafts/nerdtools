@@ -9,9 +9,6 @@ return {
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 			{ "jose-elias-alvarez/null-ls.nvim" },
-			{ "ms-jpq/coq_nvim", branch = "coq" },
-			{ "ms-jpq/coq.artifacts", branch = "artifacts" },
-			{ "ms-jpq/coq.thirdparty", branch = "3p" },
 			{ "nvimdev/guard.nvim" },
 			{
 				"williamboman/mason.nvim",

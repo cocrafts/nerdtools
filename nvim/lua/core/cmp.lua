@@ -123,7 +123,6 @@ M.configure = function()
 
 	---@class cmp.ConfigSchema
 	local options = {
-		enabled = config.use_cmp,
 		mapping = mapping,
 		formatting = formatting,
 		sources = {

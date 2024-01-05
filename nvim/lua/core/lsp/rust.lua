@@ -1,4 +1,3 @@
-local coq = require("core.coq")
 local M = {}
 
 M.configure = function()
@@ -25,12 +24,12 @@ M.configure = function()
 			max_height = nil, -- Maximal height of the hover window. Nil means no max.
 			auto_focus = false, -- whether the hover action window gets automatically focused
 		},
-		server = coq.lsp_ensure_capabilities({
+		server = {
 			on_attach = function(_, bufnr)
 				vim.keymap.set("n", "<C-space>", rustools.hover_actions.hover_actions, { buffer = bufnr })
 				vim.keymap.set("n", "<leader>a", rustools.code_action_group.code_action_group, { buffer = bufnr })
 			end,
-		}),
+		},
 	})
 end
 

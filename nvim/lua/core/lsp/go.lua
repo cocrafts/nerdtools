@@ -1,5 +1,4 @@
 local config = require("utils.config")
-local coq = require("core.coq")
 local icons = require("utils.icons")
 local M = {}
 
@@ -32,7 +31,7 @@ M.configure = function(lspconfig)
 	})
 
 	local lsp_config = require("go.lsp").config()
-	lspconfig.gopls.setup(coq.lsp_ensure_capabilities(lsp_config))
+	lspconfig.gopls.setup(lsp_config)
 end
 
 return M

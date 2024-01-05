@@ -1,5 +1,3 @@
-local config = require("utils.config")
-
 local globals = {
 	mapleader = " ",
 	localmapleader = " ",
@@ -9,10 +7,6 @@ local globals = {
 	gitblame_message_when_not_committed = "",
 	zig_fmt_autosave = 0,
 }
-
-if config.use_cmp == false then
-	globals.coq_settings = require("core.coq").settings
-end
 
 local opts = {
 	timeout = true,

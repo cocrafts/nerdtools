@@ -1,8 +1,7 @@
-local coq = require("core.coq")
 local M = {}
 
 M.configure = function(lspconfig)
-	lspconfig.jsonls.setup(coq.lsp_ensure_capabilities({}))
+	lspconfig.jsonls.setup({})
 end
 
 return M

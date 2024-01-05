@@ -1,16 +1,15 @@
-local coq = require("core.coq")
 local M = {}
 
 M.configure = function(lspconfig)
 	local capabilities = vim.lsp.protocol.make_client_capabilities()
 
-	lspconfig.html.setup(coq.lsp_ensure_capabilities({
+	lspconfig.html.setup({
 		capabilities = capabilities,
-	}))
+	})
 
-	lspconfig.cssls.setup(coq.lsp_ensure_capabilities({
+	lspconfig.cssls.setup({
 		capabilities = capabilities,
-	}))
+	})
 end
 
 return M
