@@ -2,13 +2,17 @@ return {
 	{ "folke/tokyonight.nvim" },
 	{ "lukas-reineke/onedark.nvim" },
 	{ "catppuccin/nvim" },
-	{ "creativenull/efmls-configs-nvim" },
+	{
+		"creativenull/efmls-configs-nvim",
+		version = "v1.x.x",
+		dependencies = { "neovim/nvim-lspconfig" },
+	},
 	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v3.x",
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
-			{ "jose-elias-alvarez/null-ls.nvim" },
+			{ "nvimtools/none-ls.nvim" },
 			{ "nvimdev/guard.nvim" },
 			{
 				"williamboman/mason.nvim",

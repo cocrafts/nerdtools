@@ -10,8 +10,8 @@ plugins=(
 
 alias vide="neovide"
 alias nvim="env TERM=wezterm nvim"
-source $ZSH/oh-my-zsh.sh
-source ~/nerdtools/zsh/keybindings.sh
+source "$ZSH/oh-my-zsh.sh"
+source "$HOME/nerdtools/zsh/keybindings.sh"
 
 export STARSHIP_CONFIG=~/nerdtools/conf/starship.toml
 

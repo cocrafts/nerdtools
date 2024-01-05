@@ -83,7 +83,11 @@ return {
 
 			-- add client
 			for _, client in pairs(buf_clients) do
-				if client.name ~= "copilot" then
+				if client.name == "null-ls" then
+					table.insert(buf_client_names, "null")
+				elseif client.name == "lua_ls" then
+					table.insert(buf_client_names, "lua")
+				elseif client.name ~= "copilot" then
 					table.insert(buf_client_names, client.name)
 				end
 

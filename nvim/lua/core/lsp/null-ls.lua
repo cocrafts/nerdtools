@@ -5,11 +5,16 @@ M.configure = function()
 	local nls = require("null-ls")
 	local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 	local sources = {
-		nls.builtins.formatting.stylua,
-		nls.builtins.formatting.zigfmt,
-		nls.builtins.formatting.rustfmt,
-		nls.builtins.formatting.csharpier,
-		nls.builtins.diagnostics.revive,
+		nls.builtins.formatting.clang_format, -- clang
+		nls.builtins.diagnostics.clang_check,
+
+		nls.builtins.formatting.stylua, -- lua
+		nls.builtins.diagnostics.selene,
+
+		nls.builtins.formatting.ruff_format, -- python
+		nls.builtins.diagnostics.mypy,
+
+		nls.builtins.diagnostics.revive, -- golang
 		nls.builtins.formatting.golines.with({
 			extra_args = {
 				"--max-len=180",
@@ -17,18 +22,25 @@ M.configure = function()
 			},
 		}),
 
-		nls.builtins.formatting.eslint_d,
+		nls.builtins.formatting.eslint_d, -- javascript
 		nls.builtins.diagnostics.eslint_d,
+
+		nls.builtins.diagnostics.stylelint, -- css
+		nls.builtins.formatting.stylelint,
+
+		null.formatting.jq, -- json
+
+		nls.builtins.formatting.zigfmt, -- zig
+		nls.builtins.formatting.rustfmt, -- rust
+		nls.builtins.formatting.csharpier, -- cshap
+		nls.builtins.formatting.shfmt, -- shell
+
 		nls.builtins.diagnostics.typos.with({
 			extra_args = {
 				"--config",
 				vim.fn.expand("~/nerdtools/conf/typos.toml"),
 			},
 		}),
-		null.formatting.jq,
-
-		nls.builtins.formatting.shfmt,
-		nls.builtins.diagnostics.stylelint,
 	}
 
 	nls.setup({

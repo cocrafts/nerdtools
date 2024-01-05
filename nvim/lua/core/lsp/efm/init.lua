@@ -16,6 +16,7 @@ local css_bundle = require("core.lsp.efm.css")
 local go_bundle = require("core.lsp.efm.go")
 local zig_bundle = require("core.lsp.efm.zig")
 
+local M = {}
 local languages = {
 	c = { clang_format, clang_tidy },
 	lua = { stylua, selene },
@@ -37,9 +38,8 @@ local languages = {
 	sh = { shfmt },
 }
 
-local M = {}
 M.configure = function(lspconfig)
-	lspconfig.efm.setup({
+	local configs = {
 		filetypes = vim.tbl_keys(languages),
 		settings = {
 			rootMarkers = { ".git/" },
@@ -49,7 +49,14 @@ M.configure = function(lspconfig)
 			documentFormatting = true,
 			documentRangeFormatting = true,
 		},
-	})
+	}
+
+	lspconfig.efm.setup(vim.tbl_extend("force", configs, {
+		-- Custom lsp config below like on_attach and capabilities
+		--
+		-- on_attach = on_attach,
+		-- capabilities = capabilities,
+	}))
 end
 
 return M

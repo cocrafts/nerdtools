@@ -2,8 +2,8 @@ local builtin = require("telescope.builtin")
 local config = require("utils.config")
 local helper = require("utils.helper")
 local icons = require("utils.icons")
-local M = {}
 
+local M = {}
 local hints = {
 	inlay_hints = {
 		parameter_hints = {
@@ -104,10 +104,10 @@ M.configure = function()
 
 	lsp.setup()
 
-	if config.use_null_ls then
-		require("core.lsp.null-ls").configure()
-	else
+	if config.use_efm then
 		require("core.lsp.efm").configure(lspconfig)
+	else
+		require("core.lsp.null-ls").configure()
 	end
 
 	if config.use_wgsl then
