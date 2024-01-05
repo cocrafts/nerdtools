@@ -34,13 +34,6 @@ local opts = {
 	},
 }
 
-if vim.g.neovide then
-	opts["guifont"] = "Operator Mono Lig, Symbols Nerd Font Mono:h13.8"
-	opts["linespace"] = 4
-	globals["neovide_cursor_vfx_mode"] = "pixiedust"
-	globals["neovide_remember_window_size"] = true
-end
-
 local defer_opts = {
 	-- use tab
 	autoindent = true,
@@ -61,6 +54,18 @@ vim.defer_fn(function()
 		vim.opt[k] = v
 	end
 end, 0)
+
+if vim.g.neovide then
+	vim.opt.guifont = "Operator Mono Lig, Symbols Nerd Font Mono:h13.8"
+	vim.opt.linespace = 4
+	vim.g.neovide_profiler = false
+
+	vim.g.neovide_remember_window_size = true
+	vim.g.neovide_cursor_vfx_mode = "pixiedust"
+	vim.g.neovide_cursor_vfx_particle_lifetime = 4.0
+	vim.g.neovide_cursor_vfx_particle_density = 21.0
+	vim.g.neovide_scroll_animation_far_lines = 0
+end
 
 -- -- undercurl for Wezterm
 -- vim.api.nvim_set_option_value("t_Cs", "\27[4:3m")
