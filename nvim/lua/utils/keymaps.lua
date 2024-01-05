@@ -46,13 +46,7 @@ if vim.g.neovide then
 	vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode
 	vim.keymap.set("c", "<D-v>", "<C-R>+") -- Paste command mode
 	vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert mode
-
-	-- Allow clipboard copy paste in neovide
-	vim.g.neovide_input_use_logo = 1
-	vim.api.nvim_set_keymap("", "<D-v>", "+p<CR>", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("!", "<D-v>", "<C-R>+", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("t", "<D-v>", "<C-R>+", { noremap = true, silent = true })
-	vim.api.nvim_set_keymap("v", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+	vim.api.nvim_set_keymap("!", "<D-v>", "<C-R>+", { noremap = true, silent = true }) -- Allow insert mode paste
 
 	-- Runtime font scale
 	vim.g.neovide_scale_factor = 1.0
@@ -70,9 +64,9 @@ if vim.g.neovide then
 	vim.keymap.set("i", "<D-d>", '<ESC>"+yyp')
 	vim.keymap.set("v", "<D-d>", '"+yP')
 
-	vim.keymap.set("n", "<D-Left>", '"+0') -- Jump to line end
-	vim.keymap.set("i", "<D-Left>", '<ESC>"+0i')
+	vim.keymap.set("n", "<D-Left>", ":bnext<CR>") -- Jump to line end
+	vim.keymap.set("i", "<D-Left>", "<ESC>:bnext<CR>")
 
-	vim.keymap.set("n", "<D-Right>", '"+$') -- Jump to line start
-	vim.keymap.set("i", "<D-Right>", '<ESC>"+$a')
+	vim.keymap.set("n", "<D-Right>", ":bprev<CR>") -- Jump to line start
+	vim.keymap.set("i", "<D-Right>", "<ESC>:bprev<CR>")
 end
