@@ -73,13 +73,17 @@ return {
 		"nvim-neo-tree/neo-tree.nvim",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
-			"nvim-tree/nvim-web-devicons",
 			"MunifTanjim/nui.nvim",
+			{
+				"nvim-tree/nvim-web-devicons",
+				config = function()
+					require("core.devicons").configure()
+				end,
+			},
 		},
 		branch = "v3.x",
 		cmd = "Neotree",
 		config = function()
-			require("core.devicons").configure()
 			require("core.neo-tree").configure()
 		end,
 	},
