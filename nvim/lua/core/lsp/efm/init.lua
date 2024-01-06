@@ -12,6 +12,7 @@ local rustfmt = require("efmls-configs.formatters.rustfmt")
 local selene = require("efmls-configs.linters.selene")
 local shfmt = require("efmls-configs.formatters.shfmt")
 local stylua = require("efmls-configs.formatters.stylua")
+local taplo_format = require("efmls-configs.formatters.taplo")
 
 local css_bundle = require("core.lsp.efm.css")
 local go_bundle = require("core.lsp.efm.go")
@@ -39,6 +40,7 @@ local languages = {
 	zig = zig_bundle,
 	rust = { rustfmt },
 	sh = { shfmt },
+	toml = { taplo_format },
 }
 
 M.configure = function(lspconfig)
