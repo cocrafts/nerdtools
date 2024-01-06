@@ -57,9 +57,15 @@ config.window_padding = {
 
 config.keys = {
 	{
-		key = "K",
-		mods = "CMD|SHIFT",
-		action = act.ClearScrollback("ScrollbackAndViewport"),
+		key = "k",
+		mods = "CMD",
+		action = wezterm.action_callback(function(window, pane)
+			if pane:is_alt_screen_active() then -- detect application like Vim
+				window:perform_action(act.Multiple({ act.SendKey({ key = " " }), act.SendKey({ key = "G" }) }), pane)
+			else
+				window:perform_action(act.ClearScrollback("ScrollbackAndViewport"), pane)
+			end
+		end),
 	},
 	{
 		key = "I",
@@ -118,10 +124,13 @@ config.keys = {
 	{
 		key = "s",
 		mods = "CMD",
-		action = act.Multiple({
-			act.SendKey({ key = " " }),
-			act.SendKey({ key = "w" }),
-		}),
+		action = wezterm.action_callback(function(window, pane)
+			if pane:is_alt_screen_active() then -- detect application like Vim
+				window:perform_action(act.Multiple({ act.SendKey({ key = " " }), act.SendKey({ key = "w" }) }), pane)
+			else
+				window:perform_action(act.SendKey({ key = "s", mods = "CMD" }), pane)
+			end
+		end),
 	},
 	{
 		key = "d",
