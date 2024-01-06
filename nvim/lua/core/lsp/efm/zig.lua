@@ -1,3 +1,4 @@
+local codespell = require("efmls-configs.linters.codespell")
 local fs = require("efmls-configs.fs")
 
 local format_bin = fs.executable("zig")
@@ -11,4 +12,5 @@ local zigfmt = {
 
 return {
 	zigfmt,
+	codespell,
 }

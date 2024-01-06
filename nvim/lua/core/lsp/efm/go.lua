@@ -1,5 +1,6 @@
 local fs = require("efmls-configs.fs")
 local sourceText = require("efmls-configs.utils").sourceText
+local codespell = require("efmls-configs.linters.codespell")
 
 local linter = "revive"
 local config_path = vim.fn.expand("~/nerdtools/conf/revive.toml")
@@ -28,4 +29,5 @@ local golines_format = {
 return {
 	golines_format,
 	revive_lint,
+	codespell,
 }

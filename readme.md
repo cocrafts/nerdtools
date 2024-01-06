@@ -19,6 +19,7 @@
 - pip3 install mypy
 - pip3 install jsonls
 - pip3 install pyright
+- pip3 install codespell
 - https://github.com/TheZoraiz/ascii-image-converter (needed to display image)
 
 ### Other notes:
