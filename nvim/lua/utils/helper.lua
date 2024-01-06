@@ -35,6 +35,16 @@ M.layouts = {
 	end,
 }
 
+M.close_other_buffers = function()
+	local bufs = vim.api.nvim_list_bufs()
+	local current_buf = vim.api.nvim_get_current_buf()
+	for _, i in ipairs(bufs) do
+		if i ~= current_buf then
+			vim.api.nvim_buf_delete(i, {})
+		end
+	end
+end
+
 M.find_project_files = function(opts)
 	local builtin = require("telescope.builtin")
 

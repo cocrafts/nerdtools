@@ -31,6 +31,7 @@ local config = {
 		["q"] = { "<cmd>q!<cr>", "quit" },
 		["/"] = { "<Plug>(comment_toggle_linewise_current)", "Comment toggle current line" },
 		["c"] = { "<cmd>BufferKill<CR>", "Close Buffer" },
+		["C"] = { "<cmd>lua require('utils.helper').close_other_buffers()<CR>", "Close other buffers" },
 		["x"] = { "<cmd>Telescope neoclip theme=dropdown<CR>", "Clipboard history" },
 		["e"] = {
 			function()
@@ -89,8 +90,8 @@ local config = {
 			j = { "<cmd>BufferLinePick<CR>", "Jump" },
 			f = { "<cmd>Telescope buffers theme=dropdown<CR>", "Find" },
 			w = { "<cmd>BufferWipeout<CR>", "Wipeout" },
-			h = { "<cmd>BufferLineCloseLeft<CR>", "Close all to the left" },
-			l = { "<cmd>BufferLineCloseRight<CR>", "Close all to the right" },
+			p = { ":bprev<CR>", "Previous buffer" },
+			n = { ":bnext<CR>", "Next buffer" },
 		},
 		d = {
 			name = "Diagnostics",

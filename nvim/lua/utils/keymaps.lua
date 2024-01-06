@@ -64,9 +64,9 @@ if vim.g.neovide then
 	vim.keymap.set("i", "<D-d>", '<ESC>"+yyp')
 	vim.keymap.set("v", "<D-d>", '"+yP')
 
-	vim.keymap.set("n", "<D-Left>", ":bnext<CR>") -- Jump to line end
+	vim.keymap.set("n", "<D-Left>", ":bnext<CR>") -- Jump to next buffer
 	vim.keymap.set("i", "<D-Left>", "<ESC>:bnext<CR>")
 
-	vim.keymap.set("n", "<D-Right>", ":bprev<CR>") -- Jump to line start
+	vim.keymap.set("n", "<D-Right>", ":bprev<CR>") -- Jump to prev buffer
 	vim.keymap.set("i", "<D-Right>", "<ESC>:bprev<CR>")
 end

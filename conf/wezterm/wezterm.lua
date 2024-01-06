@@ -151,6 +151,34 @@ config.keys = {
 			act.SendKey({ key = "j" }),
 		}),
 	},
+	{
+		key = "LeftArrow",
+		mods = "CMD|SHIFT",
+		action = wezterm.action_callback(function(window, pane)
+			if pane:is_alt_screen_active() then
+				local prev_buffer_action = act.Multiple({
+					act.SendKey({ key = " " }),
+					act.SendKey({ key = "b" }),
+					act.SendKey({ key = "p" }),
+				})
+				window:perform_action(prev_buffer_action, pane)
+			end
+		end),
+	},
+	{
+		key = "RightArrow",
+		mods = "CMD|SHIFT",
+		action = wezterm.action_callback(function(window, pane)
+			if pane:is_alt_screen_active() then
+				local next_buffer_action = act.Multiple({
+					act.SendKey({ key = " " }),
+					act.SendKey({ key = "b" }),
+					act.SendKey({ key = "n" }),
+				})
+				window:perform_action(next_buffer_action, pane)
+			end
+		end),
+	},
 }
 
 config.colors = {
