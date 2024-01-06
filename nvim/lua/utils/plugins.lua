@@ -21,7 +21,12 @@ return {
 					pcall(vim.cmd, "MasonUpdate")
 				end,
 			},
-			{ "williamboman/mason-lspconfig.nvim" },
+			{
+				"williamboman/mason-lspconfig.nvim",
+				config = function()
+					require("core.lsp.mason").configure()
+				end,
+			},
 			{ "Hoffs/omnisharp-extended-lsp.nvim" },
 			{ "jparise/vim-graphql" },
 			{ "simrat39/rust-tools.nvim" },
@@ -59,7 +64,12 @@ return {
 					require("core.luasnip").configure()
 				end,
 			},
-			{ "hrsh7th/nvim-cmp" }, -- Autocompletion
+			{
+				"hrsh7th/nvim-cmp",
+				config = function()
+					require("core.lsp.cmp").configure()
+				end,
+			}, -- Autocompletion
 			{ "hrsh7th/cmp-buffer" },
 			{ "hrsh7th/cmp-path" },
 			{ "hrsh7th/cmp-cmdline" },
@@ -69,8 +79,6 @@ return {
 		},
 		config = function()
 			require("core.lsp").configure()
-			require("core.cmp").configure()
-			require("core.mason").configure()
 		end,
 	},
 	{
