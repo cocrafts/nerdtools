@@ -12,8 +12,8 @@ key.mode_keys("n", {
 	["<C-x>"] = ":split<CR>",
 	["<C-v>"] = ":vsplit<CR>",
 
-	["<TAB>"] = "<cmd>lua require('harpoon.ui').nav_next()<CR>",
-	["<S-TAB>"] = "<cmd>lua require('harpoon.ui').nav_prev()<CR>",
+	["<TAB>"] = ":bprev<CR>",
+	["<S-TAB>"] = ":bnext<CR>",
 
 	["<C-1>"] = "<cmd>lua require('harpoon.ui').nav_file(1)<CR>",
 	["<C-2>"] = "<cmd>lua require('harpoon.ui').nav_file(2)<CR>",

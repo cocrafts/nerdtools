@@ -90,8 +90,8 @@ local config = {
 			j = { "<cmd>BufferLinePick<CR>", "Jump" },
 			f = { "<cmd>Telescope buffers theme=dropdown<CR>", "Find" },
 			w = { "<cmd>BufferWipeout<CR>", "Wipeout" },
-			p = { ":bprev<CR>", "Previous buffer" },
-			n = { ":bnext<CR>", "Next buffer" },
+			p = { "<cmd>lua require('harpoon.ui').nav_next()<CR>", "Previous harpoon" },
+			n = { "<cmd>lua require('harpoon.ui').nav_prev()<CR>", "Next harppoon" },
 		},
 		d = {
 			name = "Diagnostics",
