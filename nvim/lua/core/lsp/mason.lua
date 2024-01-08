@@ -15,6 +15,7 @@ M.configure = function()
 				"cssls",
 				"lua_ls",
 				"ruby_ls",
+				"snyk_ls",
 				"pyright",
 				"rust_analyzer",
 				"zls",

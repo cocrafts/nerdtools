@@ -110,13 +110,10 @@ M.configure = function()
 		require("core.lsp.null-ls").configure()
 	end
 
-	if config.use_wgsl then
-		require("core.lsp.wgsl").configure(lspconfig)
-	end
-
+	require("core.lsp.snyk").configure(lspconfig)
+	require("core.lsp.toml").configure(lspconfig)
 	require("core.lsp.typescript-tools").configure()
 	require("core.lsp.rust").configure()
-	require("core.lsp.toml").configure(lspconfig)
 	-- require("core.lsp.go").configure(lspconfig)
 	require("core.lsp.bash").configure(lspconfig)
 	require("core.lsp.clang").configure(lspconfig)
@@ -128,6 +125,10 @@ M.configure = function()
 	require("core.lsp.graphql").configure(lspconfig)
 	require("core.lsp.lua-ls").configure(lspconfig)
 	require("core.lsp.python").configure(lspconfig)
+
+	if config.use_wgsl then
+		require("core.lsp.wgsl").configure(lspconfig)
+	end
 end
 
 return M

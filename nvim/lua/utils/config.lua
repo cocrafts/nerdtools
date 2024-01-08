@@ -4,6 +4,7 @@ return {
 	use_live_diagnostic = false,
 	use_efm = true,
 	use_noice = true,
+	use_snyk = false,
 	use_wgsl = false,
 	theme = require("themes.tokyonight"),
 }

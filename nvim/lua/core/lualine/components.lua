@@ -87,6 +87,8 @@ return {
 					table.insert(buf_client_names, "null")
 				elseif client.name == "lua_ls" then
 					table.insert(buf_client_names, "lua")
+				elseif client.name == "snyk_ls" then
+					table.insert(buf_client_names, "snyk")
 				elseif client.name ~= "copilot" then
 					table.insert(buf_client_names, client.name)
 				end
