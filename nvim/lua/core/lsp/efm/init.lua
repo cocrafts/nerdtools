@@ -13,6 +13,7 @@ local selene = require("efmls-configs.linters.selene")
 local shfmt = require("efmls-configs.formatters.shfmt")
 local stylua = require("efmls-configs.formatters.stylua")
 local taplo_format = require("efmls-configs.formatters.taplo")
+local terraform_format = require("efmls-configs.formatters.terraform_fmt")
 
 local css_bundle = require("core.lsp.efm.css")
 local go_bundle = require("core.lsp.efm.go")
@@ -41,6 +42,7 @@ local languages = {
 	rust = { rustfmt },
 	sh = { shfmt },
 	toml = { taplo_format },
+	terraform = { terraform_format },
 }
 
 M.configure = function(lspconfig)

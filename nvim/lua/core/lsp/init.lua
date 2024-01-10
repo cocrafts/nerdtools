@@ -112,6 +112,7 @@ M.configure = function()
 
 	require("core.lsp.snyk").configure(lspconfig)
 	require("core.lsp.toml").configure(lspconfig)
+	require("core.lsp.terraform").configure(lspconfig)
 	require("core.lsp.typescript-tools").configure()
 	require("core.lsp.rust").configure()
 	-- require("core.lsp.go").configure(lspconfig)
