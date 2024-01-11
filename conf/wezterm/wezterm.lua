@@ -135,21 +135,35 @@ config.keys = {
 	{
 		key = "d",
 		mods = "CMD",
-		action = act.Multiple({
-			act.SendKey({ key = "y" }),
-			act.SendKey({ key = "y" }),
-			act.SendKey({ key = "p" }),
-		}),
+		action = wezterm.action_callback(function(window, pane)
+			if pane:is_alt_screen_active() then -- detect application like Vim
+				window:perform_action(
+					act.Multiple({
+						act.SendKey({ key = "y" }),
+						act.SendKey({ key = "y" }),
+						act.SendKey({ key = "p" }),
+					}),
+					pane
+				)
+			end
+		end),
 	},
 	{
 		key = "/",
 		mods = "CMD",
-		action = act.Multiple({
-			act.SendKey({ key = "g" }),
-			act.SendKey({ key = "c" }),
-			act.SendKey({ key = "c" }),
-			act.SendKey({ key = "j" }),
-		}),
+		action = wezterm.action_callback(function(window, pane)
+			if pane:is_alt_screen_active() then -- detect application like Vim
+				window:perform_action(
+					act.Multiple({
+						act.SendKey({ key = "g" }),
+						act.SendKey({ key = "c" }),
+						act.SendKey({ key = "c" }),
+						act.SendKey({ key = "j" }),
+					}),
+					pane
+				)
+			end
+		end),
 	},
 	{
 		key = "LeftArrow",
