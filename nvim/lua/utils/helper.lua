@@ -38,9 +38,10 @@ M.layouts = {
 M.close_other_buffers = function()
 	local bufs = vim.api.nvim_list_bufs()
 	local current_buf = vim.api.nvim_get_current_buf()
-	for _, i in ipairs(bufs) do
-		if i ~= current_buf then
-			vim.api.nvim_buf_delete(i, {})
+	for _, buf in ipairs(bufs) do
+		local buf_name = vim.fn.bufname(buf)
+		if (buf_name and string.sub(buf_name, 1, 8)) ~= "neo-tree" and buf ~= current_buf then
+			vim.api.nvim_buf_delete(buf, {})
 		end
 	end
 end
