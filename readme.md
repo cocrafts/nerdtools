@@ -27,10 +27,5 @@
 - For Kitty, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.
 - For Wezterm [Configure undercurl](https://wezfurlong.org/wezterm/faq.html?h=undercurl#how-do-i-enable-undercurl-curly-underlines) style for Wezterm.
 
-## Install Ruby via `rvm` for macOs
-- brew uninstall --ignore-dependencies openssl@3
-- rvm reinstall 2.7.5
-- brew install openssl@3
-
 ### Awesome software to consider:
 - https://github.com/aristocratos/btop
