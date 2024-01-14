@@ -2,26 +2,28 @@
   hosts: local
   vars:
     node_version: "18.16.0"
+    ruby_version: "2.7.5"
+    cargo_bin: "~/.cargo/bin"
+    mise_node: "~/.local/share/mise/installs/node/"
+    mise_ruby: "~/.local/share/mise/installs/ruby/"
 
   tasks:
-    - name: Download nvm installation
-      shell: yes | /bin/bash -c "$(curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh)"
+    - name: Install cargo mise, generic version manager
+      command: "{{cargo_bin}}/cargo install mise"
       args:
-        creates: ~/.nvm/nvm.sh
+        creates: "{{cargo_bin}}/mise"
 
-    - name: Install Node.js latest version
-      shell: |
-        source ~/.nvm/nvm.sh
-        nvm install {{node_version}}
-        nvm alias default {{node_version}}
-        nvm use {{node_version}}
+    - name: Install Node.js {{node_version}}
+      command: "{{cargo_bin}}/mise use -g node@{{node_version}}"
       args:
-        executable: /usr/bin/zsh
-        creates: ~/.nvm/versions/node
+        creates: "{{mise_node}}/{{node_version}}/bin/node"
 
     - name: Install npm packages
-      shell: |
-        node --version
-        ~/.nvm/versions/node/v{{node_version}}/bin/npm i -g vscode-langservers-extracted graphql-language-service-cli bash-language-server eslint_d write-good pm2 @metacraft/cli
+      shell: "{{mise_node}}/{{node_version}}/bin/npm i -g vscode-langservers-extracted graphql-language-service-cli bash-language-server eslint_d write-good pm2 @metacraft/cli"
       args:
-        creates: ~/.nvm/versions/node
+        creates: "{{mise_node}}/{{node_version}}/bin/write-good"
+
+    - name: Install Ruby {{ruby_version}}
+      command: "{{cargo_bin}}/mise use -g ruby@{{ruby_version}}"
+      args:
+        creates: "{{mise_ruby}}/{{ruby_version}}/bin/ruby"
