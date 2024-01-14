@@ -24,9 +24,21 @@
       shell: ~/sh.rustup.rs -y
       tags:
         - rust
- 
-    - name: Install lsp cargo deps
-      shell: "{{cargo_bin}}/cargo install typos-cli neocmakelsp selene"
+
+    - name: Install cargo typos-cli
+      command: "{{cargo_bin}}/cargo install typos-cli"
+      args:
+        creates: "{{cargo_bin}}/typos"
+
+    - name: Install cargo neocmakelsp
+      command: "{{cargo_bin}}/cargo install neocmakelsp"
+      args:
+        creates: "{{cargo_bin}}/neocmakelsp"
+    
+    - name: Install cargo selene
+      command: "{{cargo_bin}}/cargo install selene"
+      args:
+        creates: "{{cargo_bin}}/selene"
 
     - name: Install starship
       shell: "{{cargo_bin}}/cargo install starship --locked"
@@ -35,6 +47,10 @@
 
     - name: Install taplo-cli (for Toml)
       shell: "{{cargo_bin}}/cargo install --features lsp --locked taplo-cli"
+      args:
+        creates: "{{cargo_bin}}/taplo"
 
     - name: Install wgsl-analyzer 
       shell: "{{cargo_bin}}/cargo install --git https://github.com/wgsl-analyzer/wgsl-analyzer wgsl_analyzer"
+      args:
+        creates: "{{cargo_bin}}/wgsl_analyzer"
