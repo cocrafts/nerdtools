@@ -1,22 +1,23 @@
 - name: Setup golang and dependencies
   hosts: local
   vars:
-    go_bin: "~/Sources/go/bin"
+    cargo_bin: "~/.cargo/bin"
+    go_version: "1.21.6"
+    mise_go: "~/.local/share/mise/installs/go"
+    go_bin: "~/go/bin"
 
   tasks:
-    - name: Install Go
-      shell: |
-        curl -Lo golang.tar.gz "https://go.dev/dl/go1.21.5.linux-arm64.tar.gz"
-        tar -C ~/Sources -xvf golang.tar.gz
+    - name: Install Go {{go_version}}
+      command: "{{cargo_bin}}/mise use -g go@{{go_version}}"
       args:
-        creates: "{{go_bin}}"
+        creates: "{{mise_go}}/{{go_version}}/go/bin/go"
 
     - name: Install efm-langserver
-      shell: "{{go_bin}}/go install github.com/mattn/efm-langserver@latest"
+      shell: "{{mise_go}}/{{go_version}}/go/bin/go install github.com/mattn/efm-langserver@latest"
       args:
-        creates: "{{go_bin}}/efm-langserver"
+        creates: "{{mise_go}}/{{go_version}}/packages/bin/efm-langserver"
 
     - name: Install lazygit
-      shell: "{{go_bin}}/go install github.com/jesseduffield/lazygit@latest"
+      shell: "{{mise_go}}/{{go_version}}/go/bin/go install github.com/jesseduffield/lazygit@latest"
       args:
-        creates: "{{go_bin}}/lazygit"
+        creates: "{{mise_go}}/{{go_version}}/packages/bin/lazygit"
