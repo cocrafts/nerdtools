@@ -14,6 +14,19 @@ return {
 			{ "neovim/nvim-lspconfig" },
 			{ "nvimtools/none-ls.nvim" },
 			{ "nvimdev/guard.nvim" },
+			{
+				"williamboman/mason.nvim",
+				build = function()
+					---@diagnostic disable-next-line: param-type-mismatch
+					pcall(vim.cmd, "MasonUpdate")
+				end,
+			},
+			{
+				"williamboman/mason-lspconfig.nvim",
+				config = function()
+					require("core.lsp.mason").configure()
+				end,
+			},
 			{ "Hoffs/omnisharp-extended-lsp.nvim" },
 			{ "jparise/vim-graphql" },
 			{ "simrat39/rust-tools.nvim" },

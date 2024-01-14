@@ -2,7 +2,7 @@
   hosts: local
   vars:
     node_version: "18.16.0"
-    ruby_version: "2.7.5"
+    ruby_version: "3.3.0"
     cargo_bin: "~/.cargo/bin"
     mise_node: "~/.local/share/mise/installs/node/"
     mise_ruby: "~/.local/share/mise/installs/ruby/"
