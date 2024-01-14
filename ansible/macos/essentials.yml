@@ -31,59 +31,44 @@
     - name: Install Homebrew
       shell: yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
       args:
-        creates: /opt/homebrew/bin/brew
+        creates: /usr/local/bin/brew
 
     - name: Install official git
       shell: brew install git
       args:
-        creates: /opt/homebrew/bin/git
-
-    - name: Install lazygit
-      shell: brew install lazygit
-      args:
-        creates: /opt/homebrew/bin/lazygit
+        creates: /usr/local/bin/git
 
     - name: Install ripgrep
       shell: brew install ripgrep
       args:
-        creates: /opt/homebrew/bin/rg
+        creates: /usr/local/bin/rg
 
     - name: Install zoxide
       shell: brew install zoxide
       args:
-        creates: /opt/homebrew/bin/zoxide
+        creates: /usr/local/bin/zoxide
 
     - name: Install fzf
       shell: |
         brew install fzf
         $(brew --prefix)/opt/fzf/install
       args:
-        creates: /opt/homebrew/bin/fzf
+        creates: /usr/local/bin/fzf
 
     - name: Install fd
       shell: |
         brew install fd
       args:
-        creates: /opt/homebrew/bin/fd
+        creates: /usr/local/bin/fd
 
     - name: Install jq
       shell: |
         brew install jq
       args:
-        creates: /opt/homebrew/bin/jq
+        creates: /usr/local/bin/jq
 
     - name: Install shellcheck
       shell: |
         brew install shellcheck
       args:
-        creates: /opt/homebrew/bin/shellcheck
-
-    - name: Install rbenv
-      shell: brew install rbenv
-      args:
-        creates: /opt/homebrew/bin/rbenv
-
-    - name: Install ruby-build
-      shell: brew install ruby-build
-      args:
-        creates: /opt/homebrew/bin/ruby-build
+        creates: /usr/local/bin/shellcheck
