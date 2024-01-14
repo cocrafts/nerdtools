@@ -120,7 +120,6 @@ local config = {
 			p = { "<cmd>Lazy profile<CR>", "Profile" },
 			l = { "<cmd>Lazy log<CR>", "Log" },
 			d = { "<cmd>Lazy debug<CR>", "Debug" },
-			m = { "<cmd>Mason<CR>", "Mason" },
 		},
 		f = {
 			name = "Finder",
