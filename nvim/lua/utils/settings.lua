@@ -56,7 +56,7 @@ vim.defer_fn(function()
 end, 0)
 
 if vim.g.neovide then
-	vim.opt.guifont = "Operator Mono Lig, Symbols Nerd Font Mono:h13.8"
+	vim.opt.guifont = "Operator Mono Lig:h13.8"
 	vim.opt.linespace = 4
 	vim.g.neovide_profiler = false
 
