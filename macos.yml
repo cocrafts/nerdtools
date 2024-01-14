@@ -2,7 +2,7 @@
 - name: Run all local playbooks
   hosts: local
 
-- import_playbook: ansible/macos/initialize.yml
+- import_playbook: ansible/initialize.yml
 - import_playbook: ansible/macos/essentials.yml
 - import_playbook: ansible/macos/zsh.yml
 - import_playbook: ansible/rust.yml
