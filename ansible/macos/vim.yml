@@ -40,11 +40,11 @@
     - name: Create config.yml symlink for Lazygit
       file:
         src: ~/nerdtools/conf/lazygit.yml
-        dest: ~/Library/Application\ Support/lazygit/config.yml
+        dest: ~/Library/Application Support/lazygit/config.yml
         state: link
 
     - name: Create zls.json for Zig
       file:
         src: ~/nerdtools/conf/zls.json
-        dest: "~/Library/Application\ Support/zls.json"
+        dest: "~/Library/Application Support/zls.json"
         state: link

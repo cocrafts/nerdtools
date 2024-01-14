@@ -1,5 +1,8 @@
 export LANG=en_US.UTF-8
 export NVM_LAZY_LOAD=true
+export PATH="$PATH:$HOME/Sources/nvim-macos/bin"
+export PATH="$PATH:$HOME/Sources/go/bin"
+export PATH="$PATH:$HOME/go/bin"
 
 plugins=(
 	git

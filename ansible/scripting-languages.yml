@@ -11,10 +11,10 @@
 
     - name: Install Node.js latest version
       shell: |
-          source ~/.nvm/nvm.sh
-          nvm install {{node_version}}
-          nvm alias default {{node_version}}
-          nvm use {{node_version}}
+        source ~/.nvm/nvm.sh
+        nvm install {{node_version}}
+        nvm alias default {{node_version}}
+        nvm use {{node_version}}
       args:
         executable: /usr/bin/zsh
         creates: ~/.nvm/versions/node

@@ -12,6 +12,7 @@
         - ~/Sources
         - ~/Sources/bin
         - ~/Projects
+        - ~/Library/Application\ Support/lazygit
 
     - name: Essential packages
       become: true

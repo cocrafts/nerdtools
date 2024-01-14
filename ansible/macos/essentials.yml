@@ -2,6 +2,15 @@
   hosts: local
 
   tasks:
+    - name: Create sources directory
+      file:
+        path: "{{item}}"
+        state: directory
+      with_items:
+        - ~/Sources
+        - ~/Sources/bin
+        - ~/Projects
+
     - name: Ensure .config/kitty exists
       file:
         path: ~/.config/kitty
@@ -55,16 +64,26 @@
       shell: |
         brew install fd
       args:
-        crates: /opt/homebrew/bin/fd
+        creates: /opt/homebrew/bin/fd
 
     - name: Install jq
       shell: |
         brew install jq
       args:
-        crates: /opt/homebrew/bin/jq
+        creates: /opt/homebrew/bin/jq
 
     - name: Install shellcheck
       shell: |
         brew install shellcheck
       args:
-        crates: /opt/homebrew/bin/shellcheck
+        creates: /opt/homebrew/bin/shellcheck
+
+    - name: Install rbenv
+      shell: brew install rbenv
+      args:
+        creates: /opt/homebrew/bin/rbenv
+
+    - name: Install ruby-build
+      shell: brew install ruby-build
+      args:
+        creates: /opt/homebrew/bin/ruby-build
