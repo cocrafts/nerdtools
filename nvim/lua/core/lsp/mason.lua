@@ -8,6 +8,7 @@ M.configure = function()
 				"gopls",
 				"graphql",
 				"efm",
+				"typescript-language-server",
 				-- "omnisharp",
 				"stylelint_lsp",
 				"jsonls",
