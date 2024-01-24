@@ -29,6 +29,7 @@ return {
 			},
 			{ "Hoffs/omnisharp-extended-lsp.nvim" },
 			{ "jparise/vim-graphql" },
+			{ "alaviss/nim.nvim" },
 			{ "simrat39/rust-tools.nvim" },
 			{
 				"pmizio/typescript-tools.nvim",
