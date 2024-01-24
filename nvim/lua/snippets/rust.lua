@@ -1,4 +1,4 @@
-local ls = require("luasnip") ---{{{
+local ls = require("luasnip") --{{{
 local s = ls.s
 local i = ls.i
 local t = ls.t
@@ -13,8 +13,8 @@ local rep = require("luasnip.extras").rep
 
 local snippets, autosnippets = {}, {} --}}}
 
-local group = vim.api.nvim_create_augroup("Lua Snippets", { clear = true })
-local file_pattern = "*.lua"
+local group = vim.api.nvim_create_augroup("Rust Snippets", { clear = true })
+local file_pattern = "*.rs"
 
 local function cs(trigger, nodes, opts) --{{{
 	local snippet = s(trigger, nodes)
@@ -68,10 +68,6 @@ local function cs(trigger, nodes, opts) --{{{
 	table.insert(target_table, snippet) -- insert snippet into appropriate table
 end --}}}
 
--- Start Refactoring --
-
-cs("co", { t("fmt.Println("), i(1, ""), t(")") }, { "jcl", "jj" })
-
--- End Refactoring --
+cs("co", { t("println!("), i(1, ""), t(")") }, { "jcl", "jj" }) -- console.log
 
 return snippets, autosnippets

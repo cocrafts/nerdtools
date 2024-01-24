@@ -227,7 +227,8 @@ const styles = StyleSheet.create({{
 	)
 )
 
-cs("cl", { t("console.log("), i(1, ""), t(")") }, { "jcl", "jj" }) -- console.log
+cs("co", { t("console.log("), i(1, ""), t(")") }, { "jcl", "jj" }) -- console.log
+cs("log", { t("logger.debug("), i(1, ""), t(")") }, { "jcl", "jj" })
 
 return {
 	snippets = snippets,
