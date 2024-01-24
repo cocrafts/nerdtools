@@ -110,7 +110,10 @@ M.configure = function()
 		require("core.lsp.null-ls").configure()
 	end
 
-	require("core.lsp.snyk").configure(lspconfig)
+	if config.use_snyk then	
+		require("core.lsp.snyk").configure(lspconfig)
+	end
+
 	require("core.lsp.toml").configure(lspconfig)
 	require("core.lsp.terraform").configure(lspconfig)
 	require("core.lsp.typescript-tools").configure()
