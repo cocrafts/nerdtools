@@ -104,6 +104,14 @@ M.configure = function()
 
 	lsp.setup()
 
+	require("core.lsp.terraform").configure(lspconfig)
+	require("core.lsp.typescript-tools").configure()
+	require("core.lsp.bash").configure(lspconfig)
+	require("core.lsp.cmake").configure(lspconfig)
+	require("core.lsp.html").configure(lspconfig)
+	require("core.lsp.json").configure(lspconfig)
+	require("core.lsp.graphql").configure(lspconfig)
+
 	if config.use_efm then
 		require("core.lsp.efm").configure(lspconfig)
 	else
@@ -114,21 +122,42 @@ M.configure = function()
 		require("core.lsp.snyk").configure(lspconfig)
 	end
 
-	require("core.lsp.toml").configure(lspconfig)
-	require("core.lsp.terraform").configure(lspconfig)
-	require("core.lsp.typescript-tools").configure()
-	require("core.lsp.rust").configure()
-	-- require("core.lsp.go").configure(lspconfig)
-	require("core.lsp.bash").configure(lspconfig)
-	require("core.lsp.clang").configure(lspconfig)
-	require("core.lsp.cmake").configure(lspconfig)
-	require("core.lsp.csharp").configure(lspconfig)
-	require("core.lsp.zls").configure(lspconfig)
-	require("core.lsp.html").configure(lspconfig)
-	require("core.lsp.json").configure(lspconfig)
-	require("core.lsp.graphql").configure(lspconfig)
-	require("core.lsp.lua-ls").configure(lspconfig)
-	require("core.lsp.python").configure(lspconfig)
+	if config.use_ruby then
+		require("core.lsp.ruby-ls").configure(lspconfig)
+	end
+
+	if config.use_lua then
+		require("core.lsp.lua-ls").configure(lspconfig)
+	end
+
+	if config.use_python then
+		require("core.lsp.python").configure(lspconfig)
+	end
+
+	if config.use_rust then
+		require("core.lsp.toml").configure(lspconfig)
+		require("core.lsp.rust").configure()
+	end
+
+	if config.use_zig then
+		require("core.lsp.zls").configure(lspconfig)
+	end
+
+	if config.use_nim then
+		require("core.lsp.nim").configure(lspconfig)
+	end
+
+	if config.use_clang then
+		require("core.lsp.clang").configure(lspconfig)
+	end
+
+	if config.use_csharp then
+		require("core.lsp.csharp").configure(lspconfig)
+	end
+
+	if config.use_go then
+		require("core.lsp.go").configure(lspconfig)
+	end
 
 	if config.use_wgsl then
 		require("core.lsp.wgsl").configure(lspconfig)
