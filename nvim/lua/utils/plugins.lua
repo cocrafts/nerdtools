@@ -176,13 +176,6 @@ return {
 					"kkharji/sqlite.lua",
 				},
 			},
-			{
-				"nvim-telescope/telescope-frecency.nvim",
-				dependencies = {
-					"nvim-tree/nvim-web-devicons",
-					"kkharji/sqlite.lua",
-				},
-			},
 		},
 		cmd = "Telescope",
 		lazy = true,

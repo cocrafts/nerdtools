@@ -125,8 +125,6 @@ local config = {
 		f = {
 			name = "Finder",
 			f = { "<cmd>Telescope resume<CR>", "Resume last search" },
-			s = { "<cmd>Telescope frecency workspace=CWD<CR>", "Frecency workspace search" },
-			S = { "<cmd>Telescope frecency<CR>", "Frecency search" },
 			h = { "<cmd>Telescope help_tags<CR>", "Help tags" },
 			H = { "<cmd>Telescope highlights<CR>", "Find highlight groups" },
 			r = { "<cmd>Telescope registers<CR>", "Registers" },
