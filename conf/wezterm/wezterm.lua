@@ -5,6 +5,7 @@ local config = {}
 local colors = {
 	fg = "#ABB2BF",
 	bg = "#1A1B26",
+	split = "#333333",
 	dark = "#16161e",
 	darker = "#0c0c0f",
 	cursor = "#C0CAF7",
@@ -200,6 +201,7 @@ config.colors = {
 	cursor_bg = colors.cursor,
 	cursor_fg = colors.darker,
 	cursor_border = colors.cursor,
+	split = colors.split,
 }
 
 return config
