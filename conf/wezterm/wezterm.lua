@@ -42,6 +42,7 @@ config.font = wezterm.font_with_fallback({
 	},
 })
 
+config.front_end = "WebGpu"
 config.force_reverse_video_cursor = false
 config.adjust_window_size_when_changing_font_size = false
 config.hide_tab_bar_if_only_one_tab = true
