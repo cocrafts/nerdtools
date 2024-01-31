@@ -12,6 +12,7 @@ M.configure = function()
 		nls.builtins.diagnostics.selene,
 
 		nls.builtins.formatting.ruff_format, -- python
+		nls.builtins.diagnostics.ruff,
 		nls.builtins.diagnostics.mypy,
 
 		nls.builtins.diagnostics.revive, -- golang
@@ -29,9 +30,12 @@ M.configure = function()
 		nls.builtins.formatting.stylelint,
 
 		null.formatting.jq, -- json
+		nls.builtins.formatting.taplo, -- toml
+		nls.builtins.formatting.terraform_fmt,
 
 		nls.builtins.formatting.zigfmt, -- zig
 		nls.builtins.formatting.rustfmt, -- rust
+		nls.builtins.formatting.nimpretty,
 		nls.builtins.formatting.csharpier, -- cshap
 		nls.builtins.formatting.shfmt, -- shell
 
