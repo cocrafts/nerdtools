@@ -196,8 +196,6 @@ local {} = {}
 	"jj"
 ) --}}}
 
--- Tutorial Snippets go here --
-
--- End Refactoring --
+cs("co", { t('print("'), i(1, ""), t('")') }, { "jcl", "jj" }) -- console.log
 
 return snippets, autosnippets

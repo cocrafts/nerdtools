@@ -68,6 +68,7 @@ local function cs(trigger, nodes, opts) --{{{
 	table.insert(target_table, snippet) -- insert snippet into appropriate table
 end --}}}
 
-cs("co", { t('echo "'), i(1, ""), t('"') }, { "jcl", "jj" }) -- console.log
+cs("co", { t('echo "'), i(1, ""), t('"') }, { "jcl", "jj" })
+cs("im", { t('import '), i(1, "") }, { "jcl", "jj" })
 
 return snippets, autosnippets
