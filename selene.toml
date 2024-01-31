@@ -1,2 +1,1 @@
-std="lua51+vim"
-mixed_table=false
+std = "lua51+vim"
