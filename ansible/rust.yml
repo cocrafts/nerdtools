@@ -39,7 +39,12 @@
       command: "{{cargo_bin}}/cargo install neocmakelsp"
       args:
         creates: "{{cargo_bin}}/neocmakelsp"
-    
+      
+    - name: Install cargo stylua
+      command: "{{cargo_bin}}/cargo install stylua"
+      args:
+        creates: "{{cargo_bin}}/stylua"
+
     - name: Install cargo selene
       command: "{{cargo_bin}}/cargo install selene"
       args:
