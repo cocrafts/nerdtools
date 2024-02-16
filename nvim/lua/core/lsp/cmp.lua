@@ -87,6 +87,11 @@ M.configure = function()
 			if config.use_icons then
 				vim_item.kind = icons.kind[vim_item.kind]
 
+				if entry.source.name == "codeium" then
+					vim_item.kind = icons.kind.Event
+					vim_item.kind_hl_group = "CmpItemKindCopilot"
+				end
+
 				if entry.source.name == "copilot" then
 					vim_item.kind = icons.git.Octoface
 					vim_item.kind_hl_group = "CmpItemKindCopilot"
@@ -131,6 +136,7 @@ M.configure = function()
 			{ name = "path", priority = 10 },
 			{ name = "luasnip", priority = 8, keyword_length = 2 },
 			{ name = "treesitter", priority = 7 },
+			{ name = "codeium", priority = 6 },
 			{ name = "buffer", priority = 6, keyword_length = 3 },
 		},
 		window = {

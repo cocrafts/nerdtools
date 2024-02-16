@@ -27,23 +27,23 @@ local config = {
 		nowait = true,
 	},
 	nmaps = {
-		["w"] = { "<cmd>up<cr>", "save" },
-		["q"] = { "<cmd>q!<cr>", "quit" },
+		w = { "<cmd>up<cr>", "save" },
+		q = { "<cmd>q!<cr>", "quit" },
 		["/"] = { "<Plug>(comment_toggle_linewise_current)", "Comment toggle current line" },
-		["c"] = { "<cmd>BufferKill<CR>", "Close Buffer" },
-		["C"] = { "<cmd>lua require('utils.helper').close_other_buffers()<CR>", "Close other buffers" },
-		["x"] = { "<cmd>Telescope neoclip theme=dropdown<CR>", "Clipboard history" },
-		["e"] = {
+		c = { "<cmd>BufferKill<CR>", "Close Buffer" },
+		C = { "<cmd>lua require('utils.helper').close_other_buffers()<CR>", "Close other buffers" },
+		x = { "<cmd>Telescope neoclip theme=dropdown<CR>", "Clipboard history" },
+		e = {
 			function()
 				require("neo-tree.command").execute({ toggle = true, dir = vim.loop.cwd() })
 			end,
 			"Explorer",
 		},
-		["z"] = { "<cmd>Telescope zoxide list<CR>", "Zoxide list" },
-		["u"] = { "<cmd>lua require('telescope').extensions.recent_files.pick()<CR>", "Recent files" },
-		["U"] = { "<cmd>Telescope git_status<CR>", "Open changed file" },
-		["i"] = { "<cmd>Telescope live_grep<CR>", "Live grep (lite)" },
-		["I"] = {
+		z = { "<cmd>Telescope zoxide list<CR>", "Zoxide list" },
+		u = { "<cmd>lua require('telescope').extensions.recent_files.pick()<CR>", "Recent files" },
+		U = { "<cmd>Telescope git_status<CR>", "Open changed file" },
+		i = { "<cmd>Telescope live_grep<CR>", "Live grep (lite)" },
+		I = {
 			function()
 				local path = vim.api.nvim_buf_get_name(0)
 				local directory = path:match("(.-)[^/]*$")
@@ -54,7 +54,7 @@ local config = {
 			end,
 			"Live grep",
 		},
-		["F"] = {
+		F = {
 			function()
 				local word_under_cursor = vim.fn.expand("<cword>")
 				require("telescope").extensions.live_grep_args.live_grep_args({
@@ -74,7 +74,7 @@ local config = {
 			end,
 			"Live grep (full)",
 		},
-		["o"] = {
+		o = {
 			function()
 				helper.find_project_files({
 					previewer = true,
@@ -84,7 +84,7 @@ local config = {
 			end,
 			"Find File",
 		},
-		["O"] = { "<cmd>Telescope find_files<CR>", "File search" },
+		O = { "<cmd>Telescope find_files<CR>", "File search" },
 		b = {
 			name = "Buffer",
 			j = { "<cmd>BufferLinePick<CR>", "Jump" },
@@ -158,12 +158,28 @@ local config = {
 			q = { ":DiffviewClose<CR>", "Close Git diff" },
 		},
 		[";"] = { "<cmd>lua require('harpoon.mark').add_file()<CR>", "Add to harpoon" },
-		["J"] = { "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", "Jumps menu" },
-		["j"] = {
+		[":"] = { "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", "Jumps menu" },
+		J = {
 			function()
 				require("telescope").extensions.harpoon.marks(helper.layouts.full_cursor())
 			end,
 			"Jumps telescope",
+		},
+		j = {
+			name = "AI/Ask ChatGPT bundle",
+			c = { "<cmd>ChatGPT<CR>", "ChatGPT" },
+			e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction", mode = { "n", "v" } },
+			g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction", mode = { "n", "v" } },
+			t = { "<cmd>ChatGPTRun translate<CR>", "Translate", mode = { "n", "v" } },
+			k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords", mode = { "n", "v" } },
+			d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring", mode = { "n", "v" } },
+			a = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests", mode = { "n", "v" } },
+			o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code", mode = { "n", "v" } },
+			s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize", mode = { "n", "v" } },
+			f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs", mode = { "n", "v" } },
+			x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
+			r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
+			l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
 		},
 		l = {
 			name = "LSP",
@@ -208,7 +224,13 @@ local config = {
 			h = { "<cmd>ToggleTerm direction=tab<CR>", "Terminal tab" },
 		},
 	},
-	vmaps = {},
+	vmaps = {
+		-- j = {
+		-- 	name = "AI/Ask ChatGPT bundle",
+		-- 	e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instructions" },
+		-- 	g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction" },
+		-- },
+	},
 }
 
 M.configure = function()
@@ -216,7 +238,7 @@ M.configure = function()
 
 	whichkey.setup(config.setup)
 	whichkey.register(config.nmaps, config.nopts)
-	-- whichkey.register(config.vmaps, config.vopts)
+	whichkey.register(config.vmaps, config.vopts)
 end
 
 return M
