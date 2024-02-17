@@ -2,6 +2,22 @@ local M = {}
 local helper = require("utils.helper")
 local icons = require("utils.icons")
 
+local ai_keys = {
+	e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction" },
+	g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction" },
+	t = { "<cmd>ChatGPTRun translate<CR>", "Translate" },
+	k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords" },
+	d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring" },
+	a = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests" },
+	o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code" },
+	s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize" },
+	f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs" },
+	x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code" },
+	c = { "<cmd>ChatGPTRun complete_code<CR>", "Complete Code" },
+	r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit" },
+	l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis" },
+}
+
 local config = {
 	setup = {
 		icons = {
@@ -165,22 +181,9 @@ local config = {
 			end,
 			"Jumps telescope",
 		},
-		j = {
+		j = vim.tbl_extend("force", {
 			name = "AI/Ask ChatGPT bundle",
-			c = { "<cmd>ChatGPT<CR>", "ChatGPT" },
-			e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instruction", mode = { "n", "v" } },
-			g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction", mode = { "n", "v" } },
-			t = { "<cmd>ChatGPTRun translate<CR>", "Translate", mode = { "n", "v" } },
-			k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords", mode = { "n", "v" } },
-			d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring", mode = { "n", "v" } },
-			a = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests", mode = { "n", "v" } },
-			o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code", mode = { "n", "v" } },
-			s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize", mode = { "n", "v" } },
-			f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs", mode = { "n", "v" } },
-			x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
-			r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
-			l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
-		},
+		}, ai_keys),
 		l = {
 			name = "LSP",
 			a = { "<cmd>lua vim.lsp.buf.code_action()<cr>", "Code Action" },
@@ -203,18 +206,8 @@ local config = {
 			p = { "<cmd>Telescope package_info<CR>", "Package actions" },
 			o = { "<cmd>TwilightEnable<CR>", "Twilight on" },
 			O = { "<cmd>TwilightDisable<CR>", "Twilight off" },
-			h = {
-				function()
-					require("lsp-inlayhints").toggle()
-				end,
-				"Toggle Inlay-hints",
-			},
-			H = {
-				function()
-					require("lsp-inlayhints").reset()
-				end,
-				"Reset Inlay-hints",
-			},
+			h = { "<cmd>lua require('lsp-inlayhints').toggle()<CR>", "Toggle Inlay-hints" },
+			H = { "<cmd>lua require('lsp-inlayhints').reset()<CR>", "Reset Inlay-hints" },
 		},
 		k = {
 			name = "Terminal",
@@ -224,13 +217,7 @@ local config = {
 			h = { "<cmd>ToggleTerm direction=tab<CR>", "Terminal tab" },
 		},
 	},
-	vmaps = {
-		-- j = {
-		-- 	name = "AI/Ask ChatGPT bundle",
-		-- 	e = { "<cmd>ChatGPTEditWithInstruction<CR>", "Edit with instructions" },
-		-- 	g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction" },
-		-- },
-	},
+	vmaps = vim.tbl_extend("force", {}, ai_keys),
 }
 
 M.configure = function()
