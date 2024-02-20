@@ -187,7 +187,7 @@ cs(
 	"im",
 	fmt(
 		[[
-import {{ {2} }}	from '{1}';
+import {{ {2} }} from '{1}';
 		]],
 		{
 			i(1, ""),
