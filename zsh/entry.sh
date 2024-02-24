@@ -10,6 +10,8 @@ export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 plugins=(
 	git
+	copyfile
+	jsontools
 	zsh-autosuggestions
 	zsh-syntax-highlighting
 )
