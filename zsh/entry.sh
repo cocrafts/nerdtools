@@ -1,9 +1,12 @@
 export LANG=en_US.UTF-8
 export ZSH="$HOME/.oh-my-zsh"
 
+export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/Sources/bin"
 export PATH="$PATH:$HOME/Sources/neovim/bin"
 export PATH="$PATH:$HOME/go/bin"
+
+export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 plugins=(
 	git
