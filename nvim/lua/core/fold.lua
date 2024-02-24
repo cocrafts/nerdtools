@@ -40,6 +40,11 @@ M.configure = function()
 	vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
 	vim.keymap.set("n", "zm", require("ufo").closeFoldsWith) -- closeAllFolds == closeFoldsWith(0)
 
+	vim.o.foldcolumn = "1" -- '0' is not bad
+	vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+	vim.o.foldlevelstart = 99 -- do not close folds when a buffer is opened
+	vim.o.foldenable = true
+
 	require("ufo").setup({
 		fold_virt_text_handler = handler,
 		open_fold_hl_timeout = 150,

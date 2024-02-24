@@ -29,7 +29,6 @@ M.configure = function(lspconfig)
 
 	vim.wo.foldmethod = "expr"
 	vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
-	vim.o.foldlevelstart = 99 -- do not close folds when a buffer is opened
 
 	lspconfig.wgsl_analyzer.setup({})
 end
