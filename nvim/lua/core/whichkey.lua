@@ -183,6 +183,8 @@ local config = {
 		},
 		j = vim.tbl_extend("force", {
 			name = "AI/Ask ChatGPT bundle",
+			j = { "<cmd>ChatGPT<CR>", "ChatGPT prompt" },
+			u = { "<cmd>ChatGPTActAs<CR>", "ChatGPT prompt" },
 		}, ai_keys),
 		l = {
 			name = "LSP",

@@ -3,7 +3,7 @@ return {
 	use_inlay_hints = true,
 	use_live_diagnostic = false,
 	use_noice = true,
-	use_efm = false,
+	use_efm = true,
 	use_ruby = true,
 	use_lua = true,
 	use_python = true,

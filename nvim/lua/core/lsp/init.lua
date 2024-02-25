@@ -111,6 +111,7 @@ M.configure = function()
 	require("core.lsp.html").configure(lspconfig)
 	require("core.lsp.json").configure(lspconfig)
 	require("core.lsp.graphql").configure(lspconfig)
+	require("core.lsp.typos").configure(lspconfig)
 
 	if config.use_efm then
 		require("core.lsp.efm").configure(lspconfig)
@@ -118,7 +119,7 @@ M.configure = function()
 		require("core.lsp.null-ls").configure()
 	end
 
-	if config.use_snyk then	
+	if config.use_snyk then
 		require("core.lsp.snyk").configure(lspconfig)
 	end
 

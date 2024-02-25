@@ -1,6 +1,5 @@
 local clang_format = require("efmls-configs.formatters.clang_format")
 local clang_tidy = require("efmls-configs.linters.clang_tidy")
-local codespell = require("efmls-configs.linters.codespell")
 local eslint_d_format = require("efmls-configs.formatters.eslint_d")
 local eslint_d_lint = require("efmls-configs.linters.eslint_d")
 local jq_format = require("efmls-configs.formatters.jq")
@@ -18,14 +17,14 @@ local terraform_format = require("efmls-configs.formatters.terraform_fmt")
 local css_bundle = require("core.lsp.efm.css")
 local go_bundle = require("core.lsp.efm.go")
 local zig_bundle = require("core.lsp.efm.zig")
-local json_bundle = { jq_format, jq_lint, codespell }
+local json_bundle = { jq_format, jq_lint }
 local eslint_bundle = { eslint_d_format, eslint_d_lint }
 
 local M = {}
 local languages = {
-	c = { clang_format, clang_tidy, codespell },
-	lua = { stylua, selene, codespell },
-	python = { mypy_lint, ruff_lint, ruff_format, codespell },
+	c = { clang_format, clang_tidy },
+	lua = { stylua, selene },
+	python = { mypy_lint, ruff_lint, ruff_format },
 	json = json_bundle,
 	jsonc = json_bundle,
 	vue = eslint_bundle,

@@ -2,6 +2,14 @@ local colors = require("core.lualine.colors")
 local conditions = require("core.lualine.conditions")
 local icons = require("utils.icons")
 
+local client_aliases = {
+    ["null-ls"] = "null",
+    ["lua_ls"] = "lua",
+    ["snyk_ls"] = "snyk",
+    ["nim_langserver"] = "nim",
+    ["typos_lsp"] = "typos",
+}
+
 local diff_source = function()
 	local gitsigns = vim.b.gitsigns_status_dict
 
@@ -83,16 +91,10 @@ return {
 
 			-- add client
 			for _, client in pairs(buf_clients) do
-				if client.name == "null-ls" then
-					table.insert(buf_client_names, "null")
-				elseif client.name == "lua_ls" then
-					table.insert(buf_client_names, "lua")
-				elseif client.name == "snyk_ls" then
-					table.insert(buf_client_names, "snyk")
-				elseif client.name == "nim_langserver" then
-					table.insert(buf_client_names, "nim!")
-				elseif client.name ~= "copilot" then
-					table.insert(buf_client_names, client.name)
+				local client_name = client_aliases[client.name] or client.name
+
+				if client.name ~= "copilot" then
+					table.insert(buf_client_names, client_name)
 				end
 
 				if client.name == "copilot" then
