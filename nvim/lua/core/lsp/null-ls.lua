@@ -1,18 +1,23 @@
 local M = {}
-local null = require("utils.null")
+local eslint = require("core.lsp.null.eslint")
+local json = require("core.lsp.null.json")
+local ruff = require("core.lsp.null.ruff")
+local rust = require("core.lsp.null.rust")
+local terraform = require("core.lsp.null.terraform")
+local typos = require("core.lsp.null.typos")
+local zig = require("core.lsp.null.zig")
 
 M.configure = function()
 	local nls = require("null-ls")
 	local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 	local sources = {
 		nls.builtins.formatting.clang_format, -- clang
-		nls.builtins.diagnostics.clang_check,
 
 		nls.builtins.formatting.stylua, -- lua
 		nls.builtins.diagnostics.selene,
 
-		nls.builtins.formatting.ruff_format, -- python
-		nls.builtins.diagnostics.ruff,
+		ruff.format, -- python
+		ruff.diagnostics,
 		nls.builtins.diagnostics.mypy,
 
 		nls.builtins.diagnostics.revive, -- golang
@@ -23,23 +28,24 @@ M.configure = function()
 			},
 		}),
 
-		nls.builtins.formatting.eslint_d, -- javascript
-		nls.builtins.diagnostics.eslint_d,
+		eslint.format,
+		eslint.diagnostics,
 
 		nls.builtins.diagnostics.stylelint, -- css
 		nls.builtins.formatting.stylelint,
 
-		null.formatting.jq, -- json
-		nls.builtins.formatting.taplo, -- toml
-		nls.builtins.formatting.terraform_fmt,
+		json.jqfmt,
+		terraform.format,
 
-		nls.builtins.formatting.zigfmt, -- zig
-		nls.builtins.formatting.rustfmt, -- rust
+		zig.format,
+		rust.format,
+		rust.taplofmt,
 		nls.builtins.formatting.nimpretty,
 		nls.builtins.formatting.csharpier, -- cshap
-		nls.builtins.formatting.shfmt, -- shell
-
-		nls.builtins.diagnostics.typos.with({
+		nls.builtins.formatting.shfmt.with({ -- shell
+			filetypes = { "sh", "zsh" },
+		}),
+		typos.diagnostic.with({
 			extra_args = {
 				"--config",
 				vim.fn.expand("~/nerdtools/conf/typos.toml"),

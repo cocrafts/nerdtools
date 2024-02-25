@@ -3,11 +3,10 @@ local conditions = require("core.lualine.conditions")
 local icons = require("utils.icons")
 
 local client_aliases = {
-    ["null-ls"] = "null",
-    ["lua_ls"] = "lua",
-    ["snyk_ls"] = "snyk",
-    ["nim_langserver"] = "nim",
-    ["typos_lsp"] = "typos",
+	["null-ls"] = "null",
+	["lua_ls"] = "lua",
+	["snyk_ls"] = "snyk",
+	["nim_langserver"] = "nim",
 }
 
 local diff_source = function()
