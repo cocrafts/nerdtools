@@ -149,6 +149,7 @@ M.configure = function()
 
 	if config.use_clang then
 		require("core.lsp.clang").configure(lspconfig)
+		require("core.lsp.meson").configure(lspconfig)
 	end
 
 	if config.use_csharp then

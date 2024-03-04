@@ -38,6 +38,10 @@ M.configure = function()
 			table.insert(ensure_installed, "zls")
 		end
 
+		if config.use_clang then
+			table.insert(ensure_installed, "swift_mesonls")
+		end
+
 		if config.use_csharp then
 			table.insert(ensure_installed, "omnisharp")
 		end
