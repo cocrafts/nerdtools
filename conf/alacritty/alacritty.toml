@@ -1,0 +1,37 @@
+import = ["~/nerdtools/conf/alacritty/themes/tokyo-night.toml"]
+
+[font]
+size = 14.2
+
+[font.bold]
+family = "OperatorMono Nerd Font Mono"
+style = "Medium"
+
+[font.bold_italic]
+family = "OperatorMono Nerd Font Mono"
+style = "Medium"
+
+[font.italic]
+family = "OperatorMono Nerd Font Mono"
+style = "Medium"
+
+[font.normal]
+family = "OperatorMono Nerd Font Mono"
+style = "Medium"
+
+[font.offset]
+x = 1
+y = 4
+
+[[keyboard.bindings]]
+chars = " w"
+key = "S"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\f"
+key = "K"
+mods = "Command"
+
+[window]
+decorations = "full"
