@@ -112,7 +112,7 @@ config.keys = {
 		action = act.ActivatePaneDirection("Next"),
 	},
 	{
-		key = "e",
+		key = "w",
 		mods = "CMD",
 		action = act.CloseCurrentPane({ confirm = false }),
 	},
