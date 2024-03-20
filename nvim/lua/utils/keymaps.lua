@@ -31,6 +31,8 @@ key.mode_keys("n", {
 	-- Git navigation
 	["<C-f>"] = "<cmd>lua require('gitsigns').next_hunk()<CR>",
 	["<C-s>"] = "<cmd>lua require('gitsigns').prev_hunk()<CR>",
+
+	["*"] = "<cmd>lua require('utils.helper').toggle_highlight_search()<CR>",
 })
 
 key.mode_keys("v", {

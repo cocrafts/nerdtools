@@ -90,4 +90,17 @@ M.open_lsp_definitions = function()
 	print("No definitions found")
 end
 
+local last_search_pattern = ""
+M.toggle_highlight_search = function()
+	local search_pattern = vim.fn.getreg("/") or ""
+
+	if search_pattern ~= last_search_pattern then
+		last_search_pattern = search_pattern
+		vim.cmd([[normal! *]])
+	else
+		vim.cmd("nohlsearch")
+		last_search_pattern = ""
+	end
+end
+
 return M
