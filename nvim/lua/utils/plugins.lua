@@ -58,6 +58,9 @@ return {
 				"pmizio/typescript-tools.nvim",
 				dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
 			},
+			{ "yuezk/vim-js" },
+			{ "HerringtonDarkholme/yats.vim" },
+			{ "maxmellon/vim-jsx-pretty" },
 			{ "lbrayner/vim-rzip" },
 			{
 				"ray-x/go.nvim",
