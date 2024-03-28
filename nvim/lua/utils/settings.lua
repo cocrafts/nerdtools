@@ -5,6 +5,7 @@ local globals = {
 	gitblame_date_format = "%r",
 	gitblame_message_template = " <author>, <date> • <summary> ",
 	gitblame_message_when_not_committed = "",
+	gitblame_delay = 0,
 	zig_fmt_autosave = 0,
 }
 
