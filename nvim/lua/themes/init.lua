@@ -58,6 +58,7 @@ highlight.system = {
 	NeoTreeEndOfBuffer = { fg = colors.explorer_bg },
 	NeoTreeWinSeparator = { fg = colors.explorer_bg, bg = colors.explorer_bg },
 	NeoTreeDirectoryName = { fg = colors.white },
+	NeoTreeSignColumn = { bg = colors.explorer_bg }, -- left padding area
 	-- git file name
 	NeoTreeGitAdded = { fg = colors.types, style = "bold" },
 	NeoTreeGitConflict = { fg = colors.red, style = "bold" },

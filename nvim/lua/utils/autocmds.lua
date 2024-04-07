@@ -18,6 +18,22 @@ local definitions = {
 		},
 	},
 	{
+		"BufEnter",
+		{
+			group = "BufferEnter",
+			desc = "Buffer Enter",
+			callback = function(args)
+				local filetype = vim.api.nvim_get_option_value("filetype", { buf = args.buf })
+
+				if filetype == "neo-tree" then
+					vim.o.statuscolumn = "%="
+				else
+					vim.o.statuscolumn = "%s%=%{v:relnum?v:relnum:v:lnum} "
+				end
+			end,
+		},
+	},
+	{
 		"LspAttach",
 		{
 			group = "UserLspConfig",
