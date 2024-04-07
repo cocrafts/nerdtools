@@ -7,7 +7,7 @@ M.configure = function()
 
 	telescope.setup({
 		defaults = {
-			prompt_prefix = string.format(" %s  ", icons.ui.Search),
+			prompt_prefix = string.format(" %s ", icons.ui.Search),
 			selection_caret = string.format("%s ", icons.ui.PointArrow),
 			layout_strategy = "horizontal",
 			layout_config = {

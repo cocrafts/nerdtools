@@ -72,7 +72,10 @@ highlight.system = {
 
 	-- Telescope
 	TelescopeNormal = { bg = colors.bg },
-	TelescopeBorder = { bg = colors.bg, fg = colors.float_border },
+	TelescopeBorder = { bg = colors.bg, fg = colors.gray },
+	TelescopePromptBorder = { bg = colors.bg, fg = colors.float_border },
+	TelescopePromptTitle = { bg = colors.bg, fg = colors.float_border },
+	TelescopePromptPrefix = { bg = colors.bg, fg = colors.float_border },
 
 	-- Cmp
 	CmpNormal = { bg = colors.bg },
