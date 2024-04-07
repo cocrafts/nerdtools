@@ -218,7 +218,6 @@ return {
 			require("core.treesitter").configure()
 		end,
 	},
-	{ "f-person/git-blame.nvim" },
 	{
 		"sindrets/diffview.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
