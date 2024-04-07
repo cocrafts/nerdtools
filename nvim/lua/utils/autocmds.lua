@@ -23,10 +23,11 @@ local definitions = {
 			group = "BufferEnter",
 			desc = "Buffer Enter",
 			callback = function(args)
+				local buftype = vim.api.nvim_get_option_value("buftype", { buf = args.buf })
 				local filetype = vim.api.nvim_get_option_value("filetype", { buf = args.buf })
 
-				if filetype == "neo-tree" or filetype == "" then
-					vim.o.statuscolumn = "%="
+				if filetype == "neo-tree" or buftype == "nofile" then
+					vim.o.statuscolumn = "%s"
 				else
 					vim.o.statuscolumn = "%s%=%{v:relnum?v:relnum:v:lnum} "
 				end
