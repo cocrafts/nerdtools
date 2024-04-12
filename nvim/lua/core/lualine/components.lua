@@ -125,7 +125,9 @@ return {
 	spaces = {
 		function(args)
 			local shiftwidth = vim.api.nvim_get_option_value("shiftwidth", { buf = args.buf })
-			return icons.ui.Tab .. " " .. shiftwidth
+			local indent = require("guess-indent").guess_from_buffer(args.buf)
+			local icon = indent == "tabs" and icons.ui.TabIndent or icons.ui.Ellipsis
+			return icon .. " " .. shiftwidth
 		end,
 		padding = 1,
 	},

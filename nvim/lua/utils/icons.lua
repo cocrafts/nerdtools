@@ -120,6 +120,7 @@ return {
 		SignIn = "",
 		SignOut = "",
 		Tab = "󰌒",
+		TabIndent = "",
 		Table = "",
 		Target = "󰀘",
 		Telescope = "",

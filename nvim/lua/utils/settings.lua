@@ -33,8 +33,8 @@ local opts = {
 local defer_opts = {
 	-- use tab
 	autoindent = true,
-	tabstop = 2, -- insert 2 spaces for a tab
-	shiftwidth = 2, -- number of spaces inserted for each indentation
+	tabstop = 4, -- insert 2 spaces for a tab
+	shiftwidth = 4, -- number of spaces inserted for each indentation
 }
 
 for k, v in pairs(globals) do
