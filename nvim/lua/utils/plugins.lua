@@ -21,6 +21,12 @@ return {
 		},
 	},
 	{
+		"nmac427/guess-indent.nvim",
+		config = function()
+			require("core.guess-indent").configure()
+		end,
+	},
+	{
 		"Exafunction/codeium.nvim",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
@@ -53,6 +59,7 @@ return {
 			{ "Hoffs/omnisharp-extended-lsp.nvim" },
 			{ "jparise/vim-graphql" },
 			{ "alaviss/nim.nvim" },
+			{ "tact-lang/tact.vim" },
 			{ "simrat39/rust-tools.nvim" },
 			{
 				"pmizio/typescript-tools.nvim",
@@ -273,7 +280,7 @@ return {
 	{
 		"ethanholz/nvim-lastplace",
 		config = function()
-			require("nvim-lastplace").setup({})
+			require("core.lastplace").configure()
 		end,
 	},
 	{ "JoosepAlviste/nvim-ts-context-commentstring" },
@@ -336,16 +343,14 @@ return {
 		-- highlight/preview color code
 		"brenoprata10/nvim-highlight-colors",
 		config = function()
-			require("nvim-highlight-colors").setup({
-				render = "foreground",
-			})
+			require("core.highlight-colors").configure()
 		end,
 	},
 	{
 		"kylechui/nvim-surround",
 		event = "VeryLazy",
 		config = function()
-			require("nvim-surround").setup()
+			require("core.surround").configure()
 		end,
 	},
 }
