@@ -123,7 +123,7 @@ M.configure = function()
 	end
 
 	if config.use_ruby then
-		require("core.lsp.ruby-ls").configure(lspconfig)
+		require("core.lsp.ruby-lsp").configure(lspconfig)
 	end
 
 	if config.use_lua then
