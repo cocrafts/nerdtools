@@ -2,7 +2,7 @@
   hosts: local
   vars:
     cargo_bin: "~/.cargo/bin"
-    go_version: "1.21.6"
+    go_version: "1.22.2"
     mise_go: "~/.local/share/mise/installs/go"
     go_bin: "~/go/bin"
 
@@ -17,7 +17,20 @@
       args:
         creates: "{{mise_go}}/{{go_version}}/packages/bin/efm-langserver"
 
+    - name: Install revive
+      shell: "{{mise_go}}/{{go_version}}/go/bin/go install github.com/mgechev/revive@latest"
+      args:
+        creates: "{{mise_go}}/{{go_version}}/packages/bin/revive"
+
+    - name: Install gofumpt
+      shell: "{{mise_go}}/{{go_version}}/go/bin/go install mvdan.cc/gofumpt@latest"
+      args:
+        creates: "{{mise_go}}/{{go_version}}/packages/bin/gofumpt"
+
     - name: Install lazygit
       shell: "{{mise_go}}/{{go_version}}/go/bin/go install github.com/jesseduffield/lazygit@latest"
       args:
         creates: "{{mise_go}}/{{go_version}}/packages/bin/lazygit"
+
+    - name: Reshim mise installations
+      shell: "{{mise_go}}/{{go_version}}/go/bin/go reshim 
