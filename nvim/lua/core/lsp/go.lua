@@ -20,9 +20,9 @@ M.configure = function(lspconfig)
 			virtual_text = { space = 0, prefix = icons.ui.Block }, -- virtual text setup
 			update_in_insert = config.use_live_diagnostic,
 		},
-		lsp_document_formatting = false,
+		lsp_document_formatting = true,
 		lsp_inlay_hints = {
-			enable = true,
+			enable = false,
 		},
 		gocoverage_sign = icons.ui.Block,
 		sign_priority = 5, -- change to a higher number to override other signs

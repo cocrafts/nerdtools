@@ -5,6 +5,9 @@ M.configure = function()
 		settings = {
 			separate_diagnostic_server = true,
 			publish_diagnostic_on = "change",
+			tsserver_plugins = {
+				"@styled/typescript-styled-plugin",
+			},
 			tsserver_file_preferences = {
 				includeInlayParameterNameHints = "all",
 				includeCompletionsForModuleExports = true,
