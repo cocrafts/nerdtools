@@ -32,6 +32,10 @@ local definitions = {
 					vim.o.statuscolumn = "%s%=%{v:relnum?v:relnum:v:lnum} "
 				end
 
+				if filetype == "func" then
+					require("nvim-treesitter.highlight").attach(args.buf, "func")
+				end
+
 				local indent = require("guess-indent").guess_from_buffer(args.buf)
 
 				if indent == "tabs" then

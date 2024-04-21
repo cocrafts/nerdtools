@@ -20,6 +20,7 @@ M.configure = function()
 			"toml",
 			"json",
 			"html",
+			"func",
 			"markdown",
 			"markdown_inline",
 		},
