@@ -118,6 +118,7 @@ local config = {
 				"Open float",
 			},
 			c = { "<cmd>lua vim.diagnostic.reset()<CR>", "Clear dianogstics" },
+			m = { "<cmd>MarkdownPreview<CR>", "Preview markdown" },
 		},
 		T = {
 			name = "Treesitter",
