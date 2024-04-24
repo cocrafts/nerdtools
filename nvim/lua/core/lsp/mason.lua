@@ -19,7 +19,7 @@ M.configure = function()
 		end
 
 		if config.use_ruby then
-			table.insert(ensure_installed, "ruby_ls")
+			table.insert(ensure_installed, "ruby_lsp")
 		end
 
 		if config.use_lua then
