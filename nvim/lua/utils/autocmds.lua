@@ -105,5 +105,6 @@ vim.filetype.add({
 	},
 	pattern = {
 		["%.env%.[%w_.-]+"] = "sh",
+		["[%w_.-]+.func"] = "func",
 	},
 })
