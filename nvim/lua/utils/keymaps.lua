@@ -29,8 +29,8 @@ key.mode_keys("n", {
 	["L"] = "Lzz",
 
 	-- Git navigation
-	["<C-f>"] = "<cmd>lua require('gitsigns').next_hunk()<CR>",
-	["<C-s>"] = "<cmd>lua require('gitsigns').prev_hunk()<CR>",
+	["<C-f>"] = "<cmd>lua require('gitsigns').next_hunk()<CR>:lua vim.api.nvim_feedkeys('zz', 'n', true)<CR>",
+	["<C-s>"] = "<cmd>lua require('gitsigns').prev_hunk()<CR>:lua vim.api.nvim_feedkeys('zz', 'n', true)<CR>",
 
 	["*"] = "<cmd>lua require('utils.helper').toggle_highlight_search()<CR>",
 })
