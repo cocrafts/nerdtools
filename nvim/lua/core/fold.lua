@@ -48,7 +48,6 @@ M.configure = function()
 	require("ufo").setup({
 		fold_virt_text_handler = handler,
 		open_fold_hl_timeout = 150,
-		close_fold_kinds = { "imports", "comment" },
 		provider_selector = function(_, filetype) -- (bufnr, filetype, buftype)
 			local domain_indent = ftMap[filetype]
 

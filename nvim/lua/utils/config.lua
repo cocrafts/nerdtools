@@ -1,4 +1,5 @@
 return {
+	indent_size = 4,
 	use_icons = true,
 	use_inlay_hints = true,
 	use_live_diagnostic = false,

@@ -36,15 +36,10 @@ local definitions = {
 					require("nvim-treesitter.highlight").attach(args.buf, "func")
 				end
 
-				local indent = require("guess-indent").guess_from_buffer(args.buf)
-
-				if indent == "tabs" then
-					vim.opt.tabstop = 2
-					vim.opt.shiftwidth = 2
-				else
-					vim.opt.tabstop = 4
-					vim.opt.shiftwidth = 4
-				end
+				-- indent == "tabs" <- this mean using tab
+				-- local indent = require("guess-indent").guess_from_buffer(args.buf)
+				vim.opt.tabstop = config.indent_size
+				vim.opt.shiftwidth = config.indent_size
 			end,
 		},
 	},
