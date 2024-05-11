@@ -1,4 +1,5 @@
 local M = {}
+local config = require("utils.config")
 local eslint = require("core.lsp.null.eslint")
 local json = require("core.lsp.null.json")
 local ruff = require("core.lsp.null.ruff")
@@ -11,40 +12,19 @@ M.configure = function()
 	local nls = require("null-ls")
 	local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 	local sources = {
-		nls.builtins.formatting.clang_format, -- clang
-
-		nls.builtins.formatting.stylua, -- lua
-		nls.builtins.diagnostics.selene,
-
-		ruff.format, -- python
-		ruff.diagnostics,
-		nls.builtins.diagnostics.mypy,
-
-		nls.builtins.diagnostics.revive, -- golang
-		nls.builtins.formatting.golines.with({
-			extra_args = {
-				"--max-len=180",
-				"--base-formatter=gofumpt",
-			},
-		}),
-
 		eslint.format,
 		eslint.diagnostics,
-
-		nls.builtins.diagnostics.stylelint, -- css
-		nls.builtins.formatting.stylelint,
 
 		json.jqfmt,
 		terraform.format,
 
-		zig.format,
-		rust.format,
-		rust.taplofmt,
-		nls.builtins.formatting.nimpretty,
-		nls.builtins.formatting.csharpier, -- cshap
+		nls.builtins.diagnostics.stylelint, -- css
+		nls.builtins.formatting.stylelint,
+
 		nls.builtins.formatting.shfmt.with({ -- shell
 			filetypes = { "sh", "zsh" },
 		}),
+
 		typos.diagnostic.with({
 			extra_args = {
 				"--config",
@@ -52,6 +32,52 @@ M.configure = function()
 			},
 		}),
 	}
+
+	if config.use_clang then
+		table.insert(sources, nls.builtins.formatting.clang_format)
+	end
+
+	if config.use_python then
+		table.insert(sources, ruff.format)
+		table.insert(sources, ruff.diagnostics)
+		table.insert(sources, nls.builtins.diagnostics.mypy)
+	end
+
+	if config.use_go then
+		table.insert(sources, nls.builtins.diagnostics.revive)
+
+		table.insert(
+			sources,
+			nls.builtins.formatting.golines.with({
+				extra_args = {
+					"--max-len=180",
+					"--base-formatter=gofumpt",
+				},
+			})
+		)
+	end
+
+	if config.use_lua then
+		table.insert(sources, nls.builtins.formatting.stylua)
+		table.insert(sources, nls.builtins.diagnostics.selene)
+	end
+
+	if config.use_zig then
+		table.insert(sources, zig.format)
+	end
+
+	if config.use_rust then
+		table.insert(sources, rust.format)
+		table.insert(sources, rust.taplofmt)
+	end
+
+	if config.use_nim then
+		table.insert(sources, nls.builtins.formatting.nimpretty)
+	end
+
+	if config.use_csharp then
+		table.insert(sources, nls.builtins.formatting.csharpier)
+	end
 
 	nls.setup({
 		sources = sources,
