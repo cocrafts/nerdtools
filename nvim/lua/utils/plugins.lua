@@ -248,6 +248,7 @@ return {
 			require("core.gitsigns").configure()
 		end,
 	},
+	{ "f-person/git-blame.nvim" },
 	{
 		"lewis6991/satellite.nvim",
 		config = function()
