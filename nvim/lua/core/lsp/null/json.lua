@@ -16,7 +16,7 @@ M.jqfmt = h.make_builtin({
 	generator_opts = {
 		command = "jq",
 		to_stdin = true,
-		args = { "--indent", "4" },
+		-- args = { "--indent", "4" },
 	},
 })
 

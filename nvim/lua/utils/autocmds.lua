@@ -38,8 +38,8 @@ local definitions = {
 
 				-- indent == "tabs" <- this mean using tab
 				-- local indent = require("guess-indent").guess_from_buffer(args.buf)
-				vim.opt.tabstop = config.indent_size
-				vim.opt.shiftwidth = config.indent_size
+				-- vim.opt.tabstop = config.indent_size
+				-- vim.opt.shiftwidth = config.indent_size
 			end,
 		},
 	},
