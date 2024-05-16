@@ -14,7 +14,7 @@
         creates: "{{mise_node}}/{{node_version}}/bin/node"
 
     - name: Install npm packages
-      shell: "{{mise_node}}/{{node_version}}/bin/npm i -g vscode-langservers-extracted graphql-language-service-cli bash-language-server eslint_d write-good pm2 @metacraft/cli"
+      shell: "{{mise_node}}/{{node_version}}/bin/npm i -g vscode-langservers-extracted graphql-language-service-cli bash-language-server eslint_d prettier stylelint write-good pm2 @metacraft/cli"
       args:
         creates: "{{mise_node}}/{{node_version}}/bin/write-good"
 
