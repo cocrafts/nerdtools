@@ -276,16 +276,9 @@ local config = {
 			},
 			l = {
 				function()
-					local bufnr = vim.api.nvim_get_current_buf()
-					local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
-
-					if filetype == "hurl" then
-						vim.cmd("HurlShowLastResponse")
-					else
-						print("Not available for this Buffer")
-					end
+					vim.cmd("HurlShowLastResponse")
 				end,
-				"Show last response",
+				"Show last Hurl response",
 			},
 		},
 	},
