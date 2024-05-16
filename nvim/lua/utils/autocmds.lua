@@ -23,6 +23,8 @@ local definitions = {
 			group = "BufferEnter",
 			desc = "Buffer Enter",
 			callback = function(args)
+				local parsers = require("nvim-treesitter.parsers")
+				local language = parsers.get_buf_lang(args.buf)
 				local buftype = vim.api.nvim_get_option_value("buftype", { buf = args.buf })
 				local filetype = vim.api.nvim_get_option_value("filetype", { buf = args.buf })
 
@@ -32,9 +34,14 @@ local definitions = {
 					vim.o.statuscolumn = "%s%=%{v:relnum?v:relnum:v:lnum} "
 				end
 
-				if filetype == "func" then
-					require("nvim-treesitter.highlight").attach(args.buf, "func")
+				-- print(string.format("%s: %s", language, parsers.has_parser(language)))
+				if parsers.has_parser(language) then
+					vim.cmd("TSBufEnable highlight")
 				end
+
+				-- if filetype == "func" or filetype == "hurl" then
+				-- 	vim.cmd("TSBufEnable highlight")
+				-- end
 
 				if filetype:sub(1, 4) == "json" then -- json, jsonc
 					vim.opt.shiftwidth = config.json_indent_size

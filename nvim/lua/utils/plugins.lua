@@ -73,6 +73,17 @@ return {
 				"pmizio/typescript-tools.nvim",
 				dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
 			},
+			{
+				"jellydn/hurl.nvim",
+				dependencies = {
+					"MunifTanjim/nui.nvim",
+					"nvim-lua/plenary.nvim",
+					"nvim-treesitter/nvim-treesitter",
+				},
+				config = function()
+					require("core.hurl").configure()
+				end,
+			},
 			{ "yuezk/vim-js" },
 			{ "HerringtonDarkholme/yats.vim" },
 			{ "maxmellon/vim-jsx-pretty" },
@@ -164,8 +175,8 @@ return {
 			require("core.lualine").configure()
 		end,
 	},
-	{ "folke/lazy.nvim", tag = "stable" },
-	{ "folke/neodev.nvim", lazy = true },
+	{ "folke/lazy.nvim",    tag = "stable" },
+	{ "folke/neodev.nvim",  lazy = true },
 	{ "folke/twilight.nvim" },
 	{
 		"folke/noice.nvim",
@@ -188,9 +199,9 @@ return {
 			require("core.whichkey").configure()
 		end,
 	},
-	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
-	{ "nvim-lua/plenary.nvim", lazy = true },
-	{ "kkharji/sqlite.lua", module = "sqlite" },
+	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true,      build = "make" },
+	{ "nvim-lua/plenary.nvim",                    lazy = true },
+	{ "kkharji/sqlite.lua",                       module = "sqlite" },
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",

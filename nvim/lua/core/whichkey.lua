@@ -16,6 +16,7 @@ local ai_keys = {
 	c = { "<cmd>ChatGPTRun complete_code<CR>", "Complete Code" },
 	r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit" },
 	l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis" },
+	h = { "<cmd>HurlRunner<CR>", "Hurl" },
 }
 
 local config = {
@@ -218,6 +219,74 @@ local config = {
 			l = { "<cmd>ToggleTerm direction=vertical<CR>", "Terminal left" },
 			j = { "<cmd>ToggleTerm direction=horizontal<CR>", "Terminal bottom" },
 			h = { "<cmd>ToggleTerm direction=tab<CR>", "Terminal tab" },
+		},
+		r = {
+			name = "Run",
+			A = {
+				function()
+					local bufnr = vim.api.nvim_get_current_buf()
+					local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+
+					if filetype == "hurl" then
+						vim.cmd("HurlRunner")
+					else
+						print("Not available for this Buffer")
+					end
+				end,
+				"Run all",
+			},
+			a = {
+				function()
+					local bufnr = vim.api.nvim_get_current_buf()
+					local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+
+					if filetype == "hurl" then
+						vim.cmd("HurlRunnerAt")
+					else
+						print("Not available for this Buffer")
+					end
+				end,
+				"Run current block",
+			},
+			t = {
+				function()
+					local bufnr = vim.api.nvim_get_current_buf()
+					local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+
+					if filetype == "hurl" then
+						vim.cmd("HurlRunnerToEntry")
+					else
+						print("Not available for this Buffer")
+					end
+				end,
+				"Run til current line",
+			},
+			v = {
+				function()
+					local bufnr = vim.api.nvim_get_current_buf()
+					local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+
+					if filetype == "hurl" then
+						vim.cmd("HurlVerbose")
+					else
+						print("Not available for this Buffer")
+					end
+				end,
+				"Run in verbose mode",
+			},
+			l = {
+				function()
+					local bufnr = vim.api.nvim_get_current_buf()
+					local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+
+					if filetype == "hurl" then
+						vim.cmd("HurlShowLastResponse")
+					else
+						print("Not available for this Buffer")
+					end
+				end,
+				"Show last response",
+			},
 		},
 	},
 	vmaps = vim.tbl_extend("force", {}, ai_keys),

@@ -30,6 +30,11 @@
       args:
         creates: "{{cargo_bin}}/mise"
 
+    - name: Install cargo hurl
+      command: "{{cargo_bin}}/cargo install hurl"
+      args:
+        creates: "{{cargo_bin}}/hurl"
+
     - name: Install cargo typos-cli
       command: "{{cargo_bin}}/cargo install typos-cli"
       args:
