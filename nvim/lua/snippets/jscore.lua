@@ -66,7 +66,7 @@ local function cs(trigger, nodes, opts) --{{{
 	end
 
 	table.insert(target_table, snippet) -- insert snippet into appropriate table
-end --}}}
+end                                  --}}}
 
 -- Old Style --
 
@@ -98,7 +98,7 @@ local if_snippet = s(
 		if_fmt_1,
 		if_fmt_2,
 	})
-) --}}}
+)                         --}}}
 local function_fmt = fmt( --{{{
 	[[
 function {}({}) {{
@@ -115,7 +115,7 @@ function {}({}) {{
 local function_snippet = s({ trig = "f[un]?", regTrig = true, hidden = true }, function_fmt)
 local function_snippet_func = s({ trig = "func" }, vim.deepcopy(function_fmt)) --}}}
 
-local short_hand_if_fmt = fmt( --{{{
+local short_hand_if_fmt = fmt(                                                 --{{{
 	[[
 if ({}) {}
 {}
@@ -166,7 +166,7 @@ for (let {} = 0; {} < {}; {}++) {{
 			i(4),
 		}
 	)
-) --}}}
+)   --}}}
 
 cs( -- [while] JS While Loop snippet{{{
 	"while",
@@ -218,6 +218,34 @@ const styles = StyleSheet.create({{
 		flex: 1,{3}
 	}}
 }});]],
+		{
+			i(1, ""),
+			rep(1),
+			i(3, ""),
+			rep(1),
+		}
+	)
+)
+
+cs(
+	"rhm",
+	fmt(
+		[[
+import {{ type FC }} from 'react'
+import {{ styled }} from 'styled-components'
+
+export const {1}: FC = () => {{
+    return (
+        <Container>{2}</Container>
+    )
+}}
+
+export default {4};
+
+const Container = styled.div`
+  {3}
+`
+]],
 		{
 			i(1, ""),
 			rep(1),
