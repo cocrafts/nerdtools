@@ -6,6 +6,11 @@ M.configure = function()
 		show_notification = false,
 		mode = "split",
 		split_position = "right",
+		env_file = {
+			".env.develompment",
+			".env.dev",
+			".env",
+		},
 		formatters = {
 			json = { "jq" }, -- Make sure you have install jq in your system, e.g: brew install jq
 			html = {
