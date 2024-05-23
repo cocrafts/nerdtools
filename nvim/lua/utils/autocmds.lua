@@ -43,11 +43,11 @@ local definitions = {
 				-- 	vim.cmd("TSBufEnable highlight")
 				-- end
 
-				if filetype:sub(1, 4) == "json" then -- json, jsonc
-					vim.opt.shiftwidth = config.json_indent_size
-				else
-					vim.opt.shiftwidth = config.indent_size
-				end
+				-- if filetype:sub(1, 4) == "json" then -- json, jsonc
+				-- 	vim.opt.shiftwidth = config.json_indent_size
+				-- else
+				-- 	vim.opt.shiftwidth = config.indent_size
+				-- end
 
 				-- indent == "tabs" <- this mean using tab
 				-- local indent = require("guess-indent").guess_from_buffer(args.buf)
