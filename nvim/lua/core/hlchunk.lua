@@ -4,7 +4,12 @@ local colors = theme.colors
 
 M.configure = function()
 	require("hlchunk").setup({
+		indent = {
+			enable = true,
+		},
 		chunk = {
+			enable = true,
+			notify = true,
 			chars = {
 				horizontal_line = "─",
 				vertical_line = "│",
