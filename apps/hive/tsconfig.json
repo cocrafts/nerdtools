@@ -1,0 +1,35 @@
+{
+  "extends": "@metacraft/tsconfig/application.json",
+  "include": [
+    "src",
+    "index*.js",
+    "../../global.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "assets/*": [
+        "./assets/*"
+      ],
+      "utils/*": [
+        "./src/utils/*"
+      ],
+      "state/*": [
+        "./src/state/*"
+      ],
+      "components/*": [
+        "./src/components/*"
+      ],
+      "scenes/*": [
+        "./src/scenes/*"
+      ],
+      "vendor/*": [
+        "./vendor/*"
+      ]
+    }
+  }
+}
+

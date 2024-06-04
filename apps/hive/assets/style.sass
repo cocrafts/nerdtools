@@ -1,0 +1,38 @@
+:root
+  --sat: env(safe-area-inset-top)
+  --sar: env(safe-area-inset-right)
+  --sab: env(safe-area-inset-bottom)
+  --sal: env(safe-area-inset-left)
+
+body, html
+  background-color: #011726
+  overflow: hidden
+
+  @media (max-width:420px)
+    background-color: #19232c
+
+#root
+  display: flex
+  position: absolute
+  overflow: hidden
+  top: 0 
+  left: 0
+  right: 0
+  bottom: 0
+
+  @media all and (display-mode: standalone)  
+    height: 99.9vh
+
+*
+  box-sizing: border-box
+
+a
+  color: inherit
+  text-decoration: none
+
+h1, h2, h3, h4, h5, h6
+  margin: 0
+  padding: 0
+
+li, select, input, button, [role="slider"], [role="listbox"]
+  outline: none
