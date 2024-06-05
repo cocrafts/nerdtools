@@ -9,6 +9,7 @@ M.configure = function()
 		env_file = {
 			".env.develompment",
 			".env.dev",
+			".env.local",
 			".env",
 		},
 		formatters = {
