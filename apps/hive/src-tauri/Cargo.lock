@@ -1287,6 +1287,9 @@ checksum = "d897f394bad6a705d5f4104762e116a75639e470d80901eed05a860a95cb1904"
 name = "hype"
 version = "0.0.0"
 dependencies = [
+ "core-foundation",
+ "core-graphics",
+ "objc",
  "serde",
  "serde_json",
  "tauri",
