@@ -17,7 +17,7 @@ M.configure = function()
 	local Terminal = require("toggleterm.terminal").Terminal
 	function LAZYGIT_TOGGLE()
 		local width = vim.o.columns - 4
-		local height = vim.o.lines - 3
+		local height = vim.o.lines - (vim.g.neovide and 4 or 3)
 		local lazygit = Terminal:new({
 			cmd = "lazygit",
 			hidden = true,
