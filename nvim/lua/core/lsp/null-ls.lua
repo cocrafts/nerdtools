@@ -71,6 +71,11 @@ M.configure = function()
 		table.insert(sources, rust.taplofmt)
 	end
 
+	if config.use_swift then
+		table.insert(sources, nls.builtins.formatting.swiftformat)
+		table.insert(sources, nls.builtins.diagnostics.swiftlint)
+	end
+
 	if config.use_nim then
 		table.insert(sources, nls.builtins.formatting.nimpretty)
 	end

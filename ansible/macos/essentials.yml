@@ -72,3 +72,15 @@
         brew install shellcheck
       args:
         creates: /usr/local/bin/shellcheck
+ 
+    - name: Install swiftlint
+      shell: |
+        brew install swiftlint
+      args:
+        creates: /usr/local/bin/swiftlint
+
+    - name: Install swiftformat
+      shell: |
+        brew install swiftformat
+      args:
+        creates: /usr/local/bin/swiftformat

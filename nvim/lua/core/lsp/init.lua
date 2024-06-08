@@ -139,6 +139,10 @@ M.configure = function()
 		require("core.lsp.rust").configure()
 	end
 
+	if config.use_swift then
+		require("core.lsp.swift").configure(lspconfig)
+	end
+
 	if config.use_zig then
 		require("core.lsp.zls").configure(lspconfig)
 	end

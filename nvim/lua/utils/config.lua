@@ -10,6 +10,7 @@ return {
 	use_lua = true,
 	use_python = true,
 	use_rust = true,
+	use_swift = true,
 	use_zig = true,
 	use_nim = true,
 	use_clang = true,
