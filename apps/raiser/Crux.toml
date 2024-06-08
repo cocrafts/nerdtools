@@ -1,0 +1,24 @@
+name = "Raiser"
+description = ""
+authors = ["Metacraft Studio"]
+repository = "https://github.com/cocrafts/"
+
+[cores.shared]
+source = "shared"
+type_gen = "shared_types"
+crux_version = "0.6.3"
+
+[shells.android]
+template = "Android"
+source = "Android"
+cores = ["shared"]
+
+[shells.iOS]
+template = "iOS"
+source = "iOS"
+cores = ["shared"]
+
+[shells.web_nextjs]
+template = "web-nextjs"
+source = "web-nextjs"
+cores = ["shared"]

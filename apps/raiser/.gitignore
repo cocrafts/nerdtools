@@ -1,0 +1,9 @@
+.bin
+.config
+
+/target
+
+*.xcodeproj
+iOS/Raiser/Info.plist
+iOS/generated
+
