@@ -3,9 +3,9 @@ members = ["shared", "shared_types"]
 resolver = "1"
 
 [workspace.package]
-authors = ["Red Badger Consulting Limited"]
+authors = ["Metacraft Studio"]
 edition = "2021"
-repository = "https://github.com/redbadger/crux/"
+repository = "https://github.com/cocrafts/nerdtools"
 license = "Apache-2.0"
 keywords = ["crux", "crux_core", "cross-platform-ui", "ffi", "wasm"]
 rust-version = "1.66"
@@ -13,4 +13,5 @@ rust-version = "1.66"
 [workspace.dependencies]
 anyhow = "1.0.86"
 crux_core = "0.8"
+crux_http = "0.9.2"
 serde = "1.0.203"

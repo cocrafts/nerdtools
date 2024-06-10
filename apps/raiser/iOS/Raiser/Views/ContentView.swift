@@ -1,24 +1,35 @@
+import HotKey
 import SharedTypes
 import SwiftUI
 
 struct ContentView: View {
 	@ObservedObject var core: Core
 
+	let hotkey = HotKey(key: .escape, modifiers: [.control, .command])
+
+	private func handleToggle() {
+		if let window = NSApplication.shared.windows.first {
+			window.setIsVisible(!window.isVisible)
+		}
+	}
+
 	var body: some View {
 		VStack {
 			Image(systemName: "globe")
 				.imageScale(.large)
 				.foregroundColor(.accentColor)
-			Text(core.view.count)
+			Text(core.view.text)
 			HStack {
-				ActionButton(label: "Reset", color: .red) {
-					core.update(.reset)
-				}
 				ActionButton(label: "Inc", color: .green) {
 					core.update(.increment)
+				}.onAppear {
+					hotkey.keyDownHandler = handleToggle
 				}
 				ActionButton(label: "Dec", color: .yellow) {
 					core.update(.decrement)
+				}
+				ActionButton(label: "Inc", color: .green) {
+					core.update(.increment)
 				}
 			}
 		}

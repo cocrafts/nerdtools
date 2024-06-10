@@ -5,6 +5,9 @@ projectReferences:
 packages:
   SharedTypes:
     path: ../shared_types/generated/swift/SharedTypes
+  HotKey:
+    url: "https://github.com/soffes/HotKey"
+    majorVersion: "0.2.0"
 options:
   bundleIdPrefix: io.stormgate.raiser
 attributes:
@@ -23,6 +26,7 @@ targets:
       - target: Shared/uniffi-bindgen-bin
       - target: Shared/shared-staticlib
       - package: SharedTypes
+      - package: HotKey
     info:
       path: Raiser/Info.plist
       properties:
@@ -40,24 +44,7 @@ targets:
     buildRules:
       - name: Generate FFI
         filePattern: "*.udl"
-        script: |
-          #!/bin/bash
-          set -e
-
-          # Skip during indexing phase in XCode 13+
-          if [ "$ACTION" == "indexbuild" ]; then
-            echo "Not building *.udl files during indexing."
-            exit 0
-          fi
-
-          # Skip for preview builds
-          if [ "$ENABLE_PREVIEWS" = "YES" ]; then
-            echo "Not building *.udl files during preview builds."
-            exit 0
-          fi
-
-          cd "${INPUT_FILE_DIR}/.."
-          "${BUILD_DIR}/debug/uniffi-bindgen" generate "src/${INPUT_FILE_NAME}" --language swift --out-dir "${PROJECT_DIR}/generated"
+        script: sh -c scripts/generate-ffi.sh
         outputFiles:
           - $(PROJECT_DIR)/generated/$(INPUT_FILE_BASE).swift
           - $(PROJECT_DIR)/generated/$(INPUT_FILE_BASE)FFI.h

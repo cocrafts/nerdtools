@@ -5,6 +5,8 @@ func handleAppDidFinishLaunching() {
 }
 
 #if os(macOS)
+	import HotKey
+
 	final class AppDelegate: NSObject, NSApplicationDelegate {
 		func applicationDidFinishLaunching(_: Notification) {
 			if let window = NSApplication.shared.windows.first {
@@ -15,6 +17,11 @@ func handleAppDidFinishLaunching() {
 			}
 
 			handleAppDidFinishLaunching()
+			_ = HotKey(
+				key: .escape,
+				modifiers: [.command, .control],
+				keyDownHandler: handleAppDidFinishLaunching
+			)
 		}
 	}
 #else
