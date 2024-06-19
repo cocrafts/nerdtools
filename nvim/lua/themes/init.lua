@@ -20,7 +20,7 @@ highlight.gui = {
 	MsgArea = { fg = colors.fg, bg = colors.bg },
 
 	Normal = { bg = colors.bg },
-	LineNR = { fg = colors.dim }, -- line numbers
+	LineNR = { fg = colors.dim },       -- line numbers
 	CursorLineNR = { fg = colors.blue }, -- current line number
 	NormalMode = { fg = colors.blue },
 	InsertMode = { fg = colors.green },
@@ -31,7 +31,7 @@ highlight.gui = {
 
 	ScrollView = { bg = colors.fg },
 
-	NonText = { fg = colors.gray }, -- whitespaces
+	NonText = { fg = colors.gray },   -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces
 	Whitespace = { fg = colors.gray }, -- whitespaces
 	Search = { fg = colors.darkest, bg = colors.blue },
@@ -85,6 +85,7 @@ highlight.system = {
 	-- Gitsign
 	GitSignsAdd = { fg = colors.green },
 	GitSignsChange = { fg = colors.blue },
+	GitSignsUntracked = { fg = colors.gray },
 
 	-- IndentBlanklineContextChar = { fg = colors.fg },
 	IndentBlanklineIndent = { fg = colors.dim },
