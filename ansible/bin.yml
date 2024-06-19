@@ -1,0 +1,19 @@
+- name: Setup binary-based tools
+  hosts: local
+
+  tasks: 
+    - name: Clone Haxe language-server
+      git:
+        repo: https://github.com/vshaxe/haxe-language-server.git
+        dest: "~/Sources/haxe/language-server" 
+
+    - name: Clone Haxe tree-sitter
+      git:
+        repo: https://github.com/vantreeseba/tree-sitter-haxe.git
+        dest: "~/Sources/haxe/tree-sitter"
+
+    - name: Create symlink to haxe-tree-sitter
+      file:
+        src: ~/Sources/haxe/tree-sitter/queries
+        dest: ~/.local/share/nvim/lazy/nvim-treesitter/queries/haxe
+        state: link

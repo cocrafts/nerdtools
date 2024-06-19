@@ -9,6 +9,7 @@
       with_items:
         - ~/Sources
         - ~/Sources/bin
+        - ~/Sources/haxe
         - ~/Projects
 
     - name: Ensure .config/kitty exists
