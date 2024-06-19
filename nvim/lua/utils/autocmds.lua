@@ -106,14 +106,17 @@ end
 
 vim.api.nvim_command("autocmd BufRead,BufNewFile Podfile set filetype=ruby")
 vim.filetype.add({
+	extension = {
+		hx = "haxe",
+		func = "func",
+		hurl = "hurl",
+		yamlfmt = "yaml",
+	},
 	filename = {
 		["tsconfig.json"] = "jsonc",
 		["apple-app-site-association"] = "jsonc",
-		[".yamlfmt"] = "yaml",
 	},
 	pattern = {
 		["%.env%.[%w_.-]+"] = "sh",
-		["[%w_.-]+.func"] = "func",
-		["[%w_.-]+.hurl"] = "hurl",
 	},
 })

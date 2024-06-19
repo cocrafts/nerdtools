@@ -8,6 +8,7 @@ local client_aliases = {
 	["snyk_ls"] = "snyk",
 	["nim_langserver"] = "nim",
 	["swift_mesonls"] = "meson",
+	["haxe_language_server"] = "haxe",
 }
 
 local diff_source = function()

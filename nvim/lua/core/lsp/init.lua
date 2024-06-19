@@ -122,6 +122,10 @@ M.configure = function()
 		require("core.lsp.snyk").configure(lspconfig)
 	end
 
+	if config.use_haxe then
+		require("core.lsp.haxe").configure(lspconfig)
+	end
+
 	if config.use_ruby then
 		require("core.lsp.ruby-lsp").configure(lspconfig)
 	end

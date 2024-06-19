@@ -9,6 +9,7 @@ M.configure = function()
 		auto_install = true,
 		modules = {},
 		ensure_installed = {
+			"haxe",
 			"typescript",
 			"tsx",
 			"graphql",
@@ -106,6 +107,17 @@ M.configure = function()
 			},
 		},
 	})
+
+	local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+	parser_config.haxe = {
+		install_info = {
+			url = "https://github.com/vantreeseba/tree-sitter-haxe",
+			files = { "src/parser.c" },
+			-- optional entries:
+			branch = "main",
+		},
+		filetype = "haxe",
+	}
 end
 
 return M
