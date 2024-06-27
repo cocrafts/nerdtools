@@ -57,6 +57,10 @@ M.configure = function()
 		)
 	end
 
+	if config.use_haxe then
+		table.insert(sources, nls.builtins.formatting.haxe_formatter)
+	end
+
 	if config.use_lua then
 		table.insert(sources, nls.builtins.formatting.stylua)
 		table.insert(sources, nls.builtins.diagnostics.selene)
