@@ -17,6 +17,7 @@ return {
 	use_clang = true,
 	use_csharp = false,
 	use_go = false,
+	use_sql = true,
 	use_snyk = false,
 	use_wgsl = false,
 	theme = require("themes.tokyonight"),

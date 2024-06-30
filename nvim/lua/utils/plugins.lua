@@ -65,6 +65,7 @@ return {
 				end,
 			},
 			{ "Hoffs/omnisharp-extended-lsp.nvim" },
+			{ "nanotee/sqls.nvim" },
 			{ "jparise/vim-graphql" },
 			{ "alaviss/nim.nvim" },
 			{ "tact-lang/tact.vim" },

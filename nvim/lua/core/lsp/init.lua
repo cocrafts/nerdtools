@@ -168,6 +168,10 @@ M.configure = function()
 		require("core.lsp.go").configure(lspconfig)
 	end
 
+	if config.use_sql then
+		require("core.lsp.sql").configure(lspconfig)
+	end
+
 	if config.use_wgsl then
 		require("core.lsp.wgsl").configure(lspconfig)
 	end
