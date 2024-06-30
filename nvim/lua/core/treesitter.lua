@@ -12,6 +12,7 @@ M.configure = function()
 			"haxe",
 			"typescript",
 			"tsx",
+			"sql",
 			"graphql",
 			"rust",
 			"swift",

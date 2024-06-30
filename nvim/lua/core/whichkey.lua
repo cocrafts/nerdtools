@@ -54,8 +54,9 @@ local config = {
 			function()
 				require("neo-tree.command").execute({ toggle = true, dir = vim.loop.cwd() })
 			end,
-			"Explorer",
+			"Toggle File Explorer",
 		},
+		E = { "<cmd>DBUIToggle<CR>", "Toggle Database Explorer" },
 		z = { "<cmd>Telescope zoxide list<CR>", "Zoxide list" },
 		u = { "<cmd>lua require('telescope').extensions.recent_files.pick()<CR>", "Recent files" },
 		U = { "<cmd>Telescope git_status<CR>", "Open changed file" },
@@ -104,22 +105,38 @@ local config = {
 		O = { "<cmd>Telescope find_files<CR>", "File search" },
 		b = {
 			name = "Buffer",
-			j = { "<cmd>BufferLinePick<CR>", "Jump" },
-			f = { "<cmd>Telescope buffers theme=dropdown<CR>", "Find" },
-			w = { "<cmd>BufferWipeout<CR>", "Wipeout" },
-			p = { "<cmd>lua require('harpoon.ui').nav_next()<CR>", "Previous harpoon" },
-			n = { "<cmd>lua require('harpoon.ui').nav_prev()<CR>", "Next harppoon" },
+			j = { "<cmd>bufferlinepick<cr>", "jump" },
+			f = { "<cmd>telescope buffers theme=dropdown<cr>", "find" },
+			w = { "<cmd>bufferwipeout<cr>", "wipeout" },
+			p = { "<cmd>lua require('harpoon.ui').nav_next()<cr>", "previous harpoon" },
+			n = { "<cmd>lua require('harpoon.ui').nav_prev()<cr>", "next harppoon" },
 		},
-		d = {
-			name = "Diagnostics",
-			f = {
+		s = {
+			mame = "SQL",
+			c = { "<cmd>SqlsSwitchConnection<CR>", "Switch connection" },
+			C = { "<cmd>SqlsShowConnections<CR>", "Show connections" },
+			e = { "<cmd>SqlsExecuteQuery<CR>", "Execute query" },
+			E = { "<cmd>SqlsExecuteQueryVertical<CR>", "Execute query vertical" },
+			d = { "<cmd>SqlsSwitchDatabase<CR>", "Switch database" },
+			D = { "<cmd>SqlsShowDatabases<CR>", "Show databases" },
+			S = { "<cmd>SqlsShowSchemas<CR>", "Show schemas" },
+			t = { "<cmd>SqlsSetType<CR>", "Set Type" },
+			T = { "<cmd>SqlsShowTables<CR>", "Show tables" },
+		},
+		j = {
+			name = "Jumps",
+			d = {
 				function()
 					vim.diagnostic.open_float()
 				end,
-				"Open float",
+				"Open diagnostics",
 			},
-			c = { "<cmd>lua vim.diagnostic.reset()<CR>", "Clear dianogstics" },
+			D = { "<cmd>lua vim.diagnostic.reset()<CR>", "Clear dianogstics" },
 			m = { "<cmd>MarkdownPreview<CR>", "Preview markdown" },
+			j = { "<cmd>BufferLinePick<cr>", "jump" },
+			f = { "<cmd>Telescope buffers theme=dropdown<cr>", "find" },
+			p = { "<cmd>lua require('harpoon.ui').nav_next()<cr>", "previous harpoon" },
+			n = { "<cmd>lua require('harpoon.ui').nav_prev()<cr>", "next harppoon" },
 		},
 		T = {
 			name = "Treesitter",
@@ -183,7 +200,7 @@ local config = {
 			end,
 			"Jumps telescope",
 		},
-		j = vim.tbl_extend("force", {
+		a = vim.tbl_extend("force", {
 			name = "AI/Ask ChatGPT bundle",
 			j = { "<cmd>ChatGPT<CR>", "ChatGPT prompt" },
 			u = { "<cmd>ChatGPTActAs<CR>", "ChatGPT prompt" },
