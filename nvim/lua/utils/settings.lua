@@ -1,3 +1,5 @@
+local config = require("utils.config")
+
 local globals = {
 	mapleader = " ",
 	localmapleader = " ",
@@ -38,8 +40,8 @@ local opts = {
 local defer_opts = {
 	-- use tab
 	autoindent = true,
-	tabstop = 2,   -- insert 2 spaces for a tab
-	shiftwidth = 2, -- number of spaces inserted for each indentation
+	tabstop = config.indent_size,   -- insert 2 spaces for a tab
+	shiftwidth = config.indent_size, -- number of spaces inserted for each indentation
 }
 
 for k, v in pairs(globals) do
@@ -58,7 +60,7 @@ end, 0)
 
 if vim.g.neovide then
 	vim.opt.guifont = "Operator Mono Lig:h14"
-	vim.opt.linespace = 4
+	vim.opt.linespace = 2
 	vim.g.neovide_profiler = false
 	vim.g.neovide_floating_shadow = false
 

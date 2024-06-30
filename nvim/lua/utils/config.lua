@@ -1,5 +1,5 @@
 return {
-	indent_size = 4,
+	indent_size = 2,
 	json_indent_size = 2,
 	use_icons = true,
 	use_inlay_hints = true,
