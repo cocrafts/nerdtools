@@ -57,6 +57,18 @@ local definitions = {
 		},
 	},
 	{
+		"BufWritePre",
+		{
+			group = "goimports",
+			desc = "Format and arrange Imports on save",
+			pattern = "*.go",
+			callback = function()
+				require("go.format").goimports()
+			end,
+		},
+		config.use_go == false,
+	},
+	{
 		"LspAttach",
 		{
 			group = "UserLspConfig",

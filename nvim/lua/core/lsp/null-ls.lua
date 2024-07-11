@@ -51,15 +51,6 @@ M.configure = function()
 		table.insert(sources, gotest)
 		table.insert(sources, golangci_lint)
 		table.insert(sources, gotest_codeaction)
-		table.insert(
-			sources,
-			nls.builtins.formatting.golines.with({
-				extra_args = {
-					"--max-len=180",
-					"--base-formatter=gofumpt",
-				},
-			})
-		)
 	end
 
 	if config.use_haxe then
