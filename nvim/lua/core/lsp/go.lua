@@ -4,7 +4,7 @@ local M = {}
 
 M.configure = function(lspconfig)
 	require("go").setup({
-		goimport = "goimports_reviser",
+		goimports = "goimports_reviser",
 		fillstruct = "gopls",
 		gofmt = "gofumpt",
 		lsp_cfg = false,

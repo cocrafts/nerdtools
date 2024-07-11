@@ -44,8 +44,13 @@ M.configure = function()
 	end
 
 	if config.use_go then
-		table.insert(sources, nls.builtins.diagnostics.revive)
+		local gotest_codeaction = require("go.null_ls").gotest_action()
+		local golangci_lint = require("go.null_ls").golangci_lint()
+		local gotest = require("go.null_ls").gotest()
 
+		table.insert(sources, gotest)
+		table.insert(sources, golangci_lint)
+		table.insert(sources, gotest_codeaction)
 		table.insert(
 			sources,
 			nls.builtins.formatting.golines.with({

@@ -133,10 +133,16 @@ local config = {
 			},
 			D = { "<cmd>lua vim.diagnostic.reset()<CR>", "Clear dianogstics" },
 			m = { "<cmd>MarkdownPreview<CR>", "Preview markdown" },
-			j = { "<cmd>BufferLinePick<cr>", "jump" },
-			f = { "<cmd>Telescope buffers theme=dropdown<cr>", "find" },
+			j = { "<cmd>Telescope buffers theme=dropdown<cr>", "find" },
 			p = { "<cmd>lua require('harpoon.ui').nav_next()<cr>", "previous harpoon" },
 			n = { "<cmd>lua require('harpoon.ui').nav_prev()<cr>", "next harppoon" },
+		},
+		J = { "<cmd>Telescope buffers theme=dropdown<cr>", "find" },
+		H = {
+			function()
+				require("telescope").extensions.harpoon.marks(helper.layouts.full_cursor())
+			end,
+			"Jumps telescope",
 		},
 		T = {
 			name = "Treesitter",
@@ -194,12 +200,6 @@ local config = {
 		},
 		[";"] = { "<cmd>lua require('harpoon.mark').add_file()<CR>", "Add to harpoon" },
 		[":"] = { "<cmd>lua require('harpoon.ui').toggle_quick_menu()<CR>", "Jumps menu" },
-		J = {
-			function()
-				require("telescope").extensions.harpoon.marks(helper.layouts.full_cursor())
-			end,
-			"Jumps telescope",
-		},
 		a = vim.tbl_extend("force", {
 			name = "AI/Ask ChatGPT bundle",
 			j = { "<cmd>ChatGPT<CR>", "ChatGPT prompt" },
