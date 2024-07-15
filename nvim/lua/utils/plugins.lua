@@ -135,6 +135,7 @@ return {
 			require("core.lsp").configure()
 		end,
 	},
+	{ "echasnovski/mini.icons" },
 	{
 		"nvim-neo-tree/neo-tree.nvim",
 		dependencies = {
