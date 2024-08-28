@@ -17,6 +17,11 @@
         path: ~/.config/kitty
         state: directory
 
+    - name: Copy Geekcaps config
+      template: ./templates/capslock.json 
+      dest: ~/.config/karabiner/assets/complex_modifications
+      force: yes
+
     - name: Override Kitty conf
       template:
         src: ./templates/kitty.conf
