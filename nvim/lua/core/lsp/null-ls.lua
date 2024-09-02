@@ -1,6 +1,5 @@
 local M = {}
 local config = require("utils.config")
-local eslint = require("core.lsp.null.eslint")
 local json = require("core.lsp.null.json")
 local ruff = require("core.lsp.null.ruff")
 local rust = require("core.lsp.null.rust")
@@ -12,9 +11,6 @@ M.configure = function()
 	local nls = require("null-ls")
 	local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 	local sources = {
-		eslint.format,
-		eslint.diagnostics,
-
 		json.jqfmt,
 		terraform.format,
 

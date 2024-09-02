@@ -92,7 +92,7 @@ M.configure = function()
 		playground = {
 			enable = false,
 			disable = {},
-			updatetime = 25,      -- Debounced time for highlighting nodes in the playground from source code
+			updatetime = 25, -- Debounced time for highlighting nodes in the playground from source code
 			persist_queries = false, -- Whether the query persists across vim sessions
 			keybindings = {
 				toggle_query_editor = "o",
@@ -113,7 +113,7 @@ M.configure = function()
 	parser_config.haxe = {
 		install_info = {
 			url = "https://github.com/vantreeseba/tree-sitter-haxe",
-			files = { "src/parser.c" },
+			files = { "src/parser.c", "src/scanner.c" },
 			-- optional entries:
 			branch = "main",
 		},

@@ -105,6 +105,7 @@ M.configure = function()
 	lsp.setup()
 
 	require("core.lsp.terraform").configure(lspconfig)
+	require("core.lsp.eslint").configure(lspconfig)
 	require("core.lsp.typescript-tools").configure()
 	require("core.lsp.bash").configure(lspconfig)
 	require("core.lsp.cmake").configure(lspconfig)
