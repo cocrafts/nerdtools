@@ -30,9 +30,7 @@ return {
 		"iamcco/markdown-preview.nvim",
 		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
 		ft = { "markdown" },
-		build = function()
-			vim.fn["mkdp#util#install"]()
-		end,
+		build = "cd app && yarn install",
 	},
 	{
 		"Exafunction/codeium.nvim",
@@ -177,8 +175,8 @@ return {
 			require("core.lualine").configure()
 		end,
 	},
-	{ "folke/lazy.nvim",    tag = "stable" },
-	{ "folke/neodev.nvim",  lazy = true },
+	{ "folke/lazy.nvim", tag = "stable" },
+	{ "folke/neodev.nvim", lazy = true },
 	{ "folke/twilight.nvim" },
 	{
 		"folke/noice.nvim",
@@ -201,9 +199,9 @@ return {
 			require("core.whichkey").configure()
 		end,
 	},
-	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true,      build = "make" },
-	{ "nvim-lua/plenary.nvim",                    lazy = true },
-	{ "kkharji/sqlite.lua",                       module = "sqlite" },
+	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
+	{ "nvim-lua/plenary.nvim", lazy = true },
+	{ "kkharji/sqlite.lua", module = "sqlite" },
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
@@ -274,14 +272,14 @@ return {
 			require("core.harpoon").configure()
 		end,
 	},
-	-- {
-	-- 	"akinsho/bufferline.nvim",
-	-- 	branch = "main",
-	-- 	event = "User FileOpened",
-	-- 	config = function()
-	-- 		require("core.bufferline").configure()
-	-- 	end,
-	-- },
+	{
+		"akinsho/bufferline.nvim",
+		branch = "main",
+		event = "User FileOpened",
+		config = function()
+			require("core.bufferline").configure()
+		end,
+	},
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",
