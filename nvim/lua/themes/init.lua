@@ -20,7 +20,7 @@ highlight.gui = {
 	MsgArea = { fg = colors.fg, bg = colors.bg },
 
 	Normal = { bg = colors.bg },
-	LineNR = { fg = colors.dim },       -- line numbers
+	LineNR = { fg = colors.dim }, -- line numbers
 	CursorLineNR = { fg = colors.blue }, -- current line number
 	NormalMode = { fg = colors.blue },
 	InsertMode = { fg = colors.green },
@@ -31,7 +31,7 @@ highlight.gui = {
 
 	ScrollView = { bg = colors.fg },
 
-	NonText = { fg = colors.gray },   -- whitespaces
+	NonText = { fg = colors.gray }, -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces
 	Whitespace = { fg = colors.gray }, -- whitespaces
 	Search = { fg = colors.darkest, bg = colors.blue },
@@ -60,12 +60,13 @@ highlight.system = {
 	NeoTreeDirectoryName = { fg = colors.white },
 	NeoTreeSignColumn = { bg = colors.explorer_bg }, -- left padding area
 	-- git file name
-	NeoTreeGitAdded = { fg = colors.types, style = "bold" },
-	NeoTreeGitConflict = { fg = colors.red, style = "bold" },
-	NeoTreeGitDeleted = { fg = colors.comments, style = "bold" },
-	NeoTreeGitIgnored = { fg = colors.gray, style = "bold" },
-	NeoTreeGitModified = { fg = colors.blue, style = "bold" },
-	NeoTreeGitUntracked = { fg = colors.green, style = "bold" },
+	NeoTreeGitAdded = { fg = colors.types }, -- style = "bold" to make it bold
+	NeoTreeGitConflict = { fg = colors.red },
+	NeoTreeGitDeleted = { fg = colors.comments },
+	NeoTreeGitIgnored = { fg = colors.gray },
+	NeoTreeGitModified = { fg = colors.blue },
+	NeoTreeGitUntracked = { fg = colors.green },
+
 	-- git symbol
 	NeoTreeGitStaged = { fg = colors.gray, style = "bold" },
 	NeoTreeGitUnstaged = { fg = colors.green, style = "bold" },

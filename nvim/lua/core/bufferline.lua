@@ -215,7 +215,7 @@ local highlights = {
 		itatlic = true,
 	},
 	buffer_selected = {
-		bold = true,
+		bold = false,
 		italic = false,
 	},
 }
