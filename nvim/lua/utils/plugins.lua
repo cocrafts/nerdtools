@@ -33,14 +33,45 @@ return {
 		build = "cd app && yarn install",
 	},
 	{
-		"Exafunction/codeium.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"hrsh7th/nvim-cmp",
-		},
+		"supermaven-inc/supermaven-nvim",
 		config = function()
-			require("core.ai").configureCodeium()
+			require("core.supermaven").configure()
 		end,
+	},
+	{
+		"yetone/avante.nvim",
+		event = "VeryLazy",
+		lazy = false,
+		version = false,
+		build = "make",
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter",
+			"stevearc/dressing.nvim",
+			"nvim-lua/plenary.nvim",
+			"MunifTanjim/nui.nvim",
+			"nvim-tree/nvim-web-devicons",
+			{
+				"HakonHarnes/img-clip.nvim",
+				event = "VeryLazy",
+				opts = {
+					default = {
+						embed_image_as_base64 = false,
+						prompt_for_file_name = false,
+						drag_and_drop = {
+							insert_mode = true,
+						},
+						use_absolute_path = true, -- required for Windows users
+					},
+				},
+			},
+			{
+				"MeanderingProgrammer/render-markdown.nvim",
+				ft = { "markdown", "Avante" },
+				opts = {
+					file_types = { "markdown", "Avante" },
+				},
+			},
+		},
 	},
 	{
 		"VonHeikemen/lsp-zero.nvim",
@@ -182,8 +213,8 @@ return {
 			require("core.lualine").configure()
 		end,
 	},
-	{ "folke/lazy.nvim", tag = "stable" },
-	{ "folke/neodev.nvim", lazy = true },
+	{ "folke/lazy.nvim",       tag = "stable" },
+	{ "folke/neodev.nvim",     lazy = true },
 	{ "folke/twilight.nvim" },
 	{
 		"folke/noice.nvim",
@@ -206,9 +237,9 @@ return {
 			require("core.whichkey").configure()
 		end,
 	},
-	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true, build = "make" },
-	{ "nvim-lua/plenary.nvim", lazy = true },
-	{ "kkharji/sqlite.lua", module = "sqlite" },
+	{ "nvim-telescope/telescope-fzf-native.nvim", lazy = true,      build = "make" },
+	{ "nvim-lua/plenary.nvim",                    lazy = true },
+	{ "kkharji/sqlite.lua",                       module = "sqlite" },
 	{
 		"nvim-telescope/telescope.nvim",
 		branch = "0.1.x",
@@ -375,6 +406,7 @@ return {
 	},
 	{
 		"kylechui/nvim-surround",
+		version = "*",
 		event = "VeryLazy",
 		config = function()
 			require("core.surround").configure()

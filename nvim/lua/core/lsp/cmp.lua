@@ -44,6 +44,14 @@ M.configure = function()
 	local mapping = cmp_mapping.preset.insert({
 		-- `Enter` key to confirm completion
 		["<CR>"] = cmp.mapping.confirm({ select = false }),
+		["<S-CR>"] = cmp_mapping(function(fallback)
+			local suggestion = require("supermaven-nvim.completion_preview")
+			if suggestion.has_suggestion() then
+				suggestion.on_accept_suggestion()
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
 		["<Tab>"] = cmp_mapping(function(fallback)
 			if cmp.visible() then
 				cmp.confirm()

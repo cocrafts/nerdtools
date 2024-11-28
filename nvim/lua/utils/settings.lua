@@ -30,6 +30,7 @@ local opts = {
 	termguicolors = true,
 	-- invisible characters
 	list = true,
+	laststatus = 3,
 	listchars = {
 		tab = " ",
 		eol = "¬",
