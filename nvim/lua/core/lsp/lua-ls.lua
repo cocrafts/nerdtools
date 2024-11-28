@@ -2,6 +2,11 @@ local M = {}
 
 M.configure = function(lspconfig)
 	lspconfig.lua_ls.setup({
+		settings = {
+			Lua = {
+				hint = { enable = true },
+			},
+		},
 		on_init = function(client)
 			local path = client.workspace_folders[1].name
 			if not vim.loop.fs_stat(path .. "/.luarc.json") and not vim.loop.fs_stat(path .. "/.luarc.jsonc") then

@@ -69,26 +69,6 @@ local definitions = {
 		config.use_go == false,
 	},
 	{
-		"LspAttach",
-		{
-			group = "UserLspConfig",
-			desc = "Lsp and Inlayhints",
-			callback = function(args)
-				local filetype = vim.api.nvim_get_option_value("filetype", { buf = args.buf })
-
-				if args.data and args.data.client_id then -- lsp-inlayhints
-					local client = vim.lsp.get_client_by_id(args.data.client_id)
-					local is_ignored = helper.valueExists(filetype, { "rust" })
-
-					if client ~= nil and is_ignored == false then
-						require("lsp-inlayhints").on_attach(client, args.buf)
-					end
-				end
-			end,
-		},
-		config.use_inlay_hints == false,
-	},
-	{
 		"TextYankPost",
 		{
 			group = "_general_settings",

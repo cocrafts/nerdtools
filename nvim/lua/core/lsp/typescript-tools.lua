@@ -10,13 +10,20 @@ M.configure = function()
 			},
 			tsserver_file_preferences = {
 				includeInlayParameterNameHints = "all",
+				includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+				includeInlayFunctionParameterTypeHints = true,
+				includeInlayVariableTypeHints = false,
+				includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+				includeInlayPropertyDeclarationTypeHints = false,
+				includeInlayFunctionLikeReturnTypeHints = false,
+				includeInlayEnumMemberValueHints = false,
 				includeCompletionsForModuleExports = true,
 				quotePreference = "auto",
 			},
 			tsserver_format_options = {
 				allowIncompleteCompletions = false,
 				allowRenameOfImportPath = false,
-				convertTabsToSpaces = false,
+				convertTabsToSpaces = true,
 			},
 		},
 	})

@@ -31,6 +31,24 @@ M.configure = function(lspconfig)
 	})
 
 	local lsp_config = require("go.lsp").config()
+	lsp_config.settings = vim.tbl_deep_extend(
+		"force",
+		lsp_config.settings or {},
+		{
+			gopls = {
+				hints = {
+					rangeVariableTypes = true,
+					parameterNames = true,
+					constantValues = true,
+					assignVariableTypes = true,
+					compositeLiteralFields = true,
+					compositeLiteralTypes = true,
+					functionTypeParameters = true,
+				},
+			},
+		}
+	)
+
 	lspconfig.gopls.setup(lsp_config)
 end
 

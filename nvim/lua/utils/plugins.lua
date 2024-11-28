@@ -106,7 +106,14 @@ return {
 				end,
 			},
 			{ "szebniok/tree-sitter-wgsl" },
-			{ "lvimuser/lsp-inlayhints.nvim" },
+			{
+				"MysticalDevil/inlay-hints.nvim",
+				event = "LspAttach",
+				dependencies = { "neovim/nvim-lspconfig" },
+				config = function()
+					require("inlay-hints").setup()
+				end
+			},
 			{
 				"L3MON4D3/LuaSnip",
 				dependencies = { "friendly-snippets" },
