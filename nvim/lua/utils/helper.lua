@@ -70,13 +70,13 @@ M.open_lsp_definitions = function()
 	local results = vim.lsp.buf_request_sync(0, "textDocument/definition", vim.lsp.util.make_position_params(), 1000)
 
 	for _client_id, response in pairs(results or {}) do
-		if response.result and vim.tbl_islist(response.result) then
+		if response.result and vim.islist(response.result) then
 			-- Filter out unwanted results
 			local filtered_results = vim.tbl_filter(exclude_react_index_d_ts, response.result)
 
 			if #filtered_results == 1 then
 				-- If there's exactly one result after filtering, jump to it directly
-				vim.lsp.util.jump_to_location(filtered_results[1])
+				vim.lsp.util.show_document(filtered_results[1], "utf-8", { focus = true })
 				return
 			elseif #filtered_results > 1 then
 				-- If there are multiple results after filtering, use Telescope to display them
