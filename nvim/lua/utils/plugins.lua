@@ -305,12 +305,6 @@ return {
 		end,
 	},
 	{
-		"ThePrimeagen/harpoon",
-		config = function()
-			require("core.harpoon").configure()
-		end,
-	},
-	{
 		"akinsho/bufferline.nvim",
 		branch = "main",
 		event = "User FileOpened",

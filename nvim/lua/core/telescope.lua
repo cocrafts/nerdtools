@@ -90,7 +90,6 @@ M.configure = function()
 	telescope.load_extension("recent_files")
 	telescope.load_extension("package_info")
 	telescope.load_extension("ui-select")
-	telescope.load_extension("harpoon")
 end
 
 return M
