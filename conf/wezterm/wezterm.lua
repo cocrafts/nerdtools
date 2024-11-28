@@ -195,6 +195,17 @@ config.keys = {
 			end
 		end),
 	},
+	{
+		key = "z",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(window, pane)
+			if pane:is_alt_screen_active() then
+				window:perform_action(act.SendKey({ mods = "CTRL", key = "z" }), pane)
+			else
+				window:perform_action(wezterm.action.SendString("fg\n"), pane)
+			end
+		end),
+	},
 }
 
 config.colors = {
