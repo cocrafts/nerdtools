@@ -1,5 +1,8 @@
+git:
+  overrideGpg: true
 gui:
   border: 'rounded'
+  showSummaryOnCommit: true
   showBottomLine: false
   showCommandLog: false # use @ key to toggle it on
   showListFooter: false # for seeing the '5 of 20' message in list panels
