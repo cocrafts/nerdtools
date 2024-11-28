@@ -1,4 +1,5 @@
 local utils = require("themes.utils")
+local styles = utils.styles
 local theme = require("utils.config").theme
 local highlight = theme.options.highlight
 local colors = theme.colors
@@ -38,12 +39,12 @@ highlight.gui = {
 }
 
 highlight.hi = {
-	Comment = { fg = colors.comments, style = "italic" },
+	Comment = { fg = colors.comments, style = styles.maybe_italic },
 
 	luaFunction = { fg = colors.keywords },
 
 	rustMacro = { fg = colors.functions },
-	rustStorage = { fg = colors.keywords, style = "italic" },
+	rustStorage = { fg = colors.keywords, style = styles.maybe_italic },
 	rustModPathSep = { fg = colors.fg },
 }
 
@@ -68,8 +69,8 @@ highlight.system = {
 	NeoTreeGitUntracked = { fg = colors.green },
 
 	-- git symbol
-	NeoTreeGitStaged = { fg = colors.gray, style = "bold" },
-	NeoTreeGitUnstaged = { fg = colors.green, style = "bold" },
+	NeoTreeGitStaged = { fg = colors.gray, style = styles.maybe_bold },
+	NeoTreeGitUnstaged = { fg = colors.green, style = styles.maybe_bold },
 
 	-- Telescope
 	TelescopeNormal = { bg = colors.bg },
@@ -107,3 +108,5 @@ end
 -- if vim.fn.exists "syntax_on" then
 -- 	vim.api.nvim_command "syntax reset"
 -- end
+
+require("core.ai").configureAvante()

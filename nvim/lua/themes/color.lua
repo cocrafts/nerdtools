@@ -8,7 +8,7 @@ return {
 	darkest = "#16161e",
 	fold = "#171822",
 	cursor = "#1E202F",
-	dim = "#242533",
+	dim = "#343543",
 	gray = "#37384f",
 	none = "NONE",
 	keywords = "#B877DB",

@@ -1,6 +1,8 @@
 local M = {}
 local base_colors = require("themes.color")
 local helper = require("utils.helper")
+local theme_utils = require("themes.utils")
+local configs = theme_utils.configs
 
 local colors = helper.mergeTables(base_colors, {
 	functions = "#E95678",
@@ -17,8 +19,8 @@ M.options = {
 	setup = {
 		style = "night",
 		styles = {
-			comments = { italic = true },
-			keywords = { italic = true },
+			comments = { italic = configs.no_itatlic == false },
+			keywords = { italic = configs.no_itatlic == false },
 			floats = "dark",
 		},
 		hide_inactive_statusline = true,
