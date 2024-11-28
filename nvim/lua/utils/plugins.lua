@@ -3,11 +3,6 @@ return {
 	{ "lukas-reineke/onedark.nvim" },
 	{ "catppuccin/nvim" },
 	{
-		"creativenull/efmls-configs-nvim",
-		version = "v1.x.x",
-		dependencies = { "neovim/nvim-lspconfig" },
-	},
-	{
 		"jackMort/ChatGPT.nvim",
 		event = "VeryLazy",
 		config = function()

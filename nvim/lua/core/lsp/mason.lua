@@ -3,7 +3,6 @@ local M = {}
 
 local ensure_installed = {
 	"graphql",
-	"efm",
 	"stylelint_lsp",
 	"jsonls",
 	"html",

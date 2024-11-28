@@ -4,7 +4,6 @@ return {
 	use_icons = true,
 	use_live_diagnostic = false,
 	use_noice = true,
-	use_efm = false,
 	use_haxe = true,
 	use_ruby = true,
 	use_lua = true,
