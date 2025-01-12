@@ -1,6 +1,7 @@
 local M = {}
 local config = require("utils.config")
 local json = require("core.lsp.null.json")
+local nim = require("core.lsp.null.nim")
 local ruff = require("core.lsp.null.ruff")
 local rust = require("core.lsp.null.rust")
 local terraform = require("core.lsp.null.terraform")
@@ -73,7 +74,7 @@ M.configure = function()
 	end
 
 	if config.use_nim then
-		table.insert(sources, nls.builtins.formatting.nimpretty)
+		table.insert(sources, nim.format)
 	end
 
 	if config.use_csharp then
