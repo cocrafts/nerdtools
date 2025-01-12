@@ -147,6 +147,10 @@ M.configure = function()
 		require("core.lsp.nim").configure(lspconfig)
 	end
 
+	if config.use_gleam then
+		require("core.lsp.gleam").configure(lspconfig)
+	end
+
 	if config.use_clang then
 		require("core.lsp.clang").configure(lspconfig)
 		require("core.lsp.meson").configure(lspconfig)

@@ -63,6 +63,10 @@ M.configure = function()
 		table.insert(sources, zig.format)
 	end
 
+	if config.use_gleam then
+		table.insert(sources, nls.builtins.formatting.gleam_format)
+	end
+
 	if config.use_rust then
 		table.insert(sources, rust.format)
 		table.insert(sources, rust.taplofmt)

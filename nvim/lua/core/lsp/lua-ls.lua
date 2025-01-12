@@ -16,7 +16,7 @@ M.configure = function(lspconfig)
 							enable = false,
 						},
 						format = {
-							enable = false,
+							enable = true,
 						},
 						runtime = {
 							version = "LuaJIT",

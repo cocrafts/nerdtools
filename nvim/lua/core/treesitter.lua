@@ -17,6 +17,7 @@ M.configure = function()
 			"rust",
 			"swift",
 			"zig",
+			"gleam",
 			"lua",
 			"vim",
 			"gitignore",
