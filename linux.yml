@@ -5,8 +5,8 @@
 - import_playbook: ansible/initialize.yml
 - import_playbook: ansible/linux/essentials.yml
 - import_playbook: ansible/linux/zsh.yml
+- import_playbook: ansible/linux/vim.yml
 - import_playbook: ansible/rust.yml
 - import_playbook: ansible/go.yml
 - import_playbook: ansible/scripting-languages.yml
 - import_playbook: ansible/bin.yml
-- import_playbook: ansible/linux/vim.yml

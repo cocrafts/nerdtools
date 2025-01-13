@@ -3,6 +3,7 @@ export ZSH="$HOME/.oh-my-zsh"
 
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/Sources/bin"
+export PATH="$PATH:$HOME/Sources/haxe/bin"
 export PATH="$PATH:$HOME/Sources/neovim/bin"
 export PATH="$PATH:$HOME/go/bin"
 

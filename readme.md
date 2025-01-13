@@ -6,6 +6,11 @@
 - clone this repo to your home folder (`~/`)
 - execute: `ansible-playbook -i hosts.yml macos.yml`
 
+#### Pre-requisites:
+- Install [Homebrew](https://brew.sh/) manually via: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` command
+- Install [Ansible](https://www.ansible.com/) using `brew`: `brew install ansible`
+- Install [Starship](https://starship.rs/) (optional) via `brew`: `brew install starship`
+
 ### For remote Linux client:
 - replace ip-address under `hosts.yml`
 - make sure host machine configured be able to ssh to replaced "ip-address"
