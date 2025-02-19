@@ -1,7 +1,7 @@
 local M = {}
 local icons = require("utils.icons")
 
-M.configure = function()
+M.configureDiffview = function()
 	require("diffview").setup({
 		enhanced_diff_hl = true,
 		use_icons = true,
@@ -15,6 +15,10 @@ M.configure = function()
 			done = icons.ui.Check,
 		},
 	})
+end
+
+M.configureBlame = function()
+	require("blame").setup({})
 end
 
 return M

@@ -241,6 +241,7 @@ M.configure = function()
 			{ "<leader>gF", ":DiffviewFileHistory<CR>",               desc = "File history" },
 			{ "<leader>gd", ":DiffviewOpen<CR>",                      desc = "Git diff" },
 			{ "<leader>gq", ":DiffviewClose<CR>",                     desc = "Close Git diff" },
+			{ "<leader>g;", ":BlameToggle<CR>",                       desc = "Toggle Blame" },
 
 			{ "<leader>l",  group = "LSP" },
 			{ "<leader>la", "<cmd>lua vim.lsp.buf.code_action()<cr>", desc = "Code Action" },

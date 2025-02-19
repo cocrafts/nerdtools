@@ -45,6 +45,9 @@ return {
 			"nvim-lua/plenary.nvim",
 			"MunifTanjim/nui.nvim",
 			"nvim-tree/nvim-web-devicons",
+			"echasnovski/mini.pick", -- for file_selector provider mini.pick
+			"nvim-telescope/telescope.nvim",
+			"ibhagwan/fzf-lua",
 			{
 				"HakonHarnes/img-clip.nvim",
 				event = "VeryLazy",
@@ -138,7 +141,7 @@ return {
 				dependencies = { "neovim/nvim-lspconfig" },
 				config = function()
 					require("inlay-hints").setup()
-				end
+				end,
 			},
 			{
 				"L3MON4D3/LuaSnip",
@@ -281,7 +284,7 @@ return {
 		"sindrets/diffview.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
-			require("core.diffview").configure()
+			require("core.diff").configureDiffview()
 		end,
 	},
 	{
@@ -293,6 +296,13 @@ return {
 		end,
 	},
 	{ "f-person/git-blame.nvim" },
+	{
+		"FabijanZulj/blame.nvim",
+		lazy = false,
+		config = function()
+			require("core.diff").configureBlame()
+		end,
+	},
 	{
 		"lewis6991/satellite.nvim",
 		config = function()

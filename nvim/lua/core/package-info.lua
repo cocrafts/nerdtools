@@ -1,12 +1,13 @@
 local M = {}
-local icons = require("utils.icons")
 local colors = require("themes.color")
+local icons = require("utils.icons")
 
 M.configure = function()
 	require("package-info").setup({
 		colors = {
 			up_to_date = colors.blue,
 			outdated = colors.gray,
+			invalid = colors.red,
 		},
 		icons = {
 			enable = true,
@@ -15,6 +16,7 @@ M.configure = function()
 				outdated = " " .. icons.ui.Target .. " ",
 			},
 		},
+		hide_up_to_date = true,
 	})
 end
 
