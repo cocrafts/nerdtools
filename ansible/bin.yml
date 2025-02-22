@@ -1,11 +1,11 @@
 - name: Setup binary-based tools
   hosts: local
 
-  tasks: 
+  tasks:
     - name: Clone Haxe language-server
       git:
         repo: https://github.com/vshaxe/haxe-language-server.git
-        dest: "~/Sources/haxe/language-server" 
+        dest: "~/Sources/haxe/language-server"
 
     - name: Clone Haxe tree-sitter
       git:

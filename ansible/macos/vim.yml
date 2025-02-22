@@ -31,6 +31,12 @@
         dest: ~/.config/wezterm
         state: link
 
+    - name: Create symlink to Nushell configure
+      file:
+        src: ~/nerdtools/conf/nushell/
+        dest: ~/Libary/Applicaiton Support/nushell
+        state: link
+
     - name: Create revive.toml symlink for Golang
       file:
         src: ~/nerdtools/conf/revive.toml

@@ -6,4 +6,6 @@ node_modules
 .luarc.json
 lazy-lock.json
 
+conf/nushell/vendor/autoload/starship.nu
+conf/nushell/history.txt
 metacraft

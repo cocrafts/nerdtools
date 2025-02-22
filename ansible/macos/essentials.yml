@@ -18,9 +18,10 @@
         state: directory
 
     - name: Copy Geekcaps config
-      template: ./templates/capslock.json 
-      dest: ~/.config/karabiner/assets/complex_modifications
-      force: yes
+      template:
+        src: ./templates/capslock.json
+        dest: ~/.config/karabiner/assets/complex_modifications
+        force: yes
 
     - name: Override Kitty conf
       template:
@@ -44,10 +45,20 @@
       args:
         creates: /usr/local/bin/git
 
+    - name: Install lazy git
+      shell: brew install lazygit
+      args:
+        creates: /usr/local/bin/lazygit
+
     - name: Install ripgrep
       shell: brew install ripgrep
       args:
         creates: /usr/local/bin/rg
+
+    - name: Install starship
+      shell: brew install starship
+      args:
+        creates: /usr/local/bin/starship
 
     - name: Install zoxide
       shell: brew install zoxide
@@ -78,7 +89,7 @@
         brew install shellcheck
       args:
         creates: /usr/local/bin/shellcheck
- 
+
     - name: Install swiftlint
       shell: |
         brew install swiftlint

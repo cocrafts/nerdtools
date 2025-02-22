@@ -14,8 +14,8 @@
       get_url:
         url: https://sh.rustup.rs
         dest: ~/sh.rustup.rs
-        mode: '0755'
-        force: 'yes'
+        mode: "0755"
+        force: "yes"
       tags:
         - rust
 
@@ -44,7 +44,7 @@
       command: "{{cargo_bin}}/cargo install neocmakelsp"
       args:
         creates: "{{cargo_bin}}/neocmakelsp"
-      
+
     - name: Install cargo stylua
       command: "{{cargo_bin}}/cargo install stylua"
       args:
@@ -55,17 +55,23 @@
       args:
         creates: "{{cargo_bin}}/selene"
 
+    - name: Install cargo nushell
+      command: "{{cargo_bin}}/cargo install nu --locked"
+      args:
+        creates: "{{cargo_bin}}/selene"
+
     - name: Install starship
       shell: "{{cargo_bin}}/cargo install starship --locked"
       args:
         creates: /usr/local/bin/starship
+      when: ansible_facts['os_family'] == "Linux"
 
     - name: Install taplo-cli (for Toml)
       shell: "{{cargo_bin}}/cargo install --features lsp --locked taplo-cli"
       args:
         creates: "{{cargo_bin}}/taplo"
 
-    - name: Install wgsl-analyzer 
+    - name: Install wgsl-analyzer
       shell: "{{cargo_bin}}/cargo install --git https://github.com/wgsl-analyzer/wgsl-analyzer wgsl_analyzer"
       args:
         creates: "{{cargo_bin}}/wgsl_analyzer"
