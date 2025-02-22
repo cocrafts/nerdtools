@@ -1,7 +1,7 @@
 local M = {}
 
 M.configure = function(lspconfig)
-	lspconfig.bashls.setup({})
+	lspconfig.ols.setup({})
 end
 
 return M
