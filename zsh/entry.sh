@@ -8,6 +8,7 @@ export PATH="$PATH:$HOME/Sources/neovim/bin"
 export PATH="$PATH:$HOME/go/bin"
 
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+export XDG_CONFIG_HOME="$HOME/.config"
 
 plugins=(
 	git
