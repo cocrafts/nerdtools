@@ -25,8 +25,17 @@
 - pip3 install jsonls
 - pip3 install pyright
 - pip3 install codespell
-- https://github.com/LuaLS/lua-language-server
-- https://github.com/TheZoraiz/ascii-image-converter (needed to display image)
+- https://github.com/LuaLS/lua-language-server (included in macOS)
+- [ascii-image-converter](https://github.com/TheZoraiz/ascii-image-converter) (needed to display image)
+
+### Those `lsp` better manually installed rather than using `mason`)
+- [wgsl-analyzer](https://github.com/wgsl-analyzer/wgsl-analyzer) (shader language)
+- [hurl](https://hurl.dev/docs/installation.html) (curl like cli)
+- [lua-language-server](https://github.com/LuaLS/lua-language-server) (cmd: `brew install lua-language-server`)
+- [rust-analyzer](https://rust-analyzer.github.io/book/installation.html) (cmd: `rustup component add rust-src`, included in macOS Ansible)
+- [gopls](https://github.com/golang/tools/tree/master/gopls) for Go lsp
+- [zls](https://github.com/zigtools/zls) for Zig lsp
+- for Swift: `brew install swiftlint`, `brew install swiftformat`
 
 ### Other notes
 - For Kitty, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.

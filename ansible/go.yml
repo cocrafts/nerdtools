@@ -4,38 +4,32 @@
     cargo_bin: "~/.cargo/bin"
     go_version: "1.22.2"
     mise_go: "~/.local/share/mise/installs/go"
-    go_bin: "~/go/bin"
 
   tasks:
     - name: Install Go {{go_version}}
       command: "{{cargo_bin}}/mise use -g go@{{go_version}}"
       args:
-        creates: "{{mise_go}}/{{go_version}}/go/bin/go"
-
-    - name: Install efm-langserver
-      shell: "{{mise_go}}/{{go_version}}/go/bin/go install github.com/mattn/efm-langserver@latest"
-      args:
-        creates: "{{mise_go}}/{{go_version}}/packages/bin/efm-langserver"
+        creates: "{{mise_go}}/{{go_version}}/bin/go"
 
     - name: Install revive
-      shell: "{{mise_go}}/{{go_version}}/go/bin/go install github.com/mgechev/revive@latest"
+      shell: "{{mise_go}}/{{go_version}}/bin/go install github.com/mgechev/revive@latest"
       args:
         creates: "{{mise_go}}/{{go_version}}/packages/bin/revive"
 
     - name: Install gofumpt
-      shell: "{{mise_go}}/{{go_version}}/go/bin/go install mvdan.cc/gofumpt@latest"
+      shell: "{{mise_go}}/{{go_version}}/bin/go install mvdan.cc/gofumpt@latest"
       args:
         creates: "{{mise_go}}/{{go_version}}/packages/bin/gofumpt"
 
     - name: Install shfmt
-      shell: "{{mise_go}}/{{go_version}}/go/bin/go install mvdan.cc/sh/v3/cmd/shfmt@latest"
+      shell: "{{mise_go}}/{{go_version}}/bin/go install mvdan.cc/sh/v3/cmd/shfmt@latest"
       args:
         creates: "{{mise_go}}/{{go_version}}/packages/bin/shfmt"
 
     - name: Install lazygit
-      shell: "{{mise_go}}/{{go_version}}/go/bin/go install github.com/jesseduffield/lazygit@latest"
+      shell: "{{mise_go}}/{{go_version}}/bin/go install github.com/jesseduffield/lazygit@latest"
       args:
         creates: "{{mise_go}}/{{go_version}}/packages/bin/lazygit"
 
     - name: Reshim mise installations
-      shell: "{{mise_go}}/{{go_version}}/go/bin/go reshim 
+      shell: "{{cargo_bin}}/mise reshim"

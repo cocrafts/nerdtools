@@ -1,12 +1,12 @@
 local config = require("utils.config")
 local M = {}
 
-local ensure_installed = {
-	"graphql",
-	"stylelint_lsp",
-	"jsonls",
-	"html",
-	"cssls",
+local automatic_installation = {
+	"graphql-language-service-cli",
+	"stylelint-lsp",
+	"json-lsp",
+	"html-lsp",
+	"css-lsp",
 }
 
 M.configure = function()
@@ -14,43 +14,27 @@ M.configure = function()
 		require("mason").setup()
 
 		if config.use_snyk then
-			table.insert(ensure_installed, "snyk_ls")
+			table.insert(automatic_installation, "snyk-ls")
 		end
 
 		if config.use_ruby then
-			table.insert(ensure_installed, "ruby_lsp")
-		end
-
-		if config.use_lua then
-			table.insert(ensure_installed, "lua_ls")
+			table.insert(automatic_installation, "ruby-lsp")
 		end
 
 		if config.use_python then
-			table.insert(ensure_installed, "pyright")
-		end
-
-		if config.use_rust then
-			table.insert(ensure_installed, "rust_analyzer")
-		end
-
-		if config.use_zig then
-			table.insert(ensure_installed, "zls")
+			table.insert(automatic_installation, "pyright")
 		end
 
 		if config.use_clang then
-			table.insert(ensure_installed, "swift_mesonls")
+			table.insert(automatic_installation, "mesonlsp")
 		end
 
 		if config.use_csharp then
-			table.insert(ensure_installed, "omnisharp")
-		end
-
-		if config.use_go then
-			table.insert(ensure_installed, "gopls")
+			table.insert(automatic_installation, "omnisharp")
 		end
 
 		require("mason-lspconfig").setup({
-			ensure_installed = ensure_installed,
+			automatic_installation = automatic_installation,
 		})
 	end
 end

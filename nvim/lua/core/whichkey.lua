@@ -165,7 +165,7 @@ M.configure = function()
 				desc = "Open diagnostics",
 			},
 			{ "<leader>jD", "<cmd>lua vim.diagnostic.reset()<CR>",       desc = "Clear diagnostics" },
-			{ "<leader>jm", "<cmd>MarkdownPreview<CR>",                  desc = "Preview markdown" },
+			{ "<leader>jm", "<cmd>MarkdownPreviewToggle<CR>",            desc = "Preview markdown" },
 			{ "<leader>J",  "<cmd>Telescope buffers theme=dropdown<CR>", desc = "Find buffers" },
 
 			{ "<leader>T",  group = "Treesitter" },

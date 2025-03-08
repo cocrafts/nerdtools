@@ -25,15 +25,20 @@
       tags:
         - rust
 
+    - name: Install rust-analyzer
+      command: "{{cargo_bin}}/rustup component add rust-analyzer"
+      args:
+        creates: "{{cargo_bin}}/rust-analyzer"
+
+    - name: Install bat
+      command: "{{cargo_bin}}/cargo install --locked bat"
+      args:
+        creates: "{{cargo_bin}}/bat"
+
     - name: Install cargo mise, generic version manager
       command: "{{cargo_bin}}/cargo install mise"
       args:
         creates: "{{cargo_bin}}/mise"
-
-    - name: Install cargo hurl
-      command: "{{cargo_bin}}/cargo install hurl"
-      args:
-        creates: "{{cargo_bin}}/hurl"
 
     - name: Install cargo typos-cli
       command: "{{cargo_bin}}/cargo install typos-cli"
@@ -70,8 +75,3 @@
       shell: "{{cargo_bin}}/cargo install --features lsp --locked taplo-cli"
       args:
         creates: "{{cargo_bin}}/taplo"
-
-    - name: Install wgsl-analyzer
-      shell: "{{cargo_bin}}/cargo install --git https://github.com/wgsl-analyzer/wgsl-analyzer wgsl_analyzer"
-      args:
-        creates: "{{cargo_bin}}/wgsl_analyzer"

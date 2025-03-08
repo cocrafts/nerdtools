@@ -21,7 +21,7 @@
     "url": "https://github.com/cocrafts/nerdtools/issues"
   },
   "homepage": "https://github.com/cocrafts/nerdtools#readme",
-  "packageManager": "yarn@4.2.2",
+  "packageManager": "yarn@4.7.0",
   "devDependencies": {
     "@metacraft/eslint-config": "^0.1.3",
     "@metacraft/tsconfig": "^0.0.2",

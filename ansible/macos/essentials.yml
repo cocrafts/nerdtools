@@ -11,6 +11,9 @@
         - ~/Sources/bin
         - ~/Sources/haxe
         - ~/Projects
+        - ~/.config/lazygit
+        - ~/.config/nushell
+        - ~/.config/zls
 
     - name: Ensure .config/kitty exists
       file:
@@ -35,10 +38,10 @@
         dest: ~/.zshrc
         force: no
 
-    - name: Install Homebrew
-      shell: yes | /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    - name: Install cmake
+      shell: brew install cmake
       args:
-        creates: /usr/local/bin/brew
+        creates: /usr/local/bin/cmake
 
     - name: Install official git
       shell: brew install git
@@ -90,14 +93,12 @@
       args:
         creates: /usr/local/bin/shellcheck
 
-    - name: Install swiftlint
-      shell: |
-        brew install swiftlint
+    - name: Install lua-language-server
+      shell: brew install lua-language-server
       args:
-        creates: /usr/local/bin/swiftlint
+        creates: /usr/local/bin/lua-language-server
 
-    - name: Install swiftformat
-      shell: |
-        brew install swiftformat
+    - name: Install btop
+      shell: brew install btop
       args:
-        creates: /usr/local/bin/swiftformat
+        creates: /usr/local/bin/btop

@@ -34,7 +34,7 @@
     - name: Create symlink to Nushell configure
       file:
         src: ~/nerdtools/conf/nushell/
-        dest: ~/Libary/Applicaiton Support/nushell
+        dest: ~/.config/nushell
         state: link
 
     - name: Create revive.toml symlink for Golang
@@ -46,11 +46,11 @@
     - name: Create config.yml symlink for Lazygit
       file:
         src: ~/nerdtools/conf/lazygit.yml
-        dest: ~/Library/Application Support/lazygit/config.yml
+        dest: ~/.config/lazygit/config.yml
         state: link
 
     - name: Create zls.json for Zig
       file:
         src: ~/nerdtools/conf/zls.json
-        dest: "~/Library/Application Support/zls.json"
+        dest: "~/.config/zls/zls.json"
         state: link
