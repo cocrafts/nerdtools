@@ -35,6 +35,7 @@
 - [rust-analyzer](https://rust-analyzer.github.io/book/installation.html) (cmd: `rustup component add rust-src`, included in macOS Ansible)
 - [gopls](https://github.com/golang/tools/tree/master/gopls) for Go lsp
 - [zls](https://github.com/zigtools/zls) for Zig lsp
+- [nph](https://github.com/arnetheduck/nph) as Nim formatter
 - for Swift: `brew install swiftlint`, `brew install swiftformat`
 
 ### Other notes
@@ -44,3 +45,4 @@
 
 ### Awesome software to consider:
 - https://github.com/aristocratos/btop
+

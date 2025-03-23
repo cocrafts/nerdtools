@@ -357,6 +357,12 @@ return {
 		end,
 	},
 	{
+		"HiPhish/rainbow-delimiters.nvim",
+		config = function()
+			require("core.rainbow").configure()
+		end,
+	},
+	{
 		-- quick jump/search like vim-sneak
 		"folke/flash.nvim",
 		event = "VeryLazy",
