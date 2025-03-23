@@ -31,6 +31,12 @@
         dest: ~/.config/wezterm
         state: link
 
+    - name: Create symlink for Aider configuration
+      file:
+        src: ~/nerdtools/conf/aider.conf.yml
+        dest: ~/.aider.conf.yml
+        state: link
+
     - name: Create symlink to Nushell configure
       file:
         src: ~/nerdtools/conf/nushell/

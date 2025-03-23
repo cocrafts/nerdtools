@@ -1,0 +1,10 @@
+architect: true
+watch-files: true
+model: r1 
+editor-model: sonnet
+user-input-color: "#98be65"
+tool-output-color: "#66677b"
+tool-error-color: "#ec5f67"
+tool-warning-color: "#FF8800"
+assistant-output-color: "#51afef"
+code-theme: "github-dark"
