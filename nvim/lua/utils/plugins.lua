@@ -28,6 +28,13 @@ return {
 		build = "cd app && yarn install",
 	},
 	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		ft = { "markdown", "Avante" },
+		opts = {
+			file_types = { "markdown", "Avante" },
+		},
+	},
+	{
 		"supermaven-inc/supermaven-nvim",
 		config = function()
 			require("core.supermaven").configure()
@@ -58,15 +65,7 @@ return {
 						drag_and_drop = {
 							insert_mode = true,
 						},
-						use_absolute_path = true, -- required for Windows users
 					},
-				},
-			},
-			{
-				"MeanderingProgrammer/render-markdown.nvim",
-				ft = { "markdown", "Avante" },
-				opts = {
-					file_types = { "markdown", "Avante" },
 				},
 			},
 		},
@@ -196,12 +195,9 @@ return {
 		end,
 	},
 	{
-		"samodostal/image.nvim",
-		dependencies = {
-			{ "m00qek/baleia.nvim", tag = "v1.3.0" },
-		},
+		"3rd/image.nvim",
 		config = function()
-			require("core.image").configure()
+			require("core.graphical").configureImage()
 		end,
 	},
 	{

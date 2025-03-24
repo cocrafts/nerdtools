@@ -103,6 +103,11 @@ vim.filetype.add({
 		func = "func",
 		hurl = "hurl",
 		yamlfmt = "yaml",
+		d2 = function()
+			return "d2", function(bufnr)
+				vim.bo[bufnr].commentstring = "# %s"
+			end
+		end,
 	},
 	filename = {
 		["tsconfig.json"] = "jsonc",

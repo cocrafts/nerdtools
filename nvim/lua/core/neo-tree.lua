@@ -17,13 +17,22 @@ end
 M.configure = function()
 	local neotree = require("neo-tree")
 
+	require("nvim-web-devicons").set_icon({
+		d2 = {
+			icon = "", -- or choose any Nerd Font icon you like
+			color = "#FFD700", -- gold/yellow
+			cterm_color = "220",
+			name = "D2",
+		},
+	})
+
 	neotree.setup({
 		close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
 		popup_border_style = "rounded",
 		enable_git_status = true,
 		enable_diagnostics = true,
 		open_files_do_not_replace_types = { "terminal", "trouble", "qf", "Outline" }, -- when opening files, do not use windows containing these filetypes or buftypes
-		sort_case_insensitive = true, -- used when sorting files and directories in the tree
+		sort_case_insensitive = true,                                               -- used when sorting files and directories in the tree
 		window = {
 			position = "left",
 			width = 32,
@@ -56,7 +65,7 @@ M.configure = function()
 			hijack_netrw_behavior = "open_default",
 			use_libuv_file_watcher = true, -- This will use the OS level file watchers to detect changes instead of relying on nvim autocmd events.
 			filtered_items = {
-				visible = false, -- when true, they will just be displayed differently than normal items
+				visible = false,          -- when true, they will just be displayed differently than normal items
 				hide_dotfiles = true,
 				hide_gitignored = true,
 				hide_hidden = true, -- for Windows only
@@ -102,8 +111,8 @@ M.configure = function()
 			git_status = {
 				symbols = {
 					-- Change type
-					added = "", -- or "✚", but this is redundant info if you use git_status_colors on the name
-					modified = "", -- or "", but this is redundant info if you use git_status_colors on the name
+					added = "",                    -- or "✚", but this is redundant info if you use git_status_colors on the name
+					modified = "",                 -- or "", but this is redundant info if you use git_status_colors on the name
 					deleted = icons.misc.CircleCrossed, -- this can only be used in the git_status source
 					renamed = icons.misc.CircleEdit, -- this can only be used in the git_status source
 					-- Status type

@@ -27,6 +27,7 @@
 - pip3 install codespell
 - https://github.com/LuaLS/lua-language-server (included in macOS)
 - [ascii-image-converter](https://github.com/TheZoraiz/ascii-image-converter) (needed to display image)
+- [d2-tree-sitter](https://github.com/ravsii/tree-sitter-d2) for D2 syntax highlighting
 
 ### Those `lsp` better manually installed rather than using `mason`)
 - [wgsl-analyzer](https://github.com/wgsl-analyzer/wgsl-analyzer) (shader language)

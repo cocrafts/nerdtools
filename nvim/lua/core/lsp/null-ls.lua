@@ -17,6 +17,7 @@ M.configure = function()
 
 		nls.builtins.diagnostics.stylelint, -- css
 		nls.builtins.formatting.stylelint,
+		nls.builtins.formatting.d2_fmt,
 
 		nls.builtins.formatting.shfmt.with({ -- shell
 			filetypes = { "sh", "zsh" },
