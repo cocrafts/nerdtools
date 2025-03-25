@@ -208,6 +208,17 @@ config.keys = {
 			end
 		end),
 	},
+	{
+		key = "l",
+		mods = "CMD",
+		action = wezterm.action_callback(function(window, pane)
+			if pane:is_alt_screen_active() then
+				window:perform_action(act.SendKey({ key = ";", mods = "CTRL" }), pane)
+			else
+				window:perform_action(act.SendKey({ key = ";", mods = "CMD" }), pane)
+			end
+		end),
+	},
 }
 
 config.colors = {
