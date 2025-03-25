@@ -3,19 +3,6 @@ return {
 	{ "lukas-reineke/onedark.nvim" },
 	{ "catppuccin/nvim" },
 	{
-		"jackMort/ChatGPT.nvim",
-		event = "VeryLazy",
-		config = function()
-			require("core.ai").configureGPT()
-		end,
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-			"nvim-lua/plenary.nvim",
-			"folke/trouble.nvim",
-			"nvim-telescope/telescope.nvim",
-		},
-	},
-	{
 		"nmac427/guess-indent.nvim",
 		config = function()
 			require("core.guess-indent").configure()
