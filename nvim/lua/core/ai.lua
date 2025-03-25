@@ -30,9 +30,14 @@ M.configureAvante = function()
 Act as an expert software developer.
 Always use best practices when coding.
 Respect and use existing conventions, libraries, etc that are already present in the code base.]],
+		rag_service = { enabled = true },
+		behavior = {
+			enable_cursor_planning_mode = true,
+			enable_claude_text_editor_tool_mode = true,
+		},
 		claude = {
 			endpoint = "https://api.anthropic.com",
-			model = "claude-3-5-sonnet-20241022",
+			model = "claude-3-7-sonnet-20250219",
 			temperature = 0,
 			max_tokens = 4096,
 		},

@@ -54,6 +54,7 @@ return {
 			"nvim-tree/nvim-web-devicons",
 			"echasnovski/mini.pick", -- for file_selector provider mini.pick
 			"nvim-telescope/telescope.nvim",
+			"hrsh7th/nvim-cmp",
 			"ibhagwan/fzf-lua",
 			{
 				"HakonHarnes/img-clip.nvim",
