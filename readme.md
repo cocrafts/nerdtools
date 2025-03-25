@@ -1,49 +1,84 @@
-# Unified dev environment for Metacraft developers.
+# NerdTools
 
-### For Mac user:
-- make sure Home Brew installed
-- install Ansible with `brew install ansible`
-- clone this repo to your home folder (`~/`)
-- execute: `ansible-playbook -i hosts.yml macos.yml`
+A unified development environment for Metacraft developers that automates configuration across macOS and Linux systems.
 
-#### Pre-requisites:
-- Install [Homebrew](https://brew.sh/) manually via: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` command
-- Install [Ansible](https://www.ansible.com/) using `brew`: `brew install ansible`
-- Install [Starship](https://starship.rs/) (optional) via `brew`: `brew install starship`
+## Quick Start
 
-### For remote Linux client:
-- replace ip-address under `hosts.yml`
-- make sure host machine configured be able to ssh to replaced "ip-address"
-- make sure Ansible client existed on remote client
-- execute `ansible-playbook -i hosts.yml linux.yml`
-- run: `chsh -s $(which zsh)` to set zsh as default
+### macOS Setup
 
-### For nvim user
-- brew install llvm --with-toolchain (clang, clang-tidy, clang-format)
-- pip3 install ruff
-- pip3 install mypy
-- pip3 install jsonls
-- pip3 install pyright
-- pip3 install codespell
-- https://github.com/LuaLS/lua-language-server (included in macOS)
-- [ascii-image-converter](https://github.com/TheZoraiz/ascii-image-converter) (needed to display image)
-- [d2-tree-sitter](https://github.com/ravsii/tree-sitter-d2) for D2 syntax highlighting
+1. Install prerequisites:
+   ```bash
+   # Install Homebrew
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   
+   # Install Ansible
+   brew install ansible
+   
+   # Install Starship (optional)
+   brew install starship
+   ```
 
-### Those `lsp` better manually installed rather than using `mason`)
-- [wgsl-analyzer](https://github.com/wgsl-analyzer/wgsl-analyzer) (shader language)
-- [hurl](https://hurl.dev/docs/installation.html) (curl like cli)
-- [lua-language-server](https://github.com/LuaLS/lua-language-server) (cmd: `brew install lua-language-server`)
-- [rust-analyzer](https://rust-analyzer.github.io/book/installation.html) (cmd: `rustup component add rust-src`, included in macOS Ansible)
-- [gopls](https://github.com/golang/tools/tree/master/gopls) for Go lsp
-- [zls](https://github.com/zigtools/zls) for Zig lsp
-- [nph](https://github.com/arnetheduck/nph) as Nim formatter
-- for Swift: `brew install swiftlint`, `brew install swiftformat`
+2. Deploy environment:
+   ```bash
+   # Clone repository to home directory
+   git clone <repo-url> ~/nerdtools
+   
+   # Run Ansible playbook
+   cd ~/nerdtools
+   ansible-playbook -i hosts.yml macos.yml
+   ```
 
-### Other notes
-- For Kitty, while ssh to Linux client with Nerdtools use `kitty +kitten ssh` instead of `ssh` once to register Kitty with remote system.
-- For Wezterm [Configure undercurl](https://wezfurlong.org/wezterm/faq.html?h=undercurl#how-do-i-enable-undercurl-curly-underlines) style for Wezterm.
-- Mise, cross-languages version manager https://mise.jdx.dev/lang/bun.html
+### Linux Setup
 
-### Awesome software to consider:
-- https://github.com/aristocratos/btop
+1. Configure hosts:
+   - Edit `hosts.yml` with your target IP address
+   - Ensure SSH access is configured to the target machine
+   - Verify Ansible is installed on the remote client
+
+2. Deploy environment:
+   ```bash
+   ansible-playbook -i hosts.yml linux.yml
+   
+   # Set Zsh as default shell
+   chsh -s $(which zsh)
+   ```
+
+## Neovim Configuration
+
+### Required Dependencies
+
+| Tool | Installation | Purpose |
+|------|-------------|---------|
+| LLVM | `brew install llvm --with-toolchain` | C/C++ toolchain |
+| Ruff | `pip3 install ruff` | Python linter |
+| MyPy | `pip3 install mypy` | Python type checker |
+| JSON Language Server | `pip3 install jsonls` | JSON support |
+| Pyright | `pip3 install pyright` | Python LSP |
+| Codespell | `pip3 install codespell` | Spell checker |
+| ASCII Image Converter | [Link](https://github.com/TheZoraiz/ascii-image-converter) | Image display |
+
+### Manual LSP Installations
+
+These LSPs should be installed manually rather than via Mason:
+
+| LSP | Installation | Language |
+|-----|-------------|----------|
+| WGSL Analyzer | [Link](https://github.com/wgsl-analyzer/wgsl-analyzer) | WebGPU Shading |
+| Hurl | [Link](https://hurl.dev/docs/installation.html) | API testing |
+| Lua Language Server | `brew install lua-language-server` | Lua |
+| Rust Analyzer | `rustup component add rust-src` | Rust |
+| Gopls | [Link](https://github.com/golang/tools/tree/master/gopls) | Go |
+| ZLS | [Link](https://github.com/zigtools/zls) | Zig |
+| NPH | [Link](https://github.com/arnetheduck/nph) | Nim formatter |
+| SwiftLint & SwiftFormat | `brew install swiftlint swiftformat` | Swift |
+
+## Terminal Configuration
+
+- **Kitty**: Use `kitty +kitten ssh` instead of `ssh` when connecting to Linux systems
+- **Wezterm**: [Configure undercurl](https://wezfurlong.org/wezterm/faq.html?h=undercurl#how-do-i-enable-undercurl-curly-underlines) for proper styling
+- **Mise**: Use for [cross-language version management](https://mise.jdx.dev/lang/bun.html)
+
+## Recommended Tools
+
+- [btop](https://github.com/aristocratos/btop) - Resource monitor with modern UI
 
