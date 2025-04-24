@@ -16,6 +16,16 @@ local snippets, autosnippets = {}, {} --}}}
 local group = vim.api.nvim_create_augroup("Javascript Snippets", { clear = true })
 local file_pattern = "*.js"
 
+local function class_from_filename()
+	local basename = vim.fn.expand("%:t:r")
+	if basename == nil or basename == "" then
+		return "MyComponent"
+	end
+
+	local class_name = string.upper(string.sub(basename, 1, 1)) .. string.sub(basename, 2)
+	return sn(nil, { i(1, class_name) })
+end
+
 local function cs(trigger, nodes, opts) --{{{
 	local snippet = s(trigger, nodes)
 	local target_table = snippets
@@ -219,9 +229,31 @@ const styles = StyleSheet.create({{
 	}}
 }});]],
 		{
-			i(1, ""),
+			d(1, class_from_filename),
 			rep(1),
 			i(3, ""),
+			rep(1),
+		}
+	)
+)
+
+cs(
+	"ra",
+	fmt(
+		[[
+import React from 'react';
+
+import {{Box, Text}} from 'ui-library';
+
+export const {1}: React.FC = () => {{
+	return (
+		<Box>
+			<Text>{2}</Text>
+		</Box>
+	);
+}};]],
+		{
+			d(1, class_from_filename),
 			rep(1),
 		}
 	)
