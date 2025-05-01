@@ -33,6 +33,10 @@ M.configure = function()
 			table.insert(automatic_installation, "omnisharp")
 		end
 
+		if config.use_elixir then
+			table.insert(automatic_installation, "elixir-ls")
+		end
+
 		require("mason-lspconfig").setup({
 			automatic_installation = automatic_installation,
 		})

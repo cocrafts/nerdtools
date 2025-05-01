@@ -78,12 +78,23 @@ return {
 					require("core.lsp.mason").configure()
 				end,
 			},
+			{
+				"chrisgrieser/nvim-lsp-endhints",
+				event = "LspAttach",
+				opts = {}, -- required, even if empty
+			},
 			{ "Hoffs/omnisharp-extended-lsp.nvim" },
 			{ "nanotee/sqls.nvim" },
 			{ "jparise/vim-graphql" },
 			{ "alaviss/nim.nvim" },
 			{ "tact-lang/tact.vim" },
 			{ "simrat39/rust-tools.nvim" },
+			{
+				"elixir-tools/elixir-tools.nvim",
+				dependencies = { "nvim-lua/plenary.nvim" },
+				version = "*",
+				event = { "BufReadPre", "BufNewFile" },
+			},
 			{
 				"pmizio/typescript-tools.nvim",
 				dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },

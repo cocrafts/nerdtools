@@ -6,13 +6,13 @@ M.configureAvante = function()
 	require("avante_lib").load()
 
 	require("avante").setup({
-		provider = "claude",
+		provider = "openai",
 		-- auto_suggestions_provider = "claude",
 		system_prompt = [[
 Act as an expert software developer.
 Always use best practices when coding.
 Respect and use existing conventions, libraries, etc that are already present in the code base.]],
-		rag_service = { enabled = true },
+		-- rag_service = { enabled = true },
 		behavior = {
 			enable_cursor_planning_mode = true,
 			enable_claude_text_editor_tool_mode = true,
@@ -22,6 +22,9 @@ Respect and use existing conventions, libraries, etc that are already present in
 				close = { "q" },
 			},
 		},
+		ollama = {
+			model = "qwen2.5-coder:7b-instruct",
+		},
 		claude = {
 			endpoint = "https://api.anthropic.com",
 			model = "claude-3-7-sonnet-20250219",
@@ -30,10 +33,10 @@ Respect and use existing conventions, libraries, etc that are already present in
 		},
 		openai = {
 			endpoint = "https://api.openai.com/v1",
-			model = "gpt-4o",
+			model = "o3-mini",
 			timeout = 30000, -- Timeout in milliseconds
 			temperature = 0,
-			max_tokens = 4096,
+			max_completion_tokens = 4096,
 		},
 		windows = {
 			sidebar_header = {

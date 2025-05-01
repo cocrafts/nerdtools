@@ -1,42 +1,8 @@
 local builtin = require("telescope.builtin")
 local config = require("utils.config")
 local helper = require("utils.helper")
-local icons = require("utils.icons")
 
 local M = {}
-local hints = {
-	inlay_hints = {
-		parameter_hints = {
-			show = true,
-			prefix = string.format(" %s ", icons.kind.Number),
-			separator = ", ",
-			remove_colon_start = false,
-			remove_colon_end = true,
-		},
-		type_hints = {
-			-- type and other hints
-			show = true,
-			prefix = " ",
-			separator = ", ",
-			remove_colon_start = false,
-			remove_colon_end = false,
-		},
-		only_current_line = false,
-		-- separator between types and parameter hints. Note that type hints are
-		-- shown before parameter
-		labels_separator = "  ",
-		-- whether to align to the length of the longest line in the file
-		max_len_align = false,
-		-- padding from the left if max_len_align is true
-		max_len_align_padding = 1,
-		-- highlight group
-		highlight = "LspInlayHint",
-		-- virt_text priority
-		priority = 0,
-	},
-	enabled_at_startup = true,
-	debug_mode = false,
-}
 
 M.configure = function()
 	local lsp = require("lsp-zero").preset({})
@@ -108,6 +74,7 @@ M.configure = function()
 	require("core.lsp.cmake").configure(lspconfig)
 	require("core.lsp.html").configure(lspconfig)
 	require("core.lsp.json").configure(lspconfig)
+	require("core.lsp.toml").configure(lspconfig)
 	require("core.lsp.graphql").configure(lspconfig)
 	require("core.lsp.null-ls").configure()
 
@@ -132,7 +99,6 @@ M.configure = function()
 	end
 
 	if config.use_rust then
-		require("core.lsp.toml").configure(lspconfig)
 		require("core.lsp.rust").configure()
 	end
 
@@ -150,6 +116,10 @@ M.configure = function()
 
 	if config.use_gleam then
 		require("core.lsp.gleam").configure(lspconfig)
+	end
+
+	if config.use_elixir then
+		require("core.lsp.elixir-tools").configure()
 	end
 
 	if config.use_odin then

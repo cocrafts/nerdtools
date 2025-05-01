@@ -13,6 +13,7 @@ return {
 	use_zig = false,
 	use_nim = true,
 	use_gleam = true,
+	use_elixir = true,
 	use_odin = true,
 	use_clang = true,
 	use_csharp = false,

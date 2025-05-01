@@ -1,10 +1,18 @@
-architect: true
+#architect: true
+vim: true
 watch-files: true
-model: r1 
-editor-model: sonnet
+auto-commits: false
+auto-lint: true
+model: gemini/gemini-2.5-pro-preview-03-25
+# model: xai/grok-3-beta
+# editor-model: sonnet
+auto-commits: false
 user-input-color: "#98be65"
 tool-output-color: "#66677b"
 tool-error-color: "#ec5f67"
 tool-warning-color: "#FF8800"
 assistant-output-color: "#51afef"
 code-theme: "github-dark"
+
+read: [AI.md]
+editor: nvim
