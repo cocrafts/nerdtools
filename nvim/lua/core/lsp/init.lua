@@ -76,7 +76,7 @@ M.configure = function()
 	require("core.lsp.json").configure(lspconfig)
 	require("core.lsp.toml").configure(lspconfig)
 	require("core.lsp.graphql").configure(lspconfig)
-	require("core.lsp.null-ls").configure()
+	require("core.lsp.none-ls").configure()
 
 	if config.use_snyk then
 		require("core.lsp.snyk").configure(lspconfig)

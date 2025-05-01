@@ -42,13 +42,13 @@ M.configure = function()
 	end
 
 	if config.use_go then
-		local gotest_codeaction = require("go.null_ls").gotest_action()
-		local golangci_lint = require("go.null_ls").golangci_lint()
-		local gotest = require("go.null_ls").gotest()
+		-- local gotest = require("go.null_ls").gotest()
+		-- local gotest_codeaction = require("go.null_ls").gotest_action()
+		-- local golangci_lint = require("go.null_ls").golangci_lint()
 
-		table.insert(sources, gotest)
-		table.insert(sources, golangci_lint)
-		table.insert(sources, gotest_codeaction)
+		-- table.insert(sources, gotest)
+		-- table.insert(sources, golangci_lint)
+		-- table.insert(sources, gotest_codeaction)
 	end
 
 	if config.use_haxe then
@@ -66,6 +66,11 @@ M.configure = function()
 
 	if config.use_gleam then
 		table.insert(sources, nls.builtins.formatting.gleam_format)
+	end
+
+	if config.use_elixir then
+		table.insert(sources, nls.builtins.formatting.mix)
+		table.insert(sources, nls.builtins.diagnostics.credo)
 	end
 
 	if config.use_rust then
