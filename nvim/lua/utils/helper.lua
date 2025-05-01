@@ -58,36 +58,37 @@ M.find_project_files = function(opts)
 end
 
 M.open_lsp_definitions = function()
-	local function exclude_react_index_d_ts(result)
-		local uri = result.uri or result.targetUri
-		if not uri then
-			return false
+	local standard_result = vim.lsp.buf.definition()
+
+	if not standard_result then
+		local function exclude_react_index_d_ts(result)
+			local uri = result.uri or result.targetUri
+			if not uri then
+				return false
+			end
+			local path = vim.uri_to_fname(uri)
+			return not string.match(path, "react[/\\]index.d.ts$")
 		end
-		local path = vim.uri_to_fname(uri)
-		return not string.match(path, "react[/\\]index.d.ts$")
-	end
 
-	local results = vim.lsp.buf_request_sync(0, "textDocument/definition", vim.lsp.util.make_position_params(), 1000)
+		local results =
+				vim.lsp.buf_request_sync(0, "textDocument/definition", vim.lsp.util.make_position_params(), 1000)
 
-	for _client_id, response in pairs(results or {}) do
-		if response.result and vim.islist(response.result) then
-			-- Filter out unwanted results
-			local filtered_results = vim.tbl_filter(exclude_react_index_d_ts, response.result)
+		for _client_id, response in pairs(results or {}) do
+			if response.result and vim.islist(response.result) then
+				local filtered_results = vim.tbl_filter(exclude_react_index_d_ts, response.result)
 
-			if #filtered_results == 1 then
-				-- If there's exactly one result after filtering, jump to it directly
-				vim.lsp.util.show_document(filtered_results[1], "utf-8", { focus = true })
-				return
-			elseif #filtered_results > 1 then
-				-- If there are multiple results after filtering, use Telescope to display them
-				require("telescope.builtin").lsp_definitions(M.layouts.full_cursor())
-				return
+				if #filtered_results == 1 then
+					vim.lsp.util.show_document(filtered_results[1], "utf-8", { focus = true })
+					return
+				elseif #filtered_results > 1 then
+					require("telescope.builtin").lsp_definitions(M.layouts.full_cursor())
+					return
+				end
 			end
 		end
-	end
 
-	-- Fallback in case no results are found or some other unexpected behavior
-	print("No definitions found")
+		print("No definitions found")
+	end
 end
 
 local last_search_pattern = ""
