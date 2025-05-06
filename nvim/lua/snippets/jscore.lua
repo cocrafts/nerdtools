@@ -18,11 +18,17 @@ local file_pattern = "*.js"
 
 local function class_from_filename()
 	local basename = vim.fn.expand("%:t:r")
-	if basename == nil or basename == "" then
-		return "MyComponent"
+	local class_name = "MyComponent"
+
+	if basename == "index" then
+		local parent_dir = vim.fn.fnamemodify(vim.fn.expand("%:p"), ":h:t")
+		if parent_dir ~= nil and parent_dir ~= "" then
+			class_name = string.upper(string.sub(parent_dir, 1, 1)) .. string.sub(parent_dir, 2)
+		end
+	else
+		class_name = string.upper(string.sub(basename, 1, 1)) .. string.sub(basename, 2)
 	end
 
-	local class_name = string.upper(string.sub(basename, 1, 1)) .. string.sub(basename, 2)
 	return sn(nil, { i(1, class_name) })
 end
 
@@ -211,7 +217,9 @@ cs(
 	fmt(
 		[[
 import type {{ FC }} from 'react';
-import {{ StyleSheet, Text, View }} from 'react-native';
+import {{ StyleSheet }} from 'react-native-unistyles';
+
+import {{ Text, View }} from '@/components/themed';
 
 export const {1}: FC = () => {{
 	return (

@@ -58,9 +58,9 @@ M.find_project_files = function(opts)
 end
 
 M.open_lsp_definitions = function()
-	local standard_result = vim.lsp.buf.definition()
-
-	if not standard_result then
+	if vim.bo.filetype == "elixir" then
+		vim.lsp.buf.definition()
+	else
 		local function exclude_react_index_d_ts(result)
 			local uri = result.uri or result.targetUri
 			if not uri then

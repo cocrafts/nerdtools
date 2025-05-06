@@ -209,13 +209,26 @@ config.keys = {
 		end),
 	},
 	{
-		key = "l",
+		key = ";",
 		mods = "CMD",
 		action = wezterm.action_callback(function(window, pane)
 			if pane:is_alt_screen_active() then
 				window:perform_action(act.SendKey({ key = ";", mods = "CTRL" }), pane)
 			else
 				window:perform_action(act.SendKey({ key = ";", mods = "CMD" }), pane)
+			end
+		end),
+	},
+	{
+		key = "Tab",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(window, pane)
+			if pane:is_alt_screen_active() then
+				local next_buffer_action = act.Multiple({
+					act.SendKey({ key = "g" }),
+					act.SendKey({ key = "t" }),
+				})
+				window:perform_action(next_buffer_action, pane)
 			end
 		end),
 	},
