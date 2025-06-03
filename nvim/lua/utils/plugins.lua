@@ -83,7 +83,42 @@ return {
 				event = "LspAttach",
 				opts = {}, -- required, even if empty
 			},
-			{ "Hoffs/omnisharp-extended-lsp.nvim" },
+			{
+				"seblyng/roslyn.nvim",
+				ft = "cs",
+				---@module 'roslyn.config'
+				---@type RoslynNvimConfig
+				opts = {
+					config = {
+						broad_search = true,
+						settings = {
+							["csharp|symbol_search"] = {
+								dotnet_search_reference_assemblies = true,
+							},
+							["csharp|formatting"] = {
+								dotnet_organize_imports_on_format = true,
+							},
+							["csharp|inlay_hints"] = {
+								csharp_enable_inlay_hints_for_implicit_object_creation = true,
+								csharp_enable_inlay_hints_for_implicit_variable_types = true,
+								csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+								csharp_enable_inlay_hints_for_types = true,
+								dotnet_enable_inlay_hints_for_indexer_parameters = true,
+								dotnet_enable_inlay_hints_for_literal_parameters = true,
+								dotnet_enable_inlay_hints_for_object_creation_parameters = true,
+								dotnet_enable_inlay_hints_for_other_parameters = true,
+								dotnet_enable_inlay_hints_for_parameters = true,
+								dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
+								dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
+								dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
+							},
+							["csharp|code_lens"] = {
+								dotnet_enable_references_code_lens = true,
+							},
+						},
+					},
+				},
+			},
 			{ "nanotee/sqls.nvim" },
 			{ "jparise/vim-graphql" },
 			{ "alaviss/nim.nvim" },
@@ -168,6 +203,15 @@ return {
 		end,
 	},
 	{ "echasnovski/mini.icons" },
+	{
+		"miversen33/sunglasses.nvim",
+		event = "UIEnter",
+		config = function()
+			require("sunglasses").setup({
+				filter_percent = 0.1,
+			})
+		end,
+	},
 	{
 		"nvim-neo-tree/neo-tree.nvim",
 		dependencies = {

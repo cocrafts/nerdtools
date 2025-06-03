@@ -28,35 +28,32 @@ local handler = function(virtText, lnum, endLnum, width, truncate)
 	return newVirtText
 end
 
-local ftMap = {
-	vim = "indent",
-	python = { "treesitter", "indent" },
-	git = "",
-}
-
 M.configure = function()
 	vim.keymap.set("n", "zR", require("ufo").openAllFolds)
 	vim.keymap.set("n", "zM", require("ufo").closeAllFolds)
 	vim.keymap.set("n", "zr", require("ufo").openFoldsExceptKinds)
 	vim.keymap.set("n", "zm", require("ufo").closeFoldsWith) -- closeAllFolds == closeFoldsWith(0)
 
-	vim.o.foldcolumn = "1" -- '0' is not bad
-	vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-	vim.o.foldlevelstart = 99 -- do not close folds when a buffer is opened
+	vim.o.foldcolumn = "1"                                  -- '0' is not bad
+	vim.o.foldlevel = 99                                    -- Using ufo provider need a large value, feel free to decrease the value
+	vim.o.foldlevelstart = 99                               -- do not close folds when a buffer is opened
 	vim.o.foldenable = true
+
+	local capabilities = vim.lsp.protocol.make_client_capabilities()
+	capabilities.textDocument.foldingRange = {
+		dynamicRegistration = false,
+		lineFoldingOnly = true,
+	}
+	local language_servers = vim.lsp.get_clients() -- or list servers manually like {'gopls', 'clangd'}
+	for _, ls in ipairs(language_servers) do
+		require("lspconfig")[ls].setup({
+			capabilities = capabilities,
+			-- you can add other fields for setting up lsp server in this table
+		})
+	end
 
 	require("ufo").setup({
 		fold_virt_text_handler = handler,
-		open_fold_hl_timeout = 150,
-		provider_selector = function(_, filetype) -- (bufnr, filetype, buftype)
-			local domain_indent = ftMap[filetype]
-
-			if domain_indent ~= nil then
-				return domain_indent
-			else
-				return ""
-			end
-		end,
 	})
 end
 

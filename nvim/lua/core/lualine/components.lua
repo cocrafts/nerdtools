@@ -5,7 +5,6 @@ local icons = require("utils.icons")
 local client_aliases = {
 	["null-ls"] = "null",
 	["lua_ls"] = "lua",
-	["snyk_ls"] = "snyk",
 	["nim_langserver"] = "nim",
 	["swift_mesonls"] = "meson",
 	["haxe_language_server"] = "haxe",

@@ -1,44 +1,39 @@
 local config = require("utils.config")
 local M = {}
 
-local automatic_installation = {
-	"graphql-language-service-cli",
-	"stylelint-lsp",
-	"json-lsp",
-	"html-lsp",
-	"css-lsp",
+local ensure_installed = {
+	"graphql",
+	"tailwindcss",
 }
 
 M.configure = function()
 	if vim.loop.os_uname().sysname == "Darwin" then
-		require("mason").setup()
+		require("mason").setup({
+			registries = {
+				"github:mason-org/mason-registry", -- install with MasonInstall roslyn
+				"github:Crashdummyy/mason-registry",
+			},
+		})
 
-		if config.use_snyk then
-			table.insert(automatic_installation, "snyk-ls")
-		end
-
-		if config.use_ruby then
-			table.insert(automatic_installation, "ruby-lsp")
+		if config.use_svelte then
+			table.insert(ensure_installed, "svelte")
 		end
 
 		if config.use_python then
-			table.insert(automatic_installation, "pyright")
+			table.insert(ensure_installed, "pyright")
 		end
 
 		if config.use_clang then
-			table.insert(automatic_installation, "mesonlsp")
-		end
-
-		if config.use_csharp then
-			table.insert(automatic_installation, "omnisharp")
+			table.insert(ensure_installed, "mesonlsp")
 		end
 
 		if config.use_elixir then
-			table.insert(automatic_installation, "elixir-ls")
+			table.insert(ensure_installed, "elixirls")
 		end
 
 		require("mason-lspconfig").setup({
-			automatic_installation = automatic_installation,
+			automatic_enable = true,
+			ensure_installed = ensure_installed,
 		})
 	end
 end

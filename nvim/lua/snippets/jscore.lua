@@ -216,10 +216,11 @@ cs(
 	"rc",
 	fmt(
 		[[
-import type {{ FC }} from 'react';
+import {{ type FC }} from 'react';
+import {{ View }} from 'react-native';
 import {{ StyleSheet }} from 'react-native-unistyles';
 
-import {{ Text, View }} from '@/components/themed';
+import {{ Text }} from '@/components/ThemedText';
 
 export const {1}: FC = () => {{
 	return (

@@ -77,17 +77,18 @@ M.configure = function()
 	require("core.lsp.toml").configure(lspconfig)
 	require("core.lsp.graphql").configure(lspconfig)
 	require("core.lsp.none-ls").configure()
+	require("core.lsp.nim").configure(lspconfig)
+	require("core.lsp.zls").configure(lspconfig)
+	require("core.lsp.sql").configure(lspconfig)
+	require("core.lsp.wgsl").configure(lspconfig)
+	require("core.lsp.odin").configure(lspconfig)
+	require("core.lsp.swift").configure(lspconfig)
+	require("core.lsp.rust").configure()
+	require("core.lsp.ruby-lsp").configure(lspconfig)
+	require("core.lsp.haxe").configure(lspconfig)
 
-	if config.use_snyk then
-		require("core.lsp.snyk").configure(lspconfig)
-	end
-
-	if config.use_haxe then
-		require("core.lsp.haxe").configure(lspconfig)
-	end
-
-	if config.use_ruby then
-		require("core.lsp.ruby-lsp").configure(lspconfig)
+	if config.use_svelte then
+		vim.lsp.enable("svelte") -- svelte does not require its own lspconfig
 	end
 
 	if config.use_lua then
@@ -98,22 +99,6 @@ M.configure = function()
 		require("core.lsp.python").configure(lspconfig)
 	end
 
-	if config.use_rust then
-		require("core.lsp.rust").configure()
-	end
-
-	if config.use_swift then
-		require("core.lsp.swift").configure(lspconfig)
-	end
-
-	if config.use_zig then
-		require("core.lsp.zls").configure(lspconfig)
-	end
-
-	if config.use_nim then
-		require("core.lsp.nim").configure(lspconfig)
-	end
-
 	if config.use_gleam then
 		require("core.lsp.gleam").configure(lspconfig)
 	end
@@ -122,29 +107,13 @@ M.configure = function()
 		require("core.lsp.elixir-tools").configure()
 	end
 
-	if config.use_odin then
-		require("core.lsp.odin").configure(lspconfig)
-	end
-
 	if config.use_clang then
 		require("core.lsp.clang").configure(lspconfig)
 		require("core.lsp.meson").configure(lspconfig)
 	end
 
-	if config.use_csharp then
-		require("core.lsp.csharp").configure(lspconfig)
-	end
-
 	if config.use_go then
 		require("core.lsp.go").configure(lspconfig)
-	end
-
-	if config.use_sql then
-		require("core.lsp.sql").configure(lspconfig)
-	end
-
-	if config.use_wgsl then
-		require("core.lsp.wgsl").configure(lspconfig)
 	end
 end
 

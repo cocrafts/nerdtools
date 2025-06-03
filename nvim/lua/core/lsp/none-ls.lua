@@ -12,17 +12,35 @@ M.configure = function()
 	local nls = require("null-ls")
 	local augroup = vim.api.nvim_create_augroup("LspFormatting", {})
 	local sources = {
-		json.jqfmt,
+		-- json.jqfmt,
 		terraform.format,
+		-- zig
+		nim.format,
+		zig.format,
+		-- elixir
+		nls.builtins.formatting.mix,
+		nls.builtins.diagnostics.credo,
+		nls.builtins.formatting.gleam_format,
 
 		nls.builtins.diagnostics.stylelint, -- css
 		nls.builtins.formatting.stylelint,
 		nls.builtins.formatting.d2_fmt,
-
+		nls.builtins.formatting.csharpier,
+		--swift
+		nls.builtins.formatting.swiftformat,
+		nls.builtins.diagnostics.swiftlint,
+		-- Rust
+		rust.format,
+		rust.taplofmt,
+		-- prettier
+		nls.builtins.formatting.prettier.with({
+			filetypes = { "svelte" },
+		}),
+		-- Others
+		nls.builtins.formatting.haxe_formatter,
 		nls.builtins.formatting.shfmt.with({ -- shell
 			filetypes = { "sh", "zsh" },
 		}),
-
 		typos.diagnostic.with({
 			extra_args = {
 				"--config",
@@ -32,7 +50,12 @@ M.configure = function()
 	}
 
 	if config.use_clang then
-		table.insert(sources, nls.builtins.formatting.clang_format)
+		table.insert(
+			sources,
+			nls.builtins.formatting.clang_format.with({
+				filetypes = { "c", "cpp", "cuda", "proto" },
+			})
+		)
 	end
 
 	if config.use_python then
@@ -42,53 +65,18 @@ M.configure = function()
 	end
 
 	if config.use_go then
-		-- local gotest = require("go.null_ls").gotest()
-		-- local gotest_codeaction = require("go.null_ls").gotest_action()
-		-- local golangci_lint = require("go.null_ls").golangci_lint()
+		local gotest = require("go.null_ls").gotest()
+		local gotest_codeaction = require("go.null_ls").gotest_action()
+		local golangci_lint = require("go.null_ls").golangci_lint()
 
-		-- table.insert(sources, gotest)
-		-- table.insert(sources, golangci_lint)
-		-- table.insert(sources, gotest_codeaction)
-	end
-
-	if config.use_haxe then
-		table.insert(sources, nls.builtins.formatting.haxe_formatter)
+		table.insert(sources, gotest)
+		table.insert(sources, golangci_lint)
+		table.insert(sources, gotest_codeaction)
 	end
 
 	if config.use_lua then
 		table.insert(sources, nls.builtins.formatting.stylua)
 		table.insert(sources, nls.builtins.diagnostics.selene)
-	end
-
-	if config.use_zig then
-		table.insert(sources, zig.format)
-	end
-
-	if config.use_gleam then
-		table.insert(sources, nls.builtins.formatting.gleam_format)
-	end
-
-	if config.use_elixir then
-		table.insert(sources, nls.builtins.formatting.mix)
-		table.insert(sources, nls.builtins.diagnostics.credo)
-	end
-
-	if config.use_rust then
-		table.insert(sources, rust.format)
-		table.insert(sources, rust.taplofmt)
-	end
-
-	if config.use_swift then
-		table.insert(sources, nls.builtins.formatting.swiftformat)
-		table.insert(sources, nls.builtins.diagnostics.swiftlint)
-	end
-
-	if config.use_nim then
-		table.insert(sources, nim.format)
-	end
-
-	if config.use_csharp then
-		table.insert(sources, nls.builtins.formatting.csharpier)
 	end
 
 	nls.setup({
