@@ -20,7 +20,7 @@ config.color_scheme = "tokyonight_night"
 -- https://wezfurlong.org/wezterm/config/lua/wezterm/target_triple.html
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	config.font_size = 11.5
-	config.line_height = 1.1
+	config.line_height = 1.2
 
 	config.initial_rows = 70
 	config.initial_cols = 150

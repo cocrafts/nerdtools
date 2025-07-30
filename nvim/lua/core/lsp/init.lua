@@ -115,6 +115,10 @@ M.configure = function()
 	if config.use_go then
 		require("core.lsp.go").configure(lspconfig)
 	end
+
+	if config.use_godot then
+		require("core.lsp.godot").configure(lspconfig)
+	end
 end
 
 return M

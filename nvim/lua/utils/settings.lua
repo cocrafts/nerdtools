@@ -75,3 +75,9 @@ end
 -- -- undercurl for Wezterm
 -- vim.api.nvim_set_option_value("t_Cs", "\27[4:3m")
 -- vim.api.nvim_set_option_value("t_Ce", "\27[4:0m")
+
+vim.diagnostic.config({
+	virtual_text = {
+		severity = vim.diagnostic.severity.ERROR,
+	},
+})

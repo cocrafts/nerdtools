@@ -11,5 +11,6 @@ return {
 	use_elixir = true,
 	use_clang = true,
 	use_go = false,
+	use_godot = true,
 	theme = require("themes.tokyonight"),
 }

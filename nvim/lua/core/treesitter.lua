@@ -31,6 +31,9 @@ M.configure = function()
 			"tact",
 			"markdown",
 			"markdown_inline",
+			"gdscript",
+			"gdshader",
+			"godot_resource",
 		},
 		ignore_install = {},
 		autotag = {
