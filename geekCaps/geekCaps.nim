@@ -1,7 +1,7 @@
 import std/[json, os, strformat]
 import ./types
 import ./utils
-import ./rules/[caps, navigation, shifter, misc, number, windowControl, developer]
+import ./rules/[caps, navigation, shifter, misc, windowControl, developer]
 
 
 proc generateKarabinerConfig(): JsonNode =
@@ -19,7 +19,6 @@ proc generateKarabinerConfig(): JsonNode =
   let rules = @[
     generateCapsRule(config),
     generateMiscRules(),
-    generateNumberRules(),
     generateNavigationRules(),
     generateShifterRules(),
     generateWindowControlRules(),

@@ -7,6 +7,7 @@ proc generateNavigationRules*(): JsonNode =
   let arrowPattern = @[
     (none, none),
     (cmd, shift),
+    (shift, opt),
     (cmdShift, optShift)
   ]
 
@@ -19,6 +20,9 @@ proc generateNavigationRules*(): JsonNode =
     # Line start/end
     ("u", "left_arrow", @[(none, cmd), (cmd, shiftCmd)]),
     ("p", "right_arrow", @[(none, cmd), (cmd, shiftCmd)]),
+    # Tab switching
+    ("u", "tab", @[(shift, ctrlShift)]),
+    ("p", "tab", @[(shift, ctrlShift)])
   ]
 
   result = buildRuleGroup("Geek Navigation", @keyMaps)
