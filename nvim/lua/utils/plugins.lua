@@ -9,6 +9,11 @@ return {
 		end,
 	},
 	{
+		"nvim-treesitter/playground",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		cmd = "TSPlaygroundToggle",
+	},
+	{
 		"iamcco/markdown-preview.nvim",
 		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
 		ft = { "markdown" },
@@ -122,7 +127,6 @@ return {
 			{ "nanotee/sqls.nvim" },
 			{ "jparise/vim-graphql" },
 			{ "alaviss/nim.nvim" },
-			{ "jdonaldson/vaxe" },
 			{ "tact-lang/tact.vim" },
 			{ "simrat39/rust-tools.nvim" },
 			{

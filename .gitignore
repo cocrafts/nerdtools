@@ -10,3 +10,5 @@ conf/nushell/vendor/autoload/starship.nu
 conf/nushell/history.txt
 metacraft
 .aider*
+
+geekCaps/geekCaps

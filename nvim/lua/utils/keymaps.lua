@@ -22,6 +22,8 @@ key.mode_keys("n", {
 
 	["H"] = "Hzz",
 	["L"] = "Lzz",
+	["n"] = "nzz",
+	["N"] = "Nzz",
 
 	-- Git navigation
 	["<C-f>"] = "<cmd>lua require('gitsigns').next_hunk()<CR>:lua vim.api.nvim_feedkeys('zz', 'n', true)<CR>",

@@ -91,16 +91,14 @@ M.open_lsp_definitions = function()
 	end
 end
 
-local last_search_pattern = ""
+local match_id = nil
 M.toggle_highlight_search = function()
-	local search_pattern = vim.fn.getreg("/") or ""
-
-	if search_pattern ~= last_search_pattern then
-		last_search_pattern = search_pattern
-		vim.cmd([[normal! *]])
+	local word = vim.fn.expand("<cword>")
+	if match_id then
+		vim.fn.matchdelete(match_id)
+		match_id = nil
 	else
-		vim.cmd("nohlsearch")
-		last_search_pattern = ""
+		match_id = vim.fn.matchadd("Search", "\\<" .. word .. "\\>")
 	end
 end
 

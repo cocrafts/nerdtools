@@ -116,15 +116,16 @@ M.configure = function()
 	})
 
 	local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
-	-- parser_config.haxe = {
-	-- 	install_info = {
-	-- 		url = "https://github.com/vantreeseba/tree-sitter-haxe",
-	-- 		files = { "src/parser.c", "src/scanner.c" },
-	-- 		-- optional entries:
-	-- 		branch = "main",
-	-- 	},
-	-- 	filetype = "haxe",
-	-- }
+	parser_config.haxe = {
+		install_info = {
+			url = "https://github.com/fluctlight-kayaba/haxe-tree-sitter",
+			files = { "src/parser.c", "src/scanner.c" },
+			branch = "main",
+			generate_requires_npm = false,
+			requires_generate_from_grammar = false,
+		},
+		filetype = "haxe",
+	}
 
 	parser_config.d2 = {
 		install_info = {
