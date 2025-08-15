@@ -91,14 +91,25 @@ M.open_lsp_definitions = function()
 	end
 end
 
-local match_id = nil
 M.toggle_highlight_search = function()
 	local word = vim.fn.expand("<cword>")
-	if match_id then
-		vim.fn.matchdelete(match_id)
-		match_id = nil
+	if not word or word == "" then
+		return
+	end
+
+	local new_pattern = "\\<" .. word .. "\\>"
+	local current_search = vim.fn.getreg("/")
+
+	if vim.o.hlsearch and current_search == new_pattern then
+		-- Same word is highlighted, turn it off
+		vim.o.hlsearch = false
 	else
-		match_id = vim.fn.matchadd("Search", "\\<" .. word .. "\\>")
+		-- Different word or no highlight, set new search
+		vim.fn.setreg("/", new_pattern)
+		vim.o.hlsearch = true
+		-- Don't move cursor - just set the search pattern
+		vim.cmd("nohlsearch")
+		vim.cmd("set hlsearch")
 	end
 end
 
