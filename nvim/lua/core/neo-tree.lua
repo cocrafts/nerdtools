@@ -17,6 +17,31 @@ end
 M.configure = function()
 	local neotree = require("neo-tree")
 
+	-- Auto-center neo-tree when switching buffers
+	vim.api.nvim_create_autocmd("BufEnter", {
+		callback = function()
+			local file = vim.fn.expand("%:p")
+			if file == "" or vim.fn.filereadable(file) ~= 1 then
+				return
+			end
+
+			vim.defer_fn(function()
+				for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+					if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "neo-tree" then
+						-- Navigate to file and center
+						pcall(require("neo-tree.sources.filesystem").navigate, nil, file)
+						vim.defer_fn(function()
+							vim.api.nvim_win_call(win, function()
+								vim.cmd("normal! zz")
+							end)
+						end, 100)
+						break
+					end
+				end
+			end, 50)
+		end,
+	})
+
 	require("nvim-web-devicons").set_icon({
 		d2 = {
 			icon = "", -- or choose any Nerd Font icon you like
