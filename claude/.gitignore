@@ -1,0 +1,15 @@
+# Runtime files (don't commit)
+__store.db
+shell-snapshots/
+statsig/
+todos/
+projects/
+plugins/
+
+# Temporary debug files
+statusline-*.json
+!statusline-script.sh
+
+# Local overrides
+*.local
+*.backup
