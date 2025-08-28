@@ -1,0 +1,73 @@
+# Claude Code Global Configuration
+version: 1.0
+
+# MCP Tool Enforcement
+mcp_priority:
+  enabled: true
+  config_file: "MCP_PRIORITY.md"
+  enforce_fallback_logging: true
+  prefer_mcp_over_speed: true
+
+# Global Behavior Settings
+behavior:
+  file_operations:
+    read_before_write: true
+    prefer_edit_over_create: true
+    use_absolute_paths: true
+    
+  documentation:
+    auto_create_docs: false
+    require_explicit_request: true
+    
+  responses:
+    include_file_names: true
+    include_code_snippets: true
+    avoid_emojis_default: true
+    use_absolute_paths: true
+
+# Tool Selection Rules
+tools:
+  documentation_search:
+    primary: "mcp__Ref__ref_search_documentation"
+    secondary: "mcp__Ref__ref_read_url"
+    fallback: "WebFetch"
+    
+  web_search:
+    primary: "mcp__exa__web_search_exa"
+    secondary: "mcp__exa__crawling_exa"
+    fallback: "WebSearch"
+    
+  research:
+    primary: "mcp__exa__deep_researcher_start"
+    polling: "mcp__exa__deep_researcher_check"
+    fallback: "mcp__exa__web_search_exa"
+
+# Project Detection
+project_types:
+  - name: "rust"
+    indicators: ["Cargo.toml", "src/main.rs", "src/lib.rs"]
+    
+  - name: "nodejs"
+    indicators: ["package.json", "node_modules/"]
+    
+  - name: "dotnet"
+    indicators: ["*.csproj", "*.sln", "Program.cs"]
+    
+  - name: "unity"
+    indicators: ["Assets/", "ProjectSettings/", "*.unity"]
+    
+  - name: "nextjs"
+    indicators: ["next.config.js", "pages/", "app/"]
+
+# Quality Metrics
+quality_indicators:
+  mcp_usage_rate: 0.90  # 90% of eligible operations should use MCP
+  fallback_explanation_rate: 1.0  # 100% of fallbacks should be explained
+  file_edit_vs_create_ratio: 4.0  # 4:1 preference for editing vs creating
+
+# Logging and Monitoring
+logging:
+  tool_selection_decisions: true
+  fallback_usage: true
+  quality_metrics: true
+  performance_tracking: false

@@ -1,0 +1,162 @@
+# Global Workflow Templates for Claude Code
+
+# Research & Documentation Workflows
+workflows:
+  
+  documentation_research:
+    name: "Documentation Research"
+    trigger: "documentation OR reference needed"
+    flow:
+      1: 
+        agent: "mcp__Ref__ref_search_documentation"
+        input: "search_query"
+        fallback: "mcp__Ref__ref_read_url"
+      2:
+        agent: "content_synthesizer" 
+        input: "search_results"
+        output: "structured_documentation"
+    optimization: "parallel_search_multiple_sources"
+    
+  web_research:
+    name: "Web Research"
+    trigger: "general search OR current information needed"
+    flow:
+      1:
+        agent: "mcp__exa__web_search_exa"
+        input: "search_query"
+        fallback: "WebSearch"
+      2:
+        condition: "if specific_urls_found"
+        agent: "mcp__exa__crawling_exa"
+        input: "target_urls"
+      3:
+        agent: "information_aggregator"
+        output: "research_summary"
+    optimization: "cache_results_for_related_queries"
+    
+  deep_research:
+    name: "Complex Research"
+    trigger: "complex OR multi-faceted research"
+    flow:
+      1:
+        agent: "mcp__exa__deep_researcher_start"
+        input: "complex_query"
+      2:
+        agent: "mcp__exa__deep_researcher_check"
+        loop: "until_complete OR timeout"
+      3:
+        agent: "analysis_synthesizer"
+        output: "comprehensive_report"
+    optimization: "background_processing_with_progress_updates"
+
+# Code Development Workflows    
+  code_analysis:
+    name: "Code Analysis & Improvement"
+    trigger: "code review OR optimization needed"
+    flow:
+      1:
+        parallel:
+          - "static_analyzer"
+          - "pattern_detector" 
+          - "security_scanner"
+      2:
+        agent: "improvement_recommender"
+        input: "analysis_results"
+      3:
+        agent: "implementation_planner"
+        output: "action_plan"
+    optimization: "parallel_analysis_phases"
+    
+  bug_investigation:
+    name: "Bug Investigation"
+    trigger: "error OR bug reported"
+    flow:
+      1:
+        agent: "error_analyzer"
+        input: "error_description"
+      2:
+        condition: "if needs_research"
+        workflow: "documentation_research"
+        query: "error_pattern + technology_stack"
+      3:
+        agent: "solution_recommender"
+        output: "fix_strategy"
+    optimization: "knowledge_base_caching"
+
+  feature_development:
+    name: "Feature Development"
+    trigger: "new feature request"
+    flow:
+      1:
+        agent: "requirements_analyzer" 
+        input: "feature_description"
+      2:
+        parallel:
+          - workflow: "documentation_research"
+            query: "best_practices + technology"
+          - "architecture_designer"
+      3:
+        agent: "implementation_planner"
+        output: "development_roadmap"
+    optimization: "template_reuse_for_similar_features"
+
+# Quality Assurance Workflows
+  code_review:
+    name: "Comprehensive Code Review"
+    trigger: "code changes OR PR review"
+    flow:
+      1:
+        parallel:
+          - "syntax_checker"
+          - "style_analyzer"
+          - "security_auditor"
+          - "performance_checker"
+      2:
+        agent: "review_aggregator"
+        input: "all_check_results"
+      3:
+        agent: "improvement_prioritizer"
+        output: "actionable_feedback"
+    optimization: "incremental_checks_on_changed_files_only"
+
+# Tool Integration Workflows  
+  mcp_tool_workflow:
+    name: "MCP-First Tool Selection"
+    trigger: "any tool selection decision"
+    flow:
+      1:
+        agent: "mcp_availability_checker"
+        input: "required_capability"
+      2:
+        condition: "if mcp_available"
+        path: "use_mcp_tool"
+        else: "legacy_tool_with_explanation"
+      3:
+        agent: "result_validator"
+        fallback: "retry_with_alternative"
+    optimization: "tool_availability_caching"
+
+# Global Workflow Configuration
+settings:
+  default_timeout: 300  # 5 minutes
+  max_parallel_agents: 4
+  fallback_strategy: "graceful_degradation"
+  error_recovery: "continue_with_partial_results"
+  
+  quality_gates:
+    mcp_usage_threshold: 0.85
+    explanation_completeness: 1.0
+    workflow_completion_rate: 0.95
+    
+  optimization_rules:
+    - "cache_frequent_queries"
+    - "parallelize_independent_operations" 
+    - "prefer_streaming_for_long_operations"
+    - "batch_similar_requests"
+    
+# Performance Monitoring
+monitoring:
+  track_workflow_duration: true
+  measure_tool_selection_accuracy: true
+  monitor_fallback_frequency: true
+  log_optimization_opportunities: true
