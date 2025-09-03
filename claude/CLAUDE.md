@@ -1,114 +1,70 @@
 # Global Claude Code Configuration
 
-This file provides global guidance for Claude Code across all projects and repositories.
+Universal guidance for Claude Code across all projects and repositories.
 
-## MCP Tool Priority (ALWAYS USE FIRST)
+## MCP Tool Priority
+**Docs**: mcp__Ref__ref_search_documentation → mcp__Ref__ref_read_url → WebFetch
+**Search**: mcp__exa__web_search_exa → mcp__exa__crawling_exa → WebSearch  
+**Research**: mcp__exa__deep_researcher_start → poll with _check → manual fallback
+**Browser**: mcp__playwright__browser_* for all automation
+**Rules**: Try MCP first | Document fallback reasons | Check availability | Built-in tools (Task/Read/Write/Edit/Grep) use directly
 
-### Documentation & Web Search
-```
-Docs:    mcp__Ref__ref_search_documentation → mcp__Ref__ref_read_url → WebFetch (fallback)
-Search:  mcp__exa__web_search_exa → mcp__exa__crawling_exa → WebSearch (fallback)  
-Research: mcp__exa__deep_researcher_start → poll with _check → fallback to manual
-Browser: mcp__playwright__browser_* for all automation
-```
+## Core Built-in Tools
+**Read**: File content | **Write**: Create/overwrite | **Edit**: Modify | **Grep**: Search patterns
+**Note**: TodoWrite handled automatically by Claude Code - no configuration needed
 
-### Enforcement Rules
-1. Always try MCP tools first, even if slightly slower
-2. Document reason when using fallback tools
-3. Check MCP availability before defaulting to legacy
+## Universal Development Standards
+**Code Quality**: Follow patterns | Edit > Create | No unsolicited docs | Absolute paths | Avoid emojis
+**Workflow**: Read before write | Verify tools | Clear reasoning | Track progress naturally
+**Errors**: Graceful fallback | Clear messages | Document decisions | Continue when possible
 
-## Task Management Requirements
-
-### Todo List Usage (CRITICAL)
-- **ALWAYS** use TodoWrite tool when starting any multi-step task
-- Create todos BEFORE starting work, not after
-- Mark tasks as in_progress when starting them
-- Mark tasks as completed IMMEDIATELY after finishing
-- Break complex tasks into smaller, trackable items
-- Keep exactly ONE task in_progress at a time
-- Update todo status in real-time for user visibility
-
-## Universal Development Principles
-
-### Code Quality Standards
-- Follow existing code patterns and conventions
-- Prefer editing existing files over creating new ones
-- Never create documentation files unless explicitly requested
-- Always use absolute file paths in responses
-- Minimize file creation - edit existing files when possible
-
-### Workflow Optimization
-- **Start with TodoWrite** for any task requiring multiple steps
-- Read files before writing to understand context
-- Verify tool availability before usage
-- Provide clear reasoning for tool selection
-- Include relevant file names and code snippets in responses
-- Avoid emojis unless explicitly requested
-- Track progress visibly through todo list updates
-
-### Error Handling
-- Graceful fallbacks when MCP tools unavailable
-- Clear error messages with suggested alternatives
-- Document reasoning for tool selection decisions
-- Prefer continuation over stopping when possible
-
-## Project Detection Patterns
-
-### Common Indicators
-```
-Git Repository: Use git status for context
-Package.json: Node.js/JavaScript project
-Cargo.toml: Rust project  
-*.csproj: .NET/C# project
-Unity Project: Assets/ and ProjectSettings/ directories
-Next.js: pages/ or app/ directory with package.json
-```
-
-### Configuration Priority
-1. Project-specific CLAUDE.md (if exists)
-2. This global configuration
-3. Tool-specific defaults
-4. Claude Code built-in behaviors
+## Project Detection & Config Priority
+**Detection**: git status | package.json→Node | Cargo.toml→Rust | *.csproj→.NET | Unity→Assets/
+**Priority**: Project CLAUDE.md → This global → Tool defaults → Built-in behaviors
 
 ## Integration Guidelines
+**Projects**: Global applies unless overridden | Project CLAUDE.md precedence | Logical merging
+**Dev Tools**: Respect linting | Use preferred managers | Follow build patterns | Integrate CI/CD
 
-### With Project Configs
-- Global rules apply unless overridden
-- Project-specific CLAUDE.md takes precedence
-- Merge configurations logically
-- Maintain consistency across projects
+## Voice Mode
+**Settings**: min_listen_duration=5 (prevents cutoffs during pauses)
 
-### With Development Tools
-- Respect existing linting and formatting rules
-- Use project's preferred package managers
-- Follow established build and test patterns
-- Integrate with existing CI/CD workflows
+## File & Code Operations
+**Files**: Read before write | Absolute paths | Incremental changes | Maintain structure
+**Research**: MCP tools first | Multiple sources | Context-aware | Source attribution
+**Code**: Match style | Test changes | Backwards compatibility | Document decisions
 
-## Voice Mode Configuration
+## Claude Code Hooks Configuration
 
-### Listening Settings
-- Always use min_listen_duration=5 for voice conversations
-- This provides 5 seconds of silence before recording stops
-- Prevents premature cutoffs during natural pauses in speech
+### ⚠️ IMPORTANT: Use specialized agents for Claude config (hook-designer, workflow-architect)
 
-## Universal Commands & Patterns
+### Structure & Location
+```
+~/.claude/
+├── settings.json      # ✅ Hooks configured HERE (not hooks.json!)
+└── hooks/
+    ├── entries/       # Hook scripts (.sh/.ts)
+    └── logs/          # executions.jsonl
+```
 
-### File Operations
-- Always read before write for existing files
-- Use absolute paths in all responses
-- Prefer incremental changes over rewrites
-- Maintain file structure and organization
+### Hook Configuration (settings.json)
+```json
+{
+  "hooks": {
+    "UserPromptSubmit": [{
+      "hooks": [{
+        "type": "command",
+        "command": "sh ~/.claude/hooks/entries/user-prompt-submit.sh"
+      }]
+    }]
+  }
+}
+```
 
-### Research & Documentation
-- Start with MCP tools for all searches
-- Verify information from multiple sources
-- Provide context-aware recommendations
-- Include source attribution when relevant
-
-### Code Generation & Editing
-- Match existing code style and patterns
-- Test changes in appropriate environments
-- Consider backwards compatibility
-- Document significant architectural decisions
+### Hook Events & Guidelines
+**Events**: UserPromptSubmit | PreToolUse (can block) | PostToolUse | Notification | Stop | SessionStart
+**Rules**: JSON stdin → JSON/exit code response | 60s timeout | Validate inputs
+**Test**: `echo '{"prompt":"test"}' | sh ~/.claude/hooks/entries/user-prompt-submit.sh`
+**Logs**: `tail ~/.claude/hooks/logs/executions.jsonl`
 
 This configuration ensures consistent, high-quality assistance across all Claude Code sessions.
