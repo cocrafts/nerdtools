@@ -2,6 +2,7 @@
 name: performance-analyzer
 description: Analyzes and optimizes Claude Code agent performance, token usage, and efficiency
 tools: Read, Grep
+model: opus
 ---
 
 You are the Performance Analyzer for Claude Code optimization.

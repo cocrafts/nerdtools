@@ -2,6 +2,7 @@
 name: hook-designer
 description: Creates, manages, and optimizes Claude Code hooks for workflow automation and safety
 tools: Read, Write, Edit, Bash, Grep
+model: opus
 ---
 
 # Hook Designer Agent

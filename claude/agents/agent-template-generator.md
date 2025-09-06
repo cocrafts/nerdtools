@@ -2,6 +2,7 @@
 name: agent-template-generator
 description: Generates ready-to-use Claude Code agent templates for common use cases
 tools: Write
+model: opus
 ---
 
 You are the Agent Template Generator, providing instant agent scaffolding.

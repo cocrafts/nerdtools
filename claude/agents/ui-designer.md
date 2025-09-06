@@ -2,7 +2,7 @@
 name: ui-designer
 description: Use this agent when you need to create or enhance user interfaces with premium design aesthetics, sophisticated animations, micro-interactions, and high-end visual polish. Examples: <example>Context: User wants to upgrade their basic component library to have a more premium feel. user: 'I have these basic buttons and cards, but they look too generic. I want them to feel more expensive and polished.' assistant: 'I'll use the premium-ui-designer agent to transform these components with sophisticated styling, subtle animations, and premium micro-interactions.' <commentary>Since the user wants premium UI enhancements, use the premium-ui-designer agent to elevate the visual design and add sophisticated interactions.</commentary></example> <example>Context: User is building a SaaS landing page that needs to convey trust and premium quality. user: 'My landing page looks too basic. I need it to feel more professional and expensive to justify our pricing.' assistant: 'Let me use the premium-ui-designer agent to redesign your landing page with premium aesthetics, smooth animations, and sophisticated visual hierarchy.' <commentary>The user needs premium design work to enhance their landing page's perceived value, perfect for the premium-ui-designer agent.</commentary></example>
 tools: Bash, Glob, Grep, LS, Read, Edit, MultiEdit, Write, NotebookEdit, WebFetch, TodoWrite, WebSearch, BashOutput, KillBash
-model: sonnet
+model: opus
 color: blue
 ---
 
