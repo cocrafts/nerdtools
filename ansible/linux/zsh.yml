@@ -28,3 +28,9 @@
         src: ./templates/.zshrc
         dest: ~/.zshrc
         force: no
+
+    - name: Set zsh as default shell
+      become: true
+      user:
+        name: "{{ ansible_user_id }}"
+        shell: /usr/bin/zsh

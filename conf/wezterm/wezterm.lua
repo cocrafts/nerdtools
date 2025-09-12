@@ -59,10 +59,16 @@ config.window_padding = {
 	bottom = 0,
 }
 
+-- Platform-specific modifier key
+local mod = "CMD"
+if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
+	mod = "CTRL"
+end
+
 config.keys = {
 	{
 		key = "k",
-		mods = "CMD",
+		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
 			if pane:is_alt_screen_active() then -- detect application like Vim
 				window:perform_action(act.SendKey({ key = "l", mods = "CTRL" }), pane)
@@ -73,7 +79,7 @@ config.keys = {
 	},
 	{
 		key = "I",
-		mods = "CMD|SHIFT",
+		mods = mod .. "|SHIFT",
 		action = act.SplitPane({
 			direction = "Up",
 			size = { Percent = 24 },
@@ -81,7 +87,7 @@ config.keys = {
 	},
 	{
 		key = "J",
-		mods = "CMD|SHIFT",
+		mods = mod .. "|SHIFT",
 		action = act.SplitPane({
 			direction = "Down",
 			size = { Percent = 24 },
@@ -89,7 +95,7 @@ config.keys = {
 	},
 	{
 		key = "H",
-		mods = "CMD|SHIFT",
+		mods = mod .. "|SHIFT",
 		action = act.SplitPane({
 			direction = "Left",
 			size = { Percent = 36 },
@@ -97,7 +103,7 @@ config.keys = {
 	},
 	{
 		key = "L",
-		mods = "CMD|SHIFT",
+		mods = mod .. "|SHIFT",
 		action = act.SplitPane({
 			direction = "Right",
 			size = { Percent = 36 },
@@ -105,40 +111,40 @@ config.keys = {
 	},
 	{
 		key = "O",
-		mods = "CMD|SHIFT",
+		mods = mod .. "|SHIFT",
 		action = act.PaneSelect({}),
 	},
 	{
 		key = "o",
-		mods = "CMD",
+		mods = mod,
 		action = act.ActivatePaneDirection("Next"),
 	},
 	{
 		key = "w",
-		mods = "CMD",
+		mods = mod,
 		action = act.CloseCurrentPane({ confirm = false }),
 	},
 	{
 		key = "N",
-		mods = "CMD|SHIFT",
+		mods = mod .. "|SHIFT",
 		action = wezterm.action_callback(function(_, pane)
 			pane:move_to_new_window()
 		end),
 	},
 	{
 		key = "s",
-		mods = "CMD",
+		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
 			if pane:is_alt_screen_active() then -- detect application like Vim
 				window:perform_action(act.Multiple({ act.SendKey({ key = " " }), act.SendKey({ key = "w" }) }), pane)
 			else
-				window:perform_action(act.SendKey({ key = "s", mods = "CMD" }), pane)
+				window:perform_action(act.SendKey({ key = "s", mods = mod }), pane)
 			end
 		end),
 	},
 	{
 		key = "d",
-		mods = "CMD",
+		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
 			if pane:is_alt_screen_active() then -- detect application like Vim
 				window:perform_action(
@@ -154,7 +160,7 @@ config.keys = {
 	},
 	{
 		key = "/",
-		mods = "CMD",
+		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
 			if pane:is_alt_screen_active() then -- detect application like Vim
 				window:perform_action(
@@ -171,7 +177,7 @@ config.keys = {
 	},
 	{
 		key = "LeftArrow",
-		mods = "CMD|SHIFT",
+		mods = mod .. "|SHIFT",
 		action = wezterm.action_callback(function(window, pane)
 			if pane:is_alt_screen_active() then
 				local prev_buffer_action = act.Multiple({
@@ -185,7 +191,7 @@ config.keys = {
 	},
 	{
 		key = "RightArrow",
-		mods = "CMD|SHIFT",
+		mods = mod .. "|SHIFT",
 		action = wezterm.action_callback(function(window, pane)
 			if pane:is_alt_screen_active() then
 				local next_buffer_action = act.Multiple({
@@ -210,12 +216,12 @@ config.keys = {
 	},
 	{
 		key = ";",
-		mods = "CMD",
+		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
 			if pane:is_alt_screen_active() then
 				window:perform_action(act.SendKey({ key = ";", mods = "CTRL" }), pane)
 			else
-				window:perform_action(act.SendKey({ key = ";", mods = "CMD" }), pane)
+				window:perform_action(act.SendKey({ key = ";", mods = mod }), pane)
 			end
 		end),
 	},

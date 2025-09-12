@@ -13,7 +13,7 @@
         - ~/Sources/bin
         - ~/Sources/haxe
         - ~/Projects
-        - ~/Library/Application\ Support/lazygit
+        - ~/.config/lazygit
 
     - name: Essential packages
       become: true
@@ -37,3 +37,6 @@
           - fd-find
           - jq
           - shellcheck
+          - libssl-dev
+          - pkg-config
+          - libyaml-dev

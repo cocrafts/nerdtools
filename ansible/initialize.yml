@@ -17,3 +17,10 @@
       command: echo "sudo password correct"
       changed_when: false
       become: true
+
+    - name: Symlink claude configuration
+      file:
+        src: ~/nerdtools/claude
+        dest: ~/.claude
+        state: link
+        force: yes

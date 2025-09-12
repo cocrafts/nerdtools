@@ -26,10 +26,28 @@
         dest: ~/.config/wezterm
         state: link
 
+    - name: Create symlink for Aider configuration
+      file:
+        src: ~/nerdtools/conf/aider.conf.yml
+        dest: ~/.aider.conf.yml
+        state: link
+
+    - name: Create symlink to Nushell configure
+      file:
+        src: ~/nerdtools/conf/nushell/
+        dest: ~/.config/nushell
+        state: link
+
     - name: Create revive.toml symlink for Golang
       file:
         src: ~/nerdtools/conf/revive.toml
         dest: ~/revive.toml
+        state: link
+
+    - name: Create config.yml symlink for Lazygit
+      file:
+        src: ~/nerdtools/conf/lazygit.yml
+        dest: ~/.config/lazygit/config.yml
         state: link
 
     - name: Create zls.json for Zig

@@ -68,8 +68,7 @@
     - name: Install starship
       shell: "{{cargo_bin}}/cargo install starship --locked"
       args:
-        creates: /usr/local/bin/starship
-      when: ansible_facts['os_family'] == "Linux"
+        creates: "{{cargo_bin}}/starship"
 
     - name: Install taplo-cli (for Toml)
       shell: "{{cargo_bin}}/cargo install --features lsp --locked taplo-cli"

@@ -3,11 +3,22 @@
   vars:
     cargo_bin: "~/.cargo/bin"
     node_version: "22.14.0"
-    ruby_version: "3.3.0"
+    ruby_version: "3.4.2"
     mise_node: "~/.local/share/mise/installs/node"
     mise_ruby: "~/.local/share/mise/installs/ruby"
 
   tasks:
+    - name: Install Ruby build dependencies (Linux)
+      become: true
+      apt:
+        name:
+          - libyaml-dev
+          - libffi-dev
+          - libreadline-dev
+          - zlib1g-dev
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+
     - name: Install Node.js {{node_version}}
       command: "{{cargo_bin}}/mise use -g node@{{node_version}}"
       args:
