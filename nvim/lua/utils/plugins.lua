@@ -145,6 +145,13 @@ return {
 				end,
 			},
 			{
+				"TabbyML/vim-tabby",
+				event = { "InsertEnter" },
+				config = function()
+					require("core.tabby").configure()
+				end,
+			},
+			{
 				"L3MON4D3/LuaSnip",
 				dependencies = { "friendly-snippets" },
 				build = "make install_jsregexp",
