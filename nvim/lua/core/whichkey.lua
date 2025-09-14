@@ -265,8 +265,6 @@ M.configure = function()
 			{ "<leader>ls", "<cmd>Telescope lsp_document_symbols<CR>",  desc = "Document Symbols" },
 			{ "<leader>lS", "<cmd>Telescope lsp_workspace_symbols<CR>", desc = "Workspace symbols" },
 			{ "<leader>lp", "<cmd>Telescope package_info<CR>",          desc = "Package actions" },
-			{ "<leader>lo", "<cmd>TwilightEnable<CR>",                  desc = "Twilight on" },
-			{ "<leader>lO", "<cmd>TwilightDisable<CR>",                 desc = "Twilight off" },
 			{ "<leader>lh", "<cmd>InlayHintsEnable<CR>",                desc = "Enable Inlay-hints" },
 			{ "<leader>lH", "<cmd>InlayHintsDisable<CR>",               desc = "Disable Inlay-hints" },
 

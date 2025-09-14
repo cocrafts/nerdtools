@@ -27,12 +27,6 @@ return {
 		},
 	},
 	{
-		"supermaven-inc/supermaven-nvim",
-		config = function()
-			require("core.supermaven").configure()
-		end,
-	},
-	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v3.x",
 		dependencies = {
@@ -226,7 +220,6 @@ return {
 	},
 	{ "folke/lazy.nvim",       tag = "stable" },
 	{ "folke/neodev.nvim",     lazy = true },
-	{ "folke/twilight.nvim" },
 	{
 		"folke/noice.nvim",
 		event = "VeryLazy",
