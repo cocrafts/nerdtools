@@ -109,4 +109,3 @@ end
 -- 	vim.api.nvim_command "syntax reset"
 -- end
 
-require("core.ai").configureAvante()

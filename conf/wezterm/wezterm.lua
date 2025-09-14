@@ -25,6 +25,8 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	config.initial_rows = 70
 	config.initial_cols = 150
 else
+	-- config.font_size = 15
+	-- config.line_height = 1.15
 	config.font_size = 14.5
 	config.line_height = 1.2
 
@@ -237,6 +239,11 @@ config.keys = {
 				window:perform_action(next_buffer_action, pane)
 			end
 		end),
+	},
+	{
+		key = "Enter",
+		mods = "SHIFT",
+		action = wezterm.action({ SendString = "\x1b\r" }),
 	},
 }
 

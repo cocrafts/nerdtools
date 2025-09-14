@@ -1,7 +1,6 @@
 local key = require("utils.key")
 
 key.mode_keys("i", {
-	["<C-;>"] = "<ESC>:AvanteToggle<CR>",
 })
 
 key.mode_keys("n", {
@@ -13,9 +12,9 @@ key.mode_keys("n", {
 
 	["<C-x>"] = ":split<CR>:b#<CR>",
 	["<C-s>"] = ":vsplit<CR>:b#<CR>",
-	["<C-;>"] = ":AvanteToggle<CR>",
 	["<C-g>"] = ":tabnew<CR>",
 	["<C-S-g>"] = ":tabclose<CR>",
+
 
 	["<TAB>"] = ":bnext<CR>",
 	["<S-TAB>"] = ":bprev<CR>",

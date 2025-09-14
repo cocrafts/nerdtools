@@ -18,7 +18,8 @@ proc generateShifterRules*(): JsonNode =
     ("9", "9", shiftPattern),  # (
     ("0", "0", shiftPattern),  # )
     ("hyphen", "hyphen", shiftPattern),  # _
-    ("equal_sign", "equal_sign", shiftPattern)  # +
+    ("equal_sign", "equal_sign", shiftPattern),  # +,
+    ("backslash", "backslash", shiftPattern)  # |
   ]
 
   result = buildRuleGroup("Geek Shifter", @keyMaps)

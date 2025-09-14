@@ -21,9 +21,9 @@ return {
 	},
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
-		ft = { "markdown", "Avante" },
+		ft = { "markdown" },
 		opts = {
-			file_types = { "markdown", "Avante" },
+			file_types = { "markdown" },
 		},
 	},
 	{
@@ -31,37 +31,6 @@ return {
 		config = function()
 			require("core.supermaven").configure()
 		end,
-	},
-	{
-		"yetone/avante.nvim",
-		event = "VeryLazy",
-		lazy = false,
-		version = false,
-		build = "make",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-			"stevearc/dressing.nvim",
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			"nvim-tree/nvim-web-devicons",
-			"echasnovski/mini.pick", -- for file_selector provider mini.pick
-			"nvim-telescope/telescope.nvim",
-			"hrsh7th/nvim-cmp",
-			"ibhagwan/fzf-lua",
-			{
-				"HakonHarnes/img-clip.nvim",
-				event = "VeryLazy",
-				opts = {
-					default = {
-						embed_image_as_base64 = false,
-						prompt_for_file_name = false,
-						drag_and_drop = {
-							insert_mode = true,
-						},
-					},
-				},
-			},
-		},
 	},
 	{
 		"VonHeikemen/lsp-zero.nvim",
@@ -459,6 +428,14 @@ return {
 		event = "VeryLazy",
 		config = function()
 			require("core.surround").configure()
+		end,
+	},
+	{
+		-- Claude Code integration
+		"claude",
+		dir = vim.fn.stdpath("config") .. "/lua/core",
+		config = function()
+			require("core.claude").setup()
 		end,
 	},
 }
