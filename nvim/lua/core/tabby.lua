@@ -5,7 +5,7 @@ local M = {}
 
 M.configure = function()
   -- First, configure the server URL for the agent
-  vim.g.tabby_server_url = "http://192.168.1.5:8080"
+  vim.g.tabby_server_url = "http://192.168.2.55:8080"
 
   -- Configure the agent command to connect to our server
   -- Use full path to node and tabby-agent for mise compatibility
@@ -16,7 +16,7 @@ M.configure = function()
     "/Users/le/.local/share/mise/installs/node/24.1.0/bin/node",
     "/Users/le/.local/share/mise/installs/node/24.1.0/lib/node_modules/tabby-agent/dist/node/index.js",
     "--server",
-    "http://192.168.1.5:8080",
+    "http://192.168.2.55:8080",
     "--token",
     auth_token,
     "--stdio",
@@ -42,11 +42,6 @@ M.configure = function()
       endif
     ]])
   end
-
-  -- Print keybinding info on startup
-  vim.defer_fn(function()
-    print("🤖 Tabby AI: Shift+Enter to accept, Ctrl+\\ to trigger/dismiss")
-  end, 1000)
 
   -- Visual feedback
   vim.api.nvim_set_hl(0, "TabbyCompletion", { fg = "#808080", italic = true })
@@ -77,11 +72,9 @@ M.configure = function()
   })
 
   -- Check if token is configured
-  local auth_token = vim.env.TABBY_AUTH_TOKEN
-  if not auth_token or auth_token == "" then
+  local token = vim.env.TABBY_AUTH_TOKEN
+  if not token or token == "" then
     print("⚠️  Tabby AI: Set TABBY_AUTH_TOKEN environment variable to enable")
-  else
-    print("✅ Tabby AI configured - Server: http://192.168.1.5:8080")
   end
 end
 
