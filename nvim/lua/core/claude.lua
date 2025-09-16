@@ -320,7 +320,7 @@ function M.smart_send_with_prompt()
 		col = 0,     -- aligned with cursor column
 		anchor = "NW", -- northwest corner at the position
 		border = "rounded",
-		title = " Claude Prompt (Ctrl+Enter to send, Esc to cancel) ",
+		title = " Claude Prompt (Shift+Enter to send, Esc to cancel) ",
 		title_pos = "center",
 		style = "minimal",
 	})
@@ -379,8 +379,8 @@ function M.smart_send_with_prompt()
 		end
 	end, opts)
 
-	-- Ctrl+Enter to send (in insert mode)
-	vim.keymap.set("i", "<C-CR>", function()
+	-- Shift+Enter to send (in insert mode)
+	vim.keymap.set("i", "<S-CR>", function()
 		local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
 		local input = table.concat(lines, "\n")
 		vim.api.nvim_win_close(win, true)
