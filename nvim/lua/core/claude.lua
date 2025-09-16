@@ -113,11 +113,11 @@ local function send_to_claude(text, send_enter, focus_pane)
 						-- Don't use same-dir fallback if just a shell is running
 						-- (Avoid sending to panes where Claude was closed)
 						if
-								pane_dir == project_root
-								and pane.foreground_process_name ~= "zsh"
-								and pane.foreground_process_name ~= "bash"
-								and pane.foreground_process_name ~= "fish"
-								and pane.foreground_process_name ~= "sh"
+							pane_dir == project_root
+							and pane.foreground_process_name ~= "zsh"
+							and pane.foreground_process_name ~= "bash"
+							and pane.foreground_process_name ~= "fish"
+							and pane.foreground_process_name ~= "sh"
 						then
 							same_dir_pane_id = pane.pane_id
 						end
@@ -131,7 +131,7 @@ local function send_to_claude(text, send_enter, focus_pane)
 					-- Send text to target pane (escape special characters including backticks)
 					text = text:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n"):gsub("`", "\\`")
 					local cmd =
-							string.format('printf "%%s" "%s" | wezterm cli send-text --pane-id %d', text, target_pane_id)
+						string.format('printf "%%s" "%s" | wezterm cli send-text --pane-id %d', text, target_pane_id)
 					vim.fn.system(cmd)
 					-- Send Enter key if requested
 					if send_enter then
@@ -207,6 +207,37 @@ local function send_to_claude(text, send_enter, focus_pane)
 	vim.notify("Copied to clipboard - paste in Claude Code with Cmd/Ctrl+V", vim.log.levels.INFO)
 end
 
+-- Get diagnostics for a line or range
+local function get_diagnostics_for_lines(start_line, end_line)
+	local bufnr = vim.api.nvim_get_current_buf()
+	local diagnostics = vim.diagnostic.get(bufnr)
+	local relevant_diagnostics = {}
+
+	for _, diag in ipairs(diagnostics) do
+		-- vim.diagnostic uses 0-indexed lines
+		local diag_line = diag.lnum + 1
+		if diag_line >= start_line and diag_line <= end_line then
+			table.insert(relevant_diagnostics, diag)
+		end
+	end
+
+	if #relevant_diagnostics == 0 then
+		return nil
+	end
+
+	-- Format diagnostics
+	local formatted = {}
+	for _, diag in ipairs(relevant_diagnostics) do
+		local severity = vim.diagnostic.severity[diag.severity]
+		local line = diag.lnum + 1
+		local message = diag.message:gsub("\n", " ")
+		local source = diag.source and (" [" .. diag.source .. "]") or ""
+		table.insert(formatted, string.format("[%s] Line %d: %s%s", severity, line, message, source))
+	end
+
+	return table.concat(formatted, "\n")
+end
+
 -- Build file reference with optional line numbers
 local function build_file_reference()
 	local mode = vim.fn.mode()
@@ -224,9 +255,17 @@ local function build_file_reference()
 		relative_path = filepath:sub(#project_root + 2) -- +2 to skip the trailing slash
 	end
 
-	-- In normal mode, just return file reference
+	-- In normal mode, check for diagnostics on current line
 	if mode == "n" then
-		return "@" .. relative_path
+		local current_line = vim.fn.line(".")
+		local diagnostics = get_diagnostics_for_lines(current_line, current_line)
+		local base_ref = "@" .. relative_path .. ":" .. current_line
+
+		if diagnostics then
+			return base_ref .. " has errors:\n" .. diagnostics .. "\n\n"
+		else
+			return "@" .. relative_path
+		end
 	end
 
 	-- In visual mode, add line numbers and possibly selected text
@@ -262,6 +301,9 @@ local function build_file_reference()
 			-- Exit visual mode AFTER getting the text
 			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 
+			-- Get diagnostics for the line
+			local diagnostics = get_diagnostics_for_lines(start_line, start_line)
+
 			-- Check if it's a partial selection (selected text exists and is not the full line)
 			local result
 			if selected_text and selected_text ~= "" and selected_text:match("%S") then
@@ -271,18 +313,35 @@ local function build_file_reference()
 				-- Empty or whitespace-only selection
 				result = string.format("@%s:%d", relative_path, start_line)
 			end
+
+			-- Add diagnostics if present
+			if diagnostics then
+				result = result .. " has errors:\n" .. diagnostics .. "\n\n"
+			end
+
 			-- vim.notify("Returning: " .. result, vim.log.levels.INFO)
 			return result
 		else
 			-- Exit visual mode
 			vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 
+			-- Get diagnostics for the range
+			local diagnostics = get_diagnostics_for_lines(start_line, end_line)
+
 			-- Multiple lines or line-wise visual mode
+			local result
 			if start_line == end_line then
-				return string.format("@%s:%d", relative_path, start_line)
+				result = string.format("@%s:%d", relative_path, start_line)
 			else
-				return string.format("@%s:%d-%d", relative_path, start_line, end_line)
+				result = string.format("@%s:%d-%d", relative_path, start_line, end_line)
 			end
+
+			-- Add diagnostics if present
+			if diagnostics then
+				result = result .. " has errors:\n" .. diagnostics .. "\n\n"
+			end
+
+			return result
 		end
 	end
 
@@ -308,16 +367,18 @@ function M.smart_send_with_prompt()
 	-- Create a floating window for multiline input
 	local buf = vim.api.nvim_create_buf(false, true)
 	local width = math.min(80, math.floor(vim.o.columns * 0.8))
-	local initial_height = 1 -- Start with just 1 line
+	-- Calculate initial height based on reference content
+	local initial_lines = vim.split(reference .. " ", "\n", { plain = true })
+	local initial_height = math.max(1, #initial_lines) -- At least 1 line, or more if we have diagnostics
 	local max_height = math.min(20, math.floor(vim.o.lines * 0.4))
 
 	-- Use cursor-relative positioning
 	local win = vim.api.nvim_open_win(buf, true, {
 		relative = "cursor",
 		width = width,
-		height = initial_height,
-		row = 1,     -- 1 line below cursor
-		col = 0,     -- aligned with cursor column
+		height = math.min(initial_height, max_height), -- Don't exceed max height initially
+		row = 1, -- 1 line below cursor
+		col = 0, -- aligned with cursor column
 		anchor = "NW", -- northwest corner at the position
 		border = "rounded",
 		title = " Claude Prompt (Shift+Enter to send, Esc to cancel) ",
@@ -327,7 +388,9 @@ function M.smart_send_with_prompt()
 
 	-- Set initial content with reference and space
 	local initial_text = reference .. " "
-	vim.api.nvim_buf_set_lines(buf, 0, -1, false, { initial_text })
+	-- Split the text by newlines to handle multi-line content (e.g., with diagnostics)
+	local lines = vim.split(initial_text, "\n", { plain = true })
+	vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
 	-- Set buffer options
 	vim.bo[buf].buftype = "nofile"
@@ -337,11 +400,11 @@ function M.smart_send_with_prompt()
 
 	-- Function to resize window based on content
 	local function resize_window()
-		local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-		local line_count = #lines
+		local buf_lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+		local line_count = #buf_lines
 
 		-- Count wrapped lines if wrap is enabled
-		for _, line in ipairs(lines) do
+		for _, line in ipairs(buf_lines) do
 			if #line > width then
 				line_count = line_count + math.floor(#line / width)
 			end
@@ -370,8 +433,8 @@ function M.smart_send_with_prompt()
 
 	-- Enter to send (in normal mode)
 	vim.keymap.set("n", "<CR>", function()
-		local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-		local input = table.concat(lines, "\n")
+		local buf_content = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+		local input = table.concat(buf_content, "\n")
 		vim.api.nvim_win_close(win, true)
 		if input and input ~= "" then
 			-- Send input with Enter key to execute, but don't focus
@@ -381,8 +444,8 @@ function M.smart_send_with_prompt()
 
 	-- Shift+Enter to send (in insert mode)
 	vim.keymap.set("i", "<S-CR>", function()
-		local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-		local input = table.concat(lines, "\n")
+		local buf_content = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+		local input = table.concat(buf_content, "\n")
 		vim.api.nvim_win_close(win, true)
 		if input and input ~= "" then
 			send_to_claude(input, true, false)
@@ -556,8 +619,8 @@ function M.setup(opts)
 	-- Create commands
 	vim.api.nvim_create_user_command("ClaudePanes", M.list_panes, {})
 	vim.api.nvim_create_user_command("ClaudeSessions", M.list_sessions, {})
-	vim.api.nvim_create_user_command("ClaudeTest", function(opts)
-		M.test_send(opts.args)
+	vim.api.nvim_create_user_command("ClaudeTest", function(cmd_opts)
+		M.test_send(cmd_opts.args)
 	end, { nargs = 1, desc = "Test sending to specific WezTerm pane" })
 end
 
