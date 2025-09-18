@@ -57,154 +57,144 @@ local function find_matching_session()
 	return nil
 end
 
+-- Helper to escape text for shell
+local function escape_text(text)
+	return text:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n"):gsub("`", "\\`")
+end
+
+-- Helper to send text to a pane
+local function send_to_pane(pane_id, text, send_enter)
+	text = escape_text(text)
+	local cmd = string.format('printf "%%s" "%s" | wezterm cli send-text --pane-id %d', text, pane_id)
+	local result = vim.fn.system(cmd)
+
+	if vim.v.shell_error ~= 0 then
+		return false, result
+	end
+
+	if send_enter then
+		vim.fn.system(string.format("printf '\\r' | wezterm cli send-text --no-paste --pane-id %d", pane_id))
+	end
+
+	return true
+end
+
+-- Find Claude pane in list
+local function find_claude_pane(panes, current_pane)
+	local claude_sessions = read_claude_sessions()
+	local claude_dirs = {}
+	for _, session in ipairs(claude_sessions) do
+		claude_dirs[session.dir] = true
+	end
+
+	for _, pane in ipairs(panes) do
+		if pane.pane_id ~= current_pane and pane.foreground_process_name == "claude" then
+			-- Check if it also matches a session directory
+			if pane.cwd then
+				local pane_dir = pane.cwd:gsub("^file://[^/]+", "")
+				if claude_dirs[pane_dir] then
+					return pane.pane_id, pane.window_id -- Prefer session-matched Claude
+				end
+			end
+			return pane.pane_id, pane.window_id -- Any Claude pane
+		end
+	end
+	return nil
+end
+
+-- Get next pane in direction
+local function get_next_pane(direction)
+	local result = vim.fn.system("wezterm cli get-pane-direction " .. direction)
+	if vim.v.shell_error == 0 and result then
+		local cleaned = result:gsub("\n", ""):gsub("%s+", "")
+		if cleaned ~= "" then
+			return tonumber(cleaned)
+		end
+	end
+	return nil
+end
+
+-- Helper function to show status in Lualine
+local function show_status(msg, timeout)
+	timeout = timeout or 5000 -- Default 2 seconds
+
+	-- Check if Lualine is available
+	local has_lualine = pcall(require, "lualine")
+	if has_lualine then
+		vim.g.claude_status = msg
+		require("lualine").refresh()
+
+		-- Clear after timeout
+		vim.defer_fn(function()
+			vim.g.claude_status = nil
+			require("lualine").refresh()
+		end, timeout)
+	else
+		-- Fallback to vim.notify
+		vim.notify(msg, vim.log.levels.INFO)
+	end
+end
+
 -- Send text to Claude (WezTerm or clipboard)
 local function send_to_claude(text, send_enter, focus_pane)
 	-- Check if we're in WezTerm
-	local term_program = os.getenv("TERM_PROGRAM")
-	local wezterm_pane = os.getenv("WEZTERM_PANE")
+	if os.getenv("TERM_PROGRAM") ~= "WezTerm" or not os.getenv("WEZTERM_PANE") then
+		vim.fn.setreg("+", text)
+		show_status("Prompt copied to clipboard")
+		return
+	end
 
-	if term_program == "WezTerm" and wezterm_pane then
-		local current_pane = tonumber(wezterm_pane)
-		local project_root = get_project_root()
+	local current_pane = tonumber(os.getenv("WEZTERM_PANE"))
 
-		-- Use WezTerm CLI to send to other panes (including other windows)
-		local panes_json = vim.fn.system("wezterm cli list --format json")
-		if vim.v.shell_error == 0 then
-			-- Parse JSON to find Claude pane
-			local ok, panes = pcall(vim.json.decode, panes_json)
-			if ok and panes then
-				-- Read active Claude sessions to match by directory
-				local claude_sessions = read_claude_sessions()
-				local claude_dirs = {}
-				for _, session in ipairs(claude_sessions) do
-					claude_dirs[session.dir] = true
-				end
-
-				local claude_pane_id = nil
-				local same_dir_pane_id = nil
-				local current_window_id = nil
-
-				-- First pass: find current window and Claude panes
-				for _, pane in ipairs(panes) do
-					-- Get current window ID
-					if pane.pane_id == current_pane then
-						current_window_id = pane.window_id
-					end
-
-					-- Skip current pane for Claude detection
-					if pane.pane_id ~= current_pane then
-						local pane_dir = nil
-						if pane.cwd then
-							pane_dir = pane.cwd:gsub("^file://[^/]+", "") -- Remove file://hostname prefix
-						end
-
-						-- Method 1: Check if pane's directory matches a Claude session AND claude is running
-						if pane_dir and claude_dirs[pane_dir] and pane.foreground_process_name == "claude" then
-							claude_pane_id = pane.pane_id
-							break -- Found active Claude by session tracking
-						end
-
-						-- Method 2: Check if process name is 'claude' (fallback)
-						if not claude_pane_id and pane.foreground_process_name == "claude" then
-							claude_pane_id = pane.pane_id
-							-- Don't break, keep looking for session-matched pane
-						end
-
-						-- Don't use same-dir fallback if just a shell is running
-						-- (Avoid sending to panes where Claude was closed)
-						if
-							pane_dir == project_root
-							and pane.foreground_process_name ~= "zsh"
-							and pane.foreground_process_name ~= "bash"
-							and pane.foreground_process_name ~= "fish"
-							and pane.foreground_process_name ~= "sh"
-						then
-							same_dir_pane_id = pane.pane_id
-						end
-					end
-				end
-
-				-- Use Claude pane if found, otherwise same-dir pane
-				local target_pane_id = claude_pane_id or same_dir_pane_id
-
-				if target_pane_id then
-					-- Send text to target pane (escape special characters including backticks)
-					text = text:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n"):gsub("`", "\\`")
-					local cmd =
-						string.format('printf "%%s" "%s" | wezterm cli send-text --pane-id %d', text, target_pane_id)
-					vim.fn.system(cmd)
-					-- Send Enter key if requested
-					if send_enter then
-						-- Send Enter key to submit (send raw Enter/Return character)
-						vim.fn.system(
-							string.format(
-								"printf '\\r' | wezterm cli send-text --no-paste --pane-id %d",
-								target_pane_id
-							)
-						)
-					end
-
-					-- Find which window the target pane is in for better notification
-					local target_window = "unknown"
-					for _, pane in ipairs(panes) do
-						if pane.pane_id == target_pane_id then
-							if pane.window_id == current_window_id then
-								target_window = "same window"
-							else
-								target_window = "window " .. pane.window_id
-							end
-							break
-						end
-					end
-
-					local pane_type = claude_pane_id and "Claude" or "same-dir"
-					vim.notify(
-						string.format("Sent to %s pane %d (%s)", pane_type, target_pane_id, target_window),
-						vim.log.levels.INFO
-					)
-
-					-- Focus the target pane if requested (only works within same window)
-					if focus_pane and target_window == "same window" then
-						local focus_cmd = string.format("wezterm cli activate-pane --pane-id %d", target_pane_id)
-						vim.fn.system(focus_cmd)
-					end
-
-					return
+	-- Try to find Claude pane
+	local panes_json = vim.fn.system("wezterm cli list --format json")
+	if vim.v.shell_error == 0 then
+		local ok, panes = pcall(vim.json.decode, panes_json)
+		if ok and panes and #panes > 0 then
+			-- Find current window
+			local current_window_id
+			for _, pane in ipairs(panes) do
+				if pane.pane_id == current_pane then
+					current_window_id = pane.window_id
+					break
 				end
 			end
-		end
 
-		-- If no Claude pane found, try to use the right pane
-		local next_pane = vim.fn.system("wezterm cli get-pane-direction right")
-		if vim.v.shell_error == 0 and next_pane ~= "" then
-			local pane_id = tonumber(next_pane:gsub("\n", ""))
-			if pane_id and pane_id ~= current_pane then
-				text = text:gsub("\\", "\\\\"):gsub('"', '\\"'):gsub("\n", "\\n"):gsub("`", "\\`")
-				local cmd = string.format('printf "%%s" "%s" | wezterm cli send-text --pane-id %d', text, pane_id)
-				vim.fn.system(cmd)
-				-- Send Enter key if requested
-				if send_enter then
-					-- Send Enter key to submit (send raw Enter/Return character)
-					vim.fn.system(
-						string.format("printf '\\r' | wezterm cli send-text --no-paste --pane-id %d", pane_id)
-					)
+			-- Try to find Claude pane
+			local claude_pane_id, claude_window_id = find_claude_pane(panes, current_pane)
+			if claude_pane_id then
+				local success, err = send_to_pane(claude_pane_id, text, send_enter)
+				if success then
+					local window_desc = claude_window_id == current_window_id and "same window"
+							or "window " .. claude_window_id
+					show_status(string.format("→ Pane %d (%s)", claude_pane_id, window_desc))
+
+					if focus_pane and claude_window_id == current_window_id then
+						vim.fn.system(string.format("wezterm cli activate-pane --pane-id %d", claude_pane_id))
+					end
+				else
+					show_status("Failed: " .. err, 3000) -- Show errors longer
 				end
-				vim.notify("Sent to right pane " .. pane_id .. " (assuming Claude)", vim.log.levels.INFO)
-
-				-- Focus the right pane if requested (this is same window since it's "right")
-				if focus_pane then
-					local focus_cmd = string.format("wezterm cli activate-pane --pane-id %d", pane_id)
-					vim.fn.system(focus_cmd)
-				end
-
 				return
 			end
 		end
 	end
 
-	-- Fallback: copy to clipboard
-	vim.fn.setreg("+", text)
-	vim.notify("Copied to clipboard - paste in Claude Code with Cmd/Ctrl+V", vim.log.levels.INFO)
+	-- No Claude found, try next pane (right or down)
+	local next_pane_id = get_next_pane("right") or get_next_pane("down")
+	if next_pane_id and next_pane_id ~= current_pane then
+		local success = send_to_pane(next_pane_id, text, send_enter)
+		if success then
+			show_status(string.format("→ Pane %d", next_pane_id))
+			if focus_pane then
+				vim.fn.system(string.format("wezterm cli activate-pane --pane-id %d", next_pane_id))
+			end
+			return
+		end
+	end
+
+	-- No panes available
+	show_status("Claude Code panel does not exists", 3000)
 end
 
 -- Get diagnostics for a line or range
@@ -377,9 +367,9 @@ function M.smart_send_with_prompt()
 		relative = "cursor",
 		width = width,
 		height = math.min(initial_height, max_height), -- Don't exceed max height initially
-		row = 1, -- 1 line below cursor
-		col = 0, -- aligned with cursor column
-		anchor = "NW", -- northwest corner at the position
+		row = 1,                                     -- 1 line below cursor
+		col = 0,                                     -- aligned with cursor column
+		anchor = "NW",                               -- northwest corner at the position
 		border = "rounded",
 		title = " Claude Prompt (Shift+Enter to send, Esc to cancel) ",
 		title_pos = "center",

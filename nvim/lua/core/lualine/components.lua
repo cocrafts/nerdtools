@@ -164,4 +164,15 @@ return {
 			return string.match(vim.fn.getcwd() or "/", "[^/]+$")
 		end,
 	},
+	claude_status = {
+		function()
+			return vim.g.claude_status or ""
+		end,
+		cond = function()
+			return vim.g.claude_status ~= nil and vim.g.claude_status ~= ""
+		end,
+		color = { fg = colors.green, gui = "bold" },
+		icon = icons.diagnostics.Information,
+		padding = { left = 1, right = 1 },
+	},
 }

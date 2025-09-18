@@ -31,6 +31,7 @@ M.configure = function()
 				components.diff,
 			},
 			lualine_x = {
+				components.claude_status,
 				components.diagnostics,
 				components.lsp,
 				components.spaces,

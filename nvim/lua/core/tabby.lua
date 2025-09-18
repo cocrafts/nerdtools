@@ -5,7 +5,7 @@ local M = {}
 
 M.configure = function()
   -- First, configure the server URL for the agent
-  vim.g.tabby_server_url = "http://192.168.2.55:8080"
+  vim.g.tabby_server_url = "http://100.95.61.118:8080"
 
   -- Configure the agent command to connect to our server
   -- Use full path to node and tabby-agent for mise compatibility
@@ -16,7 +16,7 @@ M.configure = function()
     "/Users/le/.local/share/mise/installs/node/24.1.0/bin/node",
     "/Users/le/.local/share/mise/installs/node/24.1.0/lib/node_modules/tabby-agent/dist/node/index.js",
     "--server",
-    "http://192.168.2.55:8080",
+    "http://100.95.61.118:8080",
     "--token",
     auth_token,
     "--stdio",

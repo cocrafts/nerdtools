@@ -38,20 +38,13 @@ M.configure = function()
 		buffer = "Buffer",
 		tmux = "TMUX",
 		copilot = "Copilot",
+		tabby = "Tabby",
 		treesitter = "TreeSitter",
 	}
 
 	local mapping = cmp_mapping.preset.insert({
 		-- `Enter` key to confirm completion
 		["<CR>"] = cmp.mapping.confirm({ select = false }),
-		["<S-CR>"] = cmp_mapping(function(fallback)
-			local suggestion = require("supermaven-nvim.completion_preview")
-			if suggestion.has_suggestion() then
-				suggestion.on_accept_suggestion()
-			else
-				fallback()
-			end
-		end, { "i", "s" }),
 		["<Tab>"] = cmp_mapping(function(fallback)
 			if cmp.visible() then
 				cmp.confirm()
@@ -139,13 +132,13 @@ M.configure = function()
 		mapping = mapping,
 		formatting = formatting,
 		sources = {
-			{ name = "crates", priority = 19 },
-			{ name = "nvim_lsp", priority = 12 },
-			{ name = "path", priority = 10 },
-			{ name = "luasnip", priority = 8, keyword_length = 2 },
+			{ name = "crates",     priority = 19 },
+			{ name = "nvim_lsp",   priority = 12 },
+			{ name = "path",       priority = 10 },
+			{ name = "luasnip",    priority = 8, keyword_length = 2 },
 			{ name = "treesitter", priority = 7 },
-			{ name = "codeium", priority = 6 },
-			{ name = "buffer", priority = 6, keyword_length = 3 },
+			{ name = "codeium",    priority = 6 },
+			{ name = "buffer",     priority = 6, keyword_length = 3 },
 		},
 		window = {
 			completion = bordered_window,
