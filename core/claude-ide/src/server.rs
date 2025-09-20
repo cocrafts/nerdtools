@@ -7,7 +7,7 @@ use hyper::service::service_fn;
 use hyper::Request;
 use hyper_util::rt::TokioIo;
 use serde_json::{self, json};
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 use std::net::SocketAddr;
 use std::sync::Arc;
 use tokio::io::{AsyncBufReadExt, BufReader};
@@ -22,19 +22,22 @@ use crate::mcp::{parse_mcp_message, serialize_mcp_message, McpHandler, Selection
 
 type Clients = Arc<RwLock<HashMap<String, mpsc::UnboundedSender<String>>>>;
 type DiagnosticsCache = Arc<RwLock<serde_json::Value>>;
+type CommandQueue = Arc<Mutex<VecDeque<serde_json::Value>>>;
 
 pub struct WebSocketServer {
     port_min: u16,
     port_max: u16,
     port: Option<u16>,
+    neovim_port: Option<u16>,
     auth_token: Option<String>,
     workspace_folder: Option<String>,
     lock_manager: LockFileManager,
-    mcp_handler: McpHandler,
+    mcp_handler: Arc<McpHandler>,
     clients: Clients,
     running: Arc<Mutex<bool>>,
     selection_broadcaster: Option<mpsc::UnboundedSender<SelectionUpdate>>,
     diagnostics_cache: DiagnosticsCache,
+    command_queue: CommandQueue,
 }
 
 impl WebSocketServer {
@@ -94,20 +97,26 @@ impl WebSocketServer {
         // Initialize empty diagnostics cache
         let diagnostics_cache = Arc::new(RwLock::new(json!({})));
 
+        // Initialize command queue
+        let command_queue = Arc::new(Mutex::new(VecDeque::new()));
+
         Ok(Self {
             port_min,
             port_max,
             port: None,
+            neovim_port: None,
             auth_token: None,
             workspace_folder: None,
             lock_manager: LockFileManager::new(),
-            mcp_handler: McpHandler::new()
+            mcp_handler: Arc::new(McpHandler::new()
                 .with_selection_broadcaster(selection_tx.clone())
-                .with_diagnostics_cache(diagnostics_cache.clone()),
+                .with_diagnostics_cache(diagnostics_cache.clone())
+                .with_command_queue(command_queue.clone())),
             clients,
             running: Arc::new(Mutex::new(false)),
             selection_broadcaster: Some(selection_tx),
             diagnostics_cache,
+            command_queue,
         })
     }
 
@@ -145,9 +154,19 @@ impl WebSocketServer {
 
         info!("WebSocket server started on port {}", port);
 
+        // Start simple TCP server for Neovim (no auth needed, local only)
+        let neovim_listener = TcpListener::bind("127.0.0.1:0").await?;
+        let neovim_port = neovim_listener.local_addr()?.port();
+        self.neovim_port = Some(neovim_port);
+
+        info!("Neovim TCP server started on port {}", neovim_port);
+
+        // Update lock file with Neovim port
+        self.lock_manager.update_neovim_port(port, neovim_port)?;
+
         // Clone necessary data for the spawned task
         let clients = self.clients.clone();
-        let mcp_handler = Arc::new(self.mcp_handler.clone());
+        let mcp_handler = self.mcp_handler.clone(); // Now correctly clones the Arc reference
         let auth_token_for_server = auth_token.clone();
         let running = self.running.clone();
 
@@ -155,7 +174,131 @@ impl WebSocketServer {
             Self::accept_connections(listener, clients, mcp_handler, auth_token_for_server, running).await;
         });
 
+        // Spawn Neovim TCP handler
+        let command_queue_clone = self.command_queue.clone();
+        let diagnostics_cache_clone = self.diagnostics_cache.clone();
+        let running_neovim = self.running.clone();
+
+        tokio::spawn(async move {
+            Self::handle_neovim_connections(neovim_listener, command_queue_clone, diagnostics_cache_clone, running_neovim).await;
+        });
+
         Ok((port, auth_token))
+    }
+
+    /// Handle Neovim TCP connections (simple JSON-line protocol)
+    async fn handle_neovim_connections(
+        listener: TcpListener,
+        command_queue: CommandQueue,
+        diagnostics_cache: DiagnosticsCache,
+        running: Arc<Mutex<bool>>,
+    ) {
+        while *running.lock().await {
+            match listener.accept().await {
+                Ok((stream, addr)) => {
+                    info!("Neovim connected from {}", addr);
+
+                    let queue = command_queue.clone();
+                    let cache = diagnostics_cache.clone();
+
+                    tokio::spawn(async move {
+                        if let Err(e) = Self::handle_neovim_client(stream, queue, cache).await {
+                            error!("Neovim client error: {}", e);
+                        }
+                    });
+                }
+                Err(e) => {
+                    error!("Failed to accept Neovim connection: {}", e);
+                }
+            }
+        }
+    }
+
+    /// Handle a single Neovim client connection
+    async fn handle_neovim_client(
+        stream: TcpStream,
+        command_queue: CommandQueue,
+        diagnostics_cache: DiagnosticsCache,
+    ) -> Result<()> {
+        use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
+
+        let (reader, mut writer) = stream.into_split();
+        let mut reader = BufReader::new(reader);
+        let mut line = String::new();
+
+        loop {
+            line.clear();
+            match reader.read_line(&mut line).await {
+                Ok(0) => break, // EOF
+                Ok(_) => {
+                    let line = line.trim();
+                    if line.is_empty() {
+                        continue;
+                    }
+
+                    // Parse simple JSON commands
+                    if let Ok(msg) = serde_json::from_str::<serde_json::Value>(line) {
+                        let response = Self::handle_neovim_message(msg, &command_queue, &diagnostics_cache).await;
+
+                        // Send response back
+                        if let Ok(response_json) = serde_json::to_string(&response) {
+                            let _ = writer.write_all(response_json.as_bytes()).await;
+                            let _ = writer.write_all(b"\n").await;
+                            let _ = writer.flush().await;
+                        }
+                    }
+                }
+                Err(e) => {
+                    error!("Error reading from Neovim: {}", e);
+                    break;
+                }
+            }
+        }
+
+        info!("Neovim client disconnected");
+        Ok(())
+    }
+
+    /// Handle messages from Neovim
+    async fn handle_neovim_message(
+        msg: serde_json::Value,
+        command_queue: &CommandQueue,
+        diagnostics_cache: &DiagnosticsCache,
+    ) -> serde_json::Value {
+        use serde_json::json;
+
+        let method = msg.get("method").and_then(|m| m.as_str()).unwrap_or("");
+
+        match method {
+            "poll" => {
+                // Return any queued commands
+                let mut queue = command_queue.lock().await;
+                let commands: Vec<serde_json::Value> = queue.drain(..).collect();
+                json!({
+                    "type": "commands",
+                    "commands": commands
+                })
+            }
+            "selection" => {
+                // Neovim sending selection update
+                // TODO: Forward to Claude via MCP
+                json!({"status": "ok"})
+            }
+            "diagnostics" => {
+                // Neovim sending diagnostics
+                if let Some(data) = msg.get("data") {
+                    let mut cache = diagnostics_cache.write().await;
+                    *cache = data.clone();
+                }
+                json!({"status": "ok"})
+            }
+            "ready" => {
+                json!({"status": "connected"})
+            }
+            _ => {
+                json!({"error": "unknown method"})
+            }
+        }
     }
 
     async fn accept_connections(
@@ -451,6 +594,7 @@ impl WebSocketServer {
                 auth_token: Some(auth_token.clone()),
                 error: None,
                 connected: Some(!self.clients.blocking_read().is_empty()),
+                commands: None,
             }
         } else {
             CliResponse {
@@ -459,6 +603,7 @@ impl WebSocketServer {
                 auth_token: None,
                 error: Some("Server not running".to_string()),
                 connected: Some(false),
+                commands: None,
             }
         }
     }
@@ -487,6 +632,7 @@ impl WebSocketServer {
                         auth_token: None,
                         error: Some(e.to_string()),
                         connected: None,
+                commands: None,
                     };
                     let response_json = serde_json::to_string(&error_response)?;
                     println!("{}", response_json);
@@ -514,6 +660,7 @@ impl WebSocketServer {
                         auth_token: Some(auth_token),
                         error: None,
                         connected: Some(false),
+                commands: None,
                     })
                 }
             }
@@ -525,6 +672,7 @@ impl WebSocketServer {
                     auth_token: None,
                     error: None,
                     connected: None,
+                commands: None,
                 })
             }
             "status" => Ok(self.get_status()),
@@ -557,6 +705,7 @@ impl WebSocketServer {
                         auth_token: self.auth_token.clone(),
                         error: None,
                         connected: Some(!self.clients.read().await.is_empty()),
+                commands: None,
                     })
                 } else {
                     // Send default test selection
@@ -572,6 +721,7 @@ impl WebSocketServer {
                         auth_token: self.auth_token.clone(),
                         error: None,
                         connected: Some(!self.clients.read().await.is_empty()),
+                commands: None,
                     })
                 }
             }
@@ -600,6 +750,7 @@ impl WebSocketServer {
                                     auth_token: self.auth_token.clone(),
                                     error: None,
                                     connected: Some(!self.clients.read().await.is_empty()),
+                commands: None,
                                 })
                             }
                             Err(e) => {
@@ -610,6 +761,7 @@ impl WebSocketServer {
                                     auth_token: self.auth_token.clone(),
                                     error: Some(e.to_string()),
                                     connected: Some(!self.clients.read().await.is_empty()),
+                commands: None,
                                 })
                             }
                         }
@@ -620,6 +772,7 @@ impl WebSocketServer {
                             auth_token: self.auth_token.clone(),
                             error: None,
                             connected: Some(!self.clients.read().await.is_empty()),
+                commands: None,
                         })
                     }
                 } else {
@@ -629,6 +782,7 @@ impl WebSocketServer {
                         auth_token: self.auth_token.clone(),
                         error: Some("Missing params for send_message".to_string()),
                         connected: Some(!self.clients.read().await.is_empty()),
+                commands: None,
                     })
                 }
             }
@@ -655,6 +809,7 @@ impl WebSocketServer {
                         auth_token: self.auth_token.clone(),
                         error: None,
                         connected: Some(!self.clients.read().await.is_empty()),
+                commands: None,
                     })
                 } else {
                     Ok(CliResponse {
@@ -663,8 +818,23 @@ impl WebSocketServer {
                         auth_token: self.auth_token.clone(),
                         error: Some("Missing params for send_notification".to_string()),
                         connected: Some(!self.clients.read().await.is_empty()),
+                commands: None,
                     })
                 }
+            }
+            "poll_commands" => {
+                // Retrieve pending commands from the queue
+                let mut queue = self.command_queue.lock().await;
+                let commands: Vec<serde_json::Value> = queue.drain(..).collect();
+
+                Ok(CliResponse {
+                    success: true,
+                    port: self.port,
+                    auth_token: self.auth_token.clone(),
+                    error: None,
+                    connected: Some(!self.clients.read().await.is_empty()),
+                    commands: Some(commands),
+                })
             }
             _ => Err(anyhow!("Unknown method: {}", request.method)),
         }

@@ -32,6 +32,8 @@ pub struct Response {
     pub error: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub connected: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub commands: Option<Vec<serde_json::Value>>,
 }
 
 impl Cli {

@@ -15,6 +15,8 @@ pub struct LockFileData {
     pub transport: String,
     #[serde(rename = "authToken")]
     pub auth_token: String,
+    #[serde(rename = "neovimPort", skip_serializing_if = "Option::is_none")]
+    pub neovim_port: Option<u16>,
 }
 
 pub struct LockFileManager;
@@ -74,6 +76,7 @@ impl LockFileManager {
             ide_name: "Neovim".to_string(),
             transport: "ws".to_string(),
             auth_token: auth_token.to_string(),
+            neovim_port: None, // Will be updated when TCP server starts
         };
 
         let json_content = serde_json::to_string_pretty(&lock_data)
@@ -87,6 +90,31 @@ impl LockFileManager {
     }
 
     /// Remove the lock file for the given port
+    /// Update lock file with Neovim port
+    pub fn update_neovim_port(&self, port: u16, neovim_port: u16) -> Result<()> {
+        let lock_dir = Self::get_lock_dir()?;
+        let lock_file_path = lock_dir.join(format!("{}.lock", port));
+
+        // Read existing lock file
+        let content = fs::read_to_string(&lock_file_path)
+            .map_err(|e| anyhow!("Failed to read lock file: {}", e))?;
+
+        let mut lock_data: LockFileData = serde_json::from_str(&content)
+            .map_err(|e| anyhow!("Failed to parse lock file: {}", e))?;
+
+        // Update Neovim port
+        lock_data.neovim_port = Some(neovim_port);
+
+        // Write back
+        let json_content = serde_json::to_string_pretty(&lock_data)
+            .map_err(|e| anyhow!("Failed to serialize lock file data: {}", e))?;
+
+        fs::write(&lock_file_path, json_content)
+            .map_err(|e| anyhow!("Failed to write lock file: {}", e))?;
+
+        Ok(())
+    }
+
     pub fn remove_lock_file(&self, port: u16) -> Result<()> {
         let lock_dir = Self::get_lock_dir()?;
         let lock_file_path = lock_dir.join(format!("{}.lock", port));

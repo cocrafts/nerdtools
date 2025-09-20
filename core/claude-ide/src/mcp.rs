@@ -1,8 +1,10 @@
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use std::collections::VecDeque;
 use std::sync::Arc;
-use tokio::sync::{mpsc, RwLock};
+use tokio::sync::{mpsc, RwLock, Mutex};
+use tracing::{info, error};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpMessage {
@@ -57,6 +59,7 @@ impl McpMessage {
 pub struct McpHandler {
     selection_broadcaster: Option<mpsc::UnboundedSender<SelectionUpdate>>,
     diagnostics_cache: Option<Arc<RwLock<Value>>>,
+    command_queue: Option<Arc<Mutex<VecDeque<Value>>>>,
 }
 
 #[derive(Debug, Clone)]
@@ -72,6 +75,7 @@ impl McpHandler {
         Self {
             selection_broadcaster: None,
             diagnostics_cache: None,
+            command_queue: None,
         }
     }
 
@@ -82,6 +86,11 @@ impl McpHandler {
 
     pub fn with_diagnostics_cache(mut self, cache: Arc<RwLock<Value>>) -> Self {
         self.diagnostics_cache = Some(cache);
+        self
+    }
+
+    pub fn with_command_queue(mut self, queue: Arc<Mutex<VecDeque<Value>>>) -> Self {
+        self.command_queue = Some(queue);
         self
     }
 
@@ -179,15 +188,16 @@ impl McpHandler {
                     }
                 },
                 {
-                    "name": "open_file",
-                    "description": "Open a file in Neovim",
+                    "name": "openFile",
+                    "description": "Open a file in the editor and optionally navigate to a specific line",
                     "inputSchema": {
                         "type": "object",
                         "properties": {
-                            "path": {"type": "string", "description": "File path"},
-                            "line": {"type": "integer", "description": "Line number (optional)"}
+                            "filePath": {"type": "string", "description": "Path to the file to open"},
+                            "startLine": {"type": "integer", "description": "Line number to navigate to (1-indexed, optional)"},
+                            "endLine": {"type": "integer", "description": "End line for selection range (optional)"}
                         },
-                        "required": ["path"]
+                        "required": ["filePath"]
                     }
                 },
                 {
@@ -236,6 +246,53 @@ impl McpHandler {
             .ok_or_else(|| anyhow!("Missing tool name"))?;
 
         let result = match tool_name {
+            "openFile" => {
+                // Extract parameters
+                let file_path = params.get("arguments")
+                    .and_then(|args| args.get("filePath"))
+                    .and_then(|v| v.as_str())
+                    .ok_or_else(|| anyhow!("Missing filePath parameter"))?;
+
+                let start_line = params.get("arguments")
+                    .and_then(|args| args.get("startLine"))
+                    .and_then(|v| v.as_i64())
+                    .map(|v| v as u32);
+
+                let end_line = params.get("arguments")
+                    .and_then(|args| args.get("endLine"))
+                    .and_then(|v| v.as_i64())
+                    .map(|v| v as u32);
+
+                // Add command to queue for Neovim to retrieve via TCP
+                if let Some(queue) = &self.command_queue {
+                    let command = json!({
+                        "type": "openFile",
+                        "filePath": file_path,
+                        "startLine": start_line,
+                        "endLine": end_line
+                    });
+
+                    match queue.try_lock() {
+                        Ok(mut q) => {
+                            q.push_back(command.clone());
+                            info!("Queued openFile command for {}", file_path);
+                        }
+                        Err(e) => {
+                            error!("Failed to lock command queue: {}", e);
+                        }
+                    }
+                } else {
+                    error!("No command queue available!");
+                }
+
+                // Return success response
+                json!({
+                    "content": [{
+                        "type": "text",
+                        "text": format!("Opened file: {}", file_path)
+                    }]
+                })
+            }
             "getDiagnostics" | "get_diagnostics" => {
                 // Get diagnostics from cache
                 let diagnostics = if let Some(cache) = &self.diagnostics_cache {

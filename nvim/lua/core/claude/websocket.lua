@@ -11,6 +11,7 @@ local state = {
 	auth_token = nil,
 	connected = false,
 	binary_path = nil,
+	last_response = nil, -- Store last response for polling
 }
 
 -- Import utilities
@@ -97,10 +98,43 @@ function M.start()
 					if line ~= "" then
 						local ok, response = pcall(vim.json.decode, line)
 						if ok and response then
+							-- Store response for polling
+							state.last_response = response
+
 							if response.success then
 								state.port = response.port or state.port
 								state.auth_token = response.auth_token or state.auth_token
 								state.connected = response.connected or state.connected
+
+								-- Handle command responses
+								if response.commands then
+									-- Process commands directly here
+									local command_poller = require("core.claude.tools.command_poller")
+									for _, command in ipairs(response.commands) do
+										vim.schedule(function()
+											if command.type == "openFile" then
+												local file_path = command.filePath
+												if file_path then
+													vim.cmd.edit(file_path)
+
+													if command.startLine then
+														vim.fn.cursor(command.startLine, 1)
+
+														if command.endLine and command.endLine > command.startLine then
+															vim.cmd("normal! V")
+															vim.fn.cursor(command.endLine, 1)
+															vim.defer_fn(function()
+																vim.cmd("normal! <Esc>")
+															end, 100)
+														end
+													end
+
+													vim.notify(string.format("Opened: %s", vim.fn.fnamemodify(file_path, ":~:.")), vim.log.levels.INFO)
+												end
+											end
+										end)
+									end
+								end
 							end
 						end
 					end
@@ -141,6 +175,10 @@ function M.start()
 	-- Set environment variable for Claude Code to find the server
 	if state.port then
 		vim.fn.setenv("CLAUDE_CODE_SSE_PORT", tostring(state.port))
+		-- Connect to TCP server for bidirectional communication
+		vim.defer_fn(function()
+			require("core.claude.tcp_client").connect()
+		end, 500) -- Give server time to start TCP listener
 	end
 
 	return state.port, state.auth_token
@@ -148,6 +186,9 @@ end
 
 -- Stop server
 function M.stop()
+	-- Disconnect TCP client first
+	require("core.claude.tcp_client").disconnect()
+
 	if state.job_id then
 		send_command({ method = "stop" })
 		vim.wait(100)
@@ -238,7 +279,49 @@ function M.get_info()
 		connected = state.connected,
 		binary_path = state.binary_path,
 		mode = state.job_id and "websocket" or "fallback",
+		job_id = state.job_id,
 	}
+end
+
+-- Poll for commands from Claude
+function M.poll_commands()
+	if not state.job_id then
+		return nil
+	end
+
+	-- Send poll request
+	local request = vim.json.encode({
+		method = "poll_commands",
+	})
+
+	vim.fn.chansend(state.job_id, request .. "\n")
+
+	-- Commands will be processed in on_stdout handler
+	return true
+end
+
+-- Start automatic polling
+function M.start_polling()
+	-- Create timer for periodic polling
+	if not state.poll_timer then
+		state.poll_timer = vim.loop.new_timer()
+		state.poll_timer:start(
+			1000, -- Initial delay
+			500, -- Poll every 500ms
+			vim.schedule_wrap(function()
+				M.poll_commands()
+			end)
+		)
+	end
+end
+
+-- Stop polling
+function M.stop_polling()
+	if state.poll_timer then
+		state.poll_timer:stop()
+		state.poll_timer:close()
+		state.poll_timer = nil
+	end
 end
 
 return M

@@ -41,26 +41,17 @@ async fn main() -> Result<()> {
                 auth_token: Some(auth_token),
                 error: None,
                 connected: Some(false),
+                commands: None,
             };
             println!("{}", serde_json::to_string(&response)?);
 
-            // Keep running indefinitely with stdin handling
+            // Keep running indefinitely
             info!("Server running in daemon mode on port {}. Press Ctrl+C to stop.", port);
 
-            // Handle both stdin commands and Ctrl+C
-            tokio::select! {
-                // Handle Ctrl+C
-                _ = tokio::signal::ctrl_c() => {
-                    info!("Received shutdown signal, stopping server...");
-                    server.stop().await?;
-                }
-                // Handle stdin commands (like the non-daemon mode)
-                result = server.run() => {
-                    if let Err(e) = result {
-                        eprintln!("Server error: {}", e);
-                    }
-                }
-            }
+            // Just wait for Ctrl+C, don't handle stdin in daemon mode
+            tokio::signal::ctrl_c().await?;
+            info!("Received shutdown signal, stopping server...");
+            server.stop().await?;
         }
         cli::Command::Stop => {
             info!("Stopping Claude IDE server");
