@@ -188,6 +188,21 @@ function M.send_mention(file_path, text, line_start, line_end)
 	})
 end
 
+-- Send notification (no response expected)
+function M.send_notification(method, params)
+	if not state.job_id then
+		return false
+	end
+
+	return send_command({
+		method = "send_notification",
+		params = {
+			method = method,
+			params = params,
+		},
+	})
+end
+
 -- Check connection status
 function M.is_connected()
 	-- Debug: Log connection status

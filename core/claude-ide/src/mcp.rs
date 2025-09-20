@@ -1,7 +1,8 @@
 use anyhow::{anyhow, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use tokio::sync::mpsc;
+use std::sync::Arc;
+use tokio::sync::{mpsc, RwLock};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct McpMessage {
@@ -55,6 +56,7 @@ impl McpMessage {
 
 pub struct McpHandler {
     selection_broadcaster: Option<mpsc::UnboundedSender<SelectionUpdate>>,
+    diagnostics_cache: Option<Arc<RwLock<Value>>>,
 }
 
 #[derive(Debug, Clone)]
@@ -69,11 +71,17 @@ impl McpHandler {
     pub fn new() -> Self {
         Self {
             selection_broadcaster: None,
+            diagnostics_cache: None,
         }
     }
 
     pub fn with_selection_broadcaster(mut self, sender: mpsc::UnboundedSender<SelectionUpdate>) -> Self {
         self.selection_broadcaster = Some(sender);
+        self
+    }
+
+    pub fn with_diagnostics_cache(mut self, cache: Arc<RwLock<Value>>) -> Self {
+        self.diagnostics_cache = Some(cache);
         self
     }
 
@@ -147,6 +155,20 @@ impl McpHandler {
         let result = json!({
             "tools": [
                 {
+                    "name": "getDiagnostics",
+                    "description": "Get language diagnostics (errors, warnings) from the editor",
+                    "inputSchema": {
+                        "type": "object",
+                        "properties": {
+                            "uri": {
+                                "type": "string",
+                                "description": "Optional file URI to get diagnostics for. If not provided, gets diagnostics for all open files."
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                {
                     "name": "buffer_content",
                     "description": "Get content of current buffer in Neovim",
                     "inputSchema": {
@@ -213,12 +235,69 @@ impl McpHandler {
             .and_then(|v| v.as_str())
             .ok_or_else(|| anyhow!("Missing tool name"))?;
 
-        let result = json!({
-            "content": [{
-                "type": "text",
-                "text": format!("Tool {} called successfully", tool_name)
-            }]
-        });
+        let result = match tool_name {
+            "getDiagnostics" | "get_diagnostics" => {
+                // Get diagnostics from cache
+                let diagnostics = if let Some(cache) = &self.diagnostics_cache {
+                    // Use try_read to avoid blocking
+                    let cached_diagnostics = if let Ok(cache_guard) = cache.try_read() {
+                        cache_guard.clone()
+                    } else {
+                        json!({})
+                    };
+
+                    // Format the diagnostics in the same way as claudecode.nvim
+                    if let Some(diagnostics_map) = cached_diagnostics.get("diagnostics").and_then(|d| d.as_object()) {
+                        let mut formatted_diagnostics = Vec::new();
+
+                        for (file_path, file_diagnostics) in diagnostics_map {
+                            if let Some(diag_array) = file_diagnostics.as_array() {
+                                for diag in diag_array {
+                                    formatted_diagnostics.push(json!({
+                                        "type": "text",
+                                        "text": serde_json::to_string(&json!({
+                                            "filePath": file_path,
+                                            "line": diag.get("line").and_then(|l| l.as_i64()).unwrap_or(1),
+                                            "character": diag.get("character").and_then(|c| c.as_i64()).unwrap_or(1),
+                                            "severity": diag.get("severity").and_then(|s| s.as_i64()).unwrap_or(1),
+                                            "message": diag.get("message").and_then(|m| m.as_str()).unwrap_or(""),
+                                            "source": diag.get("source").and_then(|s| s.as_str()).unwrap_or("")
+                                        })).unwrap()
+                                    }));
+                                }
+                            }
+                        }
+
+                        json!({
+                            "content": formatted_diagnostics
+                        })
+                    } else {
+                        json!({
+                            "content": [{
+                                "type": "text",
+                                "text": "No diagnostics available"
+                            }]
+                        })
+                    }
+                } else {
+                    json!({
+                        "content": [{
+                            "type": "text",
+                            "text": "Diagnostics cache not initialized"
+                        }]
+                    })
+                };
+                diagnostics
+            }
+            _ => {
+                json!({
+                    "content": [{
+                        "type": "text",
+                        "text": format!("Tool {} called successfully", tool_name)
+                    }]
+                })
+            }
+        };
 
         Ok(McpMessage::new_response(message.id, Some(result), None))
     }

@@ -6,7 +6,7 @@ use hyper::server::conn::http1;
 use hyper::service::service_fn;
 use hyper::Request;
 use hyper_util::rt::TokioIo;
-use serde_json;
+use serde_json::{self, json};
 use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
@@ -21,6 +21,7 @@ use crate::lock_file::LockFileManager;
 use crate::mcp::{parse_mcp_message, serialize_mcp_message, McpHandler, SelectionUpdate};
 
 type Clients = Arc<RwLock<HashMap<String, mpsc::UnboundedSender<String>>>>;
+type DiagnosticsCache = Arc<RwLock<serde_json::Value>>;
 
 pub struct WebSocketServer {
     port_min: u16,
@@ -33,6 +34,7 @@ pub struct WebSocketServer {
     clients: Clients,
     running: Arc<Mutex<bool>>,
     selection_broadcaster: Option<mpsc::UnboundedSender<SelectionUpdate>>,
+    diagnostics_cache: DiagnosticsCache,
 }
 
 impl WebSocketServer {
@@ -89,6 +91,9 @@ impl WebSocketServer {
             }
         });
 
+        // Initialize empty diagnostics cache
+        let diagnostics_cache = Arc::new(RwLock::new(json!({})));
+
         Ok(Self {
             port_min,
             port_max,
@@ -96,10 +101,13 @@ impl WebSocketServer {
             auth_token: None,
             workspace_folder: None,
             lock_manager: LockFileManager::new(),
-            mcp_handler: McpHandler::new().with_selection_broadcaster(selection_tx.clone()),
+            mcp_handler: McpHandler::new()
+                .with_selection_broadcaster(selection_tx.clone())
+                .with_diagnostics_cache(diagnostics_cache.clone()),
             clients,
             running: Arc::new(Mutex::new(false)),
             selection_broadcaster: Some(selection_tx),
+            diagnostics_cache,
         })
     }
 
@@ -624,6 +632,40 @@ impl WebSocketServer {
                     })
                 }
             }
+            "send_notification" => {
+                // Handle send_notification requests from Neovim (no response expected)
+                if let Some(params) = request.params {
+                    let method = params.get("method")
+                        .and_then(|v| v.as_str())
+                        .unwrap_or("");
+                    let notification_params = params.get("params");
+
+                    // Forward diagnostics updates to Claude Code
+                    if method == "diagnostics_updated" {
+                        if let Some(notification_params) = notification_params {
+                            self.send_diagnostics_update(notification_params).await?;
+                            info!("Forwarded diagnostics update to Claude Code");
+                        }
+                    }
+
+                    // Always return success for notifications
+                    Ok(CliResponse {
+                        success: true,
+                        port: self.port,
+                        auth_token: self.auth_token.clone(),
+                        error: None,
+                        connected: Some(!self.clients.read().await.is_empty()),
+                    })
+                } else {
+                    Ok(CliResponse {
+                        success: false,
+                        port: self.port,
+                        auth_token: self.auth_token.clone(),
+                        error: Some("Missing params for send_notification".to_string()),
+                        connected: Some(!self.clients.read().await.is_empty()),
+                    })
+                }
+            }
             _ => Err(anyhow!("Unknown method: {}", request.method)),
         }
     }
@@ -667,6 +709,46 @@ impl WebSocketServer {
         }
 
         info!("Sent selection update to {} clients", sent_count);
+        Ok(())
+    }
+
+    /// Send diagnostics notification to all connected clients
+    pub async fn send_diagnostics_update(&self, diagnostics_params: &serde_json::Value) -> Result<()> {
+        use crate::mcp::McpMessage;
+
+        // Cache the diagnostics
+        {
+            let mut cache = self.diagnostics_cache.write().await;
+            *cache = diagnostics_params.clone();
+            info!("Cached diagnostics update");
+        }
+
+        // Create a diagnostics notification in MCP format
+        let diagnostics_message = McpMessage::new_notification(
+            "diagnostics/updated".to_string(),
+            Some(diagnostics_params.clone()),
+        );
+
+        let message_json = match serde_json::to_string(&diagnostics_message) {
+            Ok(json) => json,
+            Err(e) => {
+                error!("Failed to serialize diagnostics message: {}", e);
+                return Err(anyhow!("Failed to serialize diagnostics message: {}", e));
+            }
+        };
+
+        let clients = self.clients.read().await;
+        let mut sent_count = 0;
+
+        for (client_id, sender) in clients.iter() {
+            if let Err(e) = sender.send(message_json.clone()) {
+                warn!("Failed to send diagnostics update to client {}: {}", client_id, e);
+            } else {
+                sent_count += 1;
+            }
+        }
+
+        info!("Sent diagnostics update to {} clients", sent_count);
         Ok(())
     }
 }

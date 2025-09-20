@@ -60,8 +60,8 @@ nvim/lua/core/claude/
 - [x] Port visual selection tracking ✅
 - [x] Partial line selection support ✅
 - [x] Smart file reference building with line numbers ✅
-- [ ] Create dedicated selection.lua module
-- [ ] Add debouncing for visual mode
+- [x] Create dedicated selection.lua module
+- [x] Add debouncing for visual mode
 - [ ] Implement file tree integration (neo-tree, oil)
 
 **Features implemented**:

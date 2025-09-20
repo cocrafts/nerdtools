@@ -103,6 +103,9 @@ function M.setup(opts)
 	-- Load status commands
 	require("core.claude.status")
 
+	-- Setup diagnostics monitoring
+	require("core.claude.diagnostics").setup()
+
 	-- Create keymaps
 	local keymaps = config.get("keymaps")
 	if keymaps and keymaps.send then
