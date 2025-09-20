@@ -1,0 +1,36 @@
+[package]
+name = "claude-ide-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# Workspace dependencies
+tokio = { workspace = true, features = ["full"] }
+fastwebsockets = { workspace = true }
+hyper = { workspace = true }
+http-body-util = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+uuid = { workspace = true }
+base64 = { workspace = true }
+sha1 = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+dirs = { workspace = true }
+
+# Additional dependencies for this crate
+futures-util = "0.3"
+futures-channel = "0.3"
+http = "1.0"
+bytes = "1.0"
+hyper-util = { version = "0.1", features = ["tokio"] }
+libc = "0.2"
+
+# MCP protocol implementation
+rmcp = { version = "0.6.3", features = ["server"] }
+
+[[bin]]
+name = "claude-ide"
+path = "src/main.rs"

@@ -100,7 +100,7 @@ config.keys = {
 		mods = mod .. "|SHIFT",
 		action = act.SplitPane({
 			direction = "Left",
-			size = { Percent = 36 },
+			size = { Percent = 32 },
 		}),
 	},
 	{
@@ -108,7 +108,7 @@ config.keys = {
 		mods = mod .. "|SHIFT",
 		action = act.SplitPane({
 			direction = "Right",
-			size = { Percent = 36 },
+			size = { Percent = 32 },
 		}),
 	},
 	{

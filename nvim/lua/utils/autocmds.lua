@@ -27,7 +27,7 @@ local definitions = {
 				local buftype = vim.api.nvim_get_option_value("buftype", { buf = args.buf })
 				local filetype = vim.api.nvim_get_option_value("filetype", { buf = args.buf })
 
-				if filetype == "neo-tree" or filetype == "toggleterm" or buftype == "nofile" then
+				if filetype == "neo-tree" or filetype == "toggleterm" or buftype == "nofile" or buftype == "terminal" then
 					vim.o.statuscolumn = "%s"
 				else
 					vim.o.statuscolumn = "%s%=%{v:relnum?v:relnum:v:lnum} "

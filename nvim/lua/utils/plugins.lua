@@ -430,12 +430,4 @@ return {
 			require("core.surround").configure()
 		end,
 	},
-	{
-		-- Claude Code integration
-		"claude",
-		dir = vim.fn.stdpath("config") .. "/lua/core",
-		config = function()
-			require("core.claude").setup()
-		end,
-	},
 }

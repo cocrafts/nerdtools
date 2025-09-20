@@ -6,6 +6,7 @@ export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$HOME/Sources/bin"
 export PATH="$PATH:$HOME/Sources/haxe/bin"
 export PATH="$PATH:$HOME/go/bin"
+export PATH="$PATH:$HOME/nerdtools/bin"
 
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 export XDG_CONFIG_HOME="$HOME/.config"

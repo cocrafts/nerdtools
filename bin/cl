@@ -1,0 +1,48 @@
+#!/bin/bash
+
+# Claude CLI wrapper that auto-detects IDE port from lock files
+# Works exactly like `claude` but sets CLAUDE_CODE_SSE_PORT automatically
+
+set -euo pipefail
+
+# Find the most recent lock file to get the port
+find_ide_port() {
+    local lock_dir="$HOME/.claude/ide"
+
+    if [[ ! -d "$lock_dir" ]]; then
+        return 1
+    fi
+
+    # Find the most recent .lock file
+    local latest_lock
+    latest_lock=$(find "$lock_dir" -name "*.lock" -type f -exec ls -t {} + 2>/dev/null | head -1)
+
+    if [[ -z "$latest_lock" ]]; then
+        return 1
+    fi
+
+    # Extract port from filename (e.g., "50001.lock" -> "50001")
+    local port
+    port=$(basename "$latest_lock" .lock)
+
+    if [[ "$port" =~ ^[0-9]+$ ]]; then
+        echo "$port"
+        return 0
+    fi
+
+    return 1
+}
+
+# Check if real claude command exists
+if ! command -v claude >/dev/null 2>&1; then
+    echo "Error: claude command not found" >&2
+    exit 1
+fi
+
+# Try to find and set the IDE port
+if port=$(find_ide_port); then
+    export CLAUDE_CODE_SSE_PORT="$port"
+fi
+
+# Forward all arguments to the real claude command
+exec claude "$@"

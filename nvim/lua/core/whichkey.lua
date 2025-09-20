@@ -2,38 +2,6 @@ local M = {}
 local helper = require("utils.helper")
 local icons = require("utils.icons")
 
-local make_ai_keys = function(key)
-	return {
-		{ string.format("<leader>%s", key),  group = "Ask AI" },
-		{
-			string.format("<leader>%se", key),
-			"<cmd>ChatGPTEditWithInstruction<CR>",
-			desc = "Edit with instruction",
-		},
-		{
-			string.format("<leader>%sg", key),
-			"<cmd>ChatGPTRun grammar_correction<CR>",
-			desc = "Grammar Correction",
-		},
-		{ string.format("<leader>%sa", key), "<cmd>ChatGPTRun add_tests<CR>",     desc = "Add Tests" },
-		{ string.format("<leader>%st", key), "<cmd>ChatGPTRun translate<CR>",     desc = "Translate" },
-		{ string.format("<leader>%sk", key), "<cmd>ChatGPTRun keywords<CR>",      desc = "Keywords" },
-		{ string.format("<leader>%sd", key), "<cmd>ChatGPTRun docstring<CR>",     desc = "Docstring" },
-		{ string.format("<leader>%so", key), "<cmd>ChatGPTRun optimize_code<CR>", desc = "Optimize Code" },
-		{ string.format("<leader>%ss", key), "<cmd>ChatGPTRun summarize<CR>",     desc = "Summarize" },
-		{ string.format("<leader>%sf", key), "<cmd>ChatGPTRun fix_bugs<CR>",      desc = "Fix Bugs" },
-		{ string.format("<leader>%sx", key), "<cmd>ChatGPTRun explain_code<CR>",  desc = "Explain Code" },
-		{ string.format("<leader>%sc", key), "<cmd>ChatGPTRun complete_code<CR>", desc = "Complete Code" },
-		{ string.format("<leader>%sr", key), "<cmd>ChatGPTRun roxygen_edit<CR>",  desc = "Roxygen Edit" },
-		{
-			string.format("<leader>%sA", key),
-			"<cmd>ChatGPTRun code_readability_analysis<CR>",
-			desc = "Code Readability Analysis",
-		},
-		{ string.format("<leader>%sh", key), "<cmd>HurlRunner<CR>", desc = "Hurl" },
-	}
-end
-
 local config = {
 	setup = {
 		icons = {
@@ -340,14 +308,6 @@ M.configure = function()
 			},
 		},
 	})
-
-	whichkey.add(vim.tbl_extend("force", {
-		mode = { "n" },
-		{ "<leader>aj", "<cmd>ChatGPT<CR>",      desc = "ChatGPT prompt" },
-		{ "<leader>au", "<cmd>ChatGPTActAs<CR>", desc = "ChatGPT prompt" },
-	}, make_ai_keys("h")))
-
-	whichkey.add(vim.tbl_extend("force", { mode = { "v" } }, make_ai_keys("h")))
 end
 
 return M
