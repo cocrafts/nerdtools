@@ -18,11 +18,41 @@ local state = {
     running = false,
 }
 
+--- Generate a deterministic port based on workspace path
+---@param workspace string
+---@param min_port number
+---@param max_port number
+---@return number
+local function workspace_to_port(workspace, min_port, max_port)
+    -- Simple hash function for string
+    local hash = 0
+    for i = 1, #workspace do
+        hash = (hash * 31 + workspace:byte(i)) % 2147483647
+    end
+
+    -- Map hash to port range
+    local port_range = max_port - min_port + 1
+    return min_port + (hash % port_range)
+end
+
 --- Find available port in range
 ---@param min_port number
 ---@param max_port number
+---@param preferred_port number|nil Optional preferred port to try first
 ---@return number|nil port
-local function find_available_port(min_port, max_port)
+local function find_available_port(min_port, max_port, preferred_port)
+    -- Try preferred port first if provided
+    if preferred_port and preferred_port >= min_port and preferred_port <= max_port then
+        local tcp = vim.loop.new_tcp()
+        if tcp then
+            local success = tcp:bind("127.0.0.1", preferred_port)
+            tcp:close()
+            if success then
+                return preferred_port
+            end
+        end
+    end
+
     for _ = 1, 100 do -- Try random ports
         local port = math.random(min_port, max_port)
         local tcp = vim.loop.new_tcp()
@@ -170,13 +200,34 @@ function M.handle_message(client_id, message)
     logger.debug("MCP message from " .. client_id .. ": " .. (message.method or "response"))
     logger.debug("Full message: " .. vim.inspect(message))
 
-    local response = protocol.handle_message(message)
+    -- Schedule handling in main thread to avoid fast event context issues
+    vim.schedule(function()
+        -- Handle message with error protection
+        local ok, response = pcall(protocol.handle_message, message)
 
-    if response then
-        logger.debug("Sending MCP response for: " .. (message.method or "unknown"))
-        logger.debug("Response: " .. vim.inspect(response))
-        M.send_to_client(client_id, response)
-    end
+        if not ok then
+            logger.error("Error handling message: " .. tostring(response))
+            -- Send error response if we have a message id
+            if message.id then
+                local error_response = {
+                    jsonrpc = "2.0",
+                    id = message.id,
+                    error = {
+                        code = -32603,
+                        message = "Internal error",
+                        data = tostring(response)
+                    }
+                }
+                M.send_to_client(client_id, error_response)
+            end
+            return
+        end
+
+        if response then
+            logger.debug("Sending MCP response for: " .. (message.method or "unknown"))
+            M.send_to_client(client_id, response)
+        end
+    end)
 end
 
 --- Send message to specific client
@@ -267,17 +318,146 @@ function M.start(opts)
         return false, "Server already running"
     end
 
-    -- Find available port
-    local min_port = opts.port_min or 10000
-    local max_port = opts.port_max or 65535
+    local port, auth_token
+    local workspace_auth_token = nil  -- Remember auth token for workspace even if port changes
 
-    local port = find_available_port(min_port, max_port)
-    if not port then
-        return false, "No available port found"
+    -- Try to reuse previous port from lock files (for reconnection support)
+    if opts.reuse_port ~= false then
+        -- Check for existing lock files in ~/.claude/ide/
+        local lock_dir = lockfile.get_lock_dir()
+        local lock_files = vim.fn.glob(lock_dir .. "/*.lock", false, true)
+        local current_workspace = vim.fn.getcwd()
+
+        -- First pass: Try to find a lock file for the same workspace
+        for _, lock_path in ipairs(lock_files) do
+            -- Extract port from filename
+            local port_str = vim.fn.fnamemodify(lock_path, ":t:r")
+            local check_port = tonumber(port_str)
+
+            if check_port then
+                -- Read lock file to check workspace and process
+                local lock_data = lockfile.read(check_port)
+
+                if lock_data then
+                    -- Check if this is for the same workspace
+                    local same_workspace = false
+                    if lock_data.workspaceFolders then
+                        for _, folder in ipairs(lock_data.workspaceFolders) do
+                            if folder == current_workspace then
+                                same_workspace = true
+                                break
+                            end
+                        end
+                    end
+
+                    if same_workspace then
+                        -- ALWAYS preserve the auth token for the same workspace
+                        workspace_auth_token = lock_data.authToken
+                        logger.info("Found existing auth token for workspace: " .. string.sub(workspace_auth_token, 1, 8) .. "...")
+
+                        local is_running = false
+                        if lock_data.pid then
+                            -- Check if the process is still running
+                            is_running = vim.fn.system("kill -0 " .. lock_data.pid .. " 2>/dev/null; echo $?"):gsub("\n", "") == "0"
+                        end
+
+                        if not is_running then
+                            -- Process is dead, we can reuse this port
+                            -- Try to bind to verify it's actually available
+                            local tcp = vim.loop.new_tcp()
+                            if tcp then
+                                local success = tcp:bind("127.0.0.1", check_port)
+                                tcp:close()
+
+                                if success then
+                                    port = check_port
+                                    auth_token = workspace_auth_token
+                                    logger.info("Reusing port " .. port .. " AND auth token for workspace: " .. current_workspace)
+                                    -- Clean up old lock file (will be recreated)
+                                    lockfile.delete(port)
+                                    break
+                                else
+                                    logger.info("Port " .. check_port .. " unavailable, but keeping auth token for workspace")
+                                end
+                            end
+                        else
+                            logger.info("Process still running on port " .. check_port .. ", but keeping auth token for reference")
+                        end
+                    end
+                end
+            end
+        end
+
+        -- Second pass: If no workspace match, try any dead session
+        if not port then
+            for _, lock_path in ipairs(lock_files) do
+                local port_str = vim.fn.fnamemodify(lock_path, ":t:r")
+                local check_port = tonumber(port_str)
+
+                if check_port then
+                    local lock_data = lockfile.read(check_port)
+                    if lock_data and lock_data.pid then
+                        local is_running = vim.fn.system("kill -0 " .. lock_data.pid .. " 2>/dev/null; echo $?"):gsub("\n", "") == "0"
+                        if not is_running then
+                            local tcp = vim.loop.new_tcp()
+                            if tcp then
+                                local success = tcp:bind("127.0.0.1", check_port)
+                                tcp:close()
+                                if success then
+                                    port = check_port
+                                    auth_token = lock_data.authToken
+                                    logger.info("Reusing port " .. port .. " from dead session")
+                                    lockfile.delete(port)
+                                    break
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
     end
 
-    -- Generate auth token
-    state.auth_token = lockfile.generate_auth_token()
+    -- If no reused port, find a new one
+    if not port then
+        local min_port = opts.port_min or 10000
+        local max_port = opts.port_max or 65535
+        local current_workspace = vim.fn.getcwd()
+
+        -- Generate a deterministic preferred port based on workspace
+        local preferred_port = workspace_to_port(current_workspace, min_port, max_port)
+        logger.debug("Preferred port for workspace '" .. current_workspace .. "': " .. preferred_port)
+
+        port = find_available_port(min_port, max_port, preferred_port)
+        if not port then
+            return false, "No available port found"
+        end
+
+        if port == preferred_port then
+            logger.info("Using preferred port " .. port .. " for workspace")
+        else
+            logger.info("Preferred port " .. preferred_port .. " unavailable, using " .. port)
+        end
+    end
+
+    -- Use auth token in order of preference:
+    -- 1. Reused from same port (auth_token)
+    -- 2. Preserved from same workspace (workspace_auth_token)
+    -- 3. Generate new one
+    local auth_reused = false
+    if auth_token then
+        state.auth_token = auth_token
+        auth_reused = true
+        logger.info("Using auth token from reused port")
+    elseif workspace_auth_token then
+        state.auth_token = workspace_auth_token
+        auth_reused = true
+        logger.info("Using preserved auth token from workspace")
+    else
+        state.auth_token = lockfile.generate_auth_token()
+        logger.info("Generated new auth token")
+    end
+    state.auth_reused = auth_reused
 
     -- Create TCP server
     state.server = vim.loop.new_tcp()
@@ -309,9 +489,21 @@ function M.start(opts)
     state.running = true
 
     -- Create lock file
+    logger.info("Creating lock file for port " .. port .. " with auth token: " .. (state.auth_token and string.sub(state.auth_token, 1, 8) .. "..." or "nil"))
     local lock_success, lock_err = lockfile.create(port, state.auth_token)
     if not lock_success then
-        logger.warn("Failed to create lock file: " .. lock_err)
+        logger.error("Failed to create lock file: " .. (lock_err or "unknown error"))
+        vim.notify("Failed to create Claude IDE lock file: " .. (lock_err or "unknown error"), vim.log.levels.ERROR)
+    else
+        logger.info("Lock file created successfully for port " .. port)
+        local lock_path = lockfile.get_lock_path(port)
+        -- Check if we're reusing auth token
+        if state.auth_reused then
+            vim.notify("Claude IDE: Reusing auth token for reconnection on port " .. port, vim.log.levels.INFO)
+            vim.notify("Claude Code should auto-reconnect with same credentials", vim.log.levels.INFO)
+        else
+            vim.notify("Claude IDE lock file created: " .. lock_path, vim.log.levels.INFO)
+        end
     end
 
     logger.info(string.format("WebSocket server started on port %d", port))

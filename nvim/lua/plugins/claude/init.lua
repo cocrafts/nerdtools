@@ -39,7 +39,7 @@ function M.setup(opts)
     -- Initialize logger
     logger.setup(opts.log_level or vim.log.levels.INFO)
 
-    -- Start WebSocket server
+    -- Start WebSocket server with reconnection support
     local success, result, auth_token = server.start(opts)
     if not success then
         return false, result
@@ -64,6 +64,16 @@ function M.setup(opts)
     -- Set environment variables for Claude Code
     vim.env.CLAUDE_CODE_SSE_PORT = tostring(result)
     vim.env.ENABLE_IDE_INTEGRATION = "true"
+
+    -- Setup user commands
+    require("plugins.claude.commands").setup()
+
+    -- Notify if we reused a port (Claude Code might reconnect)
+    local lock_data = lockfile.read(result)
+    if lock_data and vim.env.CLAUDE_CODE_SSE_PORT then
+        vim.notify("Claude IDE ready on port " .. result, vim.log.levels.INFO)
+        vim.notify("Use :ClaudeStatus to check connection", vim.log.levels.INFO)
+    end
 
     return true
 end

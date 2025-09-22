@@ -16,6 +16,13 @@ function M.get_lock_dir()
     end
 end
 
+--- Get lock file path for a specific port
+---@param port number
+---@return string
+function M.get_lock_path(port)
+    return M.get_lock_dir() .. "/" .. port .. ".lock"
+end
+
 --- Generate random UUID for authentication
 ---@return string
 function M.generate_auth_token()
@@ -114,7 +121,38 @@ function M.create(port, auth_token)
     return true
 end
 
---- Remove lock file
+--- Read lock file content
+---@param port number
+---@return table|nil lock_data
+function M.read(port)
+    if not port or type(port) ~= "number" then
+        return nil
+    end
+
+    local lock_path = M.get_lock_path(port)
+
+    if vim.fn.filereadable(lock_path) == 0 then
+        return nil
+    end
+
+    local file = io.open(lock_path, "r")
+    if not file then
+        return nil
+    end
+
+    local content = file:read("*a")
+    file:close()
+
+    local ok, data = pcall(vim.json.decode, content)
+    if not ok then
+        logger.error("Failed to parse lock file: " .. tostring(data))
+        return nil
+    end
+
+    return data
+end
+
+--- Remove lock file (alias for delete)
 ---@param port number
 ---@return boolean success
 ---@return string|nil error_message
@@ -139,6 +177,9 @@ function M.remove(port)
 
     return true
 end
+
+--- Delete lock file (alias for remove)
+M.delete = M.remove
 
 --- Update lock file
 ---@param port number

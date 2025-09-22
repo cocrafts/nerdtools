@@ -67,8 +67,10 @@ function M.handle_notification(message)
 
     logger.debug("Handling notification: " .. method)
 
-    if method == "notifications/initialized" then
+    if method == "initialized" then
         logger.info("Client initialized")
+    elseif method == "notifications/initialized" then
+        logger.info("Client initialized (notifications format)")
     else
         logger.debug("Unknown notification: " .. method)
     end
@@ -121,13 +123,29 @@ end
 ---@param params table
 ---@return table
 function M.handle_tools_call(id, params)
+    if not params or not params.name then
+        return M.create_error_response(id, -32602, "Invalid params", "Missing tool name")
+    end
+
     local tool_name = params.name
     local tool_args = params.arguments or {}
 
     logger.debug("Calling tool: " .. tool_name)
 
-    -- Execute tool
-    local success, result = tools.execute(tool_name, tool_args)
+    -- Check if tools module is available
+    if not tools or not tools.execute then
+        logger.error("Tools module not available or missing execute function")
+        return M.create_error_response(id, -32500, "Internal error", "Tools module not available")
+    end
+
+    -- Execute tool with error protection
+    local ok, success, result = pcall(tools.execute, tool_name, tool_args)
+
+    if not ok then
+        -- Error calling tools.execute
+        logger.error("Error executing tool: " .. tostring(success))
+        return M.create_error_response(id, -32603, "Internal error", tostring(success))
+    end
 
     if success then
         return {
