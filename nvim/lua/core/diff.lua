@@ -1,6 +1,9 @@
 local M = {}
 local icons = require("utils.icons")
 
+-- Set diff filler characters globally to use diagonal lines
+vim.opt.fillchars:append("diff:╱")
+
 M.configureDiffview = function()
 	require("diffview").setup({
 		enhanced_diff_hl = true,

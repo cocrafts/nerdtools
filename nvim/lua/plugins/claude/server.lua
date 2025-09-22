@@ -202,8 +202,38 @@ function M.handle_message(client_id, message)
 
     -- Schedule handling in main thread to avoid fast event context issues
     vim.schedule(function()
-        -- Handle message with error protection
-        local ok, response = pcall(protocol.handle_message, message)
+        -- Log ALL incoming methods for debugging
+        if message.method then
+            vim.notify(string.format("[Claude IDE] Method: %s", message.method), vim.log.levels.DEBUG)
+        end
+
+        -- Log tools/call requests specifically with higher visibility
+        if message.method == "tools/call" and message.params then
+            vim.notify(string.format("[Claude IDE] TOOL CALL: %s", message.params.name or "unknown"), vim.log.levels.WARN)
+            if message.params.name == "openFile" and message.params.arguments then
+                vim.notify(string.format("[Claude IDE] Opening: %s",
+                    message.params.arguments.filePath or "none"), vim.log.levels.WARN)
+            elseif message.params.name == "openDiff" and message.params.arguments then
+                vim.notify(string.format("[Claude IDE] DIFF: %s | Tab: %s",
+                    message.params.arguments.old_file_path or "none",
+                    message.params.arguments.tab_name or "NO_TAB_NAME"), vim.log.levels.WARN)
+            elseif message.params.name == "closeTab" and message.params.arguments then
+                vim.notify(string.format("[Claude IDE] CLOSE TAB RECEIVED: %s",
+                    message.params.arguments.tab_name or "none"), vim.log.levels.ERROR)
+            end
+        end
+
+        -- Log ALL messages including notifications
+        if message.method then
+            if message.method:match("^notifications/") then
+                vim.notify(string.format("[Claude IDE] NOTIFICATION: %s", message.method), vim.log.levels.WARN)
+            elseif message.method == "editDecision" then
+                vim.notify(string.format("[Claude IDE] EDIT DECISION: %s",
+                    vim.inspect(message.params or {})), vim.log.levels.ERROR)
+            end
+        end
+        -- Handle message with error protection (pass client_id for deferred responses)
+        local ok, response = pcall(protocol.handle_message, message, client_id)
 
         if not ok then
             logger.error("Error handling message: " .. tostring(response))
@@ -233,13 +263,16 @@ end
 --- Send message to specific client
 ---@param client_id string
 ---@param message table
+---@return boolean success
 function M.send_to_client(client_id, message)
     local client_data = state.clients[client_id]
     if not client_data or not client_data.tcp then
+        logger.error(string.format("send_to_client: No valid client data for ID: %s", client_id))
         return false
     end
 
     local json = vim.json.encode(message)
+    logger.info(string.format("send_to_client: Sending to %s: %s", client_id, vim.inspect(message)))
 
     if client_data.is_websocket then
         -- Wrap in WebSocket frame
@@ -248,20 +281,33 @@ function M.send_to_client(client_id, message)
             opcode = frame.OPCODE.TEXT,
             payload = json,
         })
-        client_data.tcp:write(frame_data)
+        local ok, err = pcall(function()
+            client_data.tcp:write(frame_data)
+        end)
+        if not ok then
+            logger.error(string.format("Failed to write to client %s: %s", client_id, err))
+            return false
+        end
+        logger.debug(string.format("Successfully sent WebSocket frame to client %s", client_id))
     else
         -- Plain TCP (shouldn't happen with Claude)
         client_data.tcp:write(json .. "\n")
     end
-
     return true
 end
 
 --- Broadcast message to all connected clients
 ---@param message table
 function M.broadcast(message)
+    logger.info(string.format("Broadcasting message: %s", message.method or "unknown"))
+    local count = 0
     for client_id, _ in pairs(state.clients) do
         M.send_to_client(client_id, message)
+        count = count + 1
+    end
+    logger.info(string.format("Broadcasted to %d clients", count))
+    if count == 0 then
+        vim.notify("[Claude IDE] No clients connected to broadcast to!", vim.log.levels.WARN)
     end
 end
 

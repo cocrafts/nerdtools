@@ -36,6 +36,12 @@ highlight.gui = {
 	SpecialKey = { fg = colors.gray }, -- whitespaces
 	Whitespace = { fg = colors.gray }, -- whitespaces
 	Search = { fg = colors.darkest, bg = colors.blue },
+
+	-- Diff highlights
+	DiffAdd = { bg = "#20303b" },
+	DiffDelete = { bg = "#37222c", fg = "#5a4a53" },
+	DiffChange = { bg = "#1f2231" },
+	DiffText = { bg = "#394b70" },
 }
 
 highlight.hi = {

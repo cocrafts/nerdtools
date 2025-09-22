@@ -9,6 +9,17 @@ local logger = require("plugins.claude.logger")
 ---@return table
 function M.get_tool_list()
     return {
+        -- closeAllDiffTabs tool (Claude Code sends this after accepting/rejecting)
+        {
+            name = "closeAllDiffTabs",
+            description = "Close all diff tabs",
+            inputSchema = {
+                type = "object",
+                properties = {},
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
         -- openFile tool
         {
             name = "openFile",
@@ -90,6 +101,55 @@ function M.get_tool_list()
                 ["$schema"] = "http://json-schema.org/draft-07/schema#",
             },
         },
+
+        -- closeTab tool (for closing diff tabs when rejected)
+        {
+            name = "closeTab",
+            description = "Close a tab by name",
+            inputSchema = {
+                type = "object",
+                properties = {
+                    tab_name = {
+                        type = "string",
+                        description = "Name of the tab to close",
+                    },
+                },
+                required = { "tab_name" },
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
+
+        -- openDiff tool
+        {
+            name = "openDiff",
+            description = "Open a diff view comparing old file content with new file content",
+            inputSchema = {
+                type = "object",
+                properties = {
+                    old_file_path = {
+                        type = "string",
+                        description = "Path to the old file to compare",
+                    },
+                    new_file_path = {
+                        type = "string",
+                        description = "Path to the new file to compare",
+                    },
+                    new_file_contents = {
+                        type = "string",
+                        description = "Contents for the new file version",
+                    },
+                    tab_name = {
+                        type = "string",
+                        description = "Name for the diff tab/view",
+                    },
+                },
+                required = { "old_file_path", "new_file_path", "new_file_contents", "tab_name" },
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
+
         -- getDiagnostics tool
         {
             name = "getDiagnostics",
@@ -119,6 +179,12 @@ function M.execute(name, args)
 
     if name == "openFile" then
         return M.execute_open_file(args)
+    elseif name == "openDiff" then
+        return M.execute_open_diff(args)
+    elseif name == "closeTab" then
+        return M.execute_close_tab(args)
+    elseif name == "closeAllDiffTabs" then
+        return M.execute_close_all_diff_tabs(args)
     elseif name == "getCurrentSelection" then
         return M.execute_get_current_selection(args)
     elseif name == "getOpenEditors" then
@@ -156,12 +222,10 @@ local function find_main_editor_window()
         end
 
         -- Skip known sidebar filetypes
-        if is_suitable and (
-            filetype == "neo-tree" or
-            filetype == "NvimTree" or
-            filetype == "oil" or
-            filetype == "minifiles"
-        ) then
+        if
+            is_suitable
+            and (filetype == "neo-tree" or filetype == "NvimTree" or filetype == "oil" or filetype == "minifiles")
+        then
             is_suitable = false
         end
 
@@ -171,6 +235,160 @@ local function find_main_editor_window()
     end
 
     return nil
+end
+
+--- Execute closeTab tool
+---@param args table
+---@return boolean success
+---@return table result
+function M.execute_close_tab(args)
+    if not args.tab_name then
+        return false, "Missing tab_name parameter"
+    end
+
+    vim.notify(string.format("[Claude IDE] CloseTab called with: %s", args.tab_name), vim.log.levels.WARN)
+    logger.info(string.format("CloseTab called with: %s", args.tab_name))
+
+    -- Try to close diff using the new function that handles tab names with markers
+    local diffview = require("plugins.claude.diffview")
+    local closed = diffview.close_diff_by_tab_name(args.tab_name)
+
+    if closed then
+        vim.notify(string.format("[Claude IDE] Successfully closed diff tab: %s", args.tab_name), vim.log.levels.INFO)
+        logger.info(string.format("Successfully closed diff tab: %s", args.tab_name))
+    else
+        vim.notify(string.format("[Claude IDE] Diff not found or already closed: %s", args.tab_name), vim.log.levels.WARN)
+        logger.debug(string.format("Diff not found or already closed: %s", args.tab_name))
+    end
+
+    return true,
+        {
+            content = {
+                {
+                    type = "text",
+                    text = "TAB_CLOSED", -- Match claudecode.nvim's response
+                },
+            },
+        }
+end
+
+--- Execute closeAllDiffTabs tool
+---@param args table
+---@return boolean success
+---@return table result
+function M.execute_close_all_diff_tabs(args)
+    vim.notify("[Claude IDE] closeAllDiffTabs called", vim.log.levels.INFO)
+    logger.info("closeAllDiffTabs called")
+
+    -- Close all diff tabs more carefully
+    local tabpages = vim.api.nvim_list_tabpages()
+
+    -- Find a tab without diffs to keep open
+    local safe_tab = nil
+    for _, tabpage in ipairs(tabpages) do
+        local has_diff = false
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
+            local buf = vim.api.nvim_win_get_buf(win)
+            local buf_name = vim.api.nvim_buf_get_name(buf)
+            if buf_name:match("%(Claude's suggestion%)") or
+               vim.api.nvim_buf_get_option(buf, "diff") then
+                has_diff = true
+                break
+            end
+        end
+        if not has_diff then
+            safe_tab = tabpage
+            break
+        end
+    end
+
+    -- Go to safe tab or first tab, then close all others
+    if safe_tab then
+        vim.api.nvim_set_current_tabpage(safe_tab)
+    else
+        vim.cmd("tabnext 1")
+    end
+
+    if #tabpages > 1 then
+        vim.cmd("tabonly")
+    end
+
+    local diffview = require("plugins.claude.diffview")
+
+    -- Clear all active diffs from tracking
+    local active_diffs = diffview.get_active_diffs and diffview.get_active_diffs() or {}
+    for tab_name, diff in pairs(active_diffs) do
+        if diff.temp_file then
+            vim.fn.delete(diff.temp_file)
+        end
+        active_diffs[tab_name] = nil
+    end
+
+    -- Now clean up any lingering suggestion buffers
+    local buffers_deleted = 0
+    for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_valid(buf) then
+            local buf_name = vim.api.nvim_buf_get_name(buf)
+            -- Match the exact format: "filename (Claude's suggestion)" or temp files
+            if buf_name:match("%(Claude's suggestion%)") or
+               buf_name:match("claude_diff") or
+               (buf_name:match("/tmp/") and buf_name:match("claude")) then
+                pcall(vim.cmd, string.format("silent! bwipeout! %d", buf))
+                buffers_deleted = buffers_deleted + 1
+            end
+        end
+    end
+
+    -- Turn off diff mode in any remaining windows
+    for _, win in ipairs(vim.api.nvim_list_wins()) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_get_option(buf, "diff") then
+            vim.api.nvim_win_call(win, function()
+                vim.cmd("diffoff")
+            end)
+        end
+    end
+
+    vim.notify(string.format("[Claude IDE] Closed %d windows and deleted %d buffers", windows_closed, buffers_deleted), vim.log.levels.INFO)
+
+    return true,
+        {
+            content = {
+                {
+                    type = "text",
+                    text = "ALL_DIFF_TABS_CLOSED",
+                },
+            },
+        }
+end
+
+--- Execute openDiff tool
+---@param args table
+---@return boolean success
+---@return table result
+function M.execute_open_diff(args)
+    -- Validate required parameters
+    if not args.old_file_path or not args.new_file_path or not args.new_file_contents or not args.tab_name then
+        return false, "Missing required parameters for openDiff"
+    end
+
+    local diffview = require("plugins.claude.diffview")
+    local success, err =
+        diffview.open_diff(args.old_file_path, args.new_file_path, args.new_file_contents, args.tab_name)
+
+    if success then
+        return true,
+            {
+                content = {
+                    {
+                        type = "text",
+                        text = string.format("Diff opened for %s", args.old_file_path),
+                    },
+                },
+            }
+    else
+        return false, err or "Failed to open diff"
+    end
 end
 
 --- Execute openFile tool
@@ -267,7 +485,7 @@ function M.execute_open_file(args)
         -- File was opened, create simplified success response
         return true, {
             success = true,
-            message = message
+            message = message,
         }
     end
 
@@ -279,7 +497,7 @@ function M.execute_open_file(args)
         success = true,
         message = message,
         content = content,
-        filePath = file_path
+        filePath = file_path,
     }
 end
 
@@ -294,7 +512,7 @@ function M.execute_get_current_selection(args)
         -- No selection
         return true, {
             text = "",
-            isEmpty = true
+            isEmpty = true,
         }
     end
 
@@ -312,15 +530,16 @@ function M.execute_get_current_selection(args)
 
     local file_path = vim.api.nvim_buf_get_name(0)
 
-    return true, {
-        text = text,
-        filePath = file_path,
-        selection = {
-            start = { line = start_line - 1, character = start_col - 1 },
-            ["end"] = { line = end_line - 1, character = end_col - 1 },
-            isEmpty = false
+    return true,
+        {
+            text = text,
+            filePath = file_path,
+            selection = {
+                start = { line = start_line - 1, character = start_col - 1 },
+                ["end"] = { line = end_line - 1, character = end_col - 1 },
+                isEmpty = false,
+            },
         }
-    }
 end
 
 --- Execute getOpenEditors tool
@@ -350,7 +569,7 @@ function M.execute_get_open_editors(args)
     end
 
     return true, {
-        editors = tabs
+        editors = tabs,
     }
 end
 
@@ -380,7 +599,7 @@ function M.execute_get_workspace_folders(args)
     end
 
     return true, {
-        folders = folders
+        folders = folders,
     }
 end
 
@@ -389,75 +608,75 @@ end
 ---@return boolean success
 ---@return table result
 function M.execute_get_diagnostics(args)
-    local diagnostics_by_file = {}
+    -- Check if diagnostics are available
+    if not vim.diagnostic or not vim.diagnostic.get then
+        return false, "Diagnostics not available"
+    end
+
+    local diagnostics
+    local bufnr_to_check = nil
 
     if args.uri then
         -- Get diagnostics for specific file
         local file_path = args.uri:gsub("^file://", "")
-        local bufnr = vim.fn.bufnr(file_path)
 
-        if bufnr ~= -1 then
-            local diagnostics = vim.diagnostic.get(bufnr)
-            local formatted = {}
+        -- Try different methods to find the buffer
+        bufnr_to_check = vim.fn.bufnr(file_path)
 
-            for _, diag in ipairs(diagnostics) do
-                table.insert(formatted, {
-                    message = diag.message,
-                    severity = vim.diagnostic.severity[diag.severity],
-                    range = {
-                        start = { line = diag.lnum, character = diag.col },
-                        ["end"] = { line = diag.end_lnum or diag.lnum, character = diag.end_col or diag.col },
-                    },
-                    source = diag.source,
-                })
-            end
-
-            diagnostics_by_file[file_path] = {
-                uri = args.uri,
-                diagnostics = formatted,
-            }
+        -- If not found with full path, try expanding it
+        if bufnr_to_check == -1 then
+            file_path = vim.fn.expand(file_path)
+            bufnr_to_check = vim.fn.bufnr(file_path)
         end
-    else
-        -- Get all diagnostics
-        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-            if vim.api.nvim_buf_is_loaded(buf) then
-                local file_path = vim.api.nvim_buf_get_name(buf)
-                if file_path ~= "" then
-                    local diagnostics = vim.diagnostic.get(buf)
-                    if #diagnostics > 0 then
-                        local formatted = {}
 
-                        for _, diag in ipairs(diagnostics) do
-                            table.insert(formatted, {
-                                message = diag.message,
-                                severity = vim.diagnostic.severity[diag.severity],
-                                range = {
-                                    start = { line = diag.lnum, character = diag.col },
-                                    ["end"] = { line = diag.end_lnum or diag.lnum, character = diag.end_col or diag.col },
-                                },
-                                source = diag.source,
-                            })
-                        end
-
-                        table.insert(diagnostics_by_file, {
-                            uri = "file://" .. file_path,
-                            diagnostics = formatted,
-                        })
-                    end
+        -- If still not found, check all buffers for a matching name
+        if bufnr_to_check == -1 then
+            for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+                local buf_name = vim.api.nvim_buf_get_name(buf)
+                if buf_name == file_path or buf_name:match(file_path .. "$") then
+                    bufnr_to_check = buf
+                    break
                 end
             end
         end
+
+        if bufnr_to_check == -1 or not vim.api.nvim_buf_is_valid(bufnr_to_check) then
+            -- File not open, return empty content
+            return true, {
+                content = {},
+            }
+        end
+
+        diagnostics = vim.diagnostic.get(bufnr_to_check)
+    else
+        -- Get all diagnostics
+        diagnostics = vim.diagnostic.get(nil)
     end
 
-    -- Return diagnostics in the expected format
-    if #diagnostics_by_file > 0 then
-        return true, diagnostics_by_file[1] -- Return the first file's diagnostics
-    else
-        return true, {
-            uri = args.uri or "",
-            diagnostics = {}
-        }
+    -- Format diagnostics in MCP content format (matching claudecode.nvim)
+    local formatted_content = {}
+    for _, diag in ipairs(diagnostics) do
+        local file_path = vim.api.nvim_buf_get_name(diag.bufnr)
+        if file_path and file_path ~= "" then
+            table.insert(formatted_content, {
+                type = "text",
+                text = vim.json.encode({
+                    filePath = file_path,
+                    -- Convert to 1-indexed for Claude (Neovim uses 0-indexed)
+                    line = diag.lnum + 1,
+                    character = diag.col + 1,
+                    severity = diag.severity,
+                    message = diag.message,
+                    source = diag.source,
+                }),
+            })
+        end
     end
+
+    return true, {
+        content = formatted_content,
+    }
 end
 
 return M
+

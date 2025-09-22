@@ -64,6 +64,52 @@ function M.setup()
         server.stop()
         vim.notify("Claude IDE server stopped", vim.log.levels.INFO)
     end, { desc = "Stop Claude IDE server" })
+
+
+    -- :ClaudeAdd - Send at_mention for current file or specified file
+    vim.api.nvim_create_user_command("ClaudeAdd", function(opts)
+        local file_path = opts.args ~= "" and opts.args or vim.api.nvim_buf_get_name(0)
+
+        if file_path == "" then
+            vim.notify("No file specified", vim.log.levels.ERROR)
+            return
+        end
+
+        -- Get file content
+        local lines = {}
+        if vim.fn.filereadable(file_path) == 1 then
+            lines = vim.fn.readfile(file_path)
+        else
+            vim.notify("File not found: " .. file_path, vim.log.levels.ERROR)
+            return
+        end
+
+        local content = table.concat(lines, "\n")
+
+        -- Send at_mentioned notification
+        local params = {
+            filePath = file_path,
+            content = content,
+        }
+
+        -- Add line range if visual selection is active
+        if opts.range and opts.range > 0 then
+            params.lineStart = opts.line1 - 1  -- Convert to 0-indexed
+            params.lineEnd = opts.line2 - 1
+        end
+
+        local success = server.send_at_mention(params)
+        if success then
+            vim.notify("Sent @mention for: " .. file_path, vim.log.levels.INFO)
+        else
+            vim.notify("Failed to send @mention", vim.log.levels.ERROR)
+        end
+    end, {
+        desc = "Send at_mention notification for file to Claude",
+        nargs = "?",
+        range = true,
+        complete = "file"
+    })
 end
 
 return M

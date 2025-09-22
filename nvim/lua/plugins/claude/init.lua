@@ -68,6 +68,8 @@ function M.setup(opts)
     -- Setup user commands
     require("plugins.claude.commands").setup()
 
+    -- Note: Polling not needed - tools execute directly like claudecode.nvim
+
     -- Notify if we reused a port (Claude Code might reconnect)
     local lock_data = lockfile.read(result)
     if lock_data and vim.env.CLAUDE_CODE_SSE_PORT then
@@ -86,6 +88,7 @@ function M.stop()
 
         -- Stop buffer tracking
         buffer.stop_tracking()
+
 
         -- Stop server
         server.stop()
