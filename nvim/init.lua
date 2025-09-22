@@ -6,4 +6,4 @@ require("core").initialize()
 require("themes")
 
 -- Setup Claude integration (needs to run early for lock file)
-require("core.claude").setup()
+-- require("core.claude").setup()

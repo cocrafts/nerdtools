@@ -430,4 +430,36 @@ return {
 			require("core.surround").configure()
 		end,
 	},
+	{
+		"claude-ide",
+		name = "claude-ide",
+		dir = vim.fn.stdpath("config") .. "/lua/plugins/claude",
+		lazy = false, -- Load immediately
+		priority = 100, -- Load early
+		config = function()
+			local claude = require("plugins.claude")
+
+			-- Setup Claude IDE
+			local success, err = claude.setup({
+				log_level = vim.log.levels.INFO,
+				port_min = 10000,
+				port_max = 65535,
+			})
+
+			if not success then
+				vim.notify("Failed to start Claude IDE: " .. (err or "unknown error"), vim.log.levels.ERROR)
+				return
+			end
+
+			-- Create user commands
+			claude.create_commands()
+
+			-- Show startup message
+			local status = claude.get_status()
+			vim.notify(
+				string.format("Claude IDE started on port %d\nUse :ClaudeStatus to check connection", status.port),
+				vim.log.levels.INFO
+			)
+		end,
+	},
 }
