@@ -403,6 +403,21 @@ function M.accept_diff(tab_name)
     end
     --]]
 
+    -- Reload the buffer after Claude Code applies the changes
+    vim.defer_fn(function()
+        -- Find the buffer for the original file and reload it
+        if diff.old_file then
+            local bufnr = vim.fn.bufnr(diff.old_file)
+            if bufnr ~= -1 then
+                vim.api.nvim_buf_call(bufnr, function()
+                    vim.cmd("checktime")
+                    vim.cmd("e")
+                end)
+                vim.notify("Buffer reloaded after accepting changes", vim.log.levels.INFO)
+            end
+        end
+    end, 500) -- Small delay to let Claude Code apply the changes
+
     -- Clean up the diff view with a small delay to ensure response is sent first
     vim.defer_fn(function()
         -- Close diffview if open

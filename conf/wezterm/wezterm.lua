@@ -73,7 +73,7 @@ config.keys = {
 		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
 			if pane:is_alt_screen_active() then -- detect application like Vim
-				window:perform_action(act.SendKey({ key = "l", mods = "CTRL" }), pane)
+				window:perform_action(act.Multiple({ act.SendKey({ key = " " }), act.SendKey({ key = "K" }) }), pane)
 			else
 				window:perform_action(act.ClearScrollback("ScrollbackAndViewport"), pane)
 			end
