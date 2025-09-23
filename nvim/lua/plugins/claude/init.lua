@@ -8,11 +8,12 @@
 local M = {}
 
 -- Module components
-local lockfile = require("plugins.claude.lockfile")
-local server = require("plugins.claude.server")
-local logger = require("plugins.claude.logger")
-local selection = require("plugins.claude.selection")
 local buffer = require("plugins.claude.buffer")
+local lockfile = require("plugins.claude.lockfile")
+local logger = require("plugins.claude.logger")
+local prompt = require("plugins.claude.prompt")
+local selection = require("plugins.claude.selection")
+local server = require("plugins.claude.server")
 
 -- Module state
 ---@type table
@@ -67,6 +68,14 @@ function M.setup(opts)
     -- Setup user commands
     require("plugins.claude.commands").setup()
 
+    -- Setup prompt module
+    prompt.setup()
+
+    -- Setup keybinding for <leader>ai
+    vim.keymap.set({ "n", "v" }, "<leader>ai", function()
+        prompt.open_prompt()
+    end, { desc = "Open Claude prompt" })
+
     -- Note: Polling not needed - tools execute directly like claudecode.nvim
 
     return true
@@ -80,7 +89,6 @@ function M.stop()
 
         -- Stop buffer tracking
         buffer.stop_tracking()
-
 
         -- Stop server
         server.stop()
@@ -237,3 +245,4 @@ function M.create_commands()
 end
 
 return M
+
