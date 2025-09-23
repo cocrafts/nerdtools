@@ -65,6 +65,32 @@ function M.setup()
         vim.notify("Claude IDE server stopped", vim.log.levels.INFO)
     end, { desc = "Stop Claude IDE server" })
 
+    -- :ClaudeLogLevel - Set log level
+    vim.api.nvim_create_user_command("ClaudeLogLevel", function(opts)
+        local logger = require("plugins.claude.logger")
+        local level = opts.args:upper()
+
+        local levels = {
+            DEBUG = vim.log.levels.DEBUG,
+            INFO = vim.log.levels.INFO,
+            WARN = vim.log.levels.WARN,
+            ERROR = vim.log.levels.ERROR,
+        }
+
+        if levels[level] then
+            logger.set_level(levels[level])
+            vim.notify(string.format("Claude IDE log level set to %s", level), vim.log.levels.INFO)
+        else
+            vim.notify("Invalid log level. Use: DEBUG, INFO, WARN, or ERROR", vim.log.levels.ERROR)
+        end
+    end, {
+        desc = "Set Claude IDE log level (DEBUG, INFO, WARN, ERROR)",
+        nargs = 1,
+        complete = function()
+            return { "DEBUG", "INFO", "WARN", "ERROR" }
+        end
+    })
+
 
     -- :ClaudeAdd - Send at_mention for current file or specified file
     vim.api.nvim_create_user_command("ClaudeAdd", function(opts)

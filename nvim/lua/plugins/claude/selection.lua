@@ -28,7 +28,7 @@ function M.enable(srv)
     state.tracking_enabled = true
     server = srv
     M._create_autocommands()
-    logger.debug("Selection tracking enabled")
+    -- Selection tracking enabled
 end
 
 --- Disable selection tracking
@@ -56,7 +56,7 @@ function M.disable()
     state.last_active_visual_selection = nil
     server = nil
 
-    logger.debug("Selection tracking disabled")
+    -- Selection tracking disabled
 end
 
 --- Create autocommands for tracking
@@ -386,11 +386,7 @@ function M.send_selection_update(selection)
 
     if server and server.send_selection_changed then
         server.send_selection_changed(selection)
-        logger.debug(string.format(
-            "Selection updated: %s (%s)",
-            selection.filePath,
-            selection.selection.isEmpty and "cursor" or #selection.text .. " chars"
-        ))
+        -- Selection updated
     end
 end
 
@@ -408,7 +404,7 @@ function M.setup(srv)
         M.enable(srv)
     else
         -- Just create the module structure, enable will be called later
-        logger.debug("Selection module initialized (not enabled)")
+        -- Selection module initialized
     end
 end
 

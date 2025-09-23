@@ -20,6 +20,75 @@ function M.get_tool_list()
                 ["$schema"] = "http://json-schema.org/draft-07/schema#",
             },
         },
+        -- gotoDefinition tool
+        {
+            name = "gotoDefinition",
+            description = "Jump to the definition of a symbol",
+            inputSchema = {
+                type = "object",
+                properties = {
+                    symbol = {
+                        type = "string",
+                        description = "Optional: Symbol to find definition for (uses word under cursor if not provided)",
+                    },
+                },
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
+        -- findReferences tool
+        {
+            name = "findReferences",
+            description = "Find all references to a symbol",
+            inputSchema = {
+                type = "object",
+                properties = {
+                    symbol = {
+                        type = "string",
+                        description = "Optional: Symbol to find references for (uses word under cursor if not provided)",
+                    },
+                },
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
+        -- getSymbolContext tool
+        {
+            name = "getSymbolContext",
+            description = "Get comprehensive context about a symbol including definition, references, and type info",
+            inputSchema = {
+                type = "object",
+                properties = {
+                    symbol = {
+                        type = "string",
+                        description = "Optional: Symbol to get context for (uses word under cursor if not provided)",
+                    },
+                },
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
+        -- renameSymbol tool
+        {
+            name = "renameSymbol",
+            description = "Rename a symbol across the entire codebase using LSP",
+            inputSchema = {
+                type = "object",
+                properties = {
+                    newName = {
+                        type = "string",
+                        description = "The new name for the symbol",
+                    },
+                    symbol = {
+                        type = "string",
+                        description = "Optional: Symbol to rename (uses word under cursor if not provided)",
+                    },
+                },
+                required = { "newName" },
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
         -- openFile tool
         {
             name = "openFile",
@@ -175,7 +244,7 @@ end
 ---@return boolean success
 ---@return table|string result_or_error
 function M.execute(name, args)
-    logger.debug("Executing tool: " .. name)
+    -- Executing tool
 
     if name == "openFile" then
         return M.execute_open_file(args)
@@ -193,6 +262,14 @@ function M.execute(name, args)
         return M.execute_get_workspace_folders(args)
     elseif name == "getDiagnostics" then
         return M.execute_get_diagnostics(args)
+    elseif name == "gotoDefinition" then
+        return M.execute_goto_definition(args)
+    elseif name == "findReferences" then
+        return M.execute_find_references(args)
+    elseif name == "getSymbolContext" then
+        return M.execute_get_symbol_context(args)
+    elseif name == "renameSymbol" then
+        return M.execute_rename_symbol(args)
     else
         return false, "Unknown tool: " .. name
     end
@@ -246,19 +323,20 @@ function M.execute_close_tab(args)
         return false, "Missing tab_name parameter"
     end
 
-    vim.notify(string.format("[Claude IDE] CloseTab called with: %s", args.tab_name), vim.log.levels.WARN)
-    logger.info(string.format("CloseTab called with: %s", args.tab_name))
+    -- CloseTab called
 
     -- Try to close diff using the new function that handles tab names with markers
     local diffview = require("plugins.claude.diffview")
     local closed = diffview.close_diff_by_tab_name(args.tab_name)
 
     if closed then
-        vim.notify(string.format("[Claude IDE] Successfully closed diff tab: %s", args.tab_name), vim.log.levels.INFO)
-        logger.info(string.format("Successfully closed diff tab: %s", args.tab_name))
+        -- Successfully closed diff tab
     else
-        vim.notify(string.format("[Claude IDE] Diff not found or already closed: %s", args.tab_name), vim.log.levels.WARN)
-        logger.debug(string.format("Diff not found or already closed: %s", args.tab_name))
+        vim.notify(
+            string.format("[Claude IDE] Diff not found or already closed: %s", args.tab_name),
+            vim.log.levels.WARN
+        )
+        -- Diff not found or already closed
     end
 
     return true,
@@ -277,8 +355,7 @@ end
 ---@return boolean success
 ---@return table result
 function M.execute_close_all_diff_tabs(args)
-    vim.notify("[Claude IDE] closeAllDiffTabs called", vim.log.levels.INFO)
-    logger.info("closeAllDiffTabs called")
+    -- closeAllDiffTabs called
 
     -- Close all diff tabs more carefully
     local tabpages = vim.api.nvim_list_tabpages()
@@ -290,8 +367,7 @@ function M.execute_close_all_diff_tabs(args)
         for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tabpage)) do
             local buf = vim.api.nvim_win_get_buf(win)
             local buf_name = vim.api.nvim_buf_get_name(buf)
-            if buf_name:match("%(Claude's suggestion%)") or
-               vim.api.nvim_buf_get_option(buf, "diff") then
+            if buf_name:match("%(Claude's suggestion%)") or vim.api.nvim_buf_get_option(buf, "diff") then
                 has_diff = true
                 break
             end
@@ -330,9 +406,11 @@ function M.execute_close_all_diff_tabs(args)
         if vim.api.nvim_buf_is_valid(buf) then
             local buf_name = vim.api.nvim_buf_get_name(buf)
             -- Match the exact format: "filename (Claude's suggestion)" or temp files
-            if buf_name:match("%(Claude's suggestion%)") or
-               buf_name:match("claude_diff") or
-               (buf_name:match("/tmp/") and buf_name:match("claude")) then
+            if
+                buf_name:match("%(Claude's suggestion%)")
+                or buf_name:match("claude_diff")
+                or (buf_name:match("/tmp/") and buf_name:match("claude"))
+            then
                 pcall(vim.cmd, string.format("silent! bwipeout! %d", buf))
                 buffers_deleted = buffers_deleted + 1
             end
@@ -349,17 +427,19 @@ function M.execute_close_all_diff_tabs(args)
         end
     end
 
-    vim.notify(string.format("[Claude IDE] Closed %d windows and deleted %d buffers", windows_closed, buffers_deleted), vim.log.levels.INFO)
+    vim.notify(
+        string.format("[Claude IDE] Deleted %d buffers", buffers_deleted),
+        vim.log.levels.INFO
+    )
 
-    return true,
-        {
-            content = {
-                {
-                    type = "text",
-                    text = "ALL_DIFF_TABS_CLOSED",
-                },
+    return true, {
+        content = {
+            {
+                type = "text",
+                text = "ALL_DIFF_TABS_CLOSED",
             },
-        }
+        },
+    }
 end
 
 --- Execute openDiff tool
@@ -472,7 +552,7 @@ function M.execute_open_file(args)
             end
         end
 
-        logger.info(message)
+        -- Info logged
     end)
 
     if not ok then
@@ -678,5 +758,182 @@ function M.execute_get_diagnostics(args)
     }
 end
 
-return M
+--- Execute gotoDefinition tool
+---@param args table
+---@return boolean success
+---@return table result
+function M.execute_goto_definition(args)
+    local navigation = require("plugins.claude.navigation")
 
+    -- If symbol is provided, try to search for it first
+    if args.symbol then
+        -- TODO: Implement symbol search before goto definition
+        -- Looking for definition
+    end
+
+    local def = navigation.goto_definition()
+
+    if def then
+        return true,
+            {
+                content = {
+                    {
+                        type = "text",
+                        text = string.format("Jumped to definition at %s:%d:%d", def.file, def.line, def.col),
+                    },
+                },
+            }
+    else
+        return false, "No definition found"
+    end
+end
+
+--- Execute findReferences tool
+---@param args table
+---@return boolean success
+---@return table result
+function M.execute_find_references(args)
+    local navigation = require("plugins.claude.navigation")
+
+    -- If symbol is provided, try to search for it first
+    if args.symbol then
+        -- Finding references
+    end
+
+    local refs = navigation.find_references()
+
+    if refs then
+        -- Format references for Claude
+        local formatted_refs = {}
+        for _, ref in ipairs(refs) do
+            table.insert(formatted_refs, {
+                type = "text",
+                text = string.format("%s:%d:%d - %s", ref.file, ref.line, ref.col, ref.text or ""),
+            })
+        end
+
+        return true, {
+            content = formatted_refs,
+            totalReferences = #refs,
+        }
+    else
+        return false, "No references found"
+    end
+end
+
+--- Execute getSymbolContext tool
+---@param args table
+---@return boolean success
+---@return table result
+function M.execute_get_symbol_context(args)
+    local navigation = require("plugins.claude.navigation")
+
+    local context = navigation.get_symbol_context()
+
+    if context then
+        -- Format context for Claude
+        local formatted_content = {
+            {
+                type = "text",
+                text = string.format(
+                    "Symbol: %s\nCurrent location: %s:%d",
+                    context.symbol,
+                    context.current_file,
+                    context.current_line
+                ),
+            },
+        }
+
+        -- Add hover info if available
+        if context.hover_info then
+            table.insert(formatted_content, {
+                type = "text",
+                text = "Type info:\n" .. context.hover_info,
+            })
+        end
+
+        -- Add definition if found
+        if context.definition then
+            table.insert(formatted_content, {
+                type = "text",
+                text = string.format(
+                    "Definition at: %s:%d\n%s",
+                    context.definition.file,
+                    context.definition.line,
+                    context.definition.context or ""
+                ),
+            })
+        end
+
+        -- Add references summary
+        if context.references and #context.references > 0 then
+            local ref_summary = string.format("Found %d references:", context.total_references or #context.references)
+            for i, ref in ipairs(context.references) do
+                if i <= 5 then -- Show first 5 references
+                    ref_summary = ref_summary .. string.format("\n  %s:%d - %s", ref.file, ref.line, ref.text or "")
+                end
+            end
+            if context.total_references > 5 then
+                ref_summary = ref_summary .. string.format("\n  ... and %d more", context.total_references - 5)
+            end
+
+            table.insert(formatted_content, {
+                type = "text",
+                text = ref_summary,
+            })
+        end
+
+        return true, {
+            content = formatted_content,
+        }
+    else
+        return false, "No symbol context available"
+    end
+end
+
+--- Execute renameSymbol tool
+---@param args table
+---@return boolean success
+---@return table result
+function M.execute_rename_symbol(args)
+    local navigation = require("plugins.claude.navigation")
+
+    -- Check required parameter
+    if not args.newName then
+        return false, "Missing required parameter: newName"
+    end
+
+    -- If symbol is provided, we'd need to position cursor on it first
+    if args.symbol then
+        -- Renaming symbol
+        -- TODO: Implement symbol search to position cursor
+    end
+
+    local result = navigation.rename_symbol(args.newName)
+
+    if result then
+        return true,
+            {
+                content = {
+                    {
+                        type = "text",
+                        text = string.format(
+                            "Successfully renamed '%s' to '%s': %d changes in %d files",
+                            result.old_name,
+                            result.new_name,
+                            result.total_changes,
+                            result.file_count
+                        ),
+                    },
+                },
+                oldName = result.old_name,
+                newName = result.new_name,
+                fileCount = result.file_count,
+                totalChanges = result.total_changes,
+            }
+    else
+        return false, "Failed to rename symbol"
+    end
+end
+
+return M

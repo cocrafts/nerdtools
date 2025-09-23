@@ -98,12 +98,7 @@ local function send_buffer_update(bufnr)
         },
     })
 
-    logger.debug(string.format(
-        "Buffer updated: %s (version %d, %d lines)",
-        vim.fn.fnamemodify(info.filepath, ":t"),
-        info.version,
-        info.lineCount
-    ))
+    -- Buffer updated
 end
 
 --- Debounced buffer update
@@ -183,7 +178,7 @@ local function on_buffer_open(bufnr)
         },
     })
 
-    logger.debug("Buffer opened: " .. filepath)
+    -- Buffer opened
 end
 
 --- Handle buffer close event
@@ -214,7 +209,7 @@ local function on_buffer_close(bufnr)
         },
     })
 
-    logger.debug("Buffer closed: " .. filepath)
+    -- Buffer closed
 end
 
 --- Setup buffer tracking
@@ -263,7 +258,7 @@ function M.setup_tracking(srv)
         end
     end)
 
-    logger.debug("Buffer tracking initialized with smart debouncing")
+    -- Buffer tracking initialized
 end
 
 --- Stop buffer tracking
@@ -285,7 +280,8 @@ function M.stop_tracking()
     state.pending_updates = {}
     server = nil
 
-    logger.debug("Buffer tracking stopped")
+    -- Buffer tracking stopped
 end
 
 return M
+

@@ -195,7 +195,7 @@ end
 function M.accept_diff(tab_name)
     local diff = active_diffs[tab_name]
     if not diff then
-        vim.notify("[Claude IDE] No active diff found", vim.log.levels.WARN)
+        -- No active diff found
         return
     end
 
@@ -211,7 +211,7 @@ function M.accept_diff(tab_name)
     vim.cmd("only")
 
     active_diffs[tab_name] = nil
-    vim.notify("[Claude IDE] Changes accepted and saved", vim.log.levels.INFO)
+    -- Changes accepted and saved
 end
 
 --- Accept new file creation
@@ -219,7 +219,7 @@ end
 function M.accept_new_file(tab_name)
     local diff = active_diffs[tab_name]
     if not diff or not diff.is_new then
-        vim.notify("[Claude IDE] No new file diff found", vim.log.levels.WARN)
+        -- No new file diff found
         return
     end
 
@@ -227,7 +227,7 @@ function M.accept_new_file(tab_name)
     vim.cmd("write " .. vim.fn.fnameescape(diff.new_file))
 
     active_diffs[tab_name] = nil
-    vim.notify("[Claude IDE] New file created: " .. diff.new_file, vim.log.levels.INFO)
+    -- New file created
 end
 
 --- Reject diff changes
@@ -235,7 +235,7 @@ end
 function M.reject_diff(tab_name)
     local diff = active_diffs[tab_name]
     if not diff then
-        vim.notify("[Claude IDE] No active diff found", vim.log.levels.WARN)
+        -- No active diff found
         return
     end
 
@@ -249,7 +249,7 @@ function M.reject_diff(tab_name)
     end
 
     active_diffs[tab_name] = nil
-    vim.notify("[Claude IDE] Changes rejected", vim.log.levels.INFO)
+    -- Changes rejected
 end
 
 return M

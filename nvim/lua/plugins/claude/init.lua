@@ -32,7 +32,7 @@ function M.setup(opts)
     opts = opts or {}
 
     if M.state.initialized then
-        logger.debug("Claude IDE already initialized")
+        -- Already initialized
         return true
     end
 
@@ -59,7 +59,7 @@ function M.setup(opts)
     -- Setup autocmds
     M._setup_autocmds()
 
-    logger.info(string.format("Claude IDE started on port %d", result))
+    -- Started on port
 
     -- Set environment variables for Claude Code
     vim.env.CLAUDE_CODE_SSE_PORT = tostring(result)
@@ -73,8 +73,7 @@ function M.setup(opts)
     -- Notify if we reused a port (Claude Code might reconnect)
     local lock_data = lockfile.read(result)
     if lock_data and vim.env.CLAUDE_CODE_SSE_PORT then
-        vim.notify("Claude IDE ready on port " .. result, vim.log.levels.INFO)
-        vim.notify("Use :ClaudeStatus to check connection", vim.log.levels.INFO)
+        -- Ready on port, status command available
     end
 
     return true
@@ -107,7 +106,7 @@ function M.stop()
         vim.env.CLAUDE_CODE_SSE_PORT = nil
         vim.env.ENABLE_IDE_INTEGRATION = nil
 
-        logger.info("Claude IDE stopped")
+        -- Stopped
     end
 end
 
@@ -174,7 +173,7 @@ function M._setup_autocmds()
                 local filepath = vim.api.nvim_buf_get_name(args.buf)
                 if filepath ~= "" then
                     -- Future: send buffer content update
-                    logger.debug("Buffer saved: " .. filepath)
+                    -- Buffer saved
                 end
             end
         end,

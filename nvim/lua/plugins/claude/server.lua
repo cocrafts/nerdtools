@@ -95,11 +95,11 @@ local function handle_client(client)
         is_websocket = false,
     }
 
-    logger.debug("Client connected: " .. client_id)
+    -- Client connection logged
 
     client:read_start(function(err, data)
         if err then
-            logger.error("Read error: " .. err)
+            -- Read error logged
             M.disconnect_client(client_id)
             return
         end
@@ -132,10 +132,10 @@ local function handle_client(client)
                     client:write(response)
                     client_data.handshake_complete = true
                     client_data.is_websocket = true
-                    logger.info("WebSocket handshake complete for " .. client_id)
+                    -- Handshake complete
                 else
                     -- Log the error
-                    logger.error("WebSocket handshake failed: " .. response:match("([^\r\n]+)$"))
+                    -- Handshake failed
                     -- Send error and close
                     client:write(response)
                     vim.defer_fn(function()
@@ -174,7 +174,7 @@ function M.process_websocket_data(client_id)
             if ok then
                 M.handle_message(client_id, message)
             else
-                logger.error("Failed to parse JSON: " .. frame_data.payload)
+                -- JSON parse error
             end
 
         elseif frame_data.opcode == frame.OPCODE.CLOSE then
@@ -197,46 +197,20 @@ end
 ---@param client_id string
 ---@param message table
 function M.handle_message(client_id, message)
-    logger.debug("MCP message from " .. client_id .. ": " .. (message.method or "response"))
-    logger.debug("Full message: " .. vim.inspect(message))
+    -- Debug logging removed
 
     -- Schedule handling in main thread to avoid fast event context issues
     vim.schedule(function()
-        -- Log ALL incoming methods for debugging
-        if message.method then
-            vim.notify(string.format("[Claude IDE] Method: %s", message.method), vim.log.levels.DEBUG)
-        end
+        -- Debug logging removed
 
-        -- Log tools/call requests specifically with higher visibility
-        if message.method == "tools/call" and message.params then
-            vim.notify(string.format("[Claude IDE] TOOL CALL: %s", message.params.name or "unknown"), vim.log.levels.WARN)
-            if message.params.name == "openFile" and message.params.arguments then
-                vim.notify(string.format("[Claude IDE] Opening: %s",
-                    message.params.arguments.filePath or "none"), vim.log.levels.WARN)
-            elseif message.params.name == "openDiff" and message.params.arguments then
-                vim.notify(string.format("[Claude IDE] DIFF: %s | Tab: %s",
-                    message.params.arguments.old_file_path or "none",
-                    message.params.arguments.tab_name or "NO_TAB_NAME"), vim.log.levels.WARN)
-            elseif message.params.name == "closeTab" and message.params.arguments then
-                vim.notify(string.format("[Claude IDE] CLOSE TAB RECEIVED: %s",
-                    message.params.arguments.tab_name or "none"), vim.log.levels.ERROR)
-            end
-        end
+        -- Tool call logging removed
 
-        -- Log ALL messages including notifications
-        if message.method then
-            if message.method:match("^notifications/") then
-                vim.notify(string.format("[Claude IDE] NOTIFICATION: %s", message.method), vim.log.levels.WARN)
-            elseif message.method == "editDecision" then
-                vim.notify(string.format("[Claude IDE] EDIT DECISION: %s",
-                    vim.inspect(message.params or {})), vim.log.levels.ERROR)
-            end
-        end
+        -- Notification logging removed
         -- Handle message with error protection (pass client_id for deferred responses)
         local ok, response = pcall(protocol.handle_message, message, client_id)
 
         if not ok then
-            logger.error("Error handling message: " .. tostring(response))
+            -- Message handling error
             -- Send error response if we have a message id
             if message.id then
                 local error_response = {
@@ -254,7 +228,7 @@ function M.handle_message(client_id, message)
         end
 
         if response then
-            logger.debug("Sending MCP response for: " .. (message.method or "unknown"))
+            -- Sending MCP response
             M.send_to_client(client_id, response)
         end
     end)
@@ -267,12 +241,12 @@ end
 function M.send_to_client(client_id, message)
     local client_data = state.clients[client_id]
     if not client_data or not client_data.tcp then
-        logger.error(string.format("send_to_client: No valid client data for ID: %s", client_id))
+        -- Invalid client data
         return false
     end
 
     local json = vim.json.encode(message)
-    logger.info(string.format("send_to_client: Sending to %s: %s", client_id, vim.inspect(message)))
+    -- Sending to client
 
     if client_data.is_websocket then
         -- Wrap in WebSocket frame
@@ -285,10 +259,10 @@ function M.send_to_client(client_id, message)
             client_data.tcp:write(frame_data)
         end)
         if not ok then
-            logger.error(string.format("Failed to write to client %s: %s", client_id, err))
+            -- Write failed
             return false
         end
-        logger.debug(string.format("Successfully sent WebSocket frame to client %s", client_id))
+        -- Frame sent
     else
         -- Plain TCP (shouldn't happen with Claude)
         client_data.tcp:write(json .. "\n")
@@ -299,15 +273,15 @@ end
 --- Broadcast message to all connected clients
 ---@param message table
 function M.broadcast(message)
-    logger.info(string.format("Broadcasting message: %s", message.method or "unknown"))
+    -- Broadcasting message
     local count = 0
     for client_id, _ in pairs(state.clients) do
         M.send_to_client(client_id, message)
         count = count + 1
     end
-    logger.info(string.format("Broadcasted to %d clients", count))
+    -- Broadcasted to clients
     if count == 0 then
-        vim.notify("[Claude IDE] No clients connected to broadcast to!", vim.log.levels.WARN)
+        -- No clients connected
     end
 end
 
@@ -348,7 +322,7 @@ function M.disconnect_client(client_id)
             client_data.tcp:close()
         end
         state.clients[client_id] = nil
-        logger.debug("Client disconnected: " .. client_id)
+        -- Client disconnected
     end
 end
 
@@ -399,7 +373,7 @@ function M.start(opts)
                     if same_workspace then
                         -- ALWAYS preserve the auth token for the same workspace
                         workspace_auth_token = lock_data.authToken
-                        logger.info("Found existing auth token for workspace: " .. string.sub(workspace_auth_token, 1, 8) .. "...")
+                        -- Found existing auth token
 
                         local is_running = false
                         if lock_data.pid then
@@ -418,16 +392,16 @@ function M.start(opts)
                                 if success then
                                     port = check_port
                                     auth_token = workspace_auth_token
-                                    logger.info("Reusing port " .. port .. " AND auth token for workspace: " .. current_workspace)
+                                    -- Reusing port and auth token
                                     -- Clean up old lock file (will be recreated)
                                     lockfile.delete(port)
                                     break
                                 else
-                                    logger.info("Port " .. check_port .. " unavailable, but keeping auth token for workspace")
+                                    -- Port unavailable, keeping auth token
                                 end
                             end
                         else
-                            logger.info("Process still running on port " .. check_port .. ", but keeping auth token for reference")
+                            -- Process running, keeping auth token
                         end
                     end
                 end
@@ -452,7 +426,7 @@ function M.start(opts)
                                 if success then
                                     port = check_port
                                     auth_token = lock_data.authToken
-                                    logger.info("Reusing port " .. port .. " from dead session")
+                                    -- Reusing port from dead session
                                     lockfile.delete(port)
                                     break
                                 end
@@ -472,7 +446,7 @@ function M.start(opts)
 
         -- Generate a deterministic preferred port based on workspace
         local preferred_port = workspace_to_port(current_workspace, min_port, max_port)
-        logger.debug("Preferred port for workspace '" .. current_workspace .. "': " .. preferred_port)
+        -- Preferred port calculated
 
         port = find_available_port(min_port, max_port, preferred_port)
         if not port then
@@ -480,9 +454,9 @@ function M.start(opts)
         end
 
         if port == preferred_port then
-            logger.info("Using preferred port " .. port .. " for workspace")
+            -- Using preferred port
         else
-            logger.info("Preferred port " .. preferred_port .. " unavailable, using " .. port)
+            -- Preferred port unavailable
         end
     end
 
@@ -494,14 +468,14 @@ function M.start(opts)
     if auth_token then
         state.auth_token = auth_token
         auth_reused = true
-        logger.info("Using auth token from reused port")
+        -- Using auth token from reused port
     elseif workspace_auth_token then
         state.auth_token = workspace_auth_token
         auth_reused = true
-        logger.info("Using preserved auth token from workspace")
+        -- Using preserved auth token
     else
         state.auth_token = lockfile.generate_auth_token()
-        logger.info("Generated new auth token")
+        -- Generated new auth token
     end
     state.auth_reused = auth_reused
 
@@ -522,7 +496,7 @@ function M.start(opts)
     -- Start listening
     state.server:listen(128, function(err)
         if err then
-            logger.error("Listen error: " .. err)
+            -- Listen error
             return
         end
 
@@ -535,13 +509,13 @@ function M.start(opts)
     state.running = true
 
     -- Create lock file
-    logger.info("Creating lock file for port " .. port .. " with auth token: " .. (state.auth_token and string.sub(state.auth_token, 1, 8) .. "..." or "nil"))
+    -- Creating lock file
     local lock_success, lock_err = lockfile.create(port, state.auth_token)
     if not lock_success then
-        logger.error("Failed to create lock file: " .. (lock_err or "unknown error"))
+        -- Failed to create lock file
         vim.notify("Failed to create Claude IDE lock file: " .. (lock_err or "unknown error"), vim.log.levels.ERROR)
     else
-        logger.info("Lock file created successfully for port " .. port)
+        -- Lock file created
         local lock_path = lockfile.get_lock_path(port)
         -- Check if we're reusing auth token
         if state.auth_reused then
@@ -552,7 +526,7 @@ function M.start(opts)
         end
     end
 
-    logger.info(string.format("WebSocket server started on port %d", port))
+    -- WebSocket server started
 
     -- Start ping timer to keep connections alive
     M.start_ping_timer()
@@ -618,7 +592,7 @@ function M.stop()
 
     state.auth_token = nil
 
-    logger.info("Server stopped")
+    -- Server stopped
 end
 
 --- Check if connected

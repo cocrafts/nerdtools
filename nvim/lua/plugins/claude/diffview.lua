@@ -164,14 +164,14 @@ function M.open_diffview(old_file_path, new_file_path, new_file_contents, tab_na
         vim.api.nvim_buf_set_keymap(
             0,
             "n",
-            "<leader>ao",
+            "<leader>au",
             string.format(":lua require('plugins.claude.diffview').accept_diff('%s')<CR>", tab_name),
             { silent = true, desc = "Accept Claude's changes" }
         )
         vim.api.nvim_buf_set_keymap(
             0,
             "n",
-            "<leader>au",
+            "<leader>ao",
             string.format(":lua require('plugins.claude.diffview').reject_diff('%s')<CR>", tab_name),
             { silent = true, desc = "Reject Claude's changes" }
         )
@@ -182,14 +182,14 @@ function M.open_diffview(old_file_path, new_file_path, new_file_contents, tab_na
             vim.api.nvim_buf_set_keymap(
                 orig_buf,
                 "n",
-                "<leader>ao",
+                "<leader>au",
                 string.format(":lua require('plugins.claude.diffview').accept_diff('%s')<CR>", tab_name),
                 { silent = true, desc = "Accept Claude's changes" }
             )
             vim.api.nvim_buf_set_keymap(
                 orig_buf,
                 "n",
-                "<leader>au",
+                "<leader>ao",
                 string.format(":lua require('plugins.claude.diffview').reject_diff('%s')<CR>", tab_name),
                 { silent = true, desc = "Reject Claude's changes" }
             )
@@ -215,7 +215,7 @@ function M.open_diffview(old_file_path, new_file_path, new_file_contents, tab_na
             group = autocmd_group,
             buffer = new_buf,
             callback = function()
-                vim.notify(string.format("[Claude IDE] Save autocmd triggered for: %s", tab_name), vim.log.levels.WARN)
+                -- Save autocmd triggered
                 if active_diffs[tab_name] and active_diffs[tab_name].status == "pending" then
                     M.accept_diff(tab_name)
                 end
@@ -373,7 +373,7 @@ end
 function M.accept_diff(tab_name)
     local diff = active_diffs[tab_name]
     if not diff then
-        vim.notify("[Claude IDE] No active diff found", vim.log.levels.WARN)
+        -- No active diff
         return
     end
 
@@ -474,11 +474,11 @@ function M.accept_diff(tab_name)
             vim.fn.delete(diff.temp_file)
         end
 
-        vim.notify("[Claude IDE] Diff view closed", vim.log.levels.DEBUG)
+        -- Diff closed
     end, 100) -- 100ms delay to ensure response is sent
 
     active_diffs[tab_name] = nil
-    vim.notify("[Claude IDE] Changes accepted", vim.log.levels.INFO)
+    -- Changes accepted
 end
 
 --- Accept new file
@@ -486,7 +486,7 @@ end
 function M.accept_new_file(tab_name)
     local diff = active_diffs[tab_name]
     if not diff or not diff.is_new then
-        vim.notify("[Claude IDE] No new file diff found", vim.log.levels.WARN)
+        -- No new file diff
         return
     end
 
@@ -503,7 +503,7 @@ function M.accept_new_file(tab_name)
     end)
 
     active_diffs[tab_name] = nil
-    vim.notify("[Claude IDE] Changes accepted - Claude Code will apply them", vim.log.levels.INFO)
+    -- Changes accepted for Claude Code
 end
 
 --- Reject diff
@@ -511,7 +511,7 @@ end
 function M.reject_diff(tab_name)
     local diff = active_diffs[tab_name]
     if not diff then
-        vim.notify("[Claude IDE] No active diff found", vim.log.levels.WARN)
+        -- No active diff
         return
     end
 
@@ -591,11 +591,11 @@ function M.reject_diff(tab_name)
             vim.fn.delete(diff.temp_file)
         end
 
-        vim.notify("[Claude IDE] Diff view closed", vim.log.levels.DEBUG)
+        -- Diff closed
     end, 100) -- 100ms delay to ensure response is sent
 
     active_diffs[tab_name] = nil
-    vim.notify("[Claude IDE] Changes rejected", vim.log.levels.INFO)
+    -- Changes rejected
 end
 
 --- Get active diffs (for closeAllDiffTabs)
@@ -608,7 +608,7 @@ end
 ---@param tab_name string
 ---@return boolean success
 function M.close_diff_by_tab_name(tab_name)
-    vim.notify(string.format("[Claude IDE] close_diff_by_tab_name called with: %s", tab_name), vim.log.levels.WARN)
+    -- Closing diff by tab name
     logger.info(string.format("close_diff_by_tab_name called with: %s", tab_name))
 
     -- Debug: Show all active diffs
@@ -634,7 +634,7 @@ function M.close_diff_by_tab_name(tab_name)
                 and vim.fn.fnamemodify(tab_name, ":t") == vim.fn.fnamemodify(stored_name, ":t")
             )
         then
-            vim.notify(string.format("[Claude IDE] Found matching diff, closing: %s", stored_name), vim.log.levels.INFO)
+            -- Found matching diff
             logger.info(string.format("Found matching diff, rejecting: %s", stored_name))
             -- Avoid double notification by marking as already handled
             if diff.status == "pending" then
@@ -655,7 +655,7 @@ function M.close_diff_by_tab_name(tab_name)
                     end
                 end
                 active_diffs[stored_name] = nil
-                vim.notify("[Claude IDE] Diff closed by Claude Code", vim.log.levels.INFO)
+                -- Diff closed by Claude Code
             else
                 vim.notify(
                     string.format("[Claude IDE] Diff status not pending: %s", diff.status or "nil"),
@@ -666,7 +666,7 @@ function M.close_diff_by_tab_name(tab_name)
         end
     end
 
-    vim.notify(string.format("[Claude IDE] No matching diff found for tab_name: %s", tab_name), vim.log.levels.WARN)
+    -- No matching diff found
     logger.warn(string.format("No matching diff found for tab_name: %s", tab_name))
     return false
 end
@@ -705,7 +705,7 @@ function M.open_diff(old_file_path, new_file_path, new_file_contents, tab_name)
     -- Fallback to native diff
     local ok, success, err = pcall(M.open_native_diff, old_file_path, new_file_path, new_file_contents, tab_name)
     if not ok then
-        vim.notify(string.format("[Claude IDE] Error in open_native_diff: %s", tostring(success)), vim.log.levels.ERROR)
+        -- Error in open_native_diff
         return false, tostring(success)
     end
     return success, err
@@ -772,4 +772,3 @@ function M.open_diff_blocking(old_file_path, new_file_path, new_file_contents, t
 end
 
 return M
-

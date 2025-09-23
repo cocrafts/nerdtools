@@ -439,12 +439,12 @@ return {
 		config = function()
 			local claude = require("plugins.claude")
 
-			-- Setup Claude IDE with debug logging temporarily
+			-- Setup Claude IDE
 			local success, err = claude.setup({
-				log_level = vim.log.levels.INFO, -- Reduced back to INFO
 				port_min = 10000,
 				port_max = 65535,
-				reuse_port = true, -- Set to false to disable port reuse for testing
+				reuse_port = true,
+				log_level = vim.log.levels.ERROR, -- Only show errors by default
 			})
 
 			if not success then
@@ -454,13 +454,6 @@ return {
 
 			-- Create user commands
 			claude.create_commands()
-
-			-- Show startup message
-			local status = claude.get_status()
-			vim.notify(
-				string.format("Claude IDE started on port %d\nUse :ClaudeStatus to check connection", status.port),
-				vim.log.levels.INFO
-			)
 		end,
 	},
 }

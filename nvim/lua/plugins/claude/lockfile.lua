@@ -116,7 +116,7 @@ function M.create(port, auth_token)
     file:write(json)
     file:close()
 
-    logger.debug("Created lock file: " .. lock_path)
+    -- Created lock file
 
     return true
 end
@@ -145,7 +145,7 @@ function M.read(port)
 
     local ok, data = pcall(vim.json.decode, content)
     if not ok then
-        logger.error("Failed to parse lock file: " .. tostring(data))
+        -- Failed to parse lock file
         return nil
     end
 
@@ -173,7 +173,7 @@ function M.remove(port)
         return false, "Failed to remove lock file: " .. (err or "unknown error")
     end
 
-    logger.debug("Removed lock file: " .. lock_path)
+    -- Removed lock file
 
     return true
 end

@@ -27,7 +27,7 @@ function M.handle_message(message, client_id)
     -- Log all incoming methods for debugging
     if message.method then
         vim.schedule(function()
-            vim.notify(string.format("[Claude IDE] Received: %s", message.method), vim.log.levels.DEBUG)
+            -- Received method
 
             -- Special logging for tools/call
             if message.method == "tools/call" and message.params then
@@ -66,7 +66,7 @@ function M.handle_request(message, client_id)
     local params = message.params or {}
     local id = message.id
 
-    logger.debug("Handling request: " .. method)
+    -- Handling request
 
     -- Route to appropriate handler
     if method == "initialize" then
@@ -94,14 +94,14 @@ function M.handle_notification(message)
     local method = message.method
     local params = message.params or {}
 
-    logger.debug("Handling notification: " .. method)
+    -- Handling notification
 
     if method == "initialized" then
-        logger.info("Client initialized")
+        -- Client initialized
     elseif method == "notifications/initialized" then
-        logger.info("Client initialized (notifications format)")
+        -- Client initialized (notifications format)
     else
-        logger.debug("Unknown notification: " .. method)
+        -- Unknown notification
     end
 end
 
@@ -160,17 +160,17 @@ function M.handle_tools_call(id, params, client_id)
     local tool_name = params.name
     local tool_args = params.arguments or {}
 
-    logger.debug("Calling tool: " .. tool_name)
+    -- Calling tool
 
     -- Check if tools module is available
     if not tools or not tools.execute then
-        logger.error("Tools module not available or missing execute function")
+        -- Tools module error
         return M.create_error_response(id, -32500, "Internal error", "Tools module not available")
     end
 
     -- Special handling for openDiff - it's a blocking operation
     if tool_name == "openDiff" then
-        logger.info(string.format("OpenDiff blocking - storing response ID: %s", tostring(id)))
+        -- OpenDiff blocking, storing response
 
         -- Store the message ID and client info for deferred response
         M.pending_responses[tool_args.tab_name or "default"] = {
@@ -202,7 +202,7 @@ function M.handle_tools_call(id, params, client_id)
 
     if not ok then
         -- Error calling tools.execute
-        logger.error("Error executing tool: " .. tostring(success))
+        -- Error executing tool
         return M.create_error_response(id, -32603, "Internal error", tostring(success))
     end
 
@@ -308,7 +308,7 @@ end
 function M.send_initialized_event(client)
     -- This would be sent after successful handshake
     -- For now, just log it
-    logger.debug("Would send initialized event")
+    -- Would send initialized event
 end
 
 --- Create notification message
@@ -330,7 +330,7 @@ end
 function M.send_diff_response(tab_name, decision, content)
     local pending = M.pending_responses[tab_name]
     if not pending then
-        logger.warn(string.format("No pending response for tab: %s", tab_name))
+        -- No pending response for tab
         return
     end
 
@@ -374,7 +374,7 @@ function M.send_diff_response(tab_name, decision, content)
 
     -- Clear the pending response
     M.pending_responses[tab_name] = nil
-    logger.info(string.format("Deferred response sent for: %s", tab_name))
+    -- Deferred response sent
 end
 
 return M

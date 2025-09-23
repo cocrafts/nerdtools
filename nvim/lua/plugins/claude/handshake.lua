@@ -45,7 +45,7 @@ function M.validate_upgrade_request(request, expected_auth_token)
 
         -- Only reject if auth header is present but incorrect
         if auth_header and auth_header ~= expected_auth_token then
-            logger.warn("Auth token mismatch: expected " .. expected_auth_token .. ", got " .. auth_header)
+            -- Auth token mismatch
             return false, "Invalid authentication token"
         end
     end
