@@ -3,7 +3,6 @@
 
 local M = {}
 
-local logger = require("plugins.claude.logger")
 local lockfile = require("plugins.claude.lockfile")
 local handshake = require("plugins.claude.handshake")
 local protocol = require("plugins.claude.protocol")

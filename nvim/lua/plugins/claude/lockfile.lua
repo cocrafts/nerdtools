@@ -3,8 +3,6 @@
 
 local M = {}
 
-local logger = require("plugins.claude.logger")
-
 --- Get lock directory path
 ---@return string
 function M.get_lock_dir()
@@ -192,34 +190,5 @@ function M.update(port, auth_token)
 end
 
 --- Read lock file
----@param port number
----@return table|nil lock_data
-function M.read(port)
-    if not port or type(port) ~= "number" then
-        return nil
-    end
-
-    local lock_dir = M.get_lock_dir()
-    local lock_path = lock_dir .. "/" .. port .. ".lock"
-
-    if vim.fn.filereadable(lock_path) == 0 then
-        return nil
-    end
-
-    local file = io.open(lock_path, "r")
-    if not file then
-        return nil
-    end
-
-    local content = file:read("*all")
-    file:close()
-
-    local ok, lock_data = pcall(vim.json.decode, content)
-    if not ok then
-        return nil
-    end
-
-    return lock_data
-end
 
 return M

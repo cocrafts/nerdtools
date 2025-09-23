@@ -3,8 +3,6 @@
 
 local M = {}
 
-local logger = require("plugins.claude.logger")
-
 --- Get list of available tools
 ---@return table
 function M.get_tool_list()
@@ -16,75 +14,6 @@ function M.get_tool_list()
             inputSchema = {
                 type = "object",
                 properties = {},
-                additionalProperties = false,
-                ["$schema"] = "http://json-schema.org/draft-07/schema#",
-            },
-        },
-        -- gotoDefinition tool
-        {
-            name = "gotoDefinition",
-            description = "Jump to the definition of a symbol",
-            inputSchema = {
-                type = "object",
-                properties = {
-                    symbol = {
-                        type = "string",
-                        description = "Optional: Symbol to find definition for (uses word under cursor if not provided)",
-                    },
-                },
-                additionalProperties = false,
-                ["$schema"] = "http://json-schema.org/draft-07/schema#",
-            },
-        },
-        -- findReferences tool
-        {
-            name = "findReferences",
-            description = "Find all references to a symbol",
-            inputSchema = {
-                type = "object",
-                properties = {
-                    symbol = {
-                        type = "string",
-                        description = "Optional: Symbol to find references for (uses word under cursor if not provided)",
-                    },
-                },
-                additionalProperties = false,
-                ["$schema"] = "http://json-schema.org/draft-07/schema#",
-            },
-        },
-        -- getSymbolContext tool
-        {
-            name = "getSymbolContext",
-            description = "Get comprehensive context about a symbol including definition, references, and type info",
-            inputSchema = {
-                type = "object",
-                properties = {
-                    symbol = {
-                        type = "string",
-                        description = "Optional: Symbol to get context for (uses word under cursor if not provided)",
-                    },
-                },
-                additionalProperties = false,
-                ["$schema"] = "http://json-schema.org/draft-07/schema#",
-            },
-        },
-        -- renameSymbol tool
-        {
-            name = "renameSymbol",
-            description = "Rename a symbol across the entire codebase using LSP",
-            inputSchema = {
-                type = "object",
-                properties = {
-                    newName = {
-                        type = "string",
-                        description = "The new name for the symbol",
-                    },
-                    symbol = {
-                        type = "string",
-                        description = "Optional: Symbol to rename (uses word under cursor if not provided)",
-                    },
-                },
-                required = { "newName" },
                 additionalProperties = false,
                 ["$schema"] = "http://json-schema.org/draft-07/schema#",
             },
@@ -235,6 +164,51 @@ function M.get_tool_list()
                 ["$schema"] = "http://json-schema.org/draft-07/schema#",
             },
         },
+        -- checkDocumentDirty tool
+        {
+            name = "checkDocumentDirty",
+            description = "Check if a document has unsaved changes (is dirty)",
+            inputSchema = {
+                type = "object",
+                properties = {
+                    filePath = {
+                        type = "string",
+                        description = "Path to the file to check",
+                    },
+                },
+                required = { "filePath" },
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
+        -- saveDocument tool
+        {
+            name = "saveDocument",
+            description = "Save a document with unsaved changes",
+            inputSchema = {
+                type = "object",
+                properties = {
+                    filePath = {
+                        type = "string",
+                        description = "Path to the file to save",
+                    },
+                },
+                required = { "filePath" },
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
+        -- getLatestSelection tool
+        {
+            name = "getLatestSelection",
+            description = "Get the most recent text selection (even if not in the active editor)",
+            inputSchema = {
+                type = "object",
+                properties = vim.empty_dict(),
+                additionalProperties = false,
+                ["$schema"] = "http://json-schema.org/draft-07/schema#",
+            },
+        },
     }
 end
 
@@ -262,14 +236,12 @@ function M.execute(name, args)
         return M.execute_get_workspace_folders(args)
     elseif name == "getDiagnostics" then
         return M.execute_get_diagnostics(args)
-    elseif name == "gotoDefinition" then
-        return M.execute_goto_definition(args)
-    elseif name == "findReferences" then
-        return M.execute_find_references(args)
-    elseif name == "getSymbolContext" then
-        return M.execute_get_symbol_context(args)
-    elseif name == "renameSymbol" then
-        return M.execute_rename_symbol(args)
+    elseif name == "checkDocumentDirty" then
+        return M.execute_check_document_dirty(args)
+    elseif name == "saveDocument" then
+        return M.execute_save_document(args)
+    elseif name == "getLatestSelection" then
+        return M.execute_get_latest_selection(args)
     else
         return false, "Unknown tool: " .. name
     end
@@ -758,182 +730,142 @@ function M.execute_get_diagnostics(args)
     }
 end
 
---- Execute gotoDefinition tool
+--- Execute checkDocumentDirty tool
 ---@param args table
 ---@return boolean success
 ---@return table result
-function M.execute_goto_definition(args)
-    local navigation = require("plugins.claude.navigation")
-
-    -- If symbol is provided, try to search for it first
-    if args.symbol then
-        -- TODO: Implement symbol search before goto definition
-        -- Looking for definition
+function M.execute_check_document_dirty(args)
+    if not args.filePath then
+        return false, "Missing required parameter: filePath"
     end
 
-    local def = navigation.goto_definition()
+    local file_path = vim.fn.expand(args.filePath)
+    local bufnr = vim.fn.bufnr(file_path)
 
-    if def then
-        return true,
-            {
-                content = {
-                    {
-                        type = "text",
-                        text = string.format("Jumped to definition at %s:%d:%d", def.file, def.line, def.col),
-                    },
-                },
-            }
-    else
-        return false, "No definition found"
-    end
-end
-
---- Execute findReferences tool
----@param args table
----@return boolean success
----@return table result
-function M.execute_find_references(args)
-    local navigation = require("plugins.claude.navigation")
-
-    -- If symbol is provided, try to search for it first
-    if args.symbol then
-        -- Finding references
-    end
-
-    local refs = navigation.find_references()
-
-    if refs then
-        -- Format references for Claude
-        local formatted_refs = {}
-        for _, ref in ipairs(refs) do
-            table.insert(formatted_refs, {
-                type = "text",
-                text = string.format("%s:%d:%d - %s", ref.file, ref.line, ref.col, ref.text or ""),
-            })
-        end
-
+    if bufnr == -1 then
+        -- Document not open
         return true, {
-            content = formatted_refs,
-            totalReferences = #refs,
-        }
-    else
-        return false, "No references found"
-    end
-end
-
---- Execute getSymbolContext tool
----@param args table
----@return boolean success
----@return table result
-function M.execute_get_symbol_context(args)
-    local navigation = require("plugins.claude.navigation")
-
-    local context = navigation.get_symbol_context()
-
-    if context then
-        -- Format context for Claude
-        local formatted_content = {
-            {
-                type = "text",
-                text = string.format(
-                    "Symbol: %s\nCurrent location: %s:%d",
-                    context.symbol,
-                    context.current_file,
-                    context.current_line
-                ),
+            content = {
+                {
+                    type = "text",
+                    text = vim.json.encode({
+                        success = false,
+                        message = "Document not open: " .. file_path,
+                    }),
+                },
             },
         }
-
-        -- Add hover info if available
-        if context.hover_info then
-            table.insert(formatted_content, {
-                type = "text",
-                text = "Type info:\n" .. context.hover_info,
-            })
-        end
-
-        -- Add definition if found
-        if context.definition then
-            table.insert(formatted_content, {
-                type = "text",
-                text = string.format(
-                    "Definition at: %s:%d\n%s",
-                    context.definition.file,
-                    context.definition.line,
-                    context.definition.context or ""
-                ),
-            })
-        end
-
-        -- Add references summary
-        if context.references and #context.references > 0 then
-            local ref_summary = string.format("Found %d references:", context.total_references or #context.references)
-            for i, ref in ipairs(context.references) do
-                if i <= 5 then -- Show first 5 references
-                    ref_summary = ref_summary .. string.format("\n  %s:%d - %s", ref.file, ref.line, ref.text or "")
-                end
-            end
-            if context.total_references > 5 then
-                ref_summary = ref_summary .. string.format("\n  ... and %d more", context.total_references - 5)
-            end
-
-            table.insert(formatted_content, {
-                type = "text",
-                text = ref_summary,
-            })
-        end
-
-        return true, {
-            content = formatted_content,
-        }
-    else
-        return false, "No symbol context available"
     end
+
+    local is_dirty = vim.api.nvim_buf_get_option(bufnr, "modified")
+    local is_untitled = vim.api.nvim_buf_get_name(bufnr) == ""
+
+    return true, {
+        content = {
+            {
+                type = "text",
+                text = vim.json.encode({
+                    success = true,
+                    filePath = file_path,
+                    isDirty = is_dirty,
+                    isUntitled = is_untitled,
+                }),
+            },
+        },
+    }
 end
 
---- Execute renameSymbol tool
+--- Execute saveDocument tool
 ---@param args table
 ---@return boolean success
 ---@return table result
-function M.execute_rename_symbol(args)
-    local navigation = require("plugins.claude.navigation")
-
-    -- Check required parameter
-    if not args.newName then
-        return false, "Missing required parameter: newName"
+function M.execute_save_document(args)
+    if not args.filePath then
+        return false, "Missing required parameter: filePath"
     end
 
-    -- If symbol is provided, we'd need to position cursor on it first
-    if args.symbol then
-        -- Renaming symbol
-        -- TODO: Implement symbol search to position cursor
-    end
+    local file_path = vim.fn.expand(args.filePath)
+    local bufnr = vim.fn.bufnr(file_path)
 
-    local result = navigation.rename_symbol(args.newName)
-
-    if result then
-        return true,
-            {
-                content = {
-                    {
-                        type = "text",
-                        text = string.format(
-                            "Successfully renamed '%s' to '%s': %d changes in %d files",
-                            result.old_name,
-                            result.new_name,
-                            result.total_changes,
-                            result.file_count
-                        ),
-                    },
+    if bufnr == -1 then
+        -- Document not open
+        return true, {
+            content = {
+                {
+                    type = "text",
+                    text = vim.json.encode({
+                        success = false,
+                        message = "Document not open: " .. file_path,
+                    }),
                 },
-                oldName = result.old_name,
-                newName = result.new_name,
-                fileCount = result.file_count,
-                totalChanges = result.total_changes,
-            }
-    else
-        return false, "Failed to rename symbol"
+            },
+        }
     end
+
+    local success, err = pcall(vim.api.nvim_buf_call, bufnr, function()
+        vim.cmd("write")
+    end)
+
+    if not success then
+        return true, {
+            content = {
+                {
+                    type = "text",
+                    text = vim.json.encode({
+                        success = false,
+                        message = "Failed to save file: " .. tostring(err),
+                        filePath = file_path,
+                    }),
+                },
+            },
+        }
+    end
+
+    return true, {
+        content = {
+            {
+                type = "text",
+                text = vim.json.encode({
+                    success = true,
+                    filePath = file_path,
+                    saved = true,
+                    message = "Document saved successfully",
+                }),
+            },
+        },
+    }
+end
+
+--- Execute getLatestSelection tool
+---@param args table
+---@return boolean success
+---@return table result
+function M.execute_get_latest_selection(args)
+    local selection = require("plugins.claude.selection")
+    local latest = selection.get_latest_selection()
+
+    if not latest then
+        return true, {
+            content = {
+                {
+                    type = "text",
+                    text = vim.json.encode({
+                        success = false,
+                        message = "No selection available",
+                    }),
+                },
+            },
+        }
+    end
+
+    return true, {
+        content = {
+            {
+                type = "text",
+                text = vim.json.encode(latest),
+            },
+        },
+    }
 end
 
 return M

@@ -391,14 +391,12 @@ function M.accept_diff(tab_name)
         vim.cmd("silent! !cp " .. vim.fn.fnameescape(diff.temp_file) .. " " .. vim.fn.fnameescape(diff.old_file))
         vim.cmd("checktime")  -- Reload the file
         -- Send a different response indicating file was already updated
-        local protocol = require("plugins.claude.protocol")
-        protocol.send_diff_response(tab_name, "accepted_and_applied", diff.contents)
+            protocol.send_diff_response(tab_name, "accepted_and_applied", diff.contents)
     else
     --]]
 
     -- Option 2: Let Claude Code apply the changes (current default)
     -- Send deferred response to Claude Code (it will handle the file update)
-    local protocol = require("plugins.claude.protocol")
     protocol.send_diff_response(tab_name, "accepted", diff.contents)
 
     --[[
@@ -494,7 +492,6 @@ function M.accept_new_file(tab_name)
     -- vim.cmd("write " .. vim.fn.fnameescape(diff.new_file))
 
     -- Send deferred response to Claude Code (it will create the file)
-    local protocol = require("plugins.claude.protocol")
     protocol.send_diff_response(tab_name, "accepted", diff.contents)
 
     -- Clean up (Claude Code will create the file, we just close the preview)
@@ -519,7 +516,6 @@ function M.reject_diff(tab_name)
     diff.status = "rejected"
 
     -- Send deferred response to Claude Code
-    local protocol = require("plugins.claude.protocol")
     protocol.send_diff_response(tab_name, "rejected", nil)
 
     -- Clean up the diff view with a small delay to ensure response is sent first

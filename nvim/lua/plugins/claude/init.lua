@@ -12,7 +12,6 @@ local lockfile = require("plugins.claude.lockfile")
 local server = require("plugins.claude.server")
 local logger = require("plugins.claude.logger")
 local selection = require("plugins.claude.selection")
-local tools = require("plugins.claude.tools")
 local buffer = require("plugins.claude.buffer")
 
 -- Module state
@@ -69,12 +68,6 @@ function M.setup(opts)
     require("plugins.claude.commands").setup()
 
     -- Note: Polling not needed - tools execute directly like claudecode.nvim
-
-    -- Notify if we reused a port (Claude Code might reconnect)
-    local lock_data = lockfile.read(result)
-    if lock_data and vim.env.CLAUDE_CODE_SSE_PORT then
-        -- Ready on port, status command available
-    end
 
     return true
 end

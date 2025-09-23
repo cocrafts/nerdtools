@@ -3,7 +3,6 @@
 
 local M = {}
 
-local logger = require("plugins.claude.logger")
 local tools = require("plugins.claude.tools")
 
 --- MCP protocol version
@@ -91,18 +90,9 @@ end
 --- Handle JSON-RPC notification
 ---@param message table
 function M.handle_notification(message)
-    local method = message.method
-    local params = message.params or {}
-
-    -- Handling notification
-
-    if method == "initialized" then
-        -- Client initialized
-    elseif method == "notifications/initialized" then
-        -- Client initialized (notifications format)
-    else
-        -- Unknown notification
-    end
+    -- Currently no notifications require action
+    -- This function exists for protocol completeness
+    -- Claude Code may send "initialized" notifications which we can safely ignore
 end
 
 --- Handle initialize request

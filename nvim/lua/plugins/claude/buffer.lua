@@ -3,7 +3,6 @@
 
 local M = {}
 
-local logger = require("plugins.claude.logger")
 local server = nil -- Will be set during setup
 
 -- Buffer tracking state

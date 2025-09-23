@@ -3,7 +3,6 @@
 
 local M = {}
 
-local logger = require("plugins.claude.logger")
 local utils = require("plugins.claude.utils")
 
 --- Parse HTTP headers
