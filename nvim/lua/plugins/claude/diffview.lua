@@ -15,12 +15,6 @@ local autocmd_group = vim.api.nvim_create_augroup("ClaudeIDEDiff", { clear = tru
 -- Note: Removed notify_diff_decision as we now use protocol.send_diff_response
 -- which sends a proper JSON-RPC response instead of a notification
 
---- Check if diffview.nvim is available
----@return boolean
-local function has_diffview()
-	local ok, _ = pcall(require, "diffview")
-	return ok
-end
 
 --- Create a temporary file with content
 ---@param content string
@@ -53,22 +47,14 @@ local function get_extension(filepath)
 	return filepath:match("%.([^%.]+)$")
 end
 
---- Open diff using diffview.nvim
+--- Show native diff (main implementation)
 ---@param old_file_path string
 ---@param new_file_path string
 ---@param new_file_contents string
 ---@param tab_name string
 ---@return boolean success
 ---@return string|nil error
-function M.open_diffview(old_file_path, new_file_path, new_file_contents, tab_name)
-	if not has_diffview() then
-		logger.warn("diffview.nvim not available, falling back to native diff")
-		return false, "diffview.nvim not available"
-	end
-
-	local diffview = require("diffview")
-	local lib = require("diffview.lib")
-
+function M.show_native_diff(old_file_path, new_file_path, new_file_contents, tab_name)
 	-- Check if old file exists
 	local old_file_exists = vim.fn.filereadable(old_file_path) == 1
 
@@ -112,10 +98,7 @@ function M.open_diffview(old_file_path, new_file_path, new_file_contents, tab_na
 			group = autocmd_group,
 			buffer = new_buf,
 			callback = function()
-				vim.notify(
-					string.format("[Claude IDE] NEW FILE buffer close autocmd triggered for: %s", tab_name),
-					vim.log.levels.WARN
-				)
+				logger.debug(string.format("NEW FILE buffer close autocmd triggered for: %s", tab_name))
 				if active_diffs[tab_name] and active_diffs[tab_name].status == "pending" then
 					M.reject_diff(tab_name)
 				end
@@ -200,10 +183,7 @@ function M.open_diffview(old_file_path, new_file_path, new_file_contents, tab_na
 			group = autocmd_group,
 			buffer = new_buf,
 			callback = function()
-				vim.notify(
-					string.format("[Claude IDE] Buffer close autocmd triggered for: %s", tab_name),
-					vim.log.levels.WARN
-				)
+				logger.debug(string.format("Buffer close autocmd triggered for: %s", tab_name))
 				if active_diffs[tab_name] and active_diffs[tab_name].status == "pending" then
 					M.reject_diff(tab_name)
 				end
@@ -242,83 +222,6 @@ function M.open_diffview(old_file_path, new_file_path, new_file_contents, tab_na
 	return true
 end
 
---- Open diff using native Neovim (fallback)
----@param old_file_path string
----@param new_file_path string
----@param new_file_contents string
----@param tab_name string
----@return boolean success
----@return string|nil error
-function M.open_native_diff(old_file_path, new_file_path, new_file_contents, tab_name)
-	-- Check if old file exists
-	local old_file_exists = vim.fn.filereadable(old_file_path) == 1
-
-	if not old_file_exists then
-		-- New file creation
-		return M.create_new_file(new_file_path, new_file_contents, tab_name)
-	end
-
-	-- Create temp file with new contents
-	local ext = get_extension(old_file_path)
-	local temp_file = create_temp_file(new_file_contents, ext)
-
-	-- Store diff info
-	active_diffs[tab_name] = {
-		old_file = old_file_path,
-		new_file = new_file_path,
-		temp_file = temp_file,
-		contents = new_file_contents,
-	}
-
-	-- Open in new tab
-	vim.cmd("tabnew")
-
-	-- Open original file on the left
-	vim.cmd("edit " .. vim.fn.fnameescape(old_file_path))
-
-	-- Set diff filler characters globally to use diagonal lines
-	vim.opt.fillchars:append("diff:╱")
-
-	vim.cmd("diffthis")
-
-	-- Open new content on the right
-	vim.cmd("vnew " .. vim.fn.fnameescape(temp_file))
-	vim.api.nvim_buf_set_name(0, new_file_path .. " (Claude's suggestion)")
-
-	-- Copy filetype for syntax highlighting
-	local old_ft = vim.bo[vim.fn.bufnr(old_file_path)].filetype
-	if old_ft and old_ft ~= "" then
-		vim.bo.filetype = old_ft
-	end
-
-	vim.cmd("diffthis")
-	vim.cmd("wincmd =")
-
-	-- Add keymaps
-	local opts = { buffer = true, silent = true }
-	vim.keymap.set("n", "<leader>ao", function()
-		M.accept_diff(tab_name)
-	end, vim.tbl_extend("force", opts, { desc = "Accept Claude's changes" }))
-	vim.keymap.set("n", "<leader>au", function()
-		M.reject_diff(tab_name)
-	end, vim.tbl_extend("force", opts, { desc = "Reject Claude's changes" }))
-
-	vim.notify(
-		string.format("[Claude IDE] Diff opened. Accept: <leader>ao | Reject: <leader>au", tab_name),
-		vim.log.levels.INFO
-	)
-
-	-- Cleanup temp file on buffer close
-	vim.api.nvim_create_autocmd({ "BufDelete", "BufWipeout" }, {
-		buffer = vim.api.nvim_get_current_buf(),
-		once = true,
-		callback = function()
-			vim.fn.delete(temp_file)
-		end,
-	})
-
-	return true
-end
 
 --- Create new file
 ---@param file_path string
@@ -384,24 +287,9 @@ function M.accept_diff(tab_name)
 	-- Mark as accepted
 	diff.status = "accepted"
 
-	-- Option 1: Apply changes directly in Neovim (more efficient)
-	-- Uncomment this block if you want Neovim to apply the changes
-	--[[
-    if diff.temp_file and diff.old_file then
-        vim.cmd("silent! !cp " .. vim.fn.fnameescape(diff.temp_file) .. " " .. vim.fn.fnameescape(diff.old_file))
-        vim.cmd("checktime")  -- Reload the file
-        -- Send a different response indicating file was already updated
-            protocol.send_diff_response(tab_name, "accepted_and_applied", diff.contents)
-    else
-    --]]
-
-	-- Option 2: Let Claude Code apply the changes (current default)
+	-- Let Claude Code apply the changes
 	-- Send deferred response to Claude Code (it will handle the file update)
 	protocol.send_diff_response(tab_name, "accepted", diff.contents)
-
-	--[[
-    end
-    --]]
 
 	-- Reload the buffer after Claude Code applies the changes
 	vim.defer_fn(function()
@@ -420,8 +308,7 @@ function M.accept_diff(tab_name)
 
 	-- Clean up the diff view with a small delay to ensure response is sent first
 	vim.defer_fn(function()
-		-- Close diffview if open
-		pcall(vim.cmd, "DiffviewClose")
+		-- No longer using diffview.nvim
 
 		-- Find and close the tab containing our diff
 		local closed = false
@@ -442,9 +329,9 @@ function M.accept_diff(tab_name)
 					-- Also check by temp file path
 					local buf_name = vim.api.nvim_buf_get_name(buf)
 					if
-						buf_name == diff.temp_file
-						or buf_name:match("Claude's suggestion")
-						or buf_name:match("claude_diff")
+							buf_name == diff.temp_file
+							or buf_name:match("Claude's suggestion")
+							or buf_name:match("claude_diff")
 					then
 						vim.api.nvim_set_current_tabpage(tabpage)
 						vim.cmd("tabclose")
@@ -466,9 +353,9 @@ function M.accept_diff(tab_name)
 				local buf = vim.api.nvim_win_get_buf(win)
 				local buf_name = vim.api.nvim_buf_get_name(buf)
 				if
-					buf_name:match("Claude's suggestion")
-					or buf_name:match("claude_diff")
-					or buf_name:match("/tmp/")
+						buf_name:match("Claude's suggestion")
+						or buf_name:match("claude_diff")
+						or buf_name:match("/tmp/")
 				then
 					vim.cmd("tabclose")
 					closed = true
@@ -535,8 +422,7 @@ function M.reject_diff(tab_name)
 
 	-- Clean up the diff view with a small delay to ensure response is sent first
 	vim.defer_fn(function()
-		-- Close diffview if open
-		pcall(vim.cmd, "DiffviewClose")
+		-- No longer using diffview.nvim
 
 		-- Find and close the tab containing our diff
 		local closed = false
@@ -557,9 +443,9 @@ function M.reject_diff(tab_name)
 					-- Also check by temp file path
 					local buf_name = vim.api.nvim_buf_get_name(buf)
 					if
-						buf_name == diff.temp_file
-						or buf_name:match("Claude's suggestion")
-						or buf_name:match("claude_diff")
+							buf_name == diff.temp_file
+							or buf_name:match("Claude's suggestion")
+							or buf_name:match("claude_diff")
 					then
 						vim.api.nvim_set_current_tabpage(tabpage)
 						vim.cmd("tabclose")
@@ -581,9 +467,9 @@ function M.reject_diff(tab_name)
 				local buf = vim.api.nvim_win_get_buf(win)
 				local buf_name = vim.api.nvim_buf_get_name(buf)
 				if
-					buf_name:match("Claude's suggestion")
-					or buf_name:match("claude_diff")
-					or buf_name:match("/tmp/")
+						buf_name:match("Claude's suggestion")
+						or buf_name:match("claude_diff")
+						or buf_name:match("/tmp/")
 				then
 					vim.cmd("tabclose")
 					closed = true
@@ -623,27 +509,21 @@ function M.close_diff_by_tab_name(tab_name)
 	logger.info(string.format("close_diff_by_tab_name called with: %s", tab_name))
 
 	-- Debug: Show all active diffs
-	vim.notify(
-		string.format("[Claude IDE] Active diffs: %s", vim.inspect(vim.tbl_keys(active_diffs))),
-		vim.log.levels.DEBUG
-	)
+	logger.debug(string.format("Active diffs: %s", vim.inspect(vim.tbl_keys(active_diffs))))
 
 	-- Try to find and close the diff by exact match or pattern
 	for stored_name, diff in pairs(active_diffs) do
-		vim.notify(
-			string.format("[Claude IDE] Checking stored diff: %s against %s", stored_name, tab_name),
-			vim.log.levels.DEBUG
-		)
+		logger.debug(string.format("Checking stored diff: %s against %s", stored_name, tab_name))
 		logger.debug(string.format("Checking stored diff: %s", stored_name))
 		-- Check if it matches exactly or if the stored name contains the file name from tab_name
 		if
-			stored_name == tab_name
-			or (tab_name:match("✻") and stored_name:match("✻"))
-			or (
-				tab_name
-				and stored_name
-				and vim.fn.fnamemodify(tab_name, ":t") == vim.fn.fnamemodify(stored_name, ":t")
-			)
+				stored_name == tab_name
+				or (tab_name:match("✻") and stored_name:match("✻"))
+				or (
+					tab_name
+					and stored_name
+					and vim.fn.fnamemodify(tab_name, ":t") == vim.fn.fnamemodify(stored_name, ":t")
+				)
 		then
 			-- Found matching diff
 			logger.info(string.format("Found matching diff, rejecting: %s", stored_name))
@@ -668,10 +548,7 @@ function M.close_diff_by_tab_name(tab_name)
 				active_diffs[stored_name] = nil
 				-- Diff closed by Claude Code
 			else
-				vim.notify(
-					string.format("[Claude IDE] Diff status not pending: %s", diff.status or "nil"),
-					vim.log.levels.WARN
-				)
+				logger.warn(string.format("Diff status not pending: %s", diff.status or "nil"))
 			end
 			return true
 		end
@@ -690,31 +567,17 @@ end
 ---@return boolean success
 ---@return string|nil error
 function M.open_diff(old_file_path, new_file_path, new_file_contents, tab_name)
-	vim.notify(
+	logger.info(
 		string.format(
-			"[Claude IDE] open_diff called - old: %s, new: %s, tab: %s",
+			"open_diff called - old: %s, new: %s, tab: %s",
 			old_file_path,
 			new_file_path,
 			tab_name
-		),
-		vim.log.levels.INFO
+		)
 	)
 
-	-- Try diffview first
-	if has_diffview() then
-		local ok, success, err = pcall(M.open_diffview, old_file_path, new_file_path, new_file_contents, tab_name)
-		if not ok then
-			vim.notify(
-				string.format("[Claude IDE] Error in open_diffview: %s", tostring(success)),
-				vim.log.levels.ERROR
-			)
-			return false, tostring(success)
-		end
-		return success, err
-	end
-
-	-- Fallback to native diff
-	local ok, success, err = pcall(M.open_native_diff, old_file_path, new_file_path, new_file_contents, tab_name)
+	-- Always use native diff (diffview.nvim integration removed)
+	local ok, success, err = pcall(M.show_native_diff, old_file_path, new_file_path, new_file_contents, tab_name)
 	if not ok then
 		-- Error in open_native_diff
 		return false, tostring(success)

@@ -3,7 +3,6 @@
 
 local M = {}
 
-local logger = require("plugins.claude.logger")
 local server = nil -- Lazy load to avoid circular dependency
 
 -- Selection state
