@@ -45,6 +45,11 @@ M.configure = function()
 				"<cmd>DBUIToggle<CR>",
 				desc = "Toggle Database Explorer",
 			},
+			{
+				"<leader>R",
+				"<cmd>e<CR>",
+				desc = "Reload buffer",
+			},
 			{ "<leader>z", "<cmd>Telescope zoxide list<CR>",                                   desc = "Zoxide list" },
 			{ "<leader>u", "<cmd>lua require('telescope').extensions.recent_files.pick()<CR>", desc = "Recent files" },
 			{
