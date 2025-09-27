@@ -119,7 +119,33 @@ config.keys = {
 	{
 		key = "o",
 		mods = mod,
-		action = act.ActivatePaneDirection("Next"),
+		action = wezterm.action_callback(function(window, pane)
+			local tab = window:active_tab()
+			local panes = tab:panes()
+			local claude_pane = nil
+
+			for _, p in ipairs(panes) do
+				local title = p:get_title()
+				if string.find(title, "✳") or title == "claude" then
+					claude_pane = p
+					break
+				end
+			end
+
+			wezterm.log_info("claude_pane: " .. tostring(claude_pane))
+			if claude_pane then
+				local current_id = pane:pane_id()
+				local claude_pane_id = claude_pane:pane_id()
+
+				if current_id == claude_pane_id then
+					panes[1]:activate()
+				else
+					claude_pane:activate()
+				end
+			else
+				window:perform_action(act.ActivatePaneDirection("Next"), pane)
+			end
+		end),
 	},
 	{
 		key = "w",
