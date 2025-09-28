@@ -119,6 +119,11 @@ config.keys = {
 	{
 		key = "o",
 		mods = mod,
+		action = act.ActivatePaneDirection("Next"),
+	},
+	{
+		key = "i",
+		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
 			local tab = window:active_tab()
 			local panes = tab:panes()
@@ -132,15 +137,12 @@ config.keys = {
 				end
 			end
 
-			wezterm.log_info("claude_pane: " .. tostring(claude_pane))
 			if claude_pane then
 				local current_id = pane:pane_id()
-				local claude_pane_id = claude_pane:pane_id()
-
-				if current_id == claude_pane_id then
-					panes[1]:activate()
-				else
+				if current_id == panes[1]:pane_id() then
 					claude_pane:activate()
+				else
+					panes[1]:activate()
 				end
 			else
 				window:perform_action(act.ActivatePaneDirection("Next"), pane)

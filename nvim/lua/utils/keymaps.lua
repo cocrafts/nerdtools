@@ -12,7 +12,7 @@ key.mode_keys("n", {
 	["<C-x>"] = ":split<CR>:b#<CR>",
 	["<C-s>"] = ":vsplit<CR>:b#<CR>",
 	["<C-g>"] = ":tabnew<CR>",
-	["<leader>G"] = ":tabclose<CR>",
+	["<leader>'"] = ":tabclose<CR>",
 
 	["<TAB>"] = ":bnext<CR>",
 	["<S-TAB>"] = ":bprev<CR>",
