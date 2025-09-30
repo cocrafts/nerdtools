@@ -61,6 +61,18 @@ config.window_padding = {
 	bottom = 0,
 }
 
+config.colors = {
+	cursor_bg = colors.cursor,
+	cursor_fg = colors.darker,
+	cursor_border = colors.cursor,
+	split = colors.split,
+}
+
+config.inactive_pane_hsb = {
+	saturation = 0.8,
+	brightness = 1,
+}
+
 -- Platform-specific modifier key
 local mod = "CMD"
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
@@ -111,16 +123,16 @@ config.keys = {
 			size = { Percent = 32 },
 		}),
 	},
-	{
-		key = "O",
-		mods = mod .. "|SHIFT",
-		action = act.PaneSelect({}),
-	},
-	{
-		key = "o",
-		mods = mod,
-		action = act.ActivatePaneDirection("Next"),
-	},
+	-- {
+	-- 	key = "O",
+	-- 	mods = mod .. "|SHIFT",
+	-- 	action = act.PaneSelect({}),
+	-- },
+	-- {
+	-- 	key = "o",
+	-- 	mods = mod,
+	-- 	action = act.ActivatePaneDirection("Next"),
+	-- },
 	{
 		key = "i",
 		mods = mod,
@@ -268,13 +280,6 @@ config.keys = {
 			end
 		end),
 	},
-}
-
-config.colors = {
-	cursor_bg = colors.cursor,
-	cursor_fg = colors.darker,
-	cursor_border = colors.cursor,
-	split = colors.split,
 }
 
 return config

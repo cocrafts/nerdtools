@@ -55,3 +55,9 @@
         src: ~/nerdtools/conf/zls.json
         dest: "~/.config/zls.json"
         state: link
+
+    - name: Create symlink to tmux configure
+      file:
+        src: ~/nerdtools/conf/tmux/
+        dest: ~/.config/tmux
+        state: link
