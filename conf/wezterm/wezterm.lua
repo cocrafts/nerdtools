@@ -164,7 +164,62 @@ config.keys = {
 	{
 		key = "w",
 		mods = mod,
-		action = act.CloseCurrentPane({ confirm = false }),
+		action = wezterm.action_callback(function(window, pane)
+			local proc_name = pane:get_foreground_process_name()
+			if proc_name and proc_name:find("tmux") then
+				window:perform_action(
+					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "x" }) }),
+					pane
+				)
+			else
+				window:perform_action(act.CloseCurrentPane({ confirm = false }), pane)
+			end
+		end),
+	},
+	{
+		key = "]",
+		mods = mod,
+		action = wezterm.action_callback(function(window, pane)
+			local proc_name = pane:get_foreground_process_name()
+			if proc_name and proc_name:find("tmux") then
+				window:perform_action(
+					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "]" }) }),
+					pane
+				)
+			else
+				window:perform_action(act.SendKey({ key = "]", mods = mod }), pane)
+			end
+		end),
+	},
+	{
+		key = "[",
+		mods = mod,
+		action = wezterm.action_callback(function(window, pane)
+			local proc_name = pane:get_foreground_process_name()
+			if proc_name and proc_name:find("tmux") then
+				window:perform_action(
+					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "[" }) }),
+					pane
+				)
+			else
+				window:perform_action(act.SendKey({ key = "[", mods = mod }), pane)
+			end
+		end),
+	},
+	{
+		key = "n",
+		mods = mod,
+		action = wezterm.action_callback(function(window, pane)
+			local proc_name = pane:get_foreground_process_name()
+			if proc_name and proc_name:find("tmux") then
+				window:perform_action(
+					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "c" }) }),
+					pane
+				)
+			else
+				window:perform_action(act.SpawnWindow, pane)
+			end
+		end),
 	},
 	{
 		key = "N",
