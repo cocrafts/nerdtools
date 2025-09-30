@@ -27,6 +27,18 @@ return {
 		},
 	},
 	{
+		"christoomey/vim-tmux-navigator",
+		lazy = false, -- Load immediately so keymaps work
+		cmd = {
+			"TmuxNavigateLeft",
+			"TmuxNavigateDown",
+			"TmuxNavigateUp",
+			"TmuxNavigateRight",
+			"TmuxNavigatePrevious",
+			"TmuxNavigatorProcessList",
+		},
+	},
+	{
 		"VonHeikemen/lsp-zero.nvim",
 		branch = "v3.x",
 		dependencies = {
@@ -212,12 +224,12 @@ return {
 			require("core.fold").configure()
 		end,
 	},
-	{
-		"3rd/image.nvim",
-		config = function()
-			require("core.graphical").configureImage()
-		end,
-	},
+	-- {
+	-- 	"3rd/image.nvim",
+	-- 	config = function()
+	-- 		require("core.graphical").configureImage()
+	-- 	end,
+	-- },
 	{
 		"nvim-lualine/lualine.nvim",
 		event = "VimEnter",
