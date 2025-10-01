@@ -17,6 +17,9 @@ end
 
 config.color_scheme = "tokyonight_night"
 
+-- Enable CSI u keyboard protocol for Shift+Enter, Ctrl+Enter, etc.
+config.enable_csi_u_key_encoding = true
+
 -- https://wezfurlong.org/wezterm/config/lua/wezterm/target_triple.html
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	config.font_size = 11.5
@@ -79,13 +82,18 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	mod = "CTRL"
 end
 
+local function is_inside_tmux(pane)
+	local proc_name = pane:get_foreground_process_name()
+	return proc_name and proc_name:find("tmux") ~= nil
+end
+
 config.keys = {
 	{
 		key = "k",
 		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
-			if pane:is_alt_screen_active() then -- detect application like Vim
-				window:perform_action(act.Multiple({ act.SendKey({ key = " " }), act.SendKey({ key = "K" }) }), pane)
+			if is_inside_tmux(pane) then
+				window:perform_action(wezterm.action.SendString("clear\n"), pane)
 			else
 				window:perform_action(act.ClearScrollback("ScrollbackAndViewport"), pane)
 			end
@@ -165,8 +173,7 @@ config.keys = {
 		key = "w",
 		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
-			local proc_name = pane:get_foreground_process_name()
-			if proc_name and proc_name:find("tmux") then
+			if is_inside_tmux(pane) then
 				window:perform_action(
 					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "x" }) }),
 					pane
@@ -180,8 +187,7 @@ config.keys = {
 		key = "]",
 		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
-			local proc_name = pane:get_foreground_process_name()
-			if proc_name and proc_name:find("tmux") then
+			if is_inside_tmux(pane) then
 				window:perform_action(
 					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "]" }) }),
 					pane
@@ -195,8 +201,7 @@ config.keys = {
 		key = "[",
 		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
-			local proc_name = pane:get_foreground_process_name()
-			if proc_name and proc_name:find("tmux") then
+			if is_inside_tmux(pane) then
 				window:perform_action(
 					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "[" }) }),
 					pane
@@ -210,8 +215,7 @@ config.keys = {
 		key = "n",
 		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
-			local proc_name = pane:get_foreground_process_name()
-			if proc_name and proc_name:find("tmux") then
+			if is_inside_tmux(pane) then
 				window:perform_action(
 					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "c" }) }),
 					pane

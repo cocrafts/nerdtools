@@ -31,6 +31,13 @@ eval "$($HOME/.cargo/bin/mise activate zsh)"
 eval "$(starship init zsh)" # load starship theme
 eval "$(zoxide init zsh)"
 
+# Exclude common command from Zsh command history
+HISTORY_IGNORE="(clear|ls|cd|pwd|exit|history)"
+zshaddhistory() {
+  emulate -L zsh
+  [[ $1 != ${~HISTORY_IGNORE} ]]
+}
+
 # Dynamically include llvm would execute instantly, took ~0 millisecond!
 llvm_dir="/usr/local/Cellar/llvm/"
 llvm_latest_version=""

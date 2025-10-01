@@ -8,8 +8,13 @@ lazy-lock.json
 
 conf/nushell/vendor/autoload/starship.nu
 conf/nushell/history.txt
+conf/tmux/plugins
 metacraft
 .aider*
 
 geekCaps/geekCaps
 claude/.credentials.json
+claude/ide
+claude/file-history
+
+core/target

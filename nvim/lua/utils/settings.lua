@@ -23,6 +23,7 @@ local opts = {
 	ignorecase = true, -- ignore case when search
 	smartcase = true,
 	mouse = "a",
+	clipboard = "unnamedplus",
 	-- line numbers
 	number = true,        -- show line numbers
 	relativenumber = true, -- show relative numbers
