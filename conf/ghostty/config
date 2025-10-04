@@ -1,0 +1,239 @@
+# Ghostty Configuration
+# Ported from conf/wezterm/wezterm.lua
+# See: https://ghostty.org/docs/config/reference
+
+# =============================================================================
+# Theme & Colors
+# =============================================================================
+
+# Tokyo Night theme (built-in)
+# Available variants: TokyoNight, TokyoNight Day, TokyoNight Moon,
+#                     TokyoNight Night, TokyoNight Storm
+theme = TokyoNight Night
+
+# Custom cursor color (overrides theme default)
+cursor-color = cell-foreground
+
+# Animated cursor shader (rainbow smear effect)
+custom-shader = /Users/le/nerdtools/conf/ghostty/smear.glsl
+# Gears and belts background animation
+custom-shader = /Users/le/nerdtools/conf/ghostty/gears-and-belts.glsl
+# custom-shader = /Users/le/nerdtools/conf/ghostty/glitchy.glsl
+custom-shader-animation = true
+
+# =============================================================================
+# Font Configuration
+# =============================================================================
+
+# Primary font: Operator Mono Lig Medium (thicker weight for better line visibility)
+font-family = Operator Mono Lig
+# font-family = Mono Lisa
+
+# Disable bold completely - use same weight for everything
+font-style-bold = false
+# Disable synthetic bold (no artificial thickening)
+font-synthetic-style = no-bold
+
+# Disable font thickening completely
+font-thicken = true
+
+# Fallback for symbols/icons
+# font-family = OperatorMono Nerd Font Mono
+font-family = Symbols Nerd Font Mono
+
+# Font size
+# Note: Adjust per platform if needed. Linux typically needs smaller (11-12pt)
+# due to different DPI handling, macOS works well at 14-15pt
+font-size = 14.5
+adjust-icon-height = 2
+adjust-font-baseline = 1
+
+# Line height
+# Note: Ghostty doesn't have a direct line-height multiplier
+# Using adjust-cell-height as approximation (1.2 - 1.0 = 0.2 = 20%)
+adjust-cell-height = 20%
+
+# =============================================================================
+# Window Configuration
+# =============================================================================
+
+# Window padding (all sides)
+window-padding-x = 0
+window-padding-y = 0
+
+# Window size (in characters) - initial size only
+# Adjust if needed: Linux might prefer ~70x150, macOS ~50x100
+window-height = 50
+window-width = 100
+
+# Remember window size and position (macOS only, no effect on Linux)
+window-save-state = always
+
+# Resize window in cell increments (not pixels) - macOS only
+window-step-resize = false
+
+# =============================================================================
+# Tab Bar Configuration
+# =============================================================================
+
+# Hide tab bar (Ghostty shows tabs in window titlebar by default on GTK)
+gtk-tabs-location = hidden
+
+# On macOS, tabs are part of native UI
+# To hide: use window-theme = ghostty (minimal chrome)
+window-theme = ghostty
+
+# =============================================================================
+# Performance & Rendering
+# =============================================================================
+
+# Use modern renderer
+# Ghostty automatically uses GPU acceleration
+
+# =============================================================================
+# Terminal Features
+# =============================================================================
+
+# Enable CSI u keyboard protocol (for Shift+Enter, Ctrl+Enter, etc.)
+# Note: Ghostty enables this by default in newer versions
+
+# Hide mouse cursor when typing
+mouse-hide-while-typing = true
+
+# =============================================================================
+# Key Bindings
+# =============================================================================
+# Note: Using 'super' (CMD on macOS, Win/Meta on Linux)
+#
+# PLATFORM DIFFERENCE: Your Wezterm config used CTRL on Linux instead of Super.
+# If you prefer CTRL on Linux, replace 'super' with 'ctrl' for those bindings.
+#
+# Ghostty doesn't support dynamic callbacks like Wezterm, so complex logic
+# (tmux detection, vim detection, Claude pane finding) cannot be ported.
+
+# Clear keybindings to start fresh
+keybind = clear
+
+# --- Window/Split Management ---
+
+keybind = super+r=reload_config
+keybind = super+shift+i=new_split:up
+keybind = super+shift+j=new_split:down
+keybind = super+shift+h=new_split:left
+keybind = super+shift+l=new_split:right
+
+# Navigate between panes (simplified - no Claude detection)
+keybind = super+i=goto_split:next
+
+# CMD+W: Close tmux pane (sends Ctrl+O x)
+keybind = super+w=text:\x0fx
+
+# --- Tab Management ---
+
+# CMD+T: Create new tmux window (sends Ctrl+O c)
+# Note: Will just output characters if not in tmux
+keybind = super+t=text:\x0fc
+
+# CMD+SHIFT+T: New Ghostty tab (not tmux)
+keybind = super+shift+t=new_tab
+
+keybind = super+n=new_window
+keybind = super+shift+n=new_window
+
+# --- Tab Navigation (1-9) ---
+
+# CMD+1-9: Switch tmux windows (sends Ctrl+O + number)
+keybind = super+1=text:\x0f1
+keybind = super+2=text:\x0f2
+keybind = super+3=text:\x0f3
+keybind = super+4=text:\x0f4
+keybind = super+5=text:\x0f5
+keybind = super+6=text:\x0f6
+keybind = super+7=text:\x0f7
+keybind = super+8=text:\x0f8
+keybind = super+9=text:\x0f9
+
+# CMD+SHIFT+1-9: Switch Ghostty tabs
+keybind = super+shift+1=goto_tab:1
+keybind = super+shift+2=goto_tab:2
+keybind = super+shift+3=goto_tab:3
+keybind = super+shift+4=goto_tab:4
+keybind = super+shift+5=goto_tab:5
+keybind = super+shift+6=goto_tab:6
+keybind = super+shift+7=goto_tab:7
+keybind = super+shift+8=goto_tab:8
+keybind = super+shift+9=goto_tab:9
+
+# --- Terminal Operations ---
+
+# Clear screen (no tmux detection)
+keybind = super+k=clear_screen
+
+# Tmux zoom pane (Ctrl+O z)
+keybind = ctrl+z=text:\x0fz
+
+# --- Vim Integration ---
+# WARNING: These are always active (no alt-screen detection)
+# Comment out if they conflict with your workflow
+
+# Save (Space+w in vim)
+keybind = super+s=text: w
+
+# Duplicate line (yy+p in vim)
+keybind = super+d=text:yyp
+
+# Comment line (gcc+j in vim)
+keybind = super+slash=text:gccj
+
+# Navigate buffers (Space+b+p/n in vim)
+keybind = super+shift+left=text: bp
+keybind = super+shift+right=text: bn
+
+# Go to definition (gt in vim)
+keybind = ctrl+tab=text:gt
+
+# --- Copy/Paste ---
+
+keybind = super+c=copy_to_clipboard
+keybind = super+v=paste_from_clipboard
+
+# --- Font Size ---
+
+keybind = super+equal=increase_font_size:1
+keybind = super+minus=decrease_font_size:1
+keybind = super+0=reset_font_size
+
+# --- Search ---
+
+keybind = super+f=toggle_quick_terminal
+keybind = super+p=toggle_command_palette
+
+# =============================================================================
+# Notes & Limitations
+# =============================================================================
+
+# Key differences from your Wezterm config:
+#
+# 1. NO TMUX DETECTION: Wezterm detected tmux and sent different sequences.
+#    Solution: Use tmux keybindings directly, or add unconsumed: prefix
+#
+# 2. NO VIM/ALT SCREEN DETECTION: Wezterm detected vim and conditionally sent keys.
+#    Solution: Vim bindings are always active now. Comment out if problematic.
+#
+# 3. NO CLAUDE PANE DETECTION: Wezterm found panes titled "claude" for toggling.
+#    Solution: Use goto_split:next instead (super+i)
+#
+# 4. SPLIT SIZES: Wezterm specified split percentages (24%, 32%).
+#    Solution: Ghostty creates equal splits. Use resize_split action manually.
+#
+# 5. MODIFIER KEY: Wezterm used CMD on macOS, CTRL on Linux.
+#    Solution: Config uses 'super' for both. On Linux, this is Win/Meta key.
+#    If you want CTRL on Linux, replace 'super' with 'ctrl' in keybindings.
+#
+# 6. PLATFORM-SPECIFIC SIZES: Wezterm had different font/window sizes per platform.
+#    Solution: Single config with macOS defaults. Adjust font-size/window-* if needed.
+#
+# Useful commands:
+# - ghostty +list-actions     (see all available actions)
+# - ghostty +list-keybinds    (see current keybindings)
+# - ghostty +list-themes      (see available themes)

@@ -21,7 +21,7 @@ highlight.gui = {
 	MsgArea = { fg = colors.fg, bg = colors.bg },
 
 	Normal = { bg = colors.bg },
-	LineNR = { fg = colors.dim }, -- line numbers
+	LineNR = { fg = colors.dim },       -- line numbers
 	CursorLineNR = { fg = colors.blue }, -- current line number
 	NormalMode = { fg = colors.blue },
 	InsertMode = { fg = colors.green },
@@ -32,7 +32,7 @@ highlight.gui = {
 
 	ScrollView = { bg = colors.fg },
 
-	NonText = { fg = colors.gray }, -- whitespaces
+	NonText = { fg = colors.gray },   -- whitespaces
 	SpecialKey = { fg = colors.gray }, -- whitespaces
 	Whitespace = { fg = colors.gray }, -- whitespaces
 	Search = { fg = colors.darkest, bg = colors.blue },
@@ -42,6 +42,9 @@ highlight.gui = {
 	DiffDelete = { bg = "#37222c", fg = "#5a4a53" },
 	DiffChange = { bg = "#1f2231" },
 	DiffText = { bg = "#394b70" },
+
+	RenderMarkdownChecked = { fg = colors.green },
+	RenderMarkdownUnchecked = { fg = colors.gray },
 }
 
 highlight.hi = {
@@ -67,7 +70,7 @@ highlight.system = {
 	NeoTreeDirectoryName = { fg = colors.white },
 	NeoTreeSignColumn = { bg = colors.explorer_bg }, -- left padding area
 	-- git file name
-	NeoTreeGitAdded = { fg = colors.types }, -- style = "bold" to make it bold
+	NeoTreeGitAdded = { fg = colors.types },        -- style = "bold" to make it bold
 	NeoTreeGitConflict = { fg = colors.red },
 	NeoTreeGitDeleted = { fg = colors.comments },
 	NeoTreeGitIgnored = { fg = colors.gray },
@@ -114,4 +117,3 @@ end
 -- if vim.fn.exists "syntax_on" then
 -- 	vim.api.nvim_command "syntax reset"
 -- end
-

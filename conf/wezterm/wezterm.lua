@@ -212,7 +212,7 @@ config.keys = {
 		end),
 	},
 	{
-		key = "n",
+		key = "t",
 		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
 			if is_inside_tmux(pane) then
@@ -220,10 +220,13 @@ config.keys = {
 					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "c" }) }),
 					pane
 				)
-			else
-				window:perform_action(act.SpawnWindow, pane)
 			end
 		end),
+	},
+	{
+		key = "t",
+		mods = mod .. "|SHIFT",
+		action = act.SpawnTab("CurrentPaneDomain"),
 	},
 	{
 		key = "N",
@@ -308,21 +311,13 @@ config.keys = {
 		key = "z",
 		mods = "CTRL",
 		action = wezterm.action_callback(function(window, pane)
-			if pane:is_alt_screen_active() then
-				window:perform_action(act.SendKey({ mods = "CTRL", key = "z" }), pane)
+			if is_inside_tmux(pane) then
+				window:perform_action(
+					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "z" }) }),
+					pane
+				)
 			else
 				window:perform_action(wezterm.action.SendString("fg\n"), pane)
-			end
-		end),
-	},
-	{
-		key = ";",
-		mods = mod,
-		action = wezterm.action_callback(function(window, pane)
-			if pane:is_alt_screen_active() then
-				window:perform_action(act.SendKey({ key = ";", mods = "CTRL" }), pane)
-			else
-				window:perform_action(act.SendKey({ key = ";", mods = mod }), pane)
 			end
 		end),
 	},
@@ -340,5 +335,26 @@ config.keys = {
 		end),
 	},
 }
+
+for i = 1, 9 do
+	table.insert(config.keys, {
+		key = tostring(i),
+		mods = mod .. "|SHIFT",
+		action = act.ActivateTab(i - 1),
+	})
+
+	table.insert(config.keys, {
+		key = tostring(i),
+		mods = mod,
+		action = wezterm.action_callback(function(window, pane)
+			if is_inside_tmux(pane) then
+				window:perform_action(act.SendKey({ key = "o", mods = "CTRL" }), pane)
+				window:perform_action(act.SendKey({ key = tostring(i) }), pane)
+			else
+				window:perform_action(act.ActivateTab(i - 1), pane)
+			end
+		end),
+	})
+end
 
 return config

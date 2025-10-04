@@ -22,9 +22,9 @@ return {
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
 		ft = { "markdown" },
-		opts = {
-			file_types = { "markdown" },
-		},
+		config = function()
+			require("core.markdown").configureRenderMarkdown()
+		end,
 	},
 	{
 		"christoomey/vim-tmux-navigator",
@@ -466,6 +466,13 @@ return {
 
 			-- Create user commands
 			claude.create_commands()
+		end,
+	},
+	{
+		"bngarren/checkmate.nvim",
+		ft = "markdown", -- Lazy loads for Markdown files matching patterns in 'files'
+		config = function()
+			require("core.markdown").configureCheckmate()
 		end,
 	},
 }
