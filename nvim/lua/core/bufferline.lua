@@ -118,19 +118,19 @@ function M.buf_kill(kill_command, bufnr, force)
 end
 
 local options = {
-	mode = "buffers", -- set to "tabs" to only show tabpages instead
-	numbers = "ordinal", -- can be "none" | "ordinal" | "buffer_id" | "both" | function
+	mode = "buffers",              -- set to "tabs" to only show tabpages instead
+	numbers = "none",              -- can be "none" | "ordinal" | "buffer_id" | "both" | function
 	close_command = function(bufnr) -- can be a string | function, see "Mouse actions"
 		M.buf_kill("bd", bufnr, false)
 	end,
 	right_mouse_command = "vert sbuffer %d", -- can be a string | function, see "Mouse actions"
-	left_mouse_command = "buffer %d", -- can be a string | function, see "Mouse actions"
-	middle_mouse_command = nil, -- can be a string | function, see "Mouse actions
+	left_mouse_command = "buffer %d",       -- can be a string | function, see "Mouse actions"
+	middle_mouse_command = nil,             -- can be a string | function, see "Mouse actions
 	indicator = {
-		icon = icons.ui.BoldLineLeft, -- this should be omitted if indicator style is not 'icon'
-		style = "icon", -- can also be 'underline'|'none',
+		icon = icons.ui.BoldLineLeft,         -- this should be omitted if indicator style is not 'icon'
+		style = "icon",                       -- can also be 'underline'|'none',
 	},
-	buffer_close_icon = icons.ui.Close,
+	buffer_close_icon = "󰅚",
 	modified_icon = icons.ui.Circle,
 	close_icon = icons.ui.BoldClose,
 	left_trunc_marker = icons.ui.ArrowCircleLeft,
@@ -199,7 +199,7 @@ local options = {
 	persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
 	-- can also be a table containing 2 custom separators
 	-- [focused and unfocused]. eg: { '|', '|' }
-	separator_style = "thin", -- "slant" | "slope" | "thick" | "thin" | { 'any', 'any' },
+	separator_style = "thick", -- "slant" | "slope" | "thick" | "thin" | { 'any', 'any' },
 	enforce_regular_tabs = false,
 	always_show_bufferline = true,
 	hover = {

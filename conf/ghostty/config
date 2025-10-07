@@ -17,7 +17,7 @@ cursor-color = cell-foreground
 # Animated cursor shader (rainbow smear effect)
 custom-shader = /Users/le/nerdtools/conf/ghostty/smear.glsl
 # Gears and belts background animation
-custom-shader = /Users/le/nerdtools/conf/ghostty/gears-and-belts.glsl
+# custom-shader = /Users/le/nerdtools/conf/ghostty/gears-and-belts.glsl
 # custom-shader = /Users/le/nerdtools/conf/ghostty/glitchy.glsl
 custom-shader-animation = true
 
@@ -82,6 +82,7 @@ gtk-tabs-location = hidden
 # On macOS, tabs are part of native UI
 # To hide: use window-theme = ghostty (minimal chrome)
 window-theme = ghostty
+macos-titlebar-style = hidden
 
 # =============================================================================
 # Performance & Rendering
@@ -127,6 +128,7 @@ keybind = super+i=goto_split:next
 
 # CMD+W: Close tmux pane (sends Ctrl+O x)
 keybind = super+w=text:\x0fx
+keybind = super+shift+w=close_surface
 
 # --- Tab Management ---
 

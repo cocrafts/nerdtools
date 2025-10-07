@@ -52,7 +52,7 @@ local function get_workspace_folders()
 	end
 
 	-- Add LSP workspace folders
-	local clients = vim.lsp.get_active_clients()
+	local clients = vim.lsp.get_clients()
 	for _, client in pairs(clients) do
 		if client.config and client.config.workspace_folders then
 			for _, ws in ipairs(client.config.workspace_folders) do

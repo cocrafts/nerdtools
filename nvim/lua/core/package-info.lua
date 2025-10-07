@@ -4,11 +4,8 @@ local icons = require("utils.icons")
 
 M.configure = function()
 	require("package-info").setup({
-		colors = {
-			up_to_date = colors.blue,
-			outdated = colors.gray,
-			invalid = colors.red,
-		},
+		-- Package info now uses highlights instead of colors option
+		-- Define custom highlights in your theme if needed
 		icons = {
 			enable = true,
 			style = {
@@ -18,6 +15,10 @@ M.configure = function()
 		},
 		hide_up_to_date = true,
 	})
+
+	-- Set custom highlights instead of colors
+	vim.api.nvim_set_hl(0, "PackageInfoUpToDateVersion", { fg = colors.blue })
+	vim.api.nvim_set_hl(0, "PackageInfoOutdatedVersion", { fg = colors.gray })
 end
 
 return M
