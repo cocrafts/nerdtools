@@ -9,6 +9,8 @@ local globals = {
 	gitblame_message_template = " <author>, <date> • <summary> ",
 	gitblame_message_when_not_committed = "",
 	gitblame_delay = 0,
+	tmux_navigator_no_wrap = 1,
+	tmux_navigator_disable_when_zoomed = 1,
 }
 
 local opts = {

@@ -224,12 +224,12 @@ return {
 			require("core.fold").configure()
 		end,
 	},
-	-- {
-	-- 	"3rd/image.nvim",
-	-- 	config = function()
-	-- 		require("core.graphical").configureImage()
-	-- 	end,
-	-- },
+	{
+		"3rd/image.nvim",
+		config = function()
+			require("core.graphical").configureImage()
+		end,
+	},
 	{
 		"nvim-lualine/lualine.nvim",
 		event = "VimEnter",
@@ -241,7 +241,8 @@ return {
 	{ "folke/neodev.nvim",     lazy = true },
 	{
 		"folke/noice.nvim",
-		event = "VeryLazy",
+		lazy = false,
+		priority = 1000,
 		dependencies = { "MunifTanjim/nui.nvim" },
 		config = function()
 			require("core.noice").configure()
@@ -463,5 +464,19 @@ return {
 		config = function()
 			require("core.markdown").configureCheckmate()
 		end,
+	},
+	{
+		"sphamba/smear-cursor.nvim",
+		opts = {
+			cursor_color = "none",
+			stiffness = 0.3,
+			trailing_stiffness = 0.1,
+			damping = 0.5,
+			trailing_exponent = 5,
+			never_draw_over_target = true,
+			hide_target_hack = true,
+			gamma = 1,
+			time_interval = 3,
+		},
 	},
 }

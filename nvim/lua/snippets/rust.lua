@@ -65,8 +65,8 @@ local function cs(trigger, nodes, opts) --{{{
 		end
 	end
 
-	table.insert(target_table, snippet) -- insert snippet into appropriate table
-end --}}}
+	table.insert(target_table, snippet)
+end
 
 cs("co", { t("println!("), i(1, ""), t(")") }, { "jcl", "jj" }) -- console.log
 

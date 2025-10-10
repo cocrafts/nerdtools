@@ -5,6 +5,12 @@ M.configure = function()
 	local fzf = require("fzf-lua")
 	local neoclip = require("neoclip")
 
+	-- Configure chafa for image preview
+	local img_previewer = nil
+	if vim.fn.executable("chafa") == 1 then
+		img_previewer = { "chafa", "{file}", "--format=symbols" }
+	end
+
 	-- Setup fzf-lua with telescope profile for familiar look/feel
 	fzf.setup({
 		-- Use telescope profile as base with some customizations
@@ -21,6 +27,18 @@ M.configure = function()
 				horizontal = "right:60%",
 			},
 		},
+		-- Image preview with chafa
+		previewers = img_previewer and {
+			builtin = {
+				extensions = {
+					["png"] = img_previewer,
+					["jpg"] = img_previewer,
+					["jpeg"] = img_previewer,
+					["gif"] = img_previewer,
+					["webp"] = img_previewer,
+				},
+			},
+		} or nil,
 		fzf_opts = {
 			["--layout"] = "reverse",
 			["--info"] = "inline",
@@ -47,11 +65,11 @@ M.configure = function()
 		-- Search pickers
 		grep = {
 			prompt = "Grep: ",
-			rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e",
+			rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob '!node_modules' -e",
 		},
 		live_grep = {
 			prompt = "Live Grep: ",
-			cmd = "rg --column --line-number --no-heading --color=always --smart-case --max-columns=4096",
+			cmd = "rg --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob '!node_modules'",
 		},
 		-- LSP pickers
 		lsp = {
@@ -125,6 +143,15 @@ M.recent_files = function()
 	require("fzf-lua").oldfiles({
 		cwd_only = true,
 		include_current_session = true,
+		winopts = {
+			width = 0.6,
+			height = 0.6,
+			row = 0.5,
+			col = 0.5,
+			preview = {
+				vertical = "up:60%",
+			},
+		},
 	})
 end
 

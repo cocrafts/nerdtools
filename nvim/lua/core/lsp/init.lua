@@ -1,22 +1,22 @@
-local builtin = require("telescope.builtin")
+local fzf = require("fzf-lua")
 local config = require("utils.config")
 local helper = require("utils.helper")
 
 local M = {}
 
 M.configure = function()
-	local lsp = require("lsp-zero").preset({})
+	local lsp = require("lsp-zero")
 	local lspconfig = require("lspconfig")
 
 	require("neodev").setup()
 
 	if config.use_live_diagnostic then
-		vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+		vim.diagnostic.config({
 			update_in_insert = true,
 		})
 	end
 
-	lsp.on_attach(function(_, bufnr)
+	lsp.on_attach(function(client, bufnr)
 		local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
 		local mapkey = function(mode, key, desc, cb)
 			vim.keymap.set(mode, key, cb, {
@@ -44,7 +44,7 @@ M.configure = function()
 		end)
 
 		mapkey("n", "gD", "Goto implementations", function()
-			builtin.lsp_implementations(helper.layouts.full_cursor())
+			fzf.lsp_implementations()
 		end)
 
 		mapkey("n", "gs", "Incoming calls", function()
