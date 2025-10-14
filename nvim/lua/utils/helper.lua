@@ -22,19 +22,6 @@ M.valueExists = function(item, items)
 	return false
 end
 
-M.layouts = {
-	full_cursor = function(height)
-		return require("telescope.themes").get_cursor({
-			layout_config = {
-				width = function(_, max_columns, _)
-					return max_columns - 6
-				end,
-				height = height or 12,
-			},
-		})
-	end,
-}
-
 M.close_other_buffers = function()
 	local bufs = vim.api.nvim_list_bufs()
 	local current_buf = vim.api.nvim_get_current_buf()
@@ -47,13 +34,13 @@ M.close_other_buffers = function()
 end
 
 M.find_project_files = function(opts)
-	local builtin = require("telescope.builtin")
+	local fzf = require("fzf-lua")
 
 	opts = opts or {}
-	local ok = pcall(builtin.git_files, opts)
+	local ok = pcall(fzf.git_files, opts)
 
 	if not ok then
-		builtin.find_files(opts)
+		fzf.files(opts)
 	end
 end
 
@@ -81,7 +68,18 @@ M.open_lsp_definitions = function()
 					vim.lsp.util.show_document(filtered_results[1], "utf-8", { focus = true })
 					return
 				elseif #filtered_results > 1 then
-					require("telescope.builtin").lsp_definitions(M.layouts.full_cursor())
+					require("fzf-lua").lsp_definitions({
+						winopts = {
+							relative = "cursor",
+							width = 0.6,
+							height = 0.5,
+							row = 1,
+							col = 0,
+							preview = {
+								vertical = "up:60%",
+							},
+						},
+					})
 					return
 				end
 			end
