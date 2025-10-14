@@ -17,8 +17,16 @@ end
 
 config.color_scheme = "tokyonight_night"
 
--- Enable CSI u keyboard protocol for Shift+Enter, Ctrl+Enter, etc.
-config.enable_csi_u_key_encoding = true
+-- Dim inactive panes
+config.inactive_pane_hsb = {
+	hue = 1.0,
+	saturation = 1.0,
+	brightness = 0.6,
+}
+
+-- Image protocol support for image.nvim
+-- WezTerm supports both Kitty and iTerm2 protocols
+config.term = "wezterm" -- Use WezTerm's terminfo for accurate capabilities
 
 -- https://wezfurlong.org/wezterm/config/lua/wezterm/target_triple.html
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
@@ -28,10 +36,8 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	config.initial_rows = 70
 	config.initial_cols = 150
 else
-	-- config.font_size = 15
-	-- config.line_height = 1.15
 	config.font_size = 14.5
-	config.line_height = 1.2
+	config.line_height = 1.14
 
 	config.initial_rows = 50
 	config.initial_cols = 100
@@ -52,7 +58,7 @@ config.max_fps = 120
 config.front_end = "WebGpu"
 config.force_reverse_video_cursor = true
 config.adjust_window_size_when_changing_font_size = false
-config.use_resize_increments = true
+config.use_resize_increments = false
 config.hide_tab_bar_if_only_one_tab = true
 config.tab_bar_at_bottom = true
 config.use_fancy_tab_bar = false
@@ -64,27 +70,10 @@ config.window_padding = {
 	bottom = 0,
 }
 
-config.colors = {
-	cursor_bg = colors.cursor,
-	cursor_fg = colors.darker,
-	cursor_border = colors.cursor,
-	split = colors.split,
-}
-
-config.inactive_pane_hsb = {
-	saturation = 0.8,
-	brightness = 1,
-}
-
 -- Platform-specific modifier key
 local mod = "CMD"
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	mod = "CTRL"
-end
-
-local function is_inside_tmux(pane)
-	local proc_name = pane:get_foreground_process_name()
-	return proc_name and proc_name:find("tmux") ~= nil
 end
 
 config.keys = {
@@ -92,8 +81,8 @@ config.keys = {
 		key = "k",
 		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
-			if is_inside_tmux(pane) then
-				window:perform_action(wezterm.action.SendString("clear\n"), pane)
+			if pane:is_alt_screen_active() then -- detect application like Vim
+				window:perform_action(act.Multiple({ act.SendKey({ key = " " }), act.SendKey({ key = "K" }) }), pane)
 			else
 				window:perform_action(act.ClearScrollback("ScrollbackAndViewport"), pane)
 			end
@@ -131,16 +120,59 @@ config.keys = {
 			size = { Percent = 32 },
 		}),
 	},
-	-- {
-	-- 	key = "O",
-	-- 	mods = mod .. "|SHIFT",
-	-- 	action = act.PaneSelect({}),
-	-- },
-	-- {
-	-- 	key = "o",
-	-- 	mods = mod,
-	-- 	action = act.ActivatePaneDirection("Next"),
-	-- },
+	-- Resize panes
+	{
+		key = "H",
+		mods = mod .. "|ALT",
+		action = act.AdjustPaneSize({ "Left", 5 }),
+	},
+	{
+		key = "J",
+		mods = mod .. "|ALT",
+		action = act.AdjustPaneSize({ "Down", 5 }),
+	},
+	{
+		key = "K",
+		mods = mod .. "|ALT",
+		action = act.AdjustPaneSize({ "Up", 5 }),
+	},
+	{
+		key = "L",
+		mods = mod .. "|ALT",
+		action = act.AdjustPaneSize({ "Right", 5 }),
+	},
+	{
+		key = "O",
+		mods = mod .. "|SHIFT",
+		action = act.PaneSelect({}),
+	},
+	{
+		key = "o",
+		mods = mod,
+		action = act.ActivatePaneDirection("Next"),
+	},
+	{
+		key = "l",
+		mods = mod,
+		action = wezterm.action_callback(function(window)
+			local tab = window:active_tab()
+			local panes = tab:panes_with_info()
+			if #panes > 0 then
+				panes[#panes].pane:activate()
+			end
+		end),
+	},
+	{
+		key = "j",
+		mods = mod,
+		action = wezterm.action_callback(function(window)
+			local tab = window:active_tab()
+			local panes = tab:panes()
+			if panes[1] then
+				panes[1]:activate()
+			end
+		end),
+	},
 	{
 		key = "i",
 		mods = mod,
@@ -157,76 +189,15 @@ config.keys = {
 				end
 			end
 
-			if claude_pane then
-				local current_id = pane:pane_id()
-				if current_id == panes[1]:pane_id() then
-					claude_pane:activate()
-				else
-					panes[1]:activate()
-				end
-			else
-				window:perform_action(act.ActivatePaneDirection("Next"), pane)
+			if claude_pane and claude_pane:pane_id() ~= pane:pane_id() then
+				claude_pane:activate()
 			end
 		end),
 	},
 	{
 		key = "w",
 		mods = mod,
-		action = wezterm.action_callback(function(window, pane)
-			if is_inside_tmux(pane) then
-				window:perform_action(
-					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "x" }) }),
-					pane
-				)
-			else
-				window:perform_action(act.CloseCurrentPane({ confirm = false }), pane)
-			end
-		end),
-	},
-	{
-		key = "]",
-		mods = mod,
-		action = wezterm.action_callback(function(window, pane)
-			if is_inside_tmux(pane) then
-				window:perform_action(
-					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "]" }) }),
-					pane
-				)
-			else
-				window:perform_action(act.SendKey({ key = "]", mods = mod }), pane)
-			end
-		end),
-	},
-	{
-		key = "[",
-		mods = mod,
-		action = wezterm.action_callback(function(window, pane)
-			if is_inside_tmux(pane) then
-				window:perform_action(
-					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "[" }) }),
-					pane
-				)
-			else
-				window:perform_action(act.SendKey({ key = "[", mods = mod }), pane)
-			end
-		end),
-	},
-	{
-		key = "t",
-		mods = mod,
-		action = wezterm.action_callback(function(window, pane)
-			if is_inside_tmux(pane) then
-				window:perform_action(
-					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "c" }) }),
-					pane
-				)
-			end
-		end),
-	},
-	{
-		key = "t",
-		mods = mod .. "|SHIFT",
-		action = act.SpawnTab("CurrentPaneDomain"),
+		action = act.CloseCurrentPane({ confirm = false }),
 	},
 	{
 		key = "N",
@@ -310,14 +281,26 @@ config.keys = {
 	{
 		key = "z",
 		mods = "CTRL",
+		action = wezterm.action.TogglePaneZoomState,
+	},
+	{
+		key = "o",
+		mods = "CTRL",
+		action = wezterm.action.RotatePanes("Clockwise"),
+	},
+	{
+		key = "O",
+		mods = "CTRL",
+		action = wezterm.action.RotatePanes("CounterClockwise"),
+	},
+	{
+		key = ";",
+		mods = mod,
 		action = wezterm.action_callback(function(window, pane)
-			if is_inside_tmux(pane) then
-				window:perform_action(
-					act.Multiple({ act.SendKey({ key = "o", mods = "CTRL" }), act.SendKey({ key = "z" }) }),
-					pane
-				)
+			if pane:is_alt_screen_active() then
+				window:perform_action(act.SendKey({ key = ";", mods = "CTRL" }), pane)
 			else
-				window:perform_action(wezterm.action.SendString("fg\n"), pane)
+				window:perform_action(act.SendKey({ key = ";", mods = mod }), pane)
 			end
 		end),
 	},
@@ -336,25 +319,11 @@ config.keys = {
 	},
 }
 
-for i = 1, 9 do
-	table.insert(config.keys, {
-		key = tostring(i),
-		mods = mod .. "|SHIFT",
-		action = act.ActivateTab(i - 1),
-	})
-
-	table.insert(config.keys, {
-		key = tostring(i),
-		mods = mod,
-		action = wezterm.action_callback(function(window, pane)
-			if is_inside_tmux(pane) then
-				window:perform_action(act.SendKey({ key = "o", mods = "CTRL" }), pane)
-				window:perform_action(act.SendKey({ key = tostring(i) }), pane)
-			else
-				window:perform_action(act.ActivateTab(i - 1), pane)
-			end
-		end),
-	})
-end
+config.colors = {
+	cursor_bg = colors.cursor,
+	cursor_fg = colors.darker,
+	cursor_border = colors.cursor,
+	split = colors.split,
+}
 
 return config

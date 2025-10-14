@@ -88,6 +88,14 @@ function M._create_autocommands()
 		end,
 		desc = "Track text changes for Claude IDE",
 	})
+
+	vim.api.nvim_create_autocmd("BufEnter", {
+		group = group,
+		callback = function()
+			M.on_buffer_enter()
+		end,
+		desc = "Track buffer switches for Claude IDE",
+	})
 end
 
 --- Clear autocommands
@@ -111,7 +119,25 @@ function M.on_text_changed()
 	M.debounce_update()
 end
 
---- Debounce selection updates
+function M.on_buffer_enter()
+	if not state.tracking_enabled then
+		return
+	end
+
+	if state.demotion_timer then
+		state.demotion_timer:stop()
+		state.demotion_timer:close()
+		state.demotion_timer = nil
+	end
+
+	if state.debounce_timer then
+		vim.loop.timer_stop(state.debounce_timer)
+		state.debounce_timer = nil
+	end
+
+	M.update_selection()
+end
+
 function M.debounce_update()
 	if state.debounce_timer then
 		vim.loop.timer_stop(state.debounce_timer)
@@ -254,10 +280,10 @@ function M.has_selection_changed(new_selection)
 	end
 
 	if
-		old.selection.start.line ~= new_selection.selection.start.line
-		or old.selection.start.character ~= new_selection.selection.start.character
-		or old.selection["end"].line ~= new_selection.selection["end"].line
-		or old.selection["end"].character ~= new_selection.selection["end"].character
+			old.selection.start.line ~= new_selection.selection.start.line
+			or old.selection.start.character ~= new_selection.selection.start.character
+			or old.selection["end"].line ~= new_selection.selection["end"].line
+			or old.selection["end"].character ~= new_selection.selection["end"].character
 	then
 		return true
 	end
