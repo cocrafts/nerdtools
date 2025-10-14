@@ -26,7 +26,8 @@ custom-shader-animation = true
 # =============================================================================
 
 # Primary font: Operator Mono Lig Medium (thicker weight for better line visibility)
-font-family = Operator Mono Lig
+font-family = "OperatorMono Nerd Font Mono"
+font-family = "Symbols Nerd Font"
 # font-family = Mono Lisa
 
 # Disable bold completely - use same weight for everything
@@ -39,19 +40,19 @@ font-thicken = true
 
 # Fallback for symbols/icons
 # font-family = OperatorMono Nerd Font Mono
-font-family = Symbols Nerd Font Mono
+# font-family = Symbols Nerd Font Mono
 
 # Font size
 # Note: Adjust per platform if needed. Linux typically needs smaller (11-12pt)
 # due to different DPI handling, macOS works well at 14-15pt
 font-size = 14.5
-adjust-icon-height = 2
 adjust-font-baseline = 1
+adjust-icon-height = -20%
 
 # Line height
 # Note: Ghostty doesn't have a direct line-height multiplier
 # Using adjust-cell-height as approximation (1.2 - 1.0 = 0.2 = 20%)
-adjust-cell-height = 20%
+adjust-cell-height = 4
 
 # =============================================================================
 # Window Configuration
@@ -72,6 +73,12 @@ window-save-state = always
 # Resize window in cell increments (not pixels) - macOS only
 window-step-resize = false
 
+quick-terminal-position = right
+quick-terminal-size = 800px
+
+split-divider-color = #303030
+link-previews = true
+
 # =============================================================================
 # Tab Bar Configuration
 # =============================================================================
@@ -82,7 +89,9 @@ gtk-tabs-location = hidden
 # On macOS, tabs are part of native UI
 # To hide: use window-theme = ghostty (minimal chrome)
 window-theme = ghostty
-macos-titlebar-style = hidden
+macos-icon = custom
+macos-custom-icon = ~/nerdtools/conf/ghostty/Ghostty.icns
+# macos-titlebar-style = hidden
 
 # =============================================================================
 # Performance & Rendering
@@ -124,27 +133,25 @@ keybind = super+shift+h=new_split:left
 keybind = super+shift+l=new_split:right
 
 # Navigate between panes (simplified - no Claude detection)
-keybind = super+i=goto_split:next
+keybind = super+o=goto_split:next
+keybind = super+shift+o=goto_split:previous
 
-# CMD+W: Close tmux pane (sends Ctrl+O x)
-keybind = super+w=text:\x0fx
-keybind = super+shift+w=close_surface
+# Resize splits (to achieve ~28% size, use after creating split)
+keybind = super+alt+h=resize_split:left,10
+keybind = super+alt+j=resize_split:down,10
+keybind = super+alt+k=resize_split:up,10
+keybind = super+alt+l=resize_split:right,10
 
-# --- Tab Management ---
-
-# CMD+T: Create new tmux window (sends Ctrl+O c)
-# Note: Will just output characters if not in tmux
 keybind = super+t=text:\x0fc
-
-# CMD+SHIFT+T: New Ghostty tab (not tmux)
+keybind = super+n=new_window
 keybind = super+shift+t=new_tab
 
-keybind = super+n=new_window
-keybind = super+shift+n=new_window
+keybind = super+=text:\x0fx
+keybind = super+shift+w=close_surface
 
 # --- Tab Navigation (1-9) ---
 
-# CMD+1-9: Switch tmux windows (sends Ctrl+O + number)
+# CMD+1-9: Switch tmux windows (sends Ctrl+O + number
 keybind = super+1=text:\x0f1
 keybind = super+2=text:\x0f2
 keybind = super+3=text:\x0f3
@@ -155,24 +162,14 @@ keybind = super+7=text:\x0f7
 keybind = super+8=text:\x0f8
 keybind = super+9=text:\x0f9
 
-# CMD+SHIFT+1-9: Switch Ghostty tabs
-keybind = super+shift+1=goto_tab:1
-keybind = super+shift+2=goto_tab:2
-keybind = super+shift+3=goto_tab:3
-keybind = super+shift+4=goto_tab:4
-keybind = super+shift+5=goto_tab:5
-keybind = super+shift+6=goto_tab:6
-keybind = super+shift+7=goto_tab:7
-keybind = super+shift+8=goto_tab:8
-keybind = super+shift+9=goto_tab:9
-
 # --- Terminal Operations ---
 
-# Clear screen (no tmux detection)
-keybind = super+k=clear_screen
+# Clear screen - send clear command + Enter
+keybind = super+k=text:clear\r
 
-# Tmux zoom pane (Ctrl+O z)
+# Maximize/restore current pane (native Ghostty zoom)
 keybind = ctrl+z=text:\x0fz
+keybind = ctrl+shift+z=toggle_split_zoom
 
 # --- Vim Integration ---
 # WARNING: These are always active (no alt-screen detection)
@@ -207,7 +204,7 @@ keybind = super+0=reset_font_size
 
 # --- Search ---
 
-keybind = super+f=toggle_quick_terminal
+keybind = super+'=toggle_quick_terminal
 keybind = super+p=toggle_command_palette
 
 # =============================================================================
