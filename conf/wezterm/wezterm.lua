@@ -191,6 +191,8 @@ config.keys = {
 
 			if claude_pane and claude_pane:pane_id() ~= pane:pane_id() then
 				claude_pane:activate()
+			else
+				panes[2]:activate()
 			end
 		end),
 	},
