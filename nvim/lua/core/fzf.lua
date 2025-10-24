@@ -21,6 +21,7 @@ M.configure = function()
 			row = 0.5,
 			col = 0.5,
 			border = "rounded",
+			backdrop = false,
 			preview = {
 				layout = "flex",
 				vertical = "down:45%",
@@ -65,11 +66,13 @@ M.configure = function()
 		-- Search pickers
 		grep = {
 			prompt = "Grep: ",
-			rg_opts = "--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob '!node_modules' -e",
+			rg_opts =
+			"--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob '!node_modules' -e",
 		},
 		live_grep = {
 			prompt = "Live Grep: ",
-			cmd = "rg --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob '!node_modules'",
+			cmd =
+			"rg --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob '!node_modules'",
 		},
 		-- LSP pickers
 		lsp = {
@@ -143,6 +146,21 @@ M.recent_files = function()
 	require("fzf-lua").oldfiles({
 		cwd_only = true,
 		include_current_session = true,
+		winopts = {
+			width = 0.6,
+			height = 0.6,
+			row = 0.5,
+			col = 0.5,
+			preview = {
+				vertical = "up:60%",
+			},
+		},
+	})
+end
+
+-- Helper for changed file (tracked by Git)
+M.changed_git_files = function()
+	require("fzf-lua").git_status({
 		winopts = {
 			width = 0.6,
 			height = 0.6,

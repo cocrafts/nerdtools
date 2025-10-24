@@ -88,6 +88,14 @@ highlight.system = {
 	TelescopePromptTitle = { bg = colors.bg, fg = colors.float_border },
 	TelescopePromptPrefix = { bg = colors.bg, fg = colors.float_border },
 
+	-- FzfLua
+	FzfLuaNormal = { bg = colors.bg, fg = colors.fg },
+	FzfLuaBorder = { bg = colors.bg, fg = colors.float_border },
+	FzfLuaPreviewNormal = { bg = colors.bg, fg = colors.fg },
+	FzfLuaPreviewBorder = { bg = colors.bg, fg = colors.float_border },
+	FzfLuaCursor = { bg = colors.cursor },
+	FzfLuaCursorLine = { bg = colors.cursor },
+
 	-- Cmp
 	CmpNormal = { bg = colors.bg },
 	CmpFloatBorder = { bg = colors.bg, fg = colors.float_border },

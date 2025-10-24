@@ -82,7 +82,7 @@ M.configure = function()
 			{ "<leader>u",  "<cmd>lua require('core.fzf').recent_files()<CR>", desc = "Recent files" },
 			{
 				"<leader>U",
-				"<cmd>FzfLua git_status<CR>",
+				"<cmd>lua require('core.fzf').changed_git_files()<CR>",
 				desc = "Open changed file",
 			},
 			{
