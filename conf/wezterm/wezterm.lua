@@ -97,14 +97,6 @@ config.keys = {
 		}),
 	},
 	{
-		key = "J",
-		mods = mod .. "|SHIFT",
-		action = act.SplitPane({
-			direction = "Down",
-			size = { Percent = 24 },
-		}),
-	},
-	{
 		key = "H",
 		mods = mod .. "|SHIFT",
 		action = act.SplitPane({
@@ -112,34 +104,31 @@ config.keys = {
 			size = { Percent = 32 },
 		}),
 	},
+	-- Layout switching
 	{
-		key = "L",
-		mods = mod .. "|SHIFT",
-		action = act.SplitPane({
-			direction = "Right",
-			size = { Percent = 32 },
-		}),
-	},
-	-- Resize panes
-	{
-		key = "H",
+		key = "h",
 		mods = mod .. "|ALT",
 		action = act.AdjustPaneSize({ "Left", 5 }),
 	},
 	{
-		key = "J",
+		key = "j",
 		mods = mod .. "|ALT",
 		action = act.AdjustPaneSize({ "Down", 5 }),
 	},
 	{
-		key = "K",
+		key = "k",
 		mods = mod .. "|ALT",
 		action = act.AdjustPaneSize({ "Up", 5 }),
 	},
 	{
-		key = "L",
+		key = "l",
 		mods = mod .. "|ALT",
 		action = act.AdjustPaneSize({ "Right", 5 }),
+	},
+	{
+		key = "o",
+		mods = mod,
+		action = act.ActivatePaneDirection("Next"),
 	},
 	{
 		key = "O",
@@ -148,8 +137,17 @@ config.keys = {
 	},
 	{
 		key = "o",
-		mods = mod,
-		action = act.ActivatePaneDirection("Next"),
+		mods = mod .. "|ALT",
+		action = wezterm.action_callback(function(window, pane)
+			local tab = window:active_tab()
+			tab:set_zoomed(false)
+			window:perform_action(
+				act.PaneSelect({
+					mode = "SwapWithActive",
+				}),
+				pane
+			)
+		end),
 	},
 	{
 		key = "l",
