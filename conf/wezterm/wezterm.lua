@@ -37,7 +37,7 @@ if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
 	config.initial_cols = 150
 else
 	config.font_size = 14.5
-	config.line_height = 1.14
+	config.line_height = 1.24
 
 	config.initial_rows = 50
 	config.initial_cols = 100
@@ -48,6 +48,7 @@ config.font = wezterm.font_with_fallback({
 		family = "Operator Mono Lig",
 		weight = "Book",
 	},
+	{ family = "JetBrains Mono", weight = "Regular" },
 	{
 		family = "Symbols Nerd Font Mono",
 		scale = 0.6,
@@ -89,7 +90,15 @@ config.keys = {
 		end),
 	},
 	{
-		key = "I",
+		key = "J",
+		mods = mod .. "|SHIFT",
+		action = act.SplitPane({
+			direction = "Down",
+			size = { Percent = 24 },
+		}),
+	},
+	{
+		key = "K",
 		mods = mod .. "|SHIFT",
 		action = act.SplitPane({
 			direction = "Up",
@@ -101,6 +110,14 @@ config.keys = {
 		mods = mod .. "|SHIFT",
 		action = act.SplitPane({
 			direction = "Left",
+			size = { Percent = 32 },
+		}),
+	},
+	{
+		key = "L",
+		mods = mod .. "|SHIFT",
+		action = act.SplitPane({
+			direction = "Right",
 			size = { Percent = 32 },
 		}),
 	},
@@ -134,20 +151,6 @@ config.keys = {
 		key = "O",
 		mods = mod .. "|SHIFT",
 		action = act.PaneSelect({}),
-	},
-	{
-		key = "o",
-		mods = mod .. "|ALT",
-		action = wezterm.action_callback(function(window, pane)
-			local tab = window:active_tab()
-			tab:set_zoomed(false)
-			window:perform_action(
-				act.PaneSelect({
-					mode = "SwapWithActive",
-				}),
-				pane
-			)
-		end),
 	},
 	{
 		key = "l",
