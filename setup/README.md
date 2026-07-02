@@ -1,6 +1,6 @@
 # nerdtools setup
 
-**Canonical contract**: [`../zsh/entry.sh`](../zsh/entry.sh). The setup recipes in this directory exist to make a machine satisfy that contract.
+**Canonical contract**: [`../zsh/entry.sh`](../zsh/entry.sh) on Unix, and its Windows counterpart [`../pwsh/entry.ps1`](../pwsh/entry.ps1). The setup recipes in this directory exist to make a machine satisfy that contract.
 
 ## How it works
 
@@ -9,6 +9,8 @@ Setup recipe (varies by OS) ──► env satisfies entry.sh ──► identical
 ```
 
 Setup commands differ between Linux/macOS, but the resulting environment is identical because `entry.sh` is the same on every machine. Cross-platform determinism comes from the contract, not from forcing every platform to use the same install commands.
+
+Windows is native (PowerShell 7, not WSL): it satisfies the same intent through a parallel contract, `pwsh/entry.ps1`. Each section below has a `## Windows` subsection with the scoop/PowerShell equivalent of the Unix commands.
 
 ## Quick start
 
@@ -37,6 +39,7 @@ The LLM reads each section and runs the platform-appropriate commands. Sections 
 | --------------------------- | -------------------------------------------------- |
 | macOS (Apple Silicon/Intel) | Brew-based install                                 |
 | Linux Debian/Ubuntu, WSL2   | apt-based install                                  |
+| Windows 10/11 (native)      | scoop + PowerShell 7; contract is `pwsh/entry.ps1` |
 | Other distros               | Concepts apply; commands need translation          |
 
 ## Files NOT in Syncthing (per-machine)
@@ -55,6 +58,8 @@ Some steps need the user (LLM cannot do them). When the LLM hits one of these, i
 | `chsh` PAM auth fails (WSL)        | Run `sudo usermod -s /usr/bin/zsh $USER` in another terminal      |
 | Default shell change applied       | Restart shell: logout / `wsl --shutdown` / new terminal tab       |
 | Sudo password (no TTY for LLM)     | Run the printed command, confirm "done"                           |
+| Windows: profile/junctions set     | Close and reopen Wezterm to load `entry.ps1`                       |
+| Windows: Smart App Control blocks self-built exes | Decide whether to disable it (irreversible) — see 04-tools |
 
 ## Final verification
 
@@ -67,6 +72,17 @@ zsh -i -c '
   command -v starship >/dev/null && echo "starship: ok"
   command -v nvim     >/dev/null && echo "nvim: ok"
   [[ -L ~/.config/nvim ]]        && echo "nvim symlink: ok"
+'
+```
+
+On **Windows**, in a fresh pwsh:
+
+```powershell
+pwsh -NoLogo -Command '
+  @("mise","starship","nvim") | ForEach-Object {
+    if (Get-Command $_ -EA SilentlyContinue) { "$_`: ok" } else { "$_`: MISSING" }
+  }
+  if (Test-Path "$env:LOCALAPPDATA\nvim") { "nvim junction: ok" }
 '
 ```
 

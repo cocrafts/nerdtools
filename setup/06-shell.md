@@ -41,6 +41,34 @@ grep -q "^${ZSH_PATH}$" /etc/shells || echo "$ZSH_PATH" | sudo tee -a /etc/shell
 chsh -s "$ZSH_PATH"
 ```
 
+## Windows (PowerShell 7 — the `entry.ps1` contract)
+
+Windows doesn't run zsh. Its contract counterpart is **`pwsh/entry.ps1`**, loaded from the
+PowerShell 7 profile. Everything `entry.sh` provides (PATH, starship/zoxide/mise init, history
+prediction, aliases) is mirrored there — so the *experience* matches even though the shell differs.
+
+```powershell
+# PowerShell 7 (skip if already installed)
+scoop install pwsh
+
+# Point the pwsh profile at the repo's entry.ps1 (source of truth stays in the repo)
+$profilePath = & pwsh -NoProfile -Command '$PROFILE'
+New-Item -ItemType Directory -Force (Split-Path $profilePath) | Out-Null
+Set-Content -Path $profilePath -Encoding utf8 -Value '. "$HOME\nerdtools\pwsh\entry.ps1"'
+```
+
+- **No oh-my-zsh**: PSReadLine (built-in) gives autosuggestions + history search; `posh-git` is
+  optional for git status in the prompt.
+- `entry.ps1` sources `~/.config/nerdtools/local.ps1` if present (counterpart of `local.zsh`).
+- Wezterm's `default_prog` launches `pwsh.exe`, so a new terminal lands in this profile.
+
+> **HANDOFF (Windows)**: close and reopen Wezterm (or open a new pwsh tab) to load `entry.ps1`.
+
+Windows verify (fresh pwsh):
+```powershell
+pwsh -NoLogo -Command 'starship --version; mise --version; (Get-Command nvim).Source'
+```
+
 ## Per-machine override (optional)
 
 ```bash

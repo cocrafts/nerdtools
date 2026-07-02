@@ -14,10 +14,26 @@ mkdir -p ~/.local/bin
 [[ -f ~/nerdtools/mise.toml ]] && ~/.local/bin/mise trust ~/nerdtools/mise.toml
 ```
 
+## Windows
+
+```powershell
+scoop install mise
+mise trust ~\nerdtools\mise.toml
+```
+
+On Windows, mise comes from scoop and lives on `PATH` via the scoop shims — not the
+`~/.local/bin/mise` canonical path that `entry.sh` hardcodes. `entry.ps1` simply calls `mise`
+from `PATH`, so subsequent sections use bare `mise` (no absolute path).
+
 ## Verify
 
 ```bash
 ~/.local/bin/mise --version
+```
+
+Windows verify:
+```powershell
+mise --version
 ```
 
 ## Notes

@@ -25,6 +25,13 @@ sudo apt-get install -y git curl ca-certificates
 xcode-select -p >/dev/null 2>&1 || xcode-select --install
 ```
 
+**Windows:** install git via winget (curl ships with Windows 10+), then install
+[scoop](https://scoop.sh) — the user-space package manager used by sections 01–06 (no admin):
+```powershell
+winget install --id Git.Git -e
+irm get.scoop.sh | iex
+```
+
 ### 0.2 Get `~/nerdtools/`
 
 Pick one option, NOT both.
@@ -35,6 +42,8 @@ git clone <YOUR_NERDTOOLS_REMOTE> ~/nerdtools
 ```
 
 Replace `<YOUR_NERDTOOLS_REMOTE>` with the actual remote URL (e.g., `git@github.com:user/nerdtools.git`).
+
+> On Windows/PowerShell use `$HOME\nerdtools` as the target (PowerShell doesn't expand `~` for `git`).
 
 **Option B — Syncthing** (multi-machine sync, when one machine already has nerdtools):
 1. Install Syncthing on both machines: https://syncthing.net/downloads/

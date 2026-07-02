@@ -29,12 +29,32 @@ brew install \
   openssl pkg-config libyaml
 ```
 
+## Windows
+
+```powershell
+# Base dirs
+New-Item -ItemType Directory -Force ~\Sources\bin, ~\Projects, ~\.config\lazygit, ~\.config\nerdtools | Out-Null
+
+# Buckets + core CLI tools (scoop was installed in section 00)
+scoop bucket add extras
+scoop bucket add nerd-fonts
+scoop install ripgrep fd fzf jq neovim shellcheck lua-language-server zoxide
+```
+
+No `zsh` on Windows — the shell is PowerShell 7, handled in section 06.
+
 ## Verify
 
 ```bash
 zsh --version
 nvim --version | head -1
 rg --version | head -1
+```
+
+Windows verify:
+```powershell
+nvim --version | Select-Object -First 1
+rg --version | Select-Object -First 1
 ```
 
 ## Notes

@@ -24,12 +24,28 @@ sudo apt-get install -y libyaml-dev libffi-dev libreadline-dev zlib1g-dev
   eslint_d
 ```
 
+## Windows
+
+```powershell
+mise use -g node@lts go@latest
+mise exec -- npm i -g bash-language-server vscode-langservers-extracted prettier eslint_d
+```
+
+Ruby is intentionally omitted on Windows: mise's ruby backend has no native Windows build
+(it needs RubyInstaller + MSYS2). Install RubyInstaller only if a specific project needs Ruby.
+
 ## Verify
 
 ```bash
 ~/.local/bin/mise exec -- node --version
 ~/.local/bin/mise exec -- go version
 ~/.local/bin/mise exec -- ruby --version
+```
+
+Windows verify (no Ruby):
+```powershell
+mise exec -- node --version
+mise exec -- go version
 ```
 
 ## Notes

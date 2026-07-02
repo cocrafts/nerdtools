@@ -18,6 +18,24 @@ ln -sfn ~/nerdtools/conf/zls.json       ~/.config/zls.json
 ln -sfn ~/nerdtools/conf/tmux           ~/.config/tmux
 ```
 
+## Windows
+
+Windows uses **directory junctions** instead of `ln -sfn`. Junctions need no admin (unlike
+`SymbolicLink`), and the target app sees the real repo files — so Wezterm hot-reloads natively.
+
+```powershell
+# Neovim reads %LOCALAPPDATA%\nvim on Windows
+New-Item -ItemType Junction -Force -Path "$env:LOCALAPPDATA\nvim" -Target "$HOME\nerdtools\nvim" | Out-Null
+
+# Wezterm reads ~/.config on Windows too
+New-Item -ItemType Junction -Force -Path "$HOME\.config\wezterm" -Target "$HOME\nerdtools\conf\wezterm" | Out-Null
+```
+
+- Junctions replace the whole target dir, so they are idempotent with `-Force`.
+- Same rule as below: do **not** junction `~/.claude`.
+- Apps that read `%APPDATA%`/`%LOCALAPPDATA%` instead of `~/.config` on Windows (e.g. lazygit)
+  need their own junction to the platform path; add per-app as needed.
+
 ## Verify
 
 ```bash
