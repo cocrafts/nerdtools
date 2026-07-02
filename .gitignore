@@ -15,6 +15,9 @@ metacraft
 geekCaps/geekCaps
 claude/.credentials.json
 claude/ide
+claude/debug
 claude/file-history
+claude/projects
+claude/history.jsonl
 
 core/target

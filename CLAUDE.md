@@ -4,9 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-NerdTools is a comprehensive development environment automation framework for Metacraft developers. It provides unified configuration management across macOS and Linux, featuring a complete Neovim IDE setup, automated deployment via Ansible, and custom keyboard configuration through GeekCaps.
+NerdTools is a comprehensive development environment for Metacraft developers, synced across macOS and Linux machines via Syncthing. It includes a complete Neovim IDE setup, an LLM-driven machine setup procedure (`setup/`), and custom keyboard configuration through GeekCaps.
 
-**Important**: The `apps/` directory contains legacy applications and should be ignored unless explicitly requested.
 
 ## Build and Development Commands
 
@@ -36,31 +35,20 @@ stylua nvim/lua/core/init.lua
 typos nvim/
 ```
 
-### Environment Deployment
+### Machine Setup
 
-```bash
-# Deploy macOS environment
-ansible-playbook -i hosts.yml macos.yml
+Setup procedure is in `setup/` as markdown documents executed by an LLM (Claude Code).
 
-# Deploy Linux environment  
-ansible-playbook -i hosts.yml linux.yml
-
-# Test individual playbook
-ansible-playbook -i hosts.yml ansible/macos/essentials.yml
+```
+# In Claude Code, in this repo:
+"Read setup/ and walk me through. Skip steps already done."
 ```
 
-### JavaScript/TypeScript (if working in apps/)
-
-```bash
-# Install dependencies
-yarn install
-
-# Run lint (via Turbo)
-yarn turbo lint
-
-# Run build (via Turbo)
-yarn turbo build
-```
+Sections:
+- `setup/README.md` — entry point + how to use
+- `setup/conventions.md` — canonical paths, philosophy
+- `setup/00-prerequisites.md` — manual bootstrap (git, nerdtools, Claude Code)
+- `setup/01-essentials.md` through `setup/06-shell.md` — execution order
 
 ## Architecture and Code Patterns
 
@@ -79,12 +67,18 @@ yarn turbo build
    - Types: `geekCaps/types.nim`, `geekCaps/keys.nim`
    - Pattern: Modular Nim rules that generate JSON for Karabiner-Elements
 
-3. **Ansible Automation** (`ansible/`, root playbooks)
-   - Platform-specific: `macos.yml`, `linux.yml`
-   - Shared roles: `ansible/*.yml`
-   - Pattern: Hierarchical playbook imports with platform detection
+3. **Machine Setup** (`setup/`)
+   - LLM-driven: markdown sections describe goals, steps, skip rules, verification
+   - Source of truth for canonical paths (mise at `~/.local/bin/mise`, etc.)
+   - Self-contained: an LLM agent reads `setup/README.md`, walks the sections, asks before sudo, verifies after
 
-4. **Configuration Files** (`conf/`)
+4. **Shell init** (`zsh/entry.sh`)
+   - Sourced from `~/.zshrc` on each machine
+   - Hardcodes paths for tools we install (mise, etc.)
+   - Detects brew prefix at runtime (cross-arch)
+   - Sources `~/.config/nerdtools/local.zsh` for per-machine override (outside Syncthing)
+
+5. **Configuration Files** (`conf/`)
    - Terminal configs: `alacritty/`, `kitty.conf`, `wezterm/wezterm.lua`
    - Shell configs: `nushell/`, `zsh/`
    - Tool configs: `aider.conf.yml`, `lazygit.yml`, `starship.toml`
@@ -102,10 +96,10 @@ yarn turbo build
 - Rule modules export a single proc returning rule configuration
 - Use `nimble configure` to test changes
 
-#### Ansible
-- Tasks use descriptive names
-- Platform-specific tasks in respective directories
-- Use templates from `ansible/*/templates/` for config files
+#### Setup markdowns
+- Each section: Goal → Preconditions → Steps → Skip rule → Verify → Notes
+- Hardcode paths for tools we install; detect for brew/apt
+- Adding a new tool: extend the relevant section, not create a new file unless it's a new concern
 
 ### Key Dependencies and Tools
 
@@ -127,28 +121,25 @@ The repository includes extensive LSP configurations. When adding new language s
 - **Lua**: Run `selene nvim/` before committing Neovim configs
 - **Nim**: Test GeekCaps with `nimble configure` after changes
 - **Typos**: Run `typos` in project root to catch spelling errors
-- **Ansible**: Use `--check` flag to dry-run playbooks
+- **Machine setup**: each `setup/*.md` has a `Verify` block; run it after the section to confirm the goal is met
 
 ## Important Notes
 
 - Neovim configuration uses Lazy.nvim for plugin management - changes to plugin specs require `:Lazy sync`
 - GeekCaps generates Karabiner-Elements configuration - always test keyboard changes carefully
-- Ansible playbooks are idempotent - safe to run multiple times
-- The repository uses Yarn workspaces but apps/ directory is legacy
+- `setup/*.md` sections have skip rules and are idempotent - safe to re-run
+- `~/nerdtools/` is synced across Mac and Linux via Syncthing — anything edited here propagates. Per-machine overrides go in `~/.config/nerdtools/local.zsh` (outside the synced tree).
 
 ## Specialized Agents
 
 This repository includes specialized Claude agents for focused tasks:
 
-1. **ansible-deployer** (`.claude/agents/ansible-deployer.md`)
-   - Expert in Ansible playbook management and environment deployment
-   - Handles macOS/Linux system configuration and tool installation
-   - Use when: Setting up new machines, adding software, troubleshooting deployments
-
-2. **neovim-configurator** (`.claude/agents/neovim-configurator.md`)
+1. **neovim-configurator** (`.claude/agents/neovim-configurator.md`)
    - Specialist in Neovim configuration, LSP setup, and plugin management
    - Manages the comprehensive IDE setup with 15+ language support
    - Use when: Adding language support, configuring plugins, optimizing performance
+
+For machine setup, work directly with `setup/*.md` sections — no specialized agent needed.
 
 ## Agent Usage Guidelines
 
@@ -159,11 +150,7 @@ Consider using specialized agents for **complex tasks** that benefit from domain
   - Debugging complex plugin interactions
   - Optimizing startup performance
   - Refactoring large portions of the config
-  
-- **ansible-deployer**: Use when:
-  - Setting up new machines from scratch
-  - Adding multiple software packages
-  - Creating new playbook roles
-  - Troubleshooting deployment failures
+
+For machine setup, work directly with `setup/*.md` — the markdown describes intent, you execute and verify.
 
 For **simple tasks** (reading files, small edits, quick searches), work directly without agents for better efficiency.

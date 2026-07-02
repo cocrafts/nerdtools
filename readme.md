@@ -1,84 +1,57 @@
 # NerdTools
 
-A unified development environment for Metacraft developers that automates configuration across macOS and Linux systems.
+Personal development environment, synced across macOS and Linux machines via Syncthing.
 
-## Quick Start
+## What's in here
 
-### macOS Setup
+| Path | What |
+| ---- | ---- |
+| [`zsh/entry.sh`](zsh/entry.sh) | Canonical shell contract — sourced from `~/.zshrc` on every machine |
+| [`setup/`](setup/) | LLM-driven machine setup procedure (recipes that satisfy the contract) |
+| [`nvim/`](nvim/) | Neovim configuration (Lazy.nvim, 15+ language LSPs) |
+| [`geekCaps/`](geekCaps/) | Karabiner-Elements config built from Nim |
+| [`conf/`](conf/) | Terminal + tool configs (alacritty, wezterm, kitty, ghostty, tmux, nushell, lazygit, starship, aider) |
+| [`claude/`](claude/) | Claude Code config — agents, commands, hooks, rules, skills |
+| [`bin/`](bin/) | Personal utility scripts |
 
-1. Install prerequisites:
-   ```bash
-   # Install Homebrew
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   
-   # Install Ansible
-   brew install ansible
-   
-   # Install Starship (optional)
-   brew install starship
-   ```
+## Setting up a new machine
 
-2. Deploy environment:
-   ```bash
-   # Clone repository to home directory
-   git clone <repo-url> ~/nerdtools
-   
-   # Run Ansible playbook
-   cd ~/nerdtools
-   ansible-playbook -i hosts.yml macos.yml
-   ```
+```bash
+# 1. Manual bootstrap
+sudo apt-get install -y git curl    # Linux
+xcode-select --install              # macOS
+git clone <this-repo-url> ~/nerdtools
 
-### Linux Setup
+# 2. Install Claude Code (https://docs.anthropic.com/claude-code)
 
-1. Configure hosts:
-   - Edit `hosts.yml` with your target IP address
-   - Ensure SSH access is configured to the target machine
-   - Verify Ansible is installed on the remote client
+# 3. LLM-driven setup
+cd ~/nerdtools && claude
+> "Read setup/ and walk me through. Skip steps already done."
+```
 
-2. Deploy environment:
-   ```bash
-   ansible-playbook -i hosts.yml linux.yml
-   
-   # Set Zsh as default shell
-   chsh -s $(which zsh)
-   ```
+See [`setup/README.md`](setup/README.md) for full details.
 
-## Neovim Configuration
+## Architecture
 
-### Required Dependencies
+`zsh/entry.sh` is the **canonical contract** — identical on every machine, hardcoded paths, defines what tools and env the shell expects. `setup/` describes one tested recipe to make a machine satisfy that contract.
 
-| Tool | Installation | Purpose |
-|------|-------------|---------|
-| LLVM | `brew install llvm --with-toolchain` | C/C++ toolchain |
-| Ruff | `pip3 install ruff` | Python linter |
-| MyPy | `pip3 install mypy` | Python type checker |
-| JSON Language Server | `pip3 install jsonls` | JSON support |
-| Pyright | `pip3 install pyright` | Python LSP |
-| Codespell | `pip3 install codespell` | Spell checker |
-| ASCII Image Converter | [Link](https://github.com/TheZoraiz/ascii-image-converter) | Image display |
+Cross-platform determinism: setup commands differ per OS (apt vs brew), but the resulting environment is identical because entry.sh is the same everywhere.
 
-### Manual LSP Installations
+```
+Setup recipe (varies by OS) ──► env satisfies entry.sh ──► identical zsh experience
+```
 
-These LSPs should be installed manually rather than via Mason:
+## Per-machine override
 
-| LSP | Installation | Language |
-|-----|-------------|----------|
-| WGSL Analyzer | [Link](https://github.com/wgsl-analyzer/wgsl-analyzer) | WebGPU Shading |
-| Hurl | [Link](https://hurl.dev/docs/installation.html) | API testing |
-| Lua Language Server | `brew install lua-language-server` | Lua |
-| Rust Analyzer | `rustup component add rust-src` | Rust |
-| Gopls | [Link](https://github.com/golang/tools/tree/master/gopls) | Go |
-| ZLS | [Link](https://github.com/zigtools/zls) | Zig |
-| NPH | [Link](https://github.com/arnetheduck/nph) | Nim formatter |
-| SwiftLint & SwiftFormat | `brew install swiftlint swiftformat` | Swift |
+Anything not safe to sync (API keys, work-only env, host-specific aliases) lives in `~/.config/nerdtools/local.zsh` (outside `~/nerdtools/`). `entry.sh` sources it at the very end if present.
 
-## Terminal Configuration
+## Components
 
-- **Kitty**: Use `kitty +kitten ssh` instead of `ssh` when connecting to Linux systems
-- **Wezterm**: [Configure undercurl](https://wezfurlong.org/wezterm/faq.html?h=undercurl#how-do-i-enable-undercurl-curly-underlines) for proper styling
-- **Mise**: Use for [cross-language version management](https://mise.jdx.dev/lang/bun.html)
+- **Neovim** — see [`nvim/readme.md`](nvim/readme.md). Lazy-loaded plugins, LSPs for 15+ languages.
+- **GeekCaps** — Karabiner config in Nim. Build with `cd geekCaps && nimble configure`.
+- **Claude Code** — agents, slash commands, hooks under [`claude/`](claude/). Loaded by Claude Code from `~/.claude/`.
 
-## Recommended Tools
+## Notes
 
-- [btop](https://github.com/aristocratos/btop) - Resource monitor with modern UI
-
+- `~/nerdtools/` is synced via Syncthing. Edits propagate to all paired machines.
+- `mise.toml` at the repo root pins `ruby = "3.4.2"` for the project. Setup trusts it once via `mise trust ~/nerdtools/mise.toml`.
