@@ -24,7 +24,9 @@ Windows uses **directory junctions** instead of `ln -sfn`. Junctions need no adm
 `SymbolicLink`), and the target app sees the real repo files — so Wezterm hot-reloads natively.
 
 ```powershell
-# Neovim reads %LOCALAPPDATA%\nvim on Windows
+# entry.ps1 sets XDG_CONFIG_HOME=~/.config, so Neovim reads ~/.config/nvim (like Unix).
+New-Item -ItemType Junction -Force -Path "$HOME\.config\nvim"     -Target "$HOME\nerdtools\nvim" | Out-Null
+# Also junction the native path as a fallback for launches without that env (e.g. Neovide from Explorer).
 New-Item -ItemType Junction -Force -Path "$env:LOCALAPPDATA\nvim" -Target "$HOME\nerdtools\nvim" | Out-Null
 
 # Wezterm reads ~/.config on Windows too
