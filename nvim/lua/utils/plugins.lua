@@ -282,6 +282,7 @@ return {
 	{ "nvim-treesitter/playground", lazy = true },
 	{
 		"nvim-treesitter/nvim-treesitter",
+		branch = "master", -- config uses the master API (require("nvim-treesitter.configs")); `main` is the incompatible rewrite
 		build = ":TSUpdate",
 		event = "User FileOpened",
 		config = function()

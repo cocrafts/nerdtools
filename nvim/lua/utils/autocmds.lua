@@ -22,8 +22,8 @@ local definitions = {
 			group = "BufferEnter",
 			desc = "Buffer Enter",
 			callback = function(args)
-				local parsers = require("nvim-treesitter.parsers")
-				local language = parsers.get_buf_lang(args.buf)
+				-- Core nvim treesitter API (nvim-treesitter `main` branch dropped parsers.get_buf_lang)
+				local language = vim.treesitter.language.get_lang(vim.bo[args.buf].filetype)
 				local buftype = vim.api.nvim_get_option_value("buftype", { buf = args.buf })
 				local filetype = vim.api.nvim_get_option_value("filetype", { buf = args.buf })
 
@@ -34,8 +34,8 @@ local definitions = {
 				end
 
 				-- print(string.format("%s: %s", language, parsers.has_parser(language)))
-				if parsers.has_parser(language) then
-					vim.cmd("TSBufEnable highlight")
+				if language and pcall(vim.treesitter.language.add, language) then
+					pcall(vim.treesitter.start, args.buf, language)
 				end
 
 				-- if filetype == "func" or filetype == "hurl" then
