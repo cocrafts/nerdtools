@@ -3,6 +3,11 @@ local M = {}
 M.configure = function()
 	local configs = require("nvim-treesitter.configs")
 
+	-- Windows: compile parsers with zig cc (no MSVC / gcc needed)
+	if vim.fn.has("win32") == 1 then
+		require("nvim-treesitter.install").compilers = { "zig" }
+	end
+
 	configs.setup({
 		on_config_done = nil,
 		sync_install = false,
