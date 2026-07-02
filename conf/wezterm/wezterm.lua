@@ -29,7 +29,7 @@ config.inactive_pane_hsb = {
 config.term = "wezterm" -- Use WezTerm's terminfo for accurate capabilities
 
 -- https://wezfurlong.org/wezterm/config/lua/wezterm/target_triple.html
-if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
+if wezterm.target_triple == "x86_64-unknown-linux-gnu" or wezterm.target_triple:find("windows") then
 	config.font_size = 11.5
 	config.line_height = 1.2
 
@@ -43,10 +43,22 @@ else
 	config.initial_cols = 100
 end
 
+-- On Windows, open straight into PowerShell 7 (falls back handled by pwsh install)
+if wezterm.target_triple:find("windows") then
+	config.default_prog = { "pwsh.exe", "-NoLogo" }
+end
+
+-- On Windows/DirectWrite the "Book" face reports numeric weight 325, not the
+-- named "Book" (380) weight, so match it by number there.
+local operator_weight = "Book"
+if wezterm.target_triple:find("windows") then
+	operator_weight = 325
+end
+
 config.font = wezterm.font_with_fallback({
 	{
 		family = "Operator Mono Lig",
-		weight = "Book",
+		weight = operator_weight,
 	},
 	{ family = "JetBrains Mono", weight = "Regular" },
 	{
@@ -73,8 +85,16 @@ config.window_padding = {
 
 -- Platform-specific modifier key
 local mod = "CMD"
-if wezterm.target_triple == "x86_64-unknown-linux-gnu" then
+if wezterm.target_triple == "x86_64-unknown-linux-gnu" or wezterm.target_triple:find("windows") then
 	mod = "CTRL"
+end
+
+-- When `mod` is CTRL (Windows/Linux), the standalone CTRL rotate bindings below
+-- would collide with mod-bindings (e.g. CTRL+o = next pane). Shift them to CTRL+ALT
+-- there. On macOS (mod=CMD) they stay on plain CTRL, unchanged.
+local rotmod = "CTRL"
+if mod == "CTRL" then
+	rotmod = "CTRL|ALT"
 end
 
 config.keys = {
@@ -288,12 +308,12 @@ config.keys = {
 	},
 	{
 		key = "o",
-		mods = "CTRL",
+		mods = rotmod,
 		action = wezterm.action.RotatePanes("Clockwise"),
 	},
 	{
 		key = "O",
-		mods = "CTRL",
+		mods = rotmod,
 		action = wezterm.action.RotatePanes("CounterClockwise"),
 	},
 	{
