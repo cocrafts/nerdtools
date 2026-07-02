@@ -56,7 +56,6 @@ M.configure = function()
 				"<cmd>lua require('utils.helper').close_other_buffers()<CR>",
 				desc = "Close other buffers",
 			},
-			{ "<leader>x", "<cmd>FzfLua neoclip<CR>", desc = "Clipboard history" },
 			{
 				"<leader>e",
 				function()

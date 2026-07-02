@@ -262,17 +262,10 @@ return {
 		end,
 	},
 	{ "nvim-lua/plenary.nvim", lazy = true },
-	{ "kkharji/sqlite.lua",    module = "sqlite" },
 	{
 		"ibhagwan/fzf-lua",
 		dependencies = {
 			{ "nvim-tree/nvim-web-devicons" },
-			{
-				"AckslD/nvim-neoclip.lua",
-				dependencies = {
-					"kkharji/sqlite.lua",
-				},
-			},
 		},
 		config = function()
 			require("core.fzf").configure()

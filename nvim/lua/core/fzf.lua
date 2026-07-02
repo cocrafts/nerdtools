@@ -3,7 +3,6 @@ local icons = require("utils.icons")
 
 M.configure = function()
 	local fzf = require("fzf-lua")
-	local neoclip = require("neoclip")
 
 	-- Configure chafa for image preview
 	local img_previewer = nil
@@ -109,21 +108,6 @@ M.configure = function()
 		colorschemes = {
 			prompt = "Colorschemes: ",
 			live_preview = true,
-		},
-	})
-
-	-- Setup neoclip with fzf-lua support
-	neoclip.setup({
-		enable_persistent_history = true,
-		keys = {
-			fzf = {
-				select = "default",
-				paste = "ctrl-j",
-				paste_behind = "ctrl-k",
-				delete = "ctrl-d",
-				edit = "ctrl-e",
-				custom = {},
-			},
 		},
 	})
 
