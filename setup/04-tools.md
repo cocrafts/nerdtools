@@ -55,6 +55,10 @@ mise use -g lazygit@latest shfmt@latest gofumpt@latest
 ```
 
 - **zig** is a drop-in C/C++ compiler (`zig cc`) for crates/plugins that build C without MSVC.
+  The Neovim config uses it for Treesitter parser compilation on Windows, and disables Lazy's
+  luarocks there (image.nvim uses `magick_cli`, so no rock is needed).
+- For image.nvim's preview, install ImageMagick via **winget** (`winget install ImageMagick.ImageMagick`) —
+  scoop's `imagemagick` is currently broken (its `innounp` dependency fails to download).
 - If a `mise use -g` tool has no Windows release, fall back to `scoop install <tool>`.
 
 > **⚠️ Gotcha — Application Control (Smart App Control / WDAC).** If enabled, running a
