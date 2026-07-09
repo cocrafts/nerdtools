@@ -37,6 +37,9 @@ return {
 			"TmuxNavigatePrevious",
 			"TmuxNavigatorProcessList",
 		},
+		config = function()
+			dofile(vim.fn.expand("~/nerdtools/conf/herdr/vim-herdr-navigation/editor/nvim.lua"))
+		end,
 	},
 	{
 		"VonHeikemen/lsp-zero.nvim",

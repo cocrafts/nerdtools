@@ -3,12 +3,6 @@ local key = require("utils.key")
 key.mode_keys("i", {})
 
 key.mode_keys("n", {
-	-- Tmux navigator (seamless navigation between vim and tmux panes)
-	["<C-h>"] = "<cmd><C-U>TmuxNavigateLeft<cr>",
-	["<C-j>"] = "<cmd><C-U>TmuxNavigateDown<cr>",
-	["<C-k>"] = "<cmd><C-U>TmuxNavigateUp<cr>",
-	["<C-l>"] = "<cmd><C-U>TmuxNavigateRight<cr>",
-
 	["<C-x>"] = ":split<CR>:b#<CR>",
 	["<C-s>"] = ":vsplit<CR>:b#<CR>",
 	["<C-g>"] = ":tabnew<CR>",
@@ -30,10 +24,6 @@ key.mode_keys("n", {
 })
 
 key.mode_keys("v", {
-	["<C-h>"] = "<cmd>TmuxNavigateLeft<cr>",
-	["<C-j>"] = "<cmd>TmuxNavigateDown<cr>",
-	["<C-k>"] = "<cmd>TmuxNavigateUp<cr>",
-	["<C-l>"] = "<cmd>TmuxNavigateRight<cr>",
 	["J"] = ":m '>+1<CR>gv=gv",
 	["K"] = ":m '<-2<CR>gv=gv",
 	["<"] = "<gv",
