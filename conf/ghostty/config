@@ -12,10 +12,10 @@
 theme = TokyoNight Night
 
 # Custom cursor color (overrides theme default)
-cursor-color = cell-foreground
+# cursor-color = cell-foreground
 
 # Animated cursor shader (rainbow smear effect)
-custom-shader = /Users/le/nerdtools/conf/ghostty/smear.glsl
+custom-shader = /Users/le/nerdtools/conf/ghostty/cursor-warp.glsl
 # Gears and belts background animation
 # custom-shader = /Users/le/nerdtools/conf/ghostty/gears-and-belts.glsl
 # custom-shader = /Users/le/nerdtools/conf/ghostty/glitchy.glsl
