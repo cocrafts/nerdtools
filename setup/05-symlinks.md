@@ -16,6 +16,15 @@ ln -sfn ~/nerdtools/conf/revive.toml    ~/revive.toml
 ln -sfn ~/nerdtools/conf/lazygit.yml    ~/.config/lazygit/config.yml
 ln -sfn ~/nerdtools/conf/zls.json       ~/.config/zls.json
 ln -sfn ~/nerdtools/conf/tmux           ~/.config/tmux
+mkdir -p ~/.config/herdr && ln -sfn ~/nerdtools/conf/herdr/config.toml ~/.config/herdr/config.toml
+```
+
+`~/.config/herdr/` also holds machine-local runtime state (logs, sockets, `session.json`), so only the `config.toml` file is symlinked, not the whole directory.
+
+The `vim-herdr-navigation` plugin (seamless `Ctrl+h/j/k/l` across herdr panes and Neovim splits) is vendored at `~/nerdtools/conf/herdr/vim-herdr-navigation`. Its `config.toml` keybinds and the Neovim side sync via git, but linking it into herdr is machine-local — run once per machine (needs `jq`):
+
+```bash
+herdr plugin link ~/nerdtools/conf/herdr/vim-herdr-navigation && herdr server reload-config
 ```
 
 ## Windows
@@ -42,7 +51,8 @@ New-Item -ItemType Junction -Force -Path "$HOME\.config\wezterm" -Target "$HOME\
 
 ```bash
 for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushell ~/.config/tmux \
-            ~/.aider.conf.yml ~/revive.toml ~/.config/lazygit/config.yml ~/.config/zls.json; do
+            ~/.aider.conf.yml ~/revive.toml ~/.config/lazygit/config.yml ~/.config/zls.json \
+            ~/.config/herdr/config.toml; do
   if [[ -L "$link" && -e "$link" ]]; then
     printf "✓ %-40s -> %s\n" "$link" "$(readlink "$link")"
   else
