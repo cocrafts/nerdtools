@@ -313,6 +313,17 @@ return {
 		end,
 	},
 	{
+		dir = "/Users/le/vimcraft/meister",
+		dependencies = { "nickjvandyke/opencode.nvim", "sindrets/diffview.nvim" },
+		cmd = "Meister",
+		keys = {
+			{ "<leader>ma", "<Plug>(meister-annotate)", mode = { "n", "x" }, desc = "Meister: annotate" },
+			{ "<leader>ms", "<Plug>(meister-send)", desc = "Meister: send annotations" },
+			{ "<leader>mc", "<Plug>(meister-clear)", desc = "Meister: clear annotations" },
+		},
+		opts = {},
+	},
+	{
 		"lewis6991/gitsigns.nvim",
 		event = "User FileOpened",
 		cmd = { "Gitsigns" },
