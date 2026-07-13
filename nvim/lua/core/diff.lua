@@ -5,6 +5,10 @@ local icons = require("utils.icons")
 vim.opt.fillchars:append("diff:╱")
 
 M.configureDiffview = function()
+	local actions = require("diffview.actions")
+	local toggle_files = { "n", "<leader>e", actions.toggle_files, { desc = "Toggle the file panel" } }
+	local unmap_b = { "n", "<leader>b", false }
+
 	require("diffview").setup({
 		enhanced_diff_hl = true,
 		use_icons = true,
@@ -16,6 +20,16 @@ M.configureDiffview = function()
 			fold_closed = "",
 			fold_open = "",
 			done = icons.ui.Check,
+		},
+		keymaps = {
+			view = { unmap_b, toggle_files },
+			file_panel = { unmap_b, toggle_files },
+			file_history_panel = { unmap_b, toggle_files },
+		},
+		hooks = {
+			view_opened = function(view)
+				view.panel:close()
+			end,
 		},
 	})
 end
