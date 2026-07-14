@@ -27,10 +27,15 @@ local definitions = {
 				local buftype = vim.api.nvim_get_option_value("buftype", { buf = args.buf })
 				local filetype = vim.api.nvim_get_option_value("filetype", { buf = args.buf })
 
-				if filetype == "neo-tree" or filetype == "toggleterm" or buftype == "nofile" or buftype == "terminal" then
+				if
+					filetype == "neo-tree"
+					or filetype == "toggleterm"
+					or buftype == "nofile"
+					or buftype == "terminal"
+				then
 					vim.o.statuscolumn = "%s"
 				else
-					vim.o.statuscolumn = "%s%=%{v:relnum?v:relnum:v:lnum} "
+					vim.o.statuscolumn = "%s%=%{%v:virtnum<0?'%#MeisterGhostNr#':''%}%{v:relnum?v:relnum:v:lnum} "
 				end
 
 				-- print(string.format("%s: %s", language, parsers.has_parser(language)))
