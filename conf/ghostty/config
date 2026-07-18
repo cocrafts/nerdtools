@@ -14,6 +14,9 @@ theme = TokyoNight Night
 # Custom cursor color (overrides theme default)
 # cursor-color = cell-foreground
 
+# Thicken the bar cursor (default 0.5pt/1px too thin on Retina); absolute points, not %
+adjust-cursor-thickness = 3
+
 # Animated cursor shader (rainbow smear effect)
 custom-shader = /Users/le/nerdtools/conf/ghostty/cursor-warp.glsl
 # Gears and belts background animation

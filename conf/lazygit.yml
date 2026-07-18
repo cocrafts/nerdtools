@@ -1,11 +1,21 @@
 git:
   overrideGpg: true
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never --hyperlinks --line-numbers --wrap-max-lines=0 --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+    - colorArg: always
+      pager: diff-so-fancy --color=always
+    - colorArg: always
+      externalDiffCommand: difft --color=always
 gui:
+  sidePanelWidth: 0.2
   border: 'rounded'
+  wrapLinesInStagingView: false
   showSummaryOnCommit: true
   showBottomLine: false
   showCommandLog: false # use @ key to toggle it on
   showListFooter: false # for seeing the '5 of 20' message in list panels
+  showRootItemInFileTree: false
   nerdFontsVersion: "" # nerd fonts version to use ("2" or "3"); empty means don't show nerd font icons
   os:
     editPreset: 'nvim'
