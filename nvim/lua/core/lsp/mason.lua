@@ -7,7 +7,11 @@ local ensure_installed = {
 }
 
 M.configure = function()
-	if vim.loop.os_uname().sysname == "Darwin" then
+	local sysname = vim.loop.os_uname().sysname
+	-- macOS and Windows get LSP servers auto-installed through Mason (on
+	-- Windows they need node from mise as the runtime for the npm-based ones).
+	-- Linux stays opted out for now.
+	if sysname == "Darwin" or sysname == "Windows_NT" then
 		require("mason").setup({
 			registries = {
 				"github:mason-org/mason-registry", -- install with MasonInstall roslyn
