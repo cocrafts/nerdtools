@@ -23,12 +23,17 @@ M.valueExists = function(item, items)
 end
 
 M.close_other_buffers = function()
-	local bufs = vim.api.nvim_list_bufs()
 	local current_buf = vim.api.nvim_get_current_buf()
-	for _, buf in ipairs(bufs) do
+	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 		local buf_name = vim.fn.bufname(buf)
-		if (buf_name and string.sub(buf_name, 1, 8)) ~= "neo-tree" and buf ~= current_buf then
-			vim.api.nvim_buf_delete(buf, {})
+		-- Keep: the current buffer, neo-tree, running terminals (deleting them
+		-- without force raises E89 and aborts the loop) and unsaved changes.
+		local keep = buf == current_buf
+			or string.sub(buf_name, 1, 8) == "neo-tree"
+			or vim.bo[buf].buftype == "terminal"
+			or vim.bo[buf].modified
+		if not keep then
+			pcall(vim.api.nvim_buf_delete, buf, {})
 		end
 	end
 end
