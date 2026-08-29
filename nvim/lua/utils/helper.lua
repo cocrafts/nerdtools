@@ -63,7 +63,7 @@ M.open_lsp_definitions = function()
 		end
 
 		local results =
-				vim.lsp.buf_request_sync(0, "textDocument/definition", vim.lsp.util.make_position_params(), 1000)
+			vim.lsp.buf_request_sync(0, "textDocument/definition", vim.lsp.util.make_position_params(), 1000)
 
 		for _client_id, response in pairs(results or {}) do
 			if response.result and vim.islist(response.result) then
