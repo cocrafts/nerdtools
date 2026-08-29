@@ -1,3 +1,8 @@
+# Shell scripts must stay LF even when checked out on Windows (core.autocrlf),
+# otherwise bash fails on the \r — e.g. conf/herdr/vim-herdr-navigation/navigate.sh
+*.sh                 text eol=lf
+*.zsh                text eol=lf
+
 /.yarn/**            linguist-vendored
 /.yarn/releases/*    binary
 /.yarn/plugins/**/*  binary
