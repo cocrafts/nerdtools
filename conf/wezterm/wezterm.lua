@@ -95,19 +95,21 @@ config.window_padding = {
 	bottom = 0,
 }
 
--- Platform-specific modifier key
-local mod = "CMD"
-if wezterm.target_triple == "x86_64-unknown-linux-gnu" or wezterm.target_triple:find("windows") then
-	mod = "CTRL"
-end
+-- Unified modifier: ALT on all three platforms, so pane muscle memory carries
+-- across machines and the CTRL namespace stays free for (Neo)vim and zsh
+-- widgets (C-w/C-o/C-i/C-d/C-hjkl are core vim keys; ^k/^s/^f/^l are zsh
+-- widgets). ALT is the only mod every OS leaves to apps: CMD is macOS-only
+-- and the Win key is shell-reserved on Windows.
+local mod = "ALT"
 
--- When `mod` is CTRL (Windows/Linux), the standalone CTRL rotate bindings below
--- would collide with mod-bindings (e.g. CTRL+o = next pane). Shift them to CTRL+ALT
--- there. On macOS (mod=CMD) they stay on plain CTRL, unchanged.
-local rotmod = "CTRL"
-if mod == "CTRL" then
-	rotmod = "CTRL|ALT"
-end
+-- On macOS, left Option is the mod key; right Option still composes special
+-- characters. (false/true are wezterm's defaults — pinned here on purpose.)
+config.send_composed_key_when_left_alt_is_pressed = false
+config.send_composed_key_when_right_alt_is_pressed = true
+
+-- mod+ALT would self-collide, so rotate and resize live on CTRL+ALT.
+local rotmod = "CTRL|ALT"
+local sizemod = "CTRL|ALT"
 
 config.keys = {
 	{
@@ -156,22 +158,22 @@ config.keys = {
 	-- Layout switching
 	{
 		key = "h",
-		mods = mod .. "|ALT",
+		mods = sizemod,
 		action = act.AdjustPaneSize({ "Left", 5 }),
 	},
 	{
 		key = "j",
-		mods = mod .. "|ALT",
+		mods = sizemod,
 		action = act.AdjustPaneSize({ "Down", 5 }),
 	},
 	{
 		key = "k",
-		mods = mod .. "|ALT",
+		mods = sizemod,
 		action = act.AdjustPaneSize({ "Up", 5 }),
 	},
 	{
 		key = "l",
-		mods = mod .. "|ALT",
+		mods = sizemod,
 		action = act.AdjustPaneSize({ "Right", 5 }),
 	},
 	{
