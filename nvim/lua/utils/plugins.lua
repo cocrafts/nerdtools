@@ -38,7 +38,20 @@ return {
 			"TmuxNavigatorProcessList",
 		},
 		config = function()
-			dofile(vim.fn.expand("~/nerdtools/conf/herdr/vim-herdr-navigation/editor/nvim.lua"))
+			-- Resolve the nerdtools checkout from this config's real location so the
+			-- path works whether ~/.config/nvim is a symlink, a junction, or the repo
+			-- itself, and regardless of what the checkout directory is named.
+			local config = vim.fn.stdpath("config")
+			local root = vim.uv.fs_realpath(config) or config
+			local plugin = vim.fs.joinpath(
+				vim.fs.dirname(root),
+				"conf/herdr/vim-herdr-navigation/editor/nvim.lua"
+			)
+			if vim.uv.fs_stat(plugin) then
+				dofile(plugin)
+			else
+				vim.notify("vim-herdr-navigation not found at " .. plugin, vim.log.levels.WARN)
+			end
 		end,
 	},
 	{
