@@ -63,15 +63,16 @@ M.configure = function()
 			include_current_session = true,
 		},
 		-- Search pickers
+		-- The glob must be double-quoted: single quotes are not quoting to
+		-- cmd.exe on Windows, so rg would receive them literally and search
+		-- nothing. Double quotes work in sh (macOS/Linux) too.
 		grep = {
 			prompt = "Grep: ",
-			rg_opts =
-			"--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob '!node_modules' -e",
+			rg_opts = '--column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob "!node_modules" -e',
 		},
 		live_grep = {
 			prompt = "Live Grep: ",
-			cmd =
-			"rg --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob '!node_modules'",
+			cmd = 'rg --column --line-number --no-heading --color=always --smart-case --max-columns=4096 --follow --glob "!node_modules"',
 		},
 		-- LSP pickers
 		lsp = {
