@@ -30,8 +30,8 @@ config.term = "wezterm" -- Use WezTerm's terminfo for accurate capabilities
 
 -- https://wezfurlong.org/wezterm/config/lua/wezterm/target_triple.html
 if wezterm.target_triple == "x86_64-unknown-linux-gnu" or wezterm.target_triple:find("windows") then
-	config.font_size = 11.5
-	config.line_height = 1.2
+	config.font_size = 11
+	config.line_height = 1.1
 
 	config.initial_rows = 70
 	config.initial_cols = 150
@@ -48,24 +48,36 @@ if wezterm.target_triple:find("windows") then
 	config.default_prog = { "pwsh.exe", "-NoLogo" }
 end
 
--- On Windows/DirectWrite the "Book" face reports numeric weight 325, not the
--- named "Book" (380) weight, so match it by number there.
-local operator_weight = "Book"
+-- Operator Mono Lig ships four faces: Book / Medium, each with an Italic.
+-- Named weights resolve on CoreText/fontconfig, but Windows/DirectWrite reports
+-- skewed numeric weights ("Book" -> 325, "Medium" -> 350), so match by number
+-- there. Operator has no true Bold face, so bold text uses the Medium face.
+local op_regular, op_bold = "Book", "Medium"
 if wezterm.target_triple:find("windows") then
-	operator_weight = 325
+	op_regular, op_bold = 325, 350
 end
 
-config.font = wezterm.font_with_fallback({
-	{
-		family = "Operator Mono Lig",
-		weight = operator_weight,
-	},
-	{ family = "JetBrains Mono", weight = "Regular" },
-	{
-		family = "Symbols Nerd Font Mono",
-		scale = 0.6,
-	},
-})
+-- Operator-Mono-first stack for a given weight + style. JetBrains Mono is the
+-- fallback only when Operator lacks a glyph (e.g. some Nerd symbols).
+local function operator_font(weight, style)
+	return wezterm.font_with_fallback({
+		{ family = "Operator Mono Lig",      weight = weight,                                  style = style },
+		{ family = "JetBrains Mono",         weight = (weight == op_bold) and "Bold" or "Regular", style = style },
+		{ family = "Symbols Nerd Font Mono", scale = 0.6 },
+	})
+end
+
+config.font = operator_font(op_regular, "Normal")
+
+-- One rule per intensity/italic combination so no variant slips to the fallback
+-- font. (Normal + upright is config.font above.)
+config.font_rules = {
+	{ italic = true,  intensity = "Normal", font = operator_font(op_regular, "Italic") },
+	{ italic = false, intensity = "Half",   font = operator_font(op_regular, "Normal") },
+	{ italic = true,  intensity = "Half",   font = operator_font(op_regular, "Italic") },
+	{ italic = false, intensity = "Bold",   font = operator_font(op_bold, "Normal") },
+	{ italic = true,  intensity = "Bold",   font = operator_font(op_bold, "Italic") },
+}
 
 config.max_fps = 120
 config.front_end = "WebGpu"
