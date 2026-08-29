@@ -40,3 +40,40 @@ map("<C-h>", "h", "left", "Navigate left (vim/herdr)")
 map("<C-j>", "j", "down", "Navigate down (vim/herdr)")
 map("<C-k>", "k", "up", "Navigate up (vim/herdr)")
 map("<C-l>", "l", "right", "Navigate right (vim/herdr)")
+
+-- Tell the herdr side that Neovim owns this pane's <C-h/j/k/l>. herdr detects
+-- Vim from the pane's foreground process, which needs a tty process group and
+-- so never works on Windows/ConPTY. A marker file works everywhere.
+local function marker()
+  local pane = vim.env.HERDR_PANE_ID
+  if pane == nil or pane == "" then
+    return nil
+  end
+  local sock = vim.env.HERDR_SOCKET_PATH
+  local dir
+  if sock ~= nil and sock ~= "" then
+    dir = vim.fs.dirname(vim.fs.normalize(sock))
+  else
+    dir = vim.fn.expand("~/.config/herdr")
+  end
+  return vim.fs.joinpath(dir, "nav", "vim-" .. pane:gsub(":", "-"))
+end
+
+local path = marker()
+if path then
+  local function claim()
+    vim.fn.mkdir(vim.fs.dirname(path), "p")
+    local file = io.open(path, "w")
+    if file then
+      file:close()
+    end
+  end
+  claim()
+  -- Nested Neovim instances share the pane, so re-claim whenever we regain it.
+  vim.api.nvim_create_autocmd({ "FocusGained", "VimResume" }, { callback = claim })
+  vim.api.nvim_create_autocmd("VimLeave", {
+    callback = function()
+      os.remove(path)
+    end,
+  })
+end

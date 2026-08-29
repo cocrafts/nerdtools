@@ -30,14 +30,30 @@ esac
 
 # Foreground process names that mean "Vim is in control of this pane".
 # Same matcher vim-tmux-navigator uses: vi, vim, nvim, view, gvim, *diff, ...
-vim_re='^g?(view|l?n?vim?x?)(diff)?$'
+# The optional .exe suffix keeps this matching on Windows, where herdr reports
+# the foreground process as nvim.exe.
+vim_re='^g?(view|l?n?vim?x?)(diff)?(\.exe)?$'
 
 # Opt-in passthrough for non-Vim TUIs (see README): HERDR_NAV_PASSTHROUGH_RE is an
 # ERE matched against the lower-cased process name. Empty (default) forwards only Vim.
 passthrough_re="${HERDR_NAV_PASSTHROUGH_RE:-}"
 
+# Windows has no tty foreground process group, so herdr's process-info only ever
+# reports the pane shell there and Vim can never be detected from it. The editor
+# side drops a marker file per pane while it is running (see editor/nvim.lua);
+# checking it first is both cheaper and platform-independent.
+marker_dir="${HERDR_SOCKET_PATH:-}"
+marker_dir="${marker_dir//\\//}"
+if [ -n "$marker_dir" ]; then
+  marker_dir="$(dirname "$marker_dir")/nav"
+else
+  marker_dir="$HOME/.config/herdr/nav"
+fi
+
 forward=0
-if [ -n "$pane" ] && command -v jq >/dev/null 2>&1; then
+if [ -n "$pane" ] && [ -e "$marker_dir/vim-${pane//:/-}" ]; then
+  forward=1
+elif [ -n "$pane" ] && command -v jq >/dev/null 2>&1; then
   if "$herdr" pane process-info --current 2>/dev/null \
     | jq -e --arg vim "$vim_re" --arg pass "$passthrough_re" \
         '.result.process_info.foreground_processes[]?.name
