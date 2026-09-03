@@ -27,6 +27,40 @@ The `vim-herdr-navigation` plugin (seamless `Ctrl+h/j/k/l` across herdr panes an
 herdr plugin link ~/nerdtools/conf/herdr/vim-herdr-navigation && herdr server reload-config
 ```
 
+## Syncthing (compiler docs)
+
+`~/projects/compiler/docs` syncs between machines via Syncthing — per-file, WIP
+docs without committing them. The Syncthing config dir is **not** symlinked
+into nerdtools on purpose: `cert.pem`/`key.pem` are the device identity (sharing
+them clones the device ID and breaks the protocol) and the index DB is
+machine-local. Only the setup recipe lives in the repo.
+
+Windows — idempotent, safe to re-run (installs syncthing, folder, versioning,
+`.stignore`, hidden logon task):
+
+```powershell
+~/nerdtool/conf/syncthing/setup.ps1
+```
+
+macOS — syncthing is already running for nerdtools, so only pair the folder:
+
+1. GUI at `http://127.0.0.1:8384` → add folder, **Folder ID must be `compiler-docs`**,
+   path `~/projects/compiler/docs`, send/receive, and share it with the Windows
+   device ID printed by the setup script.
+2. Accept the Windows device under "New Device" and share back.
+3. Create the same `.stignore` in the folder root (Syncthing never syncs
+   `.stignore` itself). Negations MUST come before the catch-all — Syncthing is
+   first-match-wins, unlike gitignore:
+
+   ```
+   !/NIM-REF.md
+   *
+   ```
+
+4. On Windows, accept the Mac's device ID in the GUI to finish pairing.
+
+Verified state: `compiler-docs` idle, 1 file tracked, trashcan versioning 30 days.
+
 ## Windows
 
 Windows uses **directory junctions** instead of `ln -sfn`. Junctions need no admin (unlike
