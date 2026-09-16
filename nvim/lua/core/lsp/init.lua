@@ -86,6 +86,7 @@ M.configure = function()
 	require("core.lsp.rust").configure()
 	require("core.lsp.ruby-lsp").configure(lspconfig)
 	require("core.lsp.haxe").configure(lspconfig)
+	require("core.lsp.metascript").configure()
 
 	if config.use_svelte then
 		vim.lsp.enable("svelte") -- svelte does not require its own lspconfig

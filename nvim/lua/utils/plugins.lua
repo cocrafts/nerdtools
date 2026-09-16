@@ -254,6 +254,11 @@ return {
 		end,
 	},
 	{ "folke/lazy.nvim",       tag = "stable" },
+	{
+		"metascriptlang/metascript.nvim",
+		event = "VeryLazy",
+		ft = "metascript",
+	},
 	{ "folke/neodev.nvim",     lazy = true },
 	{
 		"folke/noice.nvim",

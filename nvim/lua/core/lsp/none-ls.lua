@@ -1,6 +1,7 @@
 local M = {}
 local config = require("utils.config")
 local json = require("core.lsp.null.json")
+local metascript = require("core.lsp.null.metascript")
 local nim = require("core.lsp.null.nim")
 local ruff = require("core.lsp.null.ruff")
 local rust = require("core.lsp.null.rust")
@@ -17,6 +18,8 @@ M.configure = function()
 		-- zig
 		nim.format,
 		zig.format,
+		-- metascript: disabled, mls LSP handles formatting with Trans-Am cache
+		-- metascript.format,
 		-- elixir
 		nls.builtins.formatting.mix,
 		nls.builtins.diagnostics.credo,
