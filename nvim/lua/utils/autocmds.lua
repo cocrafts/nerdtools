@@ -101,12 +101,17 @@ for _, entry in ipairs(definitions) do
 end
 
 vim.api.nvim_command("autocmd BufRead,BufNewFile Podfile set filetype=ruby")
+vim.api.nvim_command("autocmd FileType metascript setlocal commentstring=//\\ %s")
 vim.filetype.add({
 	extension = {
 		hx = "haxe",
 		func = "func",
 		hurl = "hurl",
 		yamlfmt = "yaml",
+		-- ms = "metascript",
+		-- ems = "metascript",
+		-- jms = "metascript",
+		-- cms = "metascript",
 		d2 = function()
 			return "d2", function(bufnr)
 				vim.bo[bufnr].commentstring = "# %s"
