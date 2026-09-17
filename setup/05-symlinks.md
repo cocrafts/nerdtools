@@ -21,6 +21,47 @@ mkdir -p ~/.config/herdr && ln -sfn ~/nerdtools/conf/herdr/config.toml ~/.config
 
 `~/.config/herdr/` also holds machine-local runtime state (logs, sockets, `session.json`), so only the `config.toml` file is symlinked, not the whole directory.
 
+## Claude Code and Codex
+
+`~/nerdtools/claude/` is the canonical source for shared agent instructions and
+skills. Claude Code uses that directory directly; Codex points at the same
+`CLAUDE.md` and skill folders. Do not copy them into Codex-specific versions.
+
+Before linking on a new machine, inspect any existing real `~/.claude` directory
+and merge anything worth keeping. Once it is safe to replace, run:
+
+```bash
+mkdir -p ~/.codex ~/.agents/skills
+ln -sfn ~/nerdtools/claude ~/.claude
+ln -sfn ~/nerdtools/claude/CLAUDE.md ~/.codex/AGENTS.md
+
+for skill in ~/nerdtools/claude/skills/*; do
+  [ -f "$skill/SKILL.md" ] && [ ! -L "$skill" ] || continue
+  ln -sfn "$skill" ~/.agents/skills/"$(basename "$skill")"
+done
+```
+
+Keep `~/.codex/config.toml` machine-local because it contains generated plugin,
+desktop, MCP, and trust state. Add these top-level keys before the first TOML
+table so Codex discovers project `CLAUDE.md` files without parallel `AGENTS.md`
+copies:
+
+```toml
+project_doc_fallback_filenames = ["CLAUDE.md"]
+project_doc_max_bytes = 65536
+```
+
+For a repository with shared Claude/Codex skills, keep the canonical skills at
+`.claude/skills/<name>/SKILL.md` and add this relative link once:
+
+```bash
+mkdir -p .agents
+ln -sfn ../.claude/skills .agents/skills
+```
+
+A shared `SKILL.md` frontmatter should contain `name` and `description`. Put
+invocation phrases in `description`; do not add a separate `trigger` key.
+
 The `vim-herdr-navigation` plugin (seamless `Ctrl+h/j/k/l` across herdr panes and Neovim splits) is vendored at `~/nerdtools/conf/herdr/vim-herdr-navigation`. Its `config.toml` keybinds and the Neovim side sync via git, but linking it into herdr is machine-local — run once per machine (needs `jq`):
 
 ```bash
@@ -74,10 +115,22 @@ New-Item -ItemType Junction -Force -Path "$env:LOCALAPPDATA\nvim" -Target "$HOME
 
 # Wezterm reads ~/.config on Windows too
 New-Item -ItemType Junction -Force -Path "$HOME\.config\wezterm" -Target "$HOME\nerdtools\conf\wezterm" | Out-Null
+
+# Inspect and merge existing real paths before replacing them.
+New-Item -ItemType Junction -Force -Path "$HOME\.claude" -Target "$HOME\nerdtools\claude" | Out-Null
+New-Item -ItemType Directory -Force -Path "$HOME\.codex", "$HOME\.agents\skills" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md" -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
+
+Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
+  (Test-Path "$($_.FullName)\SKILL.md") -and -not ($_.Attributes -band [IO.FileAttributes]::ReparsePoint)
+} | ForEach-Object {
+  New-Item -ItemType Junction -Force -Path "$HOME\.agents\skills\$($_.Name)" -Target $_.FullName | Out-Null
+}
 ```
 
 - Junctions replace the whole target dir, so they are idempotent with `-Force`.
-- Same rule as below: do **not** junction `~/.claude`.
+- The `AGENTS.md` file symlink requires Windows Developer Mode or an elevated shell.
+- Keep the two Codex fallback keys above in `$HOME\.codex\config.toml`; that file remains machine-local.
 - Apps that read `%APPDATA%`/`%LOCALAPPDATA%` instead of `~/.config` on Windows (e.g. lazygit)
   need their own junction to the platform path; add per-app as needed.
 
@@ -86,7 +139,7 @@ New-Item -ItemType Junction -Force -Path "$HOME\.config\wezterm" -Target "$HOME\
 ```bash
 for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushell ~/.config/tmux \
             ~/.aider.conf.yml ~/revive.toml ~/.config/lazygit/config.yml ~/.config/zls.json \
-            ~/.config/herdr/config.toml; do
+            ~/.config/herdr/config.toml ~/.claude ~/.codex/AGENTS.md; do
   if [[ -L "$link" && -e "$link" ]]; then
     printf "✓ %-40s -> %s\n" "$link" "$(readlink "$link")"
   else
@@ -98,4 +151,6 @@ done
 ## Notes
 
 - `ln -sfn` is idempotent (force-overwrite existing symlink, no-deref).
-- **Do NOT symlink `~/.claude` to `~/nerdtools/claude`.** `~/.claude/` holds live Claude Code session data (credentials, sessions, history). Replacing it with a symlink destroys session state.
+- `~/.claude` also contains live credentials, sessions, and history under the
+  nerdtools working tree. Those runtime paths must stay ignored; only explicitly
+  tracked configuration and `claude/skills/` are replicated by git.
