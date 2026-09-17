@@ -19,5 +19,11 @@ claude/debug
 claude/file-history
 claude/projects
 claude/history.jsonl
+claude/*
+!claude/skills/
+!claude/skills/**
+claude/skills/rexa
+claude/skills/rexa-tasks
+claude/skills/synced
 
 core/target
