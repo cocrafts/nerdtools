@@ -12,7 +12,7 @@ mechanism against the real Nim source and decide whether we diverged, whether th
 divergence was intentional, and how to return to the Nim model.
 
 **Nim source:** `~/projects/nim/compiler/` — the ground truth for the ALGORITHM.
-**Divergence log:** `~/metascript/recompiler/docs/NIM-REF.md` — where intentional
+**Divergence log:** `~/metascript/recompiler/paper/NIM-REF.md` — where intentional
 divergences are (or should be) recorded, with DIVERGE-INTENTIONAL / SAME verdicts.
 
 ## Hard rules
@@ -21,7 +21,7 @@ divergences are (or should be) recorded, with DIVERGE-INTENTIONAL / SAME verdict
   recompiler `.ms` source this session. Do not trust memory of "how Nim works."
   Confirm behavior by emitting C (`msc build f.ms --gc=drc --emit=c --output=f.c`,
   read `out/debug/Z...c`) — ground truth beats theory.
-- **Nim is authority for the ALGORITHM, not the representation.** NIM-REF.md §3:
+- **Nim is authority for the ALGORITHM, not the representation.** NIM-REF AN-4 (⛔ FINAL DECISION):
   Q1 (AST node shape, e.g. `nkStmtListExpr`) may intentionally differ; Q2 (the
   algorithm / invariant) should follow Nim. Don't "fix" an intentional
   representation divergence.
@@ -97,7 +97,7 @@ divergence shapes:
   `sink; wasMoved` sequencing.
 
 ### 5. Classify the divergence — intentional or not
-Grep/read `docs/NIM-REF.md` for the mechanism:
+Grep `paper/NIM-REF.md` for the mechanism:
 - **Listed DIVERGE-INTENTIONAL** → read the rationale. The fix must RESPECT the
   divergence. Trace deeper WHY it exists and design a fix inside that constraint.
   If the rationale no longer holds, say so explicitly and flag for a decision.

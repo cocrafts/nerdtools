@@ -18,7 +18,7 @@ Use `/nim-guard <fixed-bug | invariant | subsystem>` to add such a guard.
 
 **Guards live in:** `~/metascript/recompiler/src/test/guard/` (`run.sh` + probes + README).
 **Nim source:** `~/projects/nim/compiler/` (algorithm) and `~/projects/nim/tests/arc/` (Nim's OWN guard methodology — counter-instrumented `=destroy`/`=copy`/`=sink` + exact-count asserts, e.g. `tarcmisc.nim`; structural `--expandArc` IR pins, e.g. `topt_wasmoved_destroy_pairs.nim`).
-**Divergence log:** `~/metascript/recompiler/docs/NIM-REF.md`.
+**Divergence log:** `~/metascript/recompiler/paper/NIM-REF.md`.
 
 ## The mechanism (already built — do not reinvent)
 
@@ -69,7 +69,7 @@ print the right answer and still double-free intermittently).
   it also goes red.
 - **Don't touch the live tree to prove red.** Toggle the fix in the deployed
   sandbox (`~/.metascript/runtime/...`) or a `/tmp` copy to demonstrate the red,
-  then restore. Never `git checkout`/`reset`; re-apply via `Edit`.
+  then restore.
 
 ## Workflow
 
