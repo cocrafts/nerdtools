@@ -17,7 +17,7 @@ than one slightly-too-large commit containing exactly your own changes.
 
 ## Message format (HARD RULES)
 
-- `type(scope): subject` — conventional commits. Types: feat, fix, refactor, docs, test, chore, perf, ci.
+- `type(scope): subject` — conventional commits. Types: feat, fix, refactor, docs, test, chore, perf, ci, build.
 - **Subject ngắn gọn. KHÔNG body, KHÔNG description, KHÔNG bullet list.** One `-m` only.
 - **KHÔNG attribution footer** (no Co-Authored-By / Generated-with — attribution is disabled globally in his settings).
 - Match the repo's existing scope convention (`git log --oneline -15` first; e.g. urg uses `feat(engine):`, `docs(engine):`).
