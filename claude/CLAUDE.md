@@ -46,13 +46,7 @@ When the user types `/<skill-name>`, invoke the Skill tool with that skill **bef
 
 - A feature or named arc has a card: `<main checkout>/.cards/<name>.md`, untracked (ignored through `~/.config/git/ignore`) and shared by every worktree of the repo, unless a workspace or project file names another place. It holds the Goal, a "Done when" a session can run, and a State of a few lines naming the step in flight. Memory points at the card and never copies it; the card is deleted once "Done when" holds on the main branch.
 - Where a repo works in worktrees: one worktree per arc, reused by every session of that arc; sequential steps are commits in it, never new worktrees; a slice lands as soon as it stands alone; the main checkout only receives lands.
-- A session ends with its work committed and the card's State current. **Where a workspace runs
-  coaching, the coach owns the card instead**: the session reads it, works, and reports what
-  changed, what it learned and what is still open, and never edits it.
-- **The card says where we are; the repo's tracked docs say what we know.** A finding that
-  outlives the step it belongs to — a rejected number, an abandoned approach, a trap that cost
-  a run — is written by the session into the review file, design doc or pending list, where it
-  is in git and a review can catch it. The card points at it and never copies it.
+- A session ends with its work committed and the card's State current.
 - A red is yours only when it is new against what the project records as known red.
 - A bug in another repo's code is fixed by a session started in that repo; from here it gets a reproduction and a note where that project keeps them.
 - A tool or the harness that refuses an action on purpose is left alone and reported, never routed around.
