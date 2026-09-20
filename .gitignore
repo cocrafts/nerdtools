@@ -21,6 +21,8 @@ geekCaps/geekCaps
 # stay on this machine goes under "local again", after the ! that would catch it.
 claude/*
 !claude/CLAUDE.md
+!claude/playbooks/
+!claude/playbooks/**
 !claude/config.yaml
 !claude/settings.json
 !claude/statusline.sh
