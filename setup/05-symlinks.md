@@ -111,12 +111,14 @@ herdr plugin link ~/nerdtools/conf/herdr/vim-herdr-navigation && herdr server re
 
 `~/.omp/agent` stays a **real directory** for the same reason `~/.claude` does: it holds
 `agent.db`, the auth store, plus session transcripts and caches. Link the tracked files
-in one by one.
+in one by one — `extensions/` excepted: everything in it is tracked, so the whole
+directory is one link and a new extension needs no new line.
 
 ```bash
 mkdir -p ~/.omp/agent
 ln -sfn ~/nerdtools/omp/config.yml ~/.omp/agent/config.yml
 ln -sfn ~/nerdtools/omp/AGENTS.md  ~/.omp/agent/AGENTS.md
+ln -sfn ~/nerdtools/omp/extensions ~/.omp/agent/extensions
 ```
 
 On Windows use the PowerShell block below — under Git Bash, `ln -sfn` silently copies
@@ -225,6 +227,7 @@ New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md"      -Targ
 
 New-Item -ItemType Directory -Force -Path "$HOME\.omp\agent" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\config.yml" -Target "$HOME\nerdtools\omp\config.yml" | Out-Null
+New-Item -ItemType Junction -Force -Path "$HOME\.omp\agent\extensions" -Target "$HOME\nerdtools\omp\extensions" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\AGENTS.md"  -Target "$HOME\nerdtools\omp\AGENTS.md" | Out-Null
 
 Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {

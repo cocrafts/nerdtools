@@ -55,5 +55,7 @@ claude/**/*.bak.*
 omp/*
 !omp/AGENTS.md
 !omp/config.yml
+!omp/extensions/
+!omp/extensions/**
 
 core/target
