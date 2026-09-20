@@ -205,42 +205,60 @@ The board and the human's own re-entry prompt both carried a note telling the ne
 shorter path was the correct one — true when written, false within a day of the move. **A
 correction recorded once has an expiry date**, exactly like a hash copied from an unlanded branch.
 
-## The card is the coach's — write it, keep it short, dispatch from it
+## The card is shared — split it by section, never by whole-file write
 
-**Split by content, not by owner.**
+The card is the one file a coach and a worker both write. That is deliberate: the worker is
+present when the facts are produced and is the only one who can say where it stopped, and the
+coach is the only one who reads across arcs. Neither can keep it true alone.
 
-- **The card is the coach's.** A worker reads it, works, and reports; it never edits it. Every
-  arc's state is then in one hand and the worker's context stays on the arc.
-- **What the worker learns is the worker's, and it goes into the repo's tracked docs** — the
-  review file, the design doc, the pending list. It writes that itself, because it is the only
-  one who knows it, and in git every agent can read it and a review can catch it.
+**Split by section, not by owner.**
 
-The card says *where we are and what is next*. The docs say *what we know*. Nothing belongs in
-both, and a fact in the card that outlives the step it belongs to is a fact in the wrong file.
+    Goal        rarely changes; whoever changes it says so in the report or the order
+    Done when   same
+    State       the WORKER's — the step in flight, what is owed, where it stopped
+    Next        the COACH's — ordered steps, each one a session can start without asking
+    Neighbours  the COACH's — what couples this arc to another, and to which
 
-### What a card contains, and nothing else
+The worker keeps **State** current as every brief already tells it to, and writes it before a
+compaction rather than after. The coach writes **Next** and **Neighbours** from the reports, and
+trims the card back to a page. Nobody needs a new rule to do their own half; what follows is the
+part that is not obvious.
 
-    Goal        one sentence: what this arc delivers
-    Done when   a condition a session can RUN, not judge
-    State       one paragraph: the step in flight, and what is owed before the next
-    Next        ordered steps, each one a session can start without asking
-    Neighbours  what couples this arc to another, and to which
+### Never rewrite the card from a stale read
 
-Keep it under a page. A card past a page has stopped being a dispatch surface and become a
-record — move the record out.
+Two writers, one untracked file, no merge and no history. A whole-file write from a snapshot
+taken before the other's edit deletes it silently and nothing looks wrong afterwards — the same
+failure `split-commit` records as trap E, with none of git's recovery. So:
+
+- Edit **your own sections in place**. Never write the file whole.
+- Re-read the card immediately before writing it, not at the top of the turn.
+- A worker that is live in its arc owns **State** while it runs; if the coach must correct it,
+  say so in the order and let the worker write it.
+
+### Keep it a page — the card is a dispatch surface, not a record
+
+A card past a page has stopped being dispatch and become a record. The record belongs in the
+repo's tracked docs, written by the worker, because only it knows and only git keeps it — the
+rule is `~/nerdtools/claude/playbooks/documentation.md`. The card points at them and never copies
+them.
+
+**A card is deleted when its "Done when" holds.** Anything in it that should outlive the arc is
+scheduled for deletion where no review can see it. That is the whole reason to move it out, and
+it is worth saying in the order rather than assuming.
 
 ### End every order with the report you need
 
-    Report: what changed, what you learned that is not in the code, what is still open.
+    Report: what changed, what you learned that is not in the code and where you wrote it,
+    what is still open.
 
-That report is the only input you have. Ask for it in the order, not afterwards.
+That report is the only input the coach has. Ask for it in the order, not afterwards.
 
-### On every report, update the card before sending the next order
+### On every report, update Next before sending the next order
 
-1. Rewrite **State** and **Next** from the report. Delete what is done; do not append.
-2. Check the report's findings reached a **tracked doc** and not your card. A rejected number,
-   an abandoned approach, a trap that cost a run — if the worker left one only in its report,
-   order it written where it belongs and give the card a pointer, not a copy.
+1. Rewrite **Next** from the report. Delete what is done; do not append.
+2. Check the report's findings reached a **tracked doc**. A rejected number, an abandoned
+   approach, a trap that cost a run — if the worker left one only in its report or only in
+   **State**, order it written where it belongs and give the card a pointer, not a copy.
 3. Re-audit every commit reference the card names, **from inside the worktree**:
 
         for s in $(grep -ohE '\b[0-9a-f]{7,40}\b' <card> | sort -u); do
@@ -260,13 +278,14 @@ That report is the only input you have. Ask for it in the order, not afterwards.
 
 ### Before a worker is replaced
 
-6. Leave the rebase **undone** and say so in **State**, with the reason. A rebase rewrites every
+6. Leave the rebase **undone** and have the worker say so in **State**, with the reason. A rebase rewrites every
    reference the card names, so it belongs to the next session's first act with the references
    fixed in the same beat. Write it as a decision or the successor reads it as neglect.
 7. Name in **Next** any step where partial work moves the number by zero — two independent
    causes, closing one changes nothing. Without it a successor reads correct progress as failure.
 8. Strip anything the successor cannot resolve: a slash-command, a tool by its Claude name, a
    harness behaviour. Say what to do, not which button to press.
+
 
 ## Open questions — measure, do not argue
 
