@@ -205,6 +205,61 @@ The board and the human's own re-entry prompt both carried a note telling the ne
 shorter path was the correct one — true when written, false within a day of the move. **A
 correction recorded once has an expiry date**, exactly like a hash copied from an unlanded branch.
 
+## Handing a worker over — the coach triggers it and receives it, but cannot author it
+
+Day 2, three runs, and a correction the human made after the coach got the shape wrong once.
+
+The tempting reading is that handoff is the coach's job end to end: the coach decides when a
+worker is cleared, and the coach writes the re-entry message. **Both true, and the conclusion
+does not follow.** The coach prepares its **board**; the worker prepares its **card**, and only
+the worker can. What dies with a worker's context is why a number was rejected, which approach
+was tried and abandoned, what its gate's skip line actually means. A coach that has never been
+inside the arc cannot write any of it, and a thin card cannot be rescued by a longer re-entry
+message — the message *points at* the card.
+
+The evidence is that the worker beats the coach at this every time it is tried. The coach once
+audited both cards itself and reported one clean when it had four dead commit references
+(error #9). Asked to check its own card **by script rather than by reading**, a worker found
+**fifteen**; the other then found four of its own. Another found six gaps in its card that the
+coach had read past twice.
+
+**So the coach's job is to ship the checklist inside the order, not to do the work.** State the
+bar, never the task: *"a fresh session must resume from the card alone, without asking a
+question only you could answer"*. Measured — *"update the card"* produces a card update; the bar
+produces findings.
+
+What the order must carry, because the coach forgot three of these the one time it typed the
+list from memory:
+
+- **Verify by script, not by reading.** `for s in $(grep -ohE '\b[0-9a-f]{7,40}\b' <card>); do
+  git merge-base --is-ancestor "$s" HEAD || echo "UNREACHABLE $s"; done`
+- **Run it with the worktree as cwd.** Outside a git repo every `cat-file` fails and the loop
+  prints empty — a check that cannot fail, the class this playbook bans everywhere else.
+- **Reachability, not existence.** `cat-file -e` still resolves a rewritten commit until it is
+  collected, so it reports clean when it is not.
+- **Compare against `HEAD`, not `main`.** Unlanded commits are not ancestors of `main`. This
+  error has been made in both directions, by the coach and against it.
+- **Unreachable is not dead.** Work in flight fails the same test for the opposite reason, so
+  name work in flight by **subject**.
+- **The invariant is EMPTY, not "these known corpses".** Delete a dead reference outright,
+  including one inside the sentence explaining it is dead — a card that wrote `old -> new` notes
+  re-injected the dead hashes into the text the loop greps and poisoned its own check.
+- **Anchor to the tree, not the sha,** wherever a document says numbers were measured at a
+  commit. A force push rewrites every sha at once; the tree hash survives and is still
+  navigable with `git log --format='%T %h %s'`.
+- **Do not rebase as the last act.** A rebase rewrites every sha the card cites, so it is the
+  **first** act of the next session with the references fixed in the same beat. Say in the card
+  that it is owed, with the reason, or the successor reads a deliberate decision as neglect.
+- **Name any goal where partial work moves the number by zero** — two independent causes where
+  closing one changes nothing. A successor that closes one and measures no movement reads its
+  own correct progress as failure.
+- **Ask what the successor does not share with you.** When it is a different agent, every
+  `/slash-command` and every named tool in the card is a reference it cannot resolve.
+
+This lives here rather than in a worker-side skill, and that was the human's correction: the
+coach is the one who has to remember, and a worker on another agent cannot invoke a Claude
+skill at all.
+
 ## Open questions — measure, do not argue
 
 Day-1 figures are **self-graded by the coach**, the circularity the coach criticises elsewhere.
