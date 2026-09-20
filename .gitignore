@@ -14,7 +14,8 @@ metacraft
 
 geekCaps/geekCaps
 
-# Claude Code — ~/.claude is a link to claude/. Everything in it is machine-local
+# Claude Code — ~/.claude is a real directory; the tracked files below are linked
+# into it one by one (setup/05-symlinks.md). Everything else in it is machine-local
 # by default (credentials, session transcripts, per-project memory, caches, logs,
 # plugins, hooks with their node_modules, scratch plans); the ! lines below are the
 # shared agent config. A new shared file needs its own ! line, and a path that must
