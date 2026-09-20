@@ -127,16 +127,22 @@ Unlike Claude Code's `settings.json`, `config.yml` is symlinked outright — not
 is machine-specific, because credentials live in `agent.db` and `.env`, not here.
 
 `~/.omp/agent/AGENTS.md` is the one user-level instruction file omp keeps, and it outranks
-`~/.claude/CLAUDE.md`. It is deliberately a wrapper: its first line imports the shared
-config, and the rest is what omp must do by hand because it cannot read Claude Code's own
-wiring — where memory lives, and that a subdirectory may carry its own `CLAUDE.md`.
-Skills need no line here; omp reads `~/.agents/skills` natively.
+`~/.claude/CLAUDE.md`. It is deliberately a wrapper: its first line imports
+`~/.claude/CLAUDE.md`, which imports the shared config in turn, and the rest is what omp
+must do by hand because it cannot read Claude Code's own wiring — where memory lives, and
+that a subdirectory may carry its own `CLAUDE.md`. Skills need no line here; omp reads
+`~/.agents/skills` natively.
+
+It imports the wrapper rather than the repo file so that a rule written for this machine
+reaches both agents from one place. The two hops expand — measured 2026-09-20, `omp -p`
+returning a value that only exists in `claude/CLAUDE.md`.
 
 **Codex does not get this treatment.** It has no `@` import
 ([openai/codex#17401](https://github.com/openai/codex/issues/17401) is still open), so a
 wrapper there would ship the model one literal `@` line and silently drop every shared
-rule. `~/.codex/AGENTS.md` stays a hard symlink to `claude/CLAUDE.md`, and Codex goes
-without the adapters. The rule that decides: an agent that expands `@` gets a wrapper, an
+rule. `~/.codex/AGENTS.md` stays a hard symlink to `claude/CLAUDE.md`, so Codex goes
+without the adapters and without the machine-local half the other two get through the
+wrapper. The rule that decides: an agent that expands `@` gets a wrapper, an
 agent that does not gets the symlink — never a copy of the content. Claude Code expands
 `@`, so it is on the wrapper side too.
 

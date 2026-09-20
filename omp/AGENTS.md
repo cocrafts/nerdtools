@@ -2,9 +2,11 @@
 
 # Adapters — omp only
 
-Everything above is `~/nerdtools/claude/CLAUDE.md`, the shared config, loaded verbatim.
-It names no agent on purpose: Claude Code owns it and never changes for anyone else.
-What follows is what omp has to do by hand, because it cannot read Claude Code's wiring.
+Everything above arrives through `~/.claude/CLAUDE.md`, which is itself one `@` line onto
+`~/nerdtools/claude/CLAUDE.md`, the shared config. Anything that file's owner wrote for
+this machine alone comes with it, which is the point. The shared config names no agent on
+purpose: Claude Code owns it and never changes for anyone else. What follows is what omp
+has to do by hand, because it cannot read Claude Code's wiring.
 
 This file shadows `~/.claude/CLAUDE.md` at user scope — omp keeps one user context file
 and this one outranks it. The import above is what puts the shared config back. If the
