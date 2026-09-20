@@ -10,11 +10,7 @@ Commit through `/split-commit` unless the user specifies otherwise.
 
 ## Comments — IMPORTANT
 
-**HARD RULE FROM THE USER (do not relax, do not "earn it back"):** when editing code, do NOT add explanatory comments. Default to ZERO. If a constraint is genuinely load-bearing, encode it in a name, a test, or an assertion — not prose. This applies even to comments that look like "good WHY" — leave them out unless he explicitly asks.
-
-**Never explain WHAT the code does** — well-named identifiers already do that. Never reference the current task/PR/session ("added for X flow", "issue #123") — that belongs in the commit message and rots.
-
-**Anti-pattern**: padding edits with block comments that restate the function's purpose or describe the change you are making. If you write 4+ lines of justification for a 2-line change, the comment isn't earning its keep.
+**HARD RULE: comments in code follow `~/nerdtools/claude/playbooks/comment.md` — read it before writing one. Default is ZERO; the playbook defines the only exceptions.**
 
 ## Skills
 
