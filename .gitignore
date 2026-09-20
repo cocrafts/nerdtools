@@ -47,4 +47,12 @@ claude/**/*.local
 claude/**/*.backup
 claude/**/*.bak.*
 
+# oh-my-pi — ~/.omp/agent is a real directory, never a link to this repo: it holds
+# agent.db (the auth store), session transcripts and caches. The tracked files below
+# are linked into it one by one (setup/05-symlinks.md); a new shared file needs its
+# own ! line.
+omp/*
+!omp/AGENTS.md
+!omp/config.yml
+
 core/target

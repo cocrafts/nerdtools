@@ -1,0 +1,12 @@
+# oh-my-pi. Machine-local state (auth, sessions, caches) stays in ~/.omp/agent;
+# this file is linked in from ~/nerdtool/omp (setup/05-symlinks.md).
+
+# ~/.claude is a foreign user root and opt-in. Without this, omp sees the project
+# .claude directories but none of ~/.claude: no user CLAUDE.md, commands, mcp.json
+# or marketplace plugins. Skills arrive separately through ~/.agents/skills.
+enabledProviders: [claude]
+
+# Claude Code's per-project store under ~/.claude/projects is the only memory.
+# A second backend here would fork it. ~/.omp/agent/AGENTS.md says where it lives.
+memory:
+  backend: "off"
