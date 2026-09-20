@@ -21,6 +21,10 @@ claude/projects
 claude/history.jsonl
 claude/*
 !claude/statusline.sh
+!claude/scripts/
+!claude/scripts/**
+!claude/themes/
+!claude/themes/**
 !claude/skills/
 !claude/skills/**
 claude/skills/rexa
