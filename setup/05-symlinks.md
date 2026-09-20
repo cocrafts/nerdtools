@@ -95,6 +95,38 @@ The `vim-herdr-navigation` plugin (seamless `Ctrl+h/j/k/l` across herdr panes an
 herdr plugin link ~/nerdtools/conf/herdr/vim-herdr-navigation && herdr server reload-config
 ```
 
+## oh-my-pi (omp)
+
+`~/.omp/agent` stays a **real directory** for the same reason `~/.claude` does: it holds
+`agent.db`, the auth store, plus session transcripts and caches. Link the tracked files
+in one by one.
+
+```bash
+mkdir -p ~/.omp/agent
+ln -sfn ~/nerdtool/omp/config.yml ~/.omp/agent/config.yml
+ln -sfn ~/nerdtool/omp/AGENTS.md  ~/.omp/agent/AGENTS.md
+```
+
+On Windows use the PowerShell block below — under Git Bash, `ln -sfn` silently copies
+the file instead of linking it unless `MSYS=winsymlinks:nativestrict` is exported, and a
+copy drifts from the repo without ever saying so.
+
+Unlike Claude Code's `settings.json`, `config.yml` is symlinked outright — nothing in it
+is machine-specific, because credentials live in `agent.db` and `.env`, not here.
+
+`~/.omp/agent/AGENTS.md` is the one user-level instruction file omp keeps, and it outranks
+`~/.claude/CLAUDE.md`. It is deliberately a wrapper: its first line imports the shared
+config, and the rest is what omp must do by hand because it cannot read Claude Code's own
+wiring — where memory lives, and that a subdirectory may carry its own `CLAUDE.md`.
+Skills need no line here; omp reads `~/.agents/skills` natively.
+
+**Codex does not get this treatment.** It has no `@` import
+([openai/codex#17401](https://github.com/openai/codex/issues/17401) is still open), so a
+wrapper there would ship the model one literal `@` line and silently drop every shared
+rule. `~/.codex/AGENTS.md` stays a hard symlink to `claude/CLAUDE.md`, and Codex goes
+without the adapters. The rule that decides: an agent that expands `@` gets a wrapper, an
+agent that does not gets the symlink — never a copy of the content.
+
 ## Syncthing (compiler docs)
 
 The whole `docs/` folder syncs between machines via Syncthing — live WIP docs
@@ -171,6 +203,10 @@ New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\commands"      -Targ
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\scripts"       -Target "$HOME\nerdtools\claude\scripts" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\themes"        -Target "$HOME\nerdtools\claude\themes" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md"      -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
+
+New-Item -ItemType Directory -Force -Path "$HOME\.omp\agent" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\config.yml" -Target "$HOME\nerdtool\omp\config.yml" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\AGENTS.md"  -Target "$HOME\nerdtool\omp\AGENTS.md" | Out-Null
 
 Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
   Test-Path "$($_.FullName)\SKILL.md"
