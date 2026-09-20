@@ -31,21 +31,41 @@ also holds `allowed-signers`, which is machine-local.
 ## Claude Code and Codex
 
 `~/nerdtools/claude/` is the canonical source for shared agent instructions and
-skills. Claude Code uses that directory directly; Codex points at the same
-`CLAUDE.md` and skill folders. Do not copy them into Codex-specific versions.
+skills. Codex points at the same `CLAUDE.md` and skill folders. Do not copy them
+into Codex-specific versions.
 
-Before linking on a new machine, inspect any existing real `~/.claude` directory
-and merge anything worth keeping. Once it is safe to replace, run:
+`~/.claude` itself stays a **real directory**, never a link to the repo: it holds
+`.credentials.json`, `history.jsonl`, `sessions/`, `projects/`, `file-history/`,
+and installed `plugins/` — machine-local state that must not enter git. Link the
+tracked items into it one by one, so a new tracked file is one more line here:
 
 ```bash
-mkdir -p ~/.codex ~/.agents/skills
-ln -sfn ~/nerdtools/claude ~/.claude
-ln -sfn ~/nerdtools/claude/CLAUDE.md ~/.codex/AGENTS.md
+mkdir -p ~/.claude/skills ~/.codex ~/.agents/skills
+ln -sfn ~/nerdtools/claude/CLAUDE.md     ~/.claude/CLAUDE.md
+ln -sfn ~/nerdtools/claude/statusline.sh ~/.claude/statusline.sh
+ln -sfn ~/nerdtools/claude/commands      ~/.claude/commands
+ln -sfn ~/nerdtools/claude/scripts       ~/.claude/scripts
+ln -sfn ~/nerdtools/claude/themes        ~/.claude/themes
+ln -sfn ~/nerdtools/claude/CLAUDE.md     ~/.codex/AGENTS.md
 
 for skill in ~/nerdtools/claude/skills/*; do
-  [ -f "$skill/SKILL.md" ] && [ ! -L "$skill" ] || continue
+  [ -f "$skill/SKILL.md" ] || continue
+  ln -sfn "$skill" ~/.claude/skills/"$(basename "$skill")"
   ln -sfn "$skill" ~/.agents/skills/"$(basename "$skill")"
 done
+```
+
+Dropping a skill upstream leaves a dangling link behind, so prune before linking:
+`find ~/.claude/skills ~/.agents/skills -maxdepth 1 -type l ! -exec test -e {} \; -exec rm {} \;`.
+
+`settings.json` is **merged by hand, never symlinked**. Claude Code reads one
+user-level `settings.json`, and part of it is machine-specific — the
+`rexa post claude` hooks only make sense where Rexa is installed. The repo's
+`claude/settings.json` carries the shared keys only; fold them into the live file
+on each machine, which lets the repo win on any key it declares:
+
+```bash
+jq -s '.[0] * .[1]' ~/.claude/settings.json ~/nerdtools/claude/settings.json   > ~/.claude/settings.new && mv ~/.claude/settings.new ~/.claude/settings.json
 ```
 
 Keep `~/.codex/config.toml` machine-local because it contains generated plugin,
@@ -143,20 +163,27 @@ New-Item -ItemType Junction -Force -Path "$HOME\.config\wezterm" -Target "$HOME\
 New-Item -ItemType Directory -Force -Path "$HOME\.config\git" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\git\ignore" -Target "$HOME\nerdtools\conf\git\ignore" | Out-Null
 
-# Inspect and merge existing real paths before replacing them.
-New-Item -ItemType Junction -Force -Path "$HOME\.claude" -Target "$HOME\nerdtools\claude" | Out-Null
-New-Item -ItemType Directory -Force -Path "$HOME\.codex", "$HOME\.agents\skills" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md" -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
+# ~/.claude stays a real directory; only the tracked items are linked into it.
+New-Item -ItemType Directory -Force -Path "$HOME\.claude\skills", "$HOME\.codex", "$HOME\.agents\skills" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\CLAUDE.md"     -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\statusline.sh" -Target "$HOME\nerdtools\claude\statusline.sh" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\commands"      -Target "$HOME\nerdtools\claude\commands" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\scripts"       -Target "$HOME\nerdtools\claude\scripts" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\themes"        -Target "$HOME\nerdtools\claude\themes" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md"      -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
 
 Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
-  (Test-Path "$($_.FullName)\SKILL.md") -and -not ($_.Attributes -band [IO.FileAttributes]::ReparsePoint)
+  Test-Path "$($_.FullName)\SKILL.md"
 } | ForEach-Object {
-  New-Item -ItemType Junction -Force -Path "$HOME\.agents\skills\$($_.Name)" -Target $_.FullName | Out-Null
+  New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\skills\$($_.Name)" -Target $_.FullName | Out-Null
+  New-Item -ItemType Junction     -Force -Path "$HOME\.agents\skills\$($_.Name)" -Target $_.FullName | Out-Null
 }
 ```
 
 - Junctions replace the whole target dir, so they are idempotent with `-Force`.
-- The `AGENTS.md` file symlink requires Windows Developer Mode or an elevated shell.
+- The file symlinks (`AGENTS.md`, `CLAUDE.md`, `statusline.sh`) require Windows
+  Developer Mode or an elevated shell. `~/.agents/skills` stays junctions so Codex
+  works without it.
 - Keep the two Codex fallback keys above in `$HOME\.codex\config.toml`; that file remains machine-local.
 - Apps that read `%APPDATA%`/`%LOCALAPPDATA%` instead of `~/.config` on Windows (e.g. lazygit)
   need their own junction to the platform path; add per-app as needed.
@@ -166,7 +193,7 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 ```bash
 for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushell ~/.config/tmux \
             ~/.aider.conf.yml ~/revive.toml ~/.config/lazygit/config.yml ~/.config/zls.json \
-            ~/.config/herdr/config.toml ~/.claude ~/.codex/AGENTS.md; do
+            ~/.config/herdr/config.toml ~/.claude/CLAUDE.md ~/.claude/commands             ~/.claude/statusline.sh ~/.codex/AGENTS.md; do
   if [[ -L "$link" && -e "$link" ]]; then
     printf "✓ %-40s -> %s\n" "$link" "$(readlink "$link")"
   else
@@ -178,6 +205,7 @@ done
 ## Notes
 
 - `ln -sfn` is idempotent (force-overwrite existing symlink, no-deref).
-- `~/.claude` also contains live credentials, sessions, and history under the
-  nerdtools working tree. Those runtime paths must stay ignored; only explicitly
-  tracked configuration and `claude/skills/` are replicated by git.
+- `~/.claude` is a real directory holding live credentials, sessions, history, and
+  installed plugins. Only `CLAUDE.md`, `statusline.sh`, `commands/`, `scripts/`,
+  `themes/`, and each `skills/<name>/` are linked back to the repo;
+  `settings.json` is merged by hand.
