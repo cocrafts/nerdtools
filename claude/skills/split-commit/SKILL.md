@@ -1,13 +1,14 @@
 ---
 name: split-commit
-description: Commit pending work as a series of SMALL logical commits with short conventional messages, no body, no attribution. Commits ONLY the hunks this session authored, safely, in a tree where other sessions work in parallel. Use when the user says /split-commit or asks to commit "theo rule cũ / chia nhỏ commit". Encodes per-repo exclusions (recompiler never commits docs/* or bun/*).
+description: Commit pending work as a series of SMALL logical commits with short conventional messages, no body, no attribution. Commits ONLY the hunks this session authored: a plain pathspec commit in the session's own worktree, the ownership procedure in a checkout that peers share. Use when the user says /split-commit or asks to commit "theo rule cũ / chia nhỏ commit". Encodes per-repo exclusions.
 ---
 
 # split-commit — chia nhỏ commit theo rule của Sơn
 
 Commit the current work as a series of small, logical commits. This skill runs
-only when the user explicitly asked to commit (his default elsewhere is
-stage-only — never volunteer commits).
+when the user asked to commit, or when the project's CLAUDE.md lets the agent
+commit on its own (the `~/metascript` workspace does); elsewhere never volunteer
+commits.
 
 **Two jobs, in this order: (1) commit ONLY what this session wrote, (2) split it
 into small logical commits.** Job 1 outranks job 2. A perfectly split commit that
@@ -23,10 +24,40 @@ than one slightly-too-large commit containing exactly your own changes.
 
 ---
 
-## 0. Ownership first — assume the tree is shared
+## First: own worktree or shared checkout
 
-Several Claude sessions commit into the SAME working tree (notably
-`~/metascript/recompiler`). Before staging anything, establish what is yours.
+```sh
+git rev-parse --show-toplevel        # where this session works
+git worktree list | head -1          # the main checkout
+```
+
+- **Own linked worktree** (the two differ — e.g. recompiler's `wt/<name>` branch from
+  `tools/wt.sh new`): the working tree and the index are private, so ownership is
+  settled by construction. Read `git status --short` once for junk, split into logical
+  commits with **Method A**, run the four-point check, and stop. Methods B and C, the
+  index re-sync and traps A–D do not apply here.
+- **Getting that branch onto `main` is the repo's land step, not this skill** —
+  `tools/wt.sh land` in recompiler (rebase, gate, compare-and-swap `main`, sync the
+  main checkout path by path); in the other `~/metascript` repos (neon, ion, void,
+  yoga, lightcube) plain git as `~/metascript/CLAUDE.md` §Arcs spells it:
+  `git rebase main`, the repo's gate, `merge --ff-only`. Never copy files into the main checkout to commit
+  them there, never commit an arc's work on `main` directly, no push or pull between
+  checkouts.
+- **Shared checkout** (the two match, or peers edit this same tree): everything below
+  applies. In a `~/metascript` repo that is the main checkout, which takes lands plus
+  the small change that belongs to no arc (setup, a doc line, an inbox note's edits).
+- **A sibling repo's file edited from this session** is committed in that sibling's
+  shared checkout, by the rules below, before this session isolates itself in a
+  worktree — afterwards git outside the worktree is refused: the edit stays uncommitted
+  and is named in a note `~/metascript/.inbox/<repo>/<yyyy-mm-dd>-<slug>.md`, which a
+  session started in that repo reads, commits from and deletes.
+
+---
+
+## 0. Ownership first — in a shared checkout, assume the tree is shared
+
+Several Claude sessions may commit into the SAME working tree (a main checkout that
+peers still edit). Before staging anything, establish what is yours.
 
 ```sh
 git log --oneline -5                 # the tip may have moved since you started
@@ -74,15 +105,9 @@ Read it before the first edit, not at commit time.
    (it sweeps untracked junk: probes, `*.o`, `out/`, scratch files — and peer files).
 6. NEVER push unless he explicitly says push.
 
-**Banned in `~/metascript/recompiler`, and don't reach for them elsewhere:**
-`git stash`, `git reset`, `git checkout .`, `git restore` — they discard working-tree
-state belonging to another session. Every recipe below works without them.
-`git reset -q -- <paths>` is NOT protection either: it clears only YOUR paths and
-cannot stop a foreign index from riding along.
-
 ---
 
-## Choose the landing method
+## Choose the landing method (shared checkout)
 
 | Situation | Method |
 |---|---|
@@ -211,8 +236,8 @@ restores the peer's staged index exactly.
 
 ## Per-repo exclusions
 
-- `~/metascript/recompiler`: **never commit `docs/*` or `bun/*`** — leave them
-  modified/untracked no matter what changed there.
+- `~/metascript/recompiler`: `docs/*` and `CLAUDE.md` are tracked: commit the hunks
+  this session authored, as `docs(...)` commits.
 - Any repo: never commit generated build outputs (`out/`, `*.o`, `.cache`),
   editor droppings, or experiment probes unless he asks by name.
 
@@ -221,5 +246,8 @@ restores the peer's staged index exactly.
 After committing, show `git log --oneline -N` for the new commits, then:
 
 - one line on what was deliberately left uncommitted (junk / exclusions),
-- one line naming the **peer work left untouched** (their staged files, their hunks
-  in a MIXED file) and the check that proves it survived.
+- in a shared checkout, one line naming the **peer work left untouched** (their staged
+  files, their hunks in a MIXED file) and the check that proves it survived;
+- in an own worktree, the land command that comes next; whether the agent runs it is
+  the repo's rule (recompiler: a gated `tools/wt.sh land` is the agent's, `--no-gate`
+  and push are asked for), not this skill's.

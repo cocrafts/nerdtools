@@ -146,7 +146,7 @@ Brief CTO mode. **Do not commit, push, or open a PR** unless the user explicitly
 4. **SKIP IS NORMAL** — the skill exists precisely because some items will turn out invalid. A run that skips 2 of 5 items is a successful run, not a failed one.
 5. **CONSENSUS PER STEP.** User confirms before each execute.
 6. **NO DRIVE-BY EDITS.** Touch only what the item scopes. New findings become new items.
-7. **NO COMMIT WITHOUT ASK.** The skill never commits/pushes/PRs on its own.
+7. **COMMIT BY THE PROJECT'S RULE.** Ask before a commit unless the project's CLAUDE.md lets the agent commit on its own; never push or open a PR without asking.
 
 ## Anti-patterns this skill prevents
 

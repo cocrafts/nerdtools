@@ -60,7 +60,7 @@ nothing new, say that, and say what it would have looked like if you had cheated
 
 Also check, and report on:
 - Did any approved plan get deviated from? Why, and was it measured?
-- Was a documented intentional divergence (`docs/NIM-REF.md`) respected rather
+- Was a documented intentional divergence (`paper/NIM-REF.md`) respected rather
   than "fixed"?
 - Were guards proven red before being trusted?
 - Any comments added? (House rule is zero.)
@@ -70,8 +70,8 @@ Explicitly including what was NOT verified. A recap that lists only successes
 reads freshly audited and is more dangerous than an obviously stale one.
 
 ### 6. Next
-The single next action, and whether it needs his sign-off. If the next action is
-a commit, ask — never commit without asking.
+The single next action, and whether it needs his sign-off. A commit follows the
+project's rule: ask, unless its CLAUDE.md lets the agent commit on its own.
 
 ## Anti-patterns
 
