@@ -41,7 +41,7 @@ tracked items into it one by one, so a new tracked file is one more line here:
 
 ```bash
 mkdir -p ~/.claude/skills ~/.codex ~/.agents/skills
-ln -sfn ~/nerdtools/claude/CLAUDE.md     ~/.claude/CLAUDE.md
+printf '@~/nerdtools/claude/CLAUDE.md\n' > ~/.claude/CLAUDE.md
 ln -sfn ~/nerdtools/claude/statusline.sh ~/.claude/statusline.sh
 ln -sfn ~/nerdtools/claude/commands      ~/.claude/commands
 ln -sfn ~/nerdtools/claude/scripts       ~/.claude/scripts
@@ -54,6 +54,18 @@ for skill in ~/nerdtools/claude/skills/*; do
   ln -sfn "$skill" ~/.agents/skills/"$(basename "$skill")"
 done
 ```
+
+`~/.claude/CLAUDE.md` is a **real file, not a symlink** — one `@` import of the shared
+config, then room for rules that belong to this machine alone. Claude Code expands `@`,
+so the import is its own sanctioned mechanism, and the machine-local half stops needing
+the hand-merge `settings.json` still needs. That file is untracked by construction: a
+rule meant for every machine goes in `claude/CLAUDE.md`, in git.
+
+Two `@` facts, measured on Windows 2026-09-20 with `claude -p` against a marker file.
+In the **user-level** `~/.claude/CLAUDE.md`, `@~/path` expands; a Windows absolute path
+(`@C:\...`) does not. In a **project** `CLAUDE.md`, only a target inside the project
+expands — one pointing outside is left as literal text, silently. Hence `~/` above, and
+no project file imports across the tree.
 
 Dropping a skill upstream leaves a dangling link behind, so prune before linking:
 `find ~/.claude/skills ~/.agents/skills -maxdepth 1 -type l ! -exec test -e {} \; -exec rm {} \;`.
@@ -103,8 +115,8 @@ in one by one.
 
 ```bash
 mkdir -p ~/.omp/agent
-ln -sfn ~/nerdtool/omp/config.yml ~/.omp/agent/config.yml
-ln -sfn ~/nerdtool/omp/AGENTS.md  ~/.omp/agent/AGENTS.md
+ln -sfn ~/nerdtools/omp/config.yml ~/.omp/agent/config.yml
+ln -sfn ~/nerdtools/omp/AGENTS.md  ~/.omp/agent/AGENTS.md
 ```
 
 On Windows use the PowerShell block below — under Git Bash, `ln -sfn` silently copies
@@ -125,7 +137,8 @@ Skills need no line here; omp reads `~/.agents/skills` natively.
 wrapper there would ship the model one literal `@` line and silently drop every shared
 rule. `~/.codex/AGENTS.md` stays a hard symlink to `claude/CLAUDE.md`, and Codex goes
 without the adapters. The rule that decides: an agent that expands `@` gets a wrapper, an
-agent that does not gets the symlink — never a copy of the content.
+agent that does not gets the symlink — never a copy of the content. Claude Code expands
+`@`, so it is on the wrapper side too.
 
 ## Syncthing (compiler docs)
 
@@ -197,7 +210,7 @@ New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\git\ignore" -Target 
 
 # ~/.claude stays a real directory; only the tracked items are linked into it.
 New-Item -ItemType Directory -Force -Path "$HOME\.claude\skills", "$HOME\.codex", "$HOME\.agents\skills" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\CLAUDE.md"     -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
+Set-Content -Path "$HOME\.claude\CLAUDE.md" -Value '@~/nerdtools/claude/CLAUDE.md' -Encoding utf8NoBOM
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\statusline.sh" -Target "$HOME\nerdtools\claude\statusline.sh" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\commands"      -Target "$HOME\nerdtools\claude\commands" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\scripts"       -Target "$HOME\nerdtools\claude\scripts" | Out-Null
@@ -205,8 +218,8 @@ New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\themes"        -Targ
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md"      -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
 
 New-Item -ItemType Directory -Force -Path "$HOME\.omp\agent" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\config.yml" -Target "$HOME\nerdtool\omp\config.yml" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\AGENTS.md"  -Target "$HOME\nerdtool\omp\AGENTS.md" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\config.yml" -Target "$HOME\nerdtools\omp\config.yml" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\AGENTS.md"  -Target "$HOME\nerdtools\omp\AGENTS.md" | Out-Null
 
 Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
   Test-Path "$($_.FullName)\SKILL.md"
@@ -217,7 +230,7 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 ```
 
 - Junctions replace the whole target dir, so they are idempotent with `-Force`.
-- The file symlinks (`AGENTS.md`, `CLAUDE.md`, `statusline.sh`) require Windows
+- The file symlinks (`AGENTS.md`, `statusline.sh`) require Windows
   Developer Mode or an elevated shell. `~/.agents/skills` stays junctions so Codex
   works without it.
 - Keep the two Codex fallback keys above in `$HOME\.codex\config.toml`; that file remains machine-local.
@@ -229,19 +242,22 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 ```bash
 for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushell ~/.config/tmux \
             ~/.aider.conf.yml ~/revive.toml ~/.config/lazygit/config.yml ~/.config/zls.json \
-            ~/.config/herdr/config.toml ~/.claude/CLAUDE.md ~/.claude/commands             ~/.claude/statusline.sh ~/.codex/AGENTS.md; do
+            ~/.config/herdr/config.toml ~/.claude/commands ~/.claude/statusline.sh \
+            ~/.codex/AGENTS.md; do
   if [[ -L "$link" && -e "$link" ]]; then
     printf "✓ %-40s -> %s\n" "$link" "$(readlink "$link")"
   else
     printf "✗ %-40s MISSING\n" "$link"
   fi
 done
+
+head -1 ~/.claude/CLAUDE.md   # a real file, must print: @~/nerdtools/claude/CLAUDE.md
 ```
 
 ## Notes
 
 - `ln -sfn` is idempotent (force-overwrite existing symlink, no-deref).
 - `~/.claude` is a real directory holding live credentials, sessions, history, and
-  installed plugins. Only `CLAUDE.md`, `statusline.sh`, `commands/`, `scripts/`,
-  `themes/`, and each `skills/<name>/` are linked back to the repo;
-  `settings.json` is merged by hand.
+  installed plugins. Only `statusline.sh`, `commands/`, `scripts/`, `themes/`, and
+  each `skills/<name>/` are linked back to the repo; `CLAUDE.md` is a real file that
+  imports the repo's, and `settings.json` is merged by hand.
