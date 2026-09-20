@@ -67,7 +67,7 @@ quota_segment() {
     at=$(printf '%.0f' "$raw_at")
     [ "$at" -gt "$now" ] && countdown=$(awk -v s=$((at - now)) 'BEGIN{
       d = int(s/86400); h = int(s%86400/3600); m = int(s%3600/60);
-      if (d > 0) printf "\033[2m→%dd%dh\033[22m", d, h;
+      if (d > 0) printf "\033[2m-%dd%dh\033[22m", d, h;
       else if (h > 0) printf "\033[2m-%dh%dm\033[22m", h, m;
       else if (m > 0) printf "\033[2m-%dm\033[22m", m;
       else printf "\033[2m-<1m\033[22m";
