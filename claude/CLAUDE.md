@@ -4,7 +4,9 @@ Universal guidance for Claude Code across all projects and repositories.
 
 ## Git Commits — HARD RULE
 
-**NEVER commit without asking the user first.** No exceptions, no "I'll just commit this quickly." When you think it's time to commit, ask. When the user says commit, use `/split-commit` unless they specify otherwise. This applies to ALL projects, ALL sessions, ALL the time.
+Commit through `/split-commit` unless the user specifies otherwise.
+
+**Never push without asking**, in any project.
 
 ## Comments — IMPORTANT
 
@@ -18,14 +20,34 @@ Universal guidance for Claude Code across all projects and repositories.
 
 When the user types `/<skill-name>`, invoke the Skill tool with that skill **before doing anything else**. The available skills, their descriptions and paths are listed in the harness `<available_skills>` block — do not duplicate that list here.
 
-## Session state and reporting — HARD RULE (audit 2026-09-17: 104 compactions, 312 "where are we" questions in 10 days)
+## Reporting — HARD RULE
 
-- **State lives in a file, not in the conversation.** Every arc has one `arc_<name>.md` in the project memory dir (`~/.claude/projects/<project>/memory/`), ≤ 40 lines, sections: Mục tiêu / Đã land / Bước hiện tại / Chưa commit / Chặn / Next / Verdict mô hình. Update it after every land, every verdict, and before any long lane. Never rely on the compaction summary to carry state.
-- **`/where`** answers "đang làm gì / ở đâu / what next" from that file in ≤ 8 lines. Never rebuild history from the transcript or from memory novels; if the file is stale, fix the file, then answer.
-- **Session boundary**: after a land or a milestone, tell the user "file trạng thái đã cập nhật, có thể `/clear`". Do not let a session reach a second compaction.
 - **After a lane (suite/guard/corpus/SAN)**: line 1 = verdict with numbers and the diff against the known-red set; then the single next action. ≤ 5 lines, no headers, no tables unless it is an A/B.
 - **Background lanes**: launch in the background, report on the notification. The user does not poll.
+- **When the agent commits on its own, the report ends with one git line**: `commit <sha…> · land <sha | not yet, because …> · tree clean | left: <path> (why)`. Anything edited outside the repo (memory, inbox, plans) is named there too — `git status` does not show it.
 - **No narrative reports**: no "history", no process retelling, no `★ Insight`, no headers in messages under ~500 words. Never Read a file > 300 lines whole; summarise logs by script to ≤ 20 lines.
+
+## Working with the user
+
+- **Answer first, code after sign-off.** "Should we / is this right / which is better" is an invitation to discuss: answer with a recommendation and stop. A conclusion and the Edit that acts on it never share a turn when the change is a design change. Read-only probes, debug prints and reverts need no permission.
+- **Ask when it is unclear.** A vague report gets one question for the command and the verbatim output; an "ok" to a question with several branches gets "which one"; a tool named in passing gets "what do you need from it" before anything is designed around it.
+- **One run once the plan is approved.** A session opened on a card says in one sentence what it understands the step in flight to be, then works. Run every step of an approved plan or card, commit each, report at the end. Stop only for a push, for deleting what someone else wrote, or for an open design question.
+- **Root fix, no menu.** A broken call site is a symptom: fix the path that produced it. Never offer a workaround beside the root fix. A fix too large for one session is said plainly and split by scope, not patched over.
+- **Measure before concluding.** What code does is claimed after reading or running it, otherwise it is phrased as an assumption. Working code is not touched on suspicion. A green unit test does not prove the path: a feature that crosses a boundary is proven end to end with its real consumer. A control answers only the question it isolates: list every variable that differs between the broken and the working run before blaming one. A status claim in a doc changes only after running it; quote the output and say what was not verified.
+- **Fail loud.** An unhandled branch reports an error that names the case. An unsafe shape is an error at the declaration: no silent fallback, no auto-repair, no warning.
+- **Extend the model that exists.** A new piece names the existing idiom it reuses; one that cannot is called a new mechanism and approved on its own.
+- **Say it when the approach turned out worse.** Surface it with the new facts that changed the estimate and recommend reversing; do not grind on to something mediocre.
+- **Audit by yourself.** Reviews and audits are read and verified in the main session, not fanned out to agents.
+- **Explain like a CTO brief.** The symptom as code, working beside broken, two to four plain sentences, then the choice. No theory survey unless asked.
+
+## Arcs and cards
+
+- A feature or named arc has a card: `<main checkout>/.cards/<name>.md`, untracked (ignored through `~/.config/git/ignore`) and shared by every worktree of the repo, unless a workspace or project file names another place. It holds the Goal, a "Done when" a session can run, and a State of a few lines naming the step in flight. Memory points at the card and never copies it; the card is deleted once "Done when" holds on the main branch.
+- Where a repo works in worktrees: one worktree per arc, reused by every session of that arc; sequential steps are commits in it, never new worktrees; a slice lands as soon as it stands alone; the main checkout only receives lands.
+- A session ends with its work committed and the card's State current.
+- A red is yours only when it is new against what the project records as known red.
+- A bug in another repo's code is fixed by a session started in that repo; from here it gets a reproduction and a note where that project keeps them.
+- A tool or the harness that refuses an action on purpose is left alone and reported, never routed around.
 
 ## Frontend Component Architecture
 
@@ -34,11 +56,11 @@ When the user types `/<skill-name>`, invoke the Skill tool with that skill **bef
 
 ## Claude Code Hooks
 
-Configured in `~/.claude/settings.json` (NOT hooks.json); scripts in `~/.claude/hooks/entries/`. Use the hook-designer / workflow-architect agents.
+Global hooks are in `~/.claude/settings.json`, a project's hooks in `<repo>/.claude/settings.json` (NOT hooks.json). Change either through the `update-config` skill.
 
 ## Defaults
 
-- **Tool priority**: MCP first (docs → Ref, search → exa, browser → playwright), then built-ins; document why you fell back. Built-in Read/Write/Edit/Grep/Task are used directly.
+- **Tool priority**: MCP first where one is connected (search → exa; browser → `rexa web` inside a Rexa terminal, playwright where the project configures it, else claude-in-chrome), then built-ins; document why you fell back. Built-in Read/Write/Edit/Grep/Task are used directly.
 - **Code**: follow existing patterns, edit > create, no unsolicited docs, absolute paths, avoid emojis, match surrounding style.
 - **Config priority**: project CLAUDE.md → this global → tool defaults → built-in behaviour.
 - **Todos**: strikethrough (`~~text~~`) for completed items; in-progress and pending render plain.
