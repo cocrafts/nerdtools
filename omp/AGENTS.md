@@ -2,7 +2,7 @@
 
 # Adapters — omp only
 
-Everything above is `~/nerdtool/claude/CLAUDE.md`, the shared config, loaded verbatim.
+Everything above is `~/nerdtools/claude/CLAUDE.md`, the shared config, loaded verbatim.
 It names no agent on purpose: Claude Code owns it and never changes for anyone else.
 What follows is what omp has to do by hand, because it cannot read Claude Code's wiring.
 

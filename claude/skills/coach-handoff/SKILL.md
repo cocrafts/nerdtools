@@ -12,7 +12,7 @@ and transcript parsing.
 
 **That only holds if the board is written BEFORE the clear.** This skill writes it.
 
-The practice this serves: `~/nerdtool/claude/playbooks/coach.md`.
+The practice this serves: `~/nerdtools/claude/playbooks/coach.md`.
 
 ## What dies with the session, and therefore what the board must carry
 
@@ -71,7 +71,7 @@ are an interested party, so recover from the board, not by asking them.
 
    ```
    You are the coach for <workspace>. Read, in this order:
-   ~/nerdtool/claude/playbooks/coach.md (the practice)
+   ~/nerdtools/claude/playbooks/coach.md (the practice)
    <workspace>/CLAUDE.md (what this workspace turns on)
    <workspace>/.coach/<name>.md (the board — what I am waiting on)
    <workspace>/.coach/log.tsv (the ledger — what has been ordered and what came of it)

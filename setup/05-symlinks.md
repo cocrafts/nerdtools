@@ -103,8 +103,8 @@ in one by one.
 
 ```bash
 mkdir -p ~/.omp/agent
-ln -sfn ~/nerdtool/omp/config.yml ~/.omp/agent/config.yml
-ln -sfn ~/nerdtool/omp/AGENTS.md  ~/.omp/agent/AGENTS.md
+ln -sfn ~/nerdtools/omp/config.yml ~/.omp/agent/config.yml
+ln -sfn ~/nerdtools/omp/AGENTS.md  ~/.omp/agent/AGENTS.md
 ```
 
 On Windows use the PowerShell block below — under Git Bash, `ln -sfn` silently copies
@@ -205,8 +205,8 @@ New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\themes"        -Targ
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md"      -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
 
 New-Item -ItemType Directory -Force -Path "$HOME\.omp\agent" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\config.yml" -Target "$HOME\nerdtool\omp\config.yml" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\AGENTS.md"  -Target "$HOME\nerdtool\omp\AGENTS.md" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\config.yml" -Target "$HOME\nerdtools\omp\config.yml" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\AGENTS.md"  -Target "$HOME\nerdtools\omp\AGENTS.md" | Out-Null
 
 Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
   Test-Path "$($_.FullName)\SKILL.md"
