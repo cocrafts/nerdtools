@@ -20,6 +20,7 @@ claude/file-history
 claude/projects
 claude/history.jsonl
 claude/*
+!claude/statusline.sh
 !claude/skills/
 !claude/skills/**
 claude/skills/rexa
