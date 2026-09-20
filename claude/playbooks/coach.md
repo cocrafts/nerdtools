@@ -207,8 +207,16 @@ correction recorded once has an expiry date**, exactly like a hash copied from a
 
 ## The card is the coach's — write it, keep it short, dispatch from it
 
-**The worker reads the card, works, and reports. The coach writes the card.** A worker never
-edits it. This frees the worker's context for the arc and puts every arc's state in one hand.
+**Split by content, not by owner.**
+
+- **The card is the coach's.** A worker reads it, works, and reports; it never edits it. Every
+  arc's state is then in one hand and the worker's context stays on the arc.
+- **What the worker learns is the worker's, and it goes into the repo's tracked docs** — the
+  review file, the design doc, the pending list. It writes that itself, because it is the only
+  one who knows it, and in git every agent can read it and a review can catch it.
+
+The card says *where we are and what is next*. The docs say *what we know*. Nothing belongs in
+both, and a fact in the card that outlives the step it belongs to is a fact in the wrong file.
 
 ### What a card contains, and nothing else
 
@@ -218,9 +226,8 @@ edits it. This frees the worker's context for the arc and puts every arc's state
     Next        ordered steps, each one a session can start without asking
     Neighbours  what couples this arc to another, and to which
 
-Keep it under a page. A card that grows past that has stopped being a dispatch surface and
-become a record; move the record into the repo's tracked docs, where every agent can read it
-and a review can catch it.
+Keep it under a page. A card past a page has stopped being a dispatch surface and become a
+record — move the record out.
 
 ### End every order with the report you need
 
@@ -231,8 +238,9 @@ That report is the only input you have. Ask for it in the order, not afterwards.
 ### On every report, update the card before sending the next order
 
 1. Rewrite **State** and **Next** from the report. Delete what is done; do not append.
-2. Add what the worker learned that no artifact carries — a rejected number, an abandoned
-   approach, a trap that cost it a run.
+2. Check the report's findings reached a **tracked doc** and not your card. A rejected number,
+   an abandoned approach, a trap that cost a run — if the worker left one only in its report,
+   order it written where it belongs and give the card a pointer, not a copy.
 3. Re-audit every commit reference the card names, **from inside the worktree**:
 
         for s in $(grep -ohE '\b[0-9a-f]{7,40}\b' <card> | sort -u); do
