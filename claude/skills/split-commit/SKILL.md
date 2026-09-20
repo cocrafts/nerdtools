@@ -30,23 +30,33 @@ In `~/metascript` these are enforced by `.githooks/commit-msg` (via
 body, or attribution makes a red commit. `Merge`, `Revert`, `fixup!`, `squash!`
 are exempt.
 
-## Own worktree or shared checkout
+## Which path — decided by the tree, not by judgment
 
 ```sh
 git rev-parse --show-toplevel; git worktree list | head -1
 ```
 
-- **Own worktree** (they differ): index and tree are private — `git status --short`
-  once for junk, then ordinary `git add <explicit files>` + `git commit`. Landing
-  on `main` is the repo's step, not this skill's: recompiler `tools/wt.sh land`;
-  the other `~/metascript` repos `git rebase main`, gate, `merge --ff-only`.
-  Never copy files into the main checkout to commit them there; no push or pull
-  between checkouts.
-- **Shared checkout** (they match, or peers edit this tree): the procedure below.
-- **A sibling repo's file edited from this session**: commit it there before
-  isolating in a worktree; afterwards git outside the worktree is refused and the
-  edit is named in `~/metascript/.inbox/<repo>/<yyyy-mm-dd>-<slug>.md` for a
-  session started there to commit and delete.
+| The tree this session works in | Path |
+|---|---|
+| Own linked worktree on `wt/<name>` (`tools/wt.sh new`, `git worktree add`) — one writer by construction | Plain commits: `git status --short` once for junk, `git add <explicit files>`, `git commit`. The `commit-msg` hook runs; nothing can race you. |
+| Shared tree — nerdtools, anything reached through a `~/.claude` symlink, a metascript main checkout taking a no-arc edit, a sibling repo's checkout | The procedure below. |
+| In doubt | The procedure — safe everywhere; the plain path is safe only alone. |
+
+Running the procedure in an own worktree is safe but buys nothing:
+`commit-tree` bypasses the `commit-msg` hook, and a leaked `GIT_INDEX_FILE`
+poisons the shell's later git calls. Playing safe means defaulting to the
+procedure when the tree might be shared, not abolishing the plain path.
+
+Landing an own worktree's branch on `main` is the repo's step, not this
+skill's: recompiler `tools/wt.sh land`; the other `~/metascript` repos
+`git rebase main`, gate, `merge --ff-only`. Never copy files into the main
+checkout to commit them there; no push or pull between checkouts.
+
+A sibling repo's file edited from this session is committed in that repo's
+shared tree (the procedure) before the session isolates itself in a worktree;
+afterwards git outside the worktree is refused and the edit is named in
+`~/metascript/.inbox/<repo>/<yyyy-mm-dd>-<slug>.md` for a session started
+there to commit and delete.
 
 ## Splitting
 
