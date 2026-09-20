@@ -232,11 +232,27 @@ git diff HEAD -- <mixed file> | grep -c '<peerSymbol>'   # must be >0 (still ali
   it, so nothing looked wrong locally. Always re-sync per path (Method B).
 - **E. Whole-file `Write` from a stale snapshot** silently deletes committed work
   (`Edit` would have errored). Never rewrite a shared file from an old read.
+- **F. Method C on a file whose tracked blob is whole-file stale.** `claude/settings.json`:
+  tracked = a 20-line stub, live symlink = 399 lines; the marker line sat inside ONE
+  +310-line hunk that was really the whole file, so the filter "succeeded" and landed the
+  user's entire settings drift — applied onto the stub, as JSON with duplicate keys. Read
+  the diff size before Method C: a whole-file divergence means hunks cannot carry
+  ownership — leave the file to its owner, or reconstruct it (Method B).
+- **G. `update-ref HEAD HEAD~1` resolves `HEAD~1` at run time — in a shared checkout it
+  deletes a peer's commit.** The bad commit landed at 05:51:50, a peer committed on top
+  at 05:52:21, the "undo mine" ran at 05:52:31 and removed THEIRS while keeping the bad
+  one. Capture the hash when you commit (`BAD=$(git rev-parse HEAD)`); un-commit
+  compare-and-swap — `git update-ref refs/heads/main <parent-of-BAD> "$BAD"` fails loud
+  when the branch moved — and when a peer HAS landed on top, re-parent their commit onto
+  the good parent (`git commit-tree <their-tree> -p <good>` with their author env)
+  instead of moving the ref.
 
 Recovery for all of these is non-destructive and never needs `reset --hard`:
 `git update-ref refs/heads/<branch> <old>` un-lands an unpushed branch move;
 `git update-ref HEAD <parent>` un-commits while leaving the working tree alone — and
-restores the peer's staged index exactly.
+restores the peer's staged index exactly — **but resolve the target from the hash
+captured at commit time and pass that hash as the CAS `<old>`, never a bare `HEAD~1`**
+(that is how G fired).
 
 ---
 
