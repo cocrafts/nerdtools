@@ -37,6 +37,9 @@ claude/*
 !claude/skills/**
 !claude/themes/
 !claude/themes/**
+!claude/hooks/
+claude/hooks/*
+!claude/hooks/comment-guard.sh
 
 # local again — inside a shared folder, but this machine's own
 claude/settings.local.json
