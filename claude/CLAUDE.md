@@ -16,6 +16,15 @@ Commit through `/split-commit` unless the user specifies otherwise.
 
 **Anti-pattern**: padding edits with block comments that restate the function's purpose or describe the change you are making. If you write 4+ lines of justification for a 2-line change, the comment isn't earning its keep.
 
+## Documentation — `docs/`, READMEs, design notes
+
+**Source code is the truth.** A doc owns exactly what the code cannot say about itself — a
+number that was measured, an approach that was tried and rejected, an anchor into another
+repo, why this shape and not the other — and **points** at everything grep already gives
+back: field lists, signatures, which file holds what, what a commit did.
+
+Before writing or editing one, read `~/nerdtools/claude/playbooks/documentation.md`.
+
 ## Skills
 
 When the user types `/<skill-name>`, invoke the Skill tool with that skill **before doing anything else**. The available skills, their descriptions and paths are listed in the harness `<available_skills>` block — do not duplicate that list here.
