@@ -18,7 +18,7 @@ input=$(cat)
     (.rate_limits.five_hour.resets_at // ""),
     (.rate_limits.seven_day.used_percentage // ""),
     (.rate_limits.seven_day.resets_at // ""),
-    (.effort.level // "")'
+    (.effort.level // "")' | tr -d '\r'
 )
 
 case "$effort" in
