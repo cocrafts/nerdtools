@@ -13,22 +13,35 @@ metacraft
 .aider*
 
 geekCaps/geekCaps
-claude/.credentials.json
-claude/ide
-claude/debug
-claude/file-history
-claude/projects
-claude/history.jsonl
+
+# Claude Code — ~/.claude is a link to claude/. Everything in it is machine-local
+# by default (credentials, session transcripts, per-project memory, caches, logs,
+# plugins, hooks with their node_modules, scratch plans); the ! lines below are the
+# shared agent config. A new shared file needs its own ! line, and a path that must
+# stay on this machine goes under "local again", after the ! that would catch it.
 claude/*
+!claude/CLAUDE.md
+!claude/config.yaml
+!claude/settings.json
 !claude/statusline.sh
+!claude/workflow-templates.yaml
+!claude/commands/
+!claude/commands/**
 !claude/scripts/
 !claude/scripts/**
-!claude/themes/
-!claude/themes/**
 !claude/skills/
 !claude/skills/**
+!claude/themes/
+!claude/themes/**
+
+# local again — inside a shared folder, but this machine's own
+claude/settings.local.json
 claude/skills/rexa
 claude/skills/rexa-tasks
 claude/skills/synced
+claude/**/node_modules
+claude/**/*.local
+claude/**/*.backup
+claude/**/*.bak.*
 
 core/target
