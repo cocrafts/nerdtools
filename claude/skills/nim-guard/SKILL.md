@@ -110,4 +110,4 @@ print the right answer and still double-free intermittently).
 - Building the structural/IR tier speculatively before the behavioral ledger has
   demonstrably missed a real drift.
 
-Base directory for this skill: /Users/le/.claude/skills/nim-guard
+Base directory for this skill: `~/.claude/skills/nim-guard`
