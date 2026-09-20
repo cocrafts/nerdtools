@@ -22,6 +22,12 @@ than one slightly-too-large commit containing exactly your own changes.
 - **KHÔNG attribution footer** (no Co-Authored-By / Generated-with — attribution is disabled globally in his settings).
 - Match the repo's existing scope convention (`git log --oneline -15` first; e.g. urg uses `feat(engine):`, `docs(engine):`).
 
+In `~/metascript` these four rules are **enforced**, not remembered: `.githooks/commit-msg`
+(reached through `core.hooksPath`, so every linked worktree inherits it) rejects a subject
+that is not `type(scope): subject`, any body or bullet list, and attribution in the subject.
+`Merge`, `Revert`, `fixup!` and `squash!` are exempt. Splitting is **not** machine-checkable:
+nothing below this line is held by anything but you.
+
 ---
 
 ## First: own worktree or shared checkout
