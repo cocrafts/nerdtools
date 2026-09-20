@@ -17,7 +17,14 @@ ln -sfn ~/nerdtools/conf/lazygit.yml    ~/.config/lazygit/config.yml
 ln -sfn ~/nerdtools/conf/zls.json       ~/.config/zls.json
 ln -sfn ~/nerdtools/conf/tmux           ~/.config/tmux
 mkdir -p ~/.config/herdr && ln -sfn ~/nerdtools/conf/herdr/config.toml ~/.config/herdr/config.toml
+mkdir -p ~/.config/git && ln -sfn ~/nerdtools/conf/git/ignore ~/.config/git/ignore
 ```
+
+`~/.config/git/ignore` is git's default `core.excludesfile` (same path on Windows).
+It carries the patterns every repo needs and no repo should have to declare:
+`.cards/`, the arc cards the agent rules put beside a main checkout, and
+`**/.claude/settings.local.json`. Only that file is linked — `~/.config/git/`
+also holds `allowed-signers`, which is machine-local.
 
 `~/.config/herdr/` also holds machine-local runtime state (logs, sockets, `session.json`), so only the `config.toml` file is symlinked, not the whole directory.
 
@@ -70,37 +77,52 @@ herdr plugin link ~/nerdtools/conf/herdr/vim-herdr-navigation && herdr server re
 
 ## Syncthing (compiler docs)
 
-`~/projects/compiler/docs` syncs between machines via Syncthing — per-file, WIP
-docs without committing them. The Syncthing config dir is **not** symlinked
+The whole `docs/` folder syncs between machines via Syncthing — live WIP docs
+shared without committing them. The Syncthing config dir is **not** symlinked
 into nerdtools on purpose: `cert.pem`/`key.pem` are the device identity (sharing
 them clones the device ID and breaks the protocol) and the index DB is
 machine-local. Only the setup recipe lives in the repo.
 
+Folders pair by **folder ID**, not by path — the local path differs per machine:
+
+| Machine | Folder ID | Path |
+| --- | --- | --- |
+| macOS | `compiler-docs` | `~/metascript/recompiler/docs` |
+| Windows | `compiler-docs` | `~\projects\compiler\docs` |
+
+There is **no `.stignore`** — every file in `docs/` syncs, new files included,
+nothing to register per file. An earlier setup whitelisted files one by one;
+Syncthing never syncs `.stignore` itself, so any leftover per-file copy must be
+deleted **by hand on each machine** (re-running `setup.ps1` removes it on
+Windows).
+
 Windows — idempotent, safe to re-run (installs syncthing, folder, versioning,
-`.stignore`, hidden logon task):
+hidden logon task):
 
 ```powershell
-~/nerdtool/conf/syncthing/setup.ps1
+~/nerdtools/conf/syncthing/setup.ps1
 ```
 
-macOS — syncthing is already running for nerdtools, so only pair the folder:
+macOS — syncthing already runs for nerdtools, so only add the folder at
+`http://127.0.0.1:8384`: ID `compiler-docs`, path `~/metascript/recompiler/docs`,
+send/receive, trashcan versioning 30 days, shared with the Windows device.
 
-1. GUI at `http://127.0.0.1:8384` → add folder, **Folder ID must be `compiler-docs`**,
-   path `~/projects/compiler/docs`, send/receive, and share it with the Windows
-   device ID printed by the setup script.
-2. Accept the Windows device under "New Device" and share back.
-3. Create the same `.stignore` in the folder root (Syncthing never syncs
-   `.stignore` itself). Negations MUST come before the catch-all — Syncthing is
-   first-match-wins, unlike gitignore:
+`setup.ps1` creates the folder but never adds a device to it, so **sharing is
+manual on both machines** — tick the other device under Edit → Sharing on each
+side. Until both have, the folder sits at `globalFiles 0` with nothing to do.
 
-   ```
-   !/NIM-REF.md
-   *
-   ```
+**First merge between two pre-populated folders** (what actually happened
+2026-09-03): a file present on both sides with different content resolves by
+newer mtime — the loser is preserved next to it as
+`NAME.sync-conflict-YYYYMMDD-HHMMSS-DEVICEID.ext`, and files overwritten by the
+winner land in `.stversions/` (30-day trashcan). Nothing is lost silently, but
+**mtime is not content**: a doc pasted through a chat tool arrived with escaped
+markdown (`\*\*bold\*\*`), reflowed lines and CRLF — and a fresh mtime that beat
+the genuinely newer edit. Diff conflicts by content (normalize whitespace and
+un-escape before comparing), not by timestamp.
 
-4. On Windows, accept the Mac's device ID in the GUI to finish pairing.
-
-Verified state: `compiler-docs` idle, 1 file tracked, trashcan versioning 30 days.
+`docs/` is inside the recompiler git repo, so `docs/.stfolder/` and
+`docs/*.sync-conflict-*` are gitignored there.
 
 ## Windows
 
@@ -115,6 +137,11 @@ New-Item -ItemType Junction -Force -Path "$env:LOCALAPPDATA\nvim" -Target "$HOME
 
 # Wezterm reads ~/.config on Windows too
 New-Item -ItemType Junction -Force -Path "$HOME\.config\wezterm" -Target "$HOME\nerdtools\conf\wezterm" | Out-Null
+
+# git's default core.excludesfile. A file needs SymbolicLink (junctions are directories only),
+# so this line needs Developer Mode or an elevated shell — or copy the file and re-copy on change.
+New-Item -ItemType Directory -Force -Path "$HOME\.config\git" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\git\ignore" -Target "$HOME\nerdtools\conf\git\ignore" | Out-Null
 
 # Inspect and merge existing real paths before replacing them.
 New-Item -ItemType Junction -Force -Path "$HOME\.claude" -Target "$HOME\nerdtools\claude" | Out-Null
