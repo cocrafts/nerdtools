@@ -79,9 +79,13 @@ escalations. That is the first real movement on the open question this playbook 
 scarcest budget and admits nothing measures.
 
 **Ask with the options enumerated, not openly** — a worker practice, so it belongs in the briefs,
-and it is what keeps step 3 cheap. void3d asked *land / land-then-re-gate / leave it* and was
-answered in one beat. void2d asked openly an hour earlier, got *"push đi"*, and had to work out
-for itself whether that covered a re-gate. `AskUserQuestion` renders the options.
+and it is what keeps step 3 cheap. `AskUserQuestion` renders them, and **the options are where the
+thinking goes**: void3d asked *land / land-then-re-gate / leave it*, so the answer said what it
+covered. The coach first wrote this up as void2d having asked openly and got a bare word back —
+**void2d corrected it**: it had also used enumerated options, and the word the coach quoted was a
+label void2d itself had written. Both escalations that night were closed questions, 2 of 2. The
+practice survived; the coach's attribution did not, and a worker caught it in a doc that was
+already pushed.
 
 ## Practices
 
@@ -158,6 +162,19 @@ So: **carry a finding to the other arc as a story with its numbers, and let that
 it means for itself.** Do not convert it into a rule, and do not tell the other arc what to do
 with it. This is the thing only the coach is positioned to do, it is cheap, and it respects that
 the receiving arc knows its own ground better than the coach does.
+
+**The best instance so far went the other way within the hour, and to a different artifact class
+entirely.** Told void2d's blind-format story, void3d applied it to its own **card**: it checked
+the handoff bar by script rather than by reading, running `git merge-base --is-ancestor <sha> main`
+over every SHA the card named, and found **fifteen dead** — the whole M6 commit table was
+pre-rebase hashes its own rebase had destroyed. The card still read beautifully and was broken
+only where a fresh session actually uses it, at `git show`. Here the new mechanism is **rebase**
+and the blind format is the **card**, which records SHAs as though they were immutable. Carried
+back to void2d the same hour, it had four of its own. Rule the workers wrote for themselves:
+**after every rebase, re-audit every SHA the card names** — one `for` loop. And the test must be
+reachability, not existence: a rewritten commit still resolves with `cat-file` until it is
+collected, so `cat-file` alone reports clean when it is not. The coach made exactly that mistake
+on the first pass.
 
 The same shape holds for harness findings. void2d found its T1 snapshot format was **blind** to a
 new mechanism — regenerating on the first red would have frozen a snapshot asserting nothing — so
