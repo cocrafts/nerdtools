@@ -76,5 +76,10 @@ criticises elsewhere. Treat them as a starting point to instrument, not as findi
 
 ## Untested
 
-More than two workers · a coach across machines · a coach surviving its own restart · a coach
-allowed to block a milestone rather than leaving the verdict to the worker's review loop.
+More than two workers · a coach across machines · a coach allowed to block a milestone rather
+than leaving the verdict to the worker's review loop.
+
+**A coach surviving its own restart** now has a ritual but no result: `/coach-handoff` flushes
+the board and the ledger before a clear and emits the re-entry prompt, gated on three
+questions the next coach must answer from those files alone. Whether it re-derives the picture
+*correctly* is the experiment; a question it has to ask a worker is the finding.
