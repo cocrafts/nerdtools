@@ -195,15 +195,16 @@ your landed paths up to the new HEAD, one path at a time:
 ```sh
 bash -c '
 for p in <every path you just landed>; do
-  entry=$(git ls-tree HEAD -- "$p")
-  git update-index --add --cacheinfo \
-    "$(echo "$entry" | awk "{print \$1}"),$(echo "$entry" | awk "{print \$3}"),$p"
+  git ls-tree HEAD -- "$p" | while read -r mode type sha name; do
+    git update-index --add --cacheinfo "$mode,$sha,$p"
+  done
 done'
 ```
 
 Per path, with `--cacheinfo`; a whole-index `read-tree HEAD` resets everything and
-discards the peer's staging. Under `bash -c`: zsh does not word-split an unquoted
-`$VAR`, so the loop would run once with every path glued into one token.
+discards the peer's staging. The loop reads ls-tree's fields with `read`, never a
+quoted-awk pipeline, and runs under `bash -c` because zsh does not word-split an
+unquoted `$VAR`.
 
 ---
 
