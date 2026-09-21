@@ -28,6 +28,15 @@ already wins; a coach that spends them connecting is doing the only job nobody e
 ulp-to-image inference on day 1 and the milestone stayed whole, what worked was not a verdict —
 it was **a question the worker was not positioned to ask itself**. Keep that shape.
 
+## First act: register, so the identity survives a compaction
+
+    echo -n "$SESSION_ID" > ~/metascript/.coach/session-id
+
+The human names the coach in the opening prompt, and that prompt is gone after the first
+compaction. The `SessionStart` hook reads this marker and re-states the brief on every resume
+and compaction for that session id only; every other session in the workspace sees nothing.
+A new coach session overwrites it. Nothing else reads it.
+
 ## The shape
 
 - One **worker** per worktree, in `bypassPermissions`, driven by a prompt card in
