@@ -82,6 +82,34 @@ function deeperClaudeMd(cwd: string): string[] {
   return found;
 }
 
+// wt.sh hook-session prints the worktree's card and the compiler inbox
+// tally on stdout; like Claude Code's SessionStart wiring, run the main
+// checkout's copy with CLAUDE_PROJECT_DIR pointing at this session's cwd.
+function wtSessionState(cwd: string): string | null {
+  try {
+    const list = spawnSync("git", ["worktree", "list", "--porcelain"], {
+      cwd,
+      encoding: "utf8",
+      timeout: 5_000,
+    });
+    const mainLine = (list.stdout ?? "")
+      .split("\n")
+      .find((line) => line.startsWith("worktree "));
+    if (!mainLine) return null;
+    const wtSh = join(mainLine.slice("worktree ".length), "tools", "wt.sh");
+    if (!existsSync(wtSh)) return null;
+    const res = spawnSync("bash", [wtSh, "hook-session"], {
+      cwd,
+      encoding: "utf8",
+      timeout: 15_000,
+      env: { ...process.env, CLAUDE_PROJECT_DIR: cwd },
+    });
+    const out = (res.stdout ?? "").trim();
+    return out.length ? out : null;
+  } catch {
+    return null;
+  }
+}
 export default function (pi: ExtensionAPI) {
   const writeTargetExisted = new Map<string, boolean>();
 
@@ -153,6 +181,12 @@ export default function (pi: ExtensionAPI) {
       }
     } catch {
       // No store for this cwd: nothing to inject.
+    }
+    const wtState = wtSessionState(cwd);
+    if (wtState) {
+      parts.unshift(
+        `Worktree/card state (tools/wt.sh hook-session):\n\n${wtState}`,
+      );
     }
     const deeper = deeperClaudeMd(cwd);
     if (deeper.length) {
