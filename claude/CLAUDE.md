@@ -17,10 +17,6 @@ Commit through `/split-commit` unless the user specifies otherwise.
 **Source code is the truth: a doc owns only what the code cannot say about itself, and points
 at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks/documentation.md`.
 
-## Skills
-
-When the user types `/<skill-name>`, invoke the Skill tool with that skill **before doing anything else**. The available skills, their descriptions and paths are listed in the harness `<available_skills>` block — do not duplicate that list here.
-
 ## Reporting — HARD RULE
 
 - **After a lane (suite/guard/corpus/SAN)**: line 1 = verdict with numbers and the diff against the known-red set; then the single next action. ≤ 5 lines, no headers, no tables unless it is an A/B.
