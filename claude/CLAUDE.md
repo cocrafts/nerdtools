@@ -10,11 +10,7 @@ Commit through `/split-commit` unless the user specifies otherwise.
 
 ## Comments — IMPORTANT
 
-**HARD RULE FROM THE USER (do not relax, do not "earn it back"):** when editing code, do NOT add explanatory comments. Default to ZERO. If a constraint is genuinely load-bearing, encode it in a name, a test, or an assertion — not prose. This applies even to comments that look like "good WHY" — leave them out unless he explicitly asks.
-
-**Never explain WHAT the code does** — well-named identifiers already do that. Never reference the current task/PR/session ("added for X flow", "issue #123") — that belongs in the commit message and rots.
-
-**Anti-pattern**: padding edits with block comments that restate the function's purpose or describe the change you are making. If you write 4+ lines of justification for a 2-line change, the comment isn't earning its keep.
+**HARD RULE: comments in code follow `~/nerdtools/claude/playbooks/comment.md` — read it before writing one. Default is ZERO; the playbook defines the only exceptions.**
 
 ## Documentation — `docs/`, READMEs, design notes
 
@@ -34,6 +30,7 @@ When the user types `/<skill-name>`, invoke the Skill tool with that skill **bef
 - **After a lane (suite/guard/corpus/SAN)**: line 1 = verdict with numbers and the diff against the known-red set; then the single next action. ≤ 5 lines, no headers, no tables unless it is an A/B.
 - **Background lanes**: launch in the background, report on the notification. The user does not poll.
 - **When the agent commits on its own, the report ends with one git line**: `commit <sha…> · land <sha | not yet, because …> · tree clean | left: <path> (why)`. Anything edited outside the repo (memory, inbox, plans) is named there too — `git status` does not show it.
+- **A report that closes a fix opens with one classification line**, above the verdict: `layer: <compiler/<phase> | runtime | std | the consuming repo — and where the bug surfaced, when that differs> · kind: <type-identity | inference | narrowing | resolution | transform-lowering | codegen-emit | DRC/lifetime | runtime-ABI | std-API | perf> · fix: <one clause> · mechanism: <existing | loosens an existing gate, naming what that gate still protects | **NEW MECHANISM**, naming what it adds and what can regress>`. The kind list is closed: a fix that fits none of them says so and proposes the word. **NEW MECHANISM** is written in bold capitals, and the session raises it the moment the need is known, not at report time — a mechanism the design does not have is a question, not a decision.
 - **No narrative reports**: no "history", no process retelling, no `★ Insight`, no headers in messages under ~500 words. Never Read a file > 300 lines whole; summarise logs by script to ≤ 20 lines.
 
 ## Working with the user

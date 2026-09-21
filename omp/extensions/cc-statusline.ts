@@ -42,7 +42,10 @@ interface AuthStorageLike {
 interface StatusContext {
 	cwd: string;
 	model?: { provider?: string; id?: string };
-	ui: { setStatus(key: string, text: string | undefined): void };
+	ui: {
+		setStatus(key: string, text: string | undefined): void;
+		setWidget(key: string, content: string[] | undefined, options?: { placement?: string }): void;
+	};
 	getContextUsage(): { tokens: number; contextWindow: number; percent: number } | undefined;
 	modelRegistry?: { authStorage?: AuthStorageLike };
 	setInterval(fn: () => void, ms: number): unknown;
@@ -93,11 +96,41 @@ function quotaText(fraction: number, resetsAt: number | undefined): string {
 	return `${pctText}${countdown}`;
 }
 
+function truncateForDisplay(line: string, columns: number): string {
+	const budget = Math.max(8, columns - 3);
+	let out = "";
+	let width = 0;
+	let state: "none" | "esc" | "csi" = "none";
+	for (const ch of line) {
+		if (state === "esc") {
+			out += ch;
+			state = ch === "[" ? "csi" : ch >= "@" && ch <= "~" ? "none" : "esc";
+			continue;
+		}
+		if (state === "csi") {
+			out += ch;
+			if (ch >= "@" && ch <= "~") state = "none";
+			continue;
+		}
+		if (ch === "\x1b") {
+			state = "esc";
+			out += ch;
+			continue;
+		}
+		if (width >= budget) return `${out}${RESET}…`;
+		out += ch;
+		width++;
+	}
+	return out;
+}
+
 export default function ccStatusLine(pi: ExtensionAPI) {
 	let cachedReports: UsageReport[] | null = null;
 	let lastFetch = 0;
+	let lastCtx: StatusContext | undefined;
 
 	const update = async (ctx: StatusContext) => {
+		lastCtx = ctx;
 		const parts: string[] = [];
 
 		const usage = ctx.getContextUsage();
@@ -132,7 +165,10 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 			if (email) parts.push(`${GRAY}${email}${FG_DEFAULT}`);
 		}
 
-		ctx.ui.setStatus("cc", parts.length > 0 ? ` ${parts.join(" · ")}` : undefined);
+		const line = ` ${parts.join(" · ")}`;
+		const cols = process.stdout.columns ?? 120;
+		const truncated = truncateForDisplay(line, cols);
+		ctx.ui.setWidget("cc", parts.length > 0 ? [truncated] : undefined, { placement: "belowEditor" });
 	};
 
 	pi.on("session_start", (_event, ctx) => {
@@ -141,4 +177,7 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 		timerCtx.setInterval(() => void update(timerCtx), 60_000);
 	});
 	pi.on("turn_end", (_event, ctx) => void update(ctx));
+	process.stdout.on("resize", () => {
+		if (lastCtx) void update(lastCtx);
+	});
 }
