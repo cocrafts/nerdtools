@@ -28,20 +28,26 @@ already wins; a coach that spends them connecting is doing the only job nobody e
 ulp-to-image inference on day 1 and the milestone stayed whole, what worked was not a verdict —
 it was **a question the worker was not positioned to ask itself**. Keep that shape.
 
-## First act: register, so the identity survives a compaction
+## Where the coach stands — the directory is the identity
 
-    echo -n "$SESSION_ID" > <workspace>/.coach/session-id
+**Open the coach in `<workspace>/.coach/`.** Not in a repo checkout, not in a worktree: the
+workspace runs across repos and the coach belongs to the workspace, not to one of them.
 
-The human names the coach in the opening prompt, and that prompt is gone after the first
-compaction. The hook `~/nerdtools/claude/scripts/arc-context.py` reads this marker and re-states
-the brief on every resume and compaction for that session id only; every other session in the
-workspace sees nothing. A new coach session overwrites it. Nothing else reads it.
+That directory is the whole identification mechanism. A worker knows which arc it is because it
+stands in `wt/<name>`; a coach knows it is the coach because it stands in `.coach`. **Location
+survives what context does not** — `/clear`, a compaction, a restart all leave cwd where it was,
+so nothing has to be registered, remembered or re-declared.
 
-**A workspace turns the hook on by having a `.coach/` directory**, which is what the hook walks up
-from the session's cwd to find. No path is configured anywhere: without `.coach/` the hook prints
-nothing and a session elsewhere never learns coaching exists. A session in a `wt/<name>` worktree
-under such a workspace is handed its card instead — `<workspace>/.wt/<name>.md`, or the repo's
-`<main checkout>/.cards/<name>.md` — on start, on entering the worktree, and when one is created.
+The hook `~/nerdtools/claude/scripts/arc-context.py` fires on session start, on entering a
+directory and on a worktree being created. It walks up from cwd to the first ancestor holding a
+`.coach/` directory — that is the workspace, and a tree without one never sees the hook at all.
+Then:
+
+    <workspace>/.coach       →  the brief, and the board inlined
+    wt/<name> worktree       →  <workspace>/.wt/<name>.md, or <main checkout>/.cards/<name>.md
+
+Both are inlined only up to a page. Past that the hook prints the path and the State section, so
+a card or a board that has grown into a record costs its own reader the context it saved.
 
 ## The shape
 

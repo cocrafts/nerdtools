@@ -44,16 +44,9 @@ def section(text, name):
     return m.group(0).rstrip() if m else ""
 
 
-def emit_card(path):
-    if not os.path.isfile(path):
-        print("ARC CARD: none at %s — this worktree has no card yet." % path)
-        return
+def inline(path):
     text = open(path, encoding="utf-8").read()
-    lines = text.count("\n") + 1
-    print("ARC CARD for this worktree: %s" % path)
-    print("You and the coach both write it. Edit your own sections in place, re-read it")
-    print("immediately before writing, never write the file whole.")
-    print("")
+    lines = text.count(chr(10)) + 1
     if lines <= INLINE_LIMIT:
         print(text.rstrip())
         return
@@ -63,20 +56,37 @@ def emit_card(path):
     if st:
         print(st)
         return
-    print(os.linesep.join(text.splitlines()[:40]).rstrip())
+    print(chr(10).join(text.splitlines()[:40]).rstrip())
     print("")
     print("Sections: " + ", ".join(re.findall(r"^##+ (.+)$", text, re.M)[:20]))
 
 
+def emit_card(path):
+    if not os.path.isfile(path):
+        print("ARC CARD: none at %s — this worktree has no card yet." % path)
+        return
+    print("ARC CARD for this worktree: %s" % path)
+    print("You and the coach both write it. Edit your own sections in place, re-read it")
+    print("immediately before writing, never write the file whole.")
+    print("")
+    inline(path)
+
+
 def emit_coach(ws):
-    board = os.path.join(ws, ".coach")
-    print("You are the coach for %s. Read, in this order:" % ws)
-    print("  ~/nerdtools/claude/playbooks/coach.md   the practice")
-    print("  %s   what this workspace turns on" % os.path.join(ws, "CLAUDE.md"))
-    print("  %s   the board" % os.path.join(board, "%s.md" % os.path.basename(ws)))
-    print("  %s   the ledger" % os.path.join(board, "log.tsv"))
+    board = os.path.join(ws, ".coach", "%s.md" % os.path.basename(ws))
+    print("You are the coach for %s, standing in its .coach directory." % ws)
+    print("Practice: ~/nerdtools/claude/playbooks/coach.md")
+    print("Ledger:   %s — append-only, the history lives there" % os.path.join(ws, ".coach", "log.tsv"))
+    print("Rules:    %s" % os.path.join(ws, "CLAUDE.md"))
     print("Then ListAgents, and the card of every worker it lists as alive.")
     print("Do not read worker transcripts unless the board says an arc is behind.")
+    print("")
+    if not os.path.isfile(board):
+        print("BOARD: none at %s yet." % board)
+        return
+    print("BOARD %s — yours, overwritten, never appended:" % board)
+    print("")
+    inline(board)
 
 
 def already_said(sid, key):
@@ -102,8 +112,7 @@ def main():
         return
     sid = str(data.get("session_id", ""))
     repeatable = str(data.get("hook_event_name", "")) == "SessionStart"
-    marker = os.path.join(ws, ".coach", "session-id")
-    if sid and os.path.isfile(marker) and open(marker, encoding="utf-8").read().strip() == sid:
+    if os.path.realpath(cwd) == os.path.realpath(os.path.join(ws, ".coach")):
         if repeatable or not already_said(sid, "coach"):
             emit_coach(ws)
         return
@@ -114,6 +123,6 @@ def main():
 
 try:
     main()
-except Exception:
-    pass
+except Exception as e:
+    print('arc-context: %s: %s' % (type(e).__name__, e), file=sys.stderr)
 sys.exit(0)
