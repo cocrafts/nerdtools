@@ -60,5 +60,9 @@ omp/*
 !omp/config.yml
 !omp/extensions/
 !omp/extensions/**
+!omp/plugins/
+omp/plugins/*
+!omp/plugins/package.json
+!omp/plugins/bun.lock
 
 core/target

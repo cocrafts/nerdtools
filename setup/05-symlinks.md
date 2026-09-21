@@ -119,6 +119,14 @@ mkdir -p ~/.omp/agent
 ln -sfn ~/nerdtools/omp/config.yml ~/.omp/agent/config.yml
 ln -sfn ~/nerdtools/omp/AGENTS.md  ~/.omp/agent/AGENTS.md
 ln -sfn ~/nerdtools/omp/extensions ~/.omp/agent/extensions
+mkdir -p ~/.omp/plugins
+ln -sfn ~/nerdtools/omp/plugins/package.json ~/.omp/plugins/package.json
+ln -sfn ~/nerdtools/omp/plugins/bun.lock     ~/.omp/plugins/bun.lock
+(
+  cd ~/.omp/plugins
+  bun install --frozen-lockfile
+)
+omp plugin doctor
 ```
 
 On Windows use the PowerShell block below — under Git Bash, `ln -sfn` silently copies
@@ -127,6 +135,11 @@ copy drifts from the repo without ever saying so.
 
 Unlike Claude Code's `settings.json`, `config.yml` is symlinked outright — nothing in it
 is machine-specific, because credentials live in `agent.db` and `.env`, not here.
+
+The plugin dependency manifest and Bun lockfile are shared; `node_modules/`, caches, and
+`omp-plugins.lock.json` stay local. The runtime lock can contain plugin settings, including
+secrets. With no runtime entry, an installed dependency loads enabled with its default features.
+`bun install --frozen-lockfile` restores the exact package graph; `omp plugin doctor` validates it.
 
 `~/.omp/agent/AGENTS.md` is the one user-level instruction file omp keeps, and it outranks
 `~/.claude/CLAUDE.md`. It is deliberately a wrapper: its first line imports
@@ -229,6 +242,13 @@ New-Item -ItemType Directory -Force -Path "$HOME\.omp\agent" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\config.yml" -Target "$HOME\nerdtools\omp\config.yml" | Out-Null
 New-Item -ItemType Junction -Force -Path "$HOME\.omp\agent\extensions" -Target "$HOME\nerdtools\omp\extensions" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\AGENTS.md"  -Target "$HOME\nerdtools\omp\AGENTS.md" | Out-Null
+New-Item -ItemType Directory -Force -Path "$HOME\.omp\plugins" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\plugins\package.json" -Target "$HOME\nerdtools\omp\plugins\package.json" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\plugins\bun.lock"     -Target "$HOME\nerdtools\omp\plugins\bun.lock" | Out-Null
+Push-Location "$HOME\.omp\plugins"
+bun install --frozen-lockfile
+Pop-Location
+omp plugin doctor
 
 Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
   Test-Path "$($_.FullName)\SKILL.md"
@@ -252,7 +272,7 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushell ~/.config/tmux \
             ~/.aider.conf.yml ~/revive.toml ~/.config/lazygit/config.yml ~/.config/zls.json \
             ~/.config/herdr/config.toml ~/.claude/commands ~/.claude/statusline.sh \
-            ~/.codex/AGENTS.md; do
+            ~/.omp/plugins/package.json ~/.omp/plugins/bun.lock ~/.codex/AGENTS.md; do
   if [[ -L "$link" && -e "$link" ]]; then
     printf "✓ %-40s -> %s\n" "$link" "$(readlink "$link")"
   else
