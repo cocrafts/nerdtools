@@ -30,12 +30,18 @@ it was **a question the worker was not positioned to ask itself**. Keep that sha
 
 ## First act: register, so the identity survives a compaction
 
-    echo -n "$SESSION_ID" > ~/metascript/.coach/session-id
+    echo -n "$SESSION_ID" > <workspace>/.coach/session-id
 
 The human names the coach in the opening prompt, and that prompt is gone after the first
-compaction. The `SessionStart` hook reads this marker and re-states the brief on every resume
-and compaction for that session id only; every other session in the workspace sees nothing.
-A new coach session overwrites it. Nothing else reads it.
+compaction. The hook `~/nerdtools/claude/scripts/arc-context.py` reads this marker and re-states
+the brief on every resume and compaction for that session id only; every other session in the
+workspace sees nothing. A new coach session overwrites it. Nothing else reads it.
+
+**A workspace turns the hook on by having a `.coach/` directory**, which is what the hook walks up
+from the session's cwd to find. No path is configured anywhere: without `.coach/` the hook prints
+nothing and a session elsewhere never learns coaching exists. A session in a `wt/<name>` worktree
+under such a workspace is handed its card instead — `<workspace>/.wt/<name>.md`, or the repo's
+`<main checkout>/.cards/<name>.md` — on start, on entering the worktree, and when one is created.
 
 ## The shape
 
