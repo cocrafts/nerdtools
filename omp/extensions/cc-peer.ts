@@ -406,15 +406,20 @@ export default async function ccPeer(pi: ExtensionAPI) {
     pi.logger.info(`cc-peer: frame type ignored: ${String(type)}`);
   };
 
-  const isValidAuthLine = (rawLine: string): boolean => {
+  const authLineRejection = (rawLine: string): string | undefined => {
+    let rec: Record<string, unknown> | undefined;
     try {
-      const rec = asRecord(JSON.parse(rawLine));
-      if (rec?.type !== "auth") return false;
-      const token = str(rec.token);
-      return !!token && tokenEquals(token, peerToken);
+      rec = asRecord(JSON.parse(rawLine));
     } catch {
-      return false;
+      return `not JSON (${rawLine.length} chars, starts ${JSON.stringify(rawLine.slice(0, 24))})`;
     }
+    if (!rec) return "JSON but not an object";
+    if (rec.type !== "auth") return `type is ${JSON.stringify(rec.type)}, not "auth"`;
+    const token = str(rec.token);
+    if (!token) return `no token field; keys present: ${Object.keys(rec).join(",")}`;
+    if (!tokenEquals(token, peerToken))
+      return `token mismatch: got ${token.length} chars sha256 ${keyHashForToken(token).slice(0, 12)}, expected ${peerToken.length} chars sha256 ${keyHashForToken(peerToken).slice(0, 12)}`;
+    return undefined;
   };
 
   const startPipeServer = (): net.Server => {
@@ -429,9 +434,10 @@ export default async function ccPeer(pi: ExtensionAPI) {
           buffer = buffer.slice(newlineAt + 1);
           if (line) {
             if (!authed) {
-              authed = isValidAuthLine(line);
-              if (!authed) {
-                pi.logger.warn("cc-peer: connection closed, first line was not a valid auth line");
+              const rejection = authLineRejection(line);
+              authed = !rejection;
+              if (rejection) {
+                pi.logger.warn(`cc-peer: connection closed, first line was not a valid auth line — ${rejection}`);
                 socket.destroy();
                 return;
               }
