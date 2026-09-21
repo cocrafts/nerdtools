@@ -1,22 +1,24 @@
-import { readdirSync, readFileSync, existsSync, type Dirent } from "node:fs";
+import {
+  existsSync,
+  readFileSync,
+  realpathSync,
+  statSync,
+} from "node:fs";
 import { spawnSync } from "node:child_process";
-import { join } from "node:path";
+import {
+  basename,
+  dirname,
+  isAbsolute,
+  join,
+  relative,
+  resolve,
+  sep,
+} from "node:path";
 import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
 
 const HOME = process.env.HOME ?? process.env.USERPROFILE ?? "";
 const GUARD = join(HOME, "nerdtools", "claude", "hooks", "comment-guard.sh");
 
-const SKIP_DIRS: Record<string, true> = {
-  ".git": true,
-  node_modules: true,
-  out: true,
-  build: true,
-  dist: true,
-  plugins: true,
-  jobs: true,
-  target: true,
-  ".venv": true,
-};
 
 // The guard speaks the Claude Code hook protocol (stdin JSON, exit 2 = deny);
 // omp's edit is a patch language, so new_string is synthesized from its + rows.
@@ -42,45 +44,86 @@ function runGuard(
   }
 }
 
-function deeperClaudeMd(cwd: string): string[] {
-  const found: string[] = [];
-  const walk = (dir: string, depth: number): void => {
-    if (found.length >= 30 || depth > 6) return;
-    let entries: Dirent[];
-    try {
-      entries = readdirSync(dir, { withFileTypes: true });
-    } catch {
-      return;
-    }
-    for (const entry of entries) {
-      if (found.length >= 30) return;
-      if (entry.isFile() && entry.name === "CLAUDE.md") {
-        found.push(join(dir, entry.name));
-        continue;
-      }
-      if (
-        entry.isDirectory() &&
-        !entry.name.startsWith(".") &&
-        !SKIP_DIRS[entry.name]
-      ) {
-        walk(join(dir, entry.name), depth + 1);
-      }
-    }
-  };
+function realpathOr(target: string): string {
   try {
-    for (const entry of readdirSync(cwd, { withFileTypes: true })) {
-      if (
-        entry.isDirectory() &&
-        !entry.name.startsWith(".") &&
-        !SKIP_DIRS[entry.name]
-      ) {
-        walk(join(cwd, entry.name), 1);
-      }
-    }
+    return realpathSync(target);
   } catch {
-    // A cwd we cannot read has nothing to point at.
+    const parent = dirname(target);
+    if (parent === target) return target;
+    return join(realpathOr(parent), basename(target));
   }
-  return found;
+}
+
+function isWithin(root: string, target: string): boolean {
+  const rel = relative(root, target);
+  return (
+    rel === "" ||
+    (rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel))
+  );
+}
+
+function nestedClaudeContext(
+  cwd: string,
+  toolName: string,
+  rawPath: string,
+  loaded: Set<string>,
+): string | null {
+  if (!["read", "edit", "write"].includes(toolName) || !rawPath) return null;
+
+  const root = realpathOr(resolve(cwd));
+  const target = realpathOr(resolve(cwd, rawPath));
+  let dir: string;
+  if (toolName === "read") {
+    try {
+      dir = statSync(target).isDirectory() ? target : dirname(target);
+    } catch {
+      return null;
+    }
+  } else {
+    dir = dirname(target);
+  }
+  if (!isWithin(root, dir) || dir === root) return null;
+
+  const dirs: string[] = [];
+  while (dir !== root) {
+    dirs.push(dir);
+    const parent = dirname(dir);
+    if (parent === dir) return null;
+    dir = parent;
+  }
+  dirs.reverse();
+
+  const files: Array<{ path: string; content: string }> = [];
+  for (const directory of dirs) {
+    const path = join(directory, "CLAUDE.md");
+    let canonical: string;
+    try {
+      canonical = realpathSync(path);
+      if (!isWithin(root, canonical) || !statSync(canonical).isFile()) continue;
+    } catch {
+      continue;
+    }
+    if (loaded.has(canonical)) continue;
+    try {
+      const content = readFileSync(canonical, "utf8").trim();
+      loaded.add(canonical);
+      if (content) files.push({ path, content });
+    } catch {
+      continue;
+    }
+  }
+  if (!files.length) return null;
+
+  return [
+    "<repo-rules>",
+    "Context files below became applicable to the path just accessed. You MUST follow them for work in their directories.",
+    ...files.flatMap(({ path, content }) => [
+      `<file path="${path.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")}">`,
+      content,
+      "</file>",
+    ]),
+    "</repo-rules>",
+  ].join("\n");
 }
 
 // wt.sh hook-session prints the worktree's card and the compiler inbox
@@ -114,6 +157,7 @@ function wtSessionState(cwd: string): string | null {
 
 export default function (pi: ExtensionAPI) {
   const writeTargetExisted = new Map<string, boolean>();
+  const loadedNestedClaudeMd = new Set<string>();
 
   pi.on("tool_call", (event) => {
     if (event.toolName === "write" && event.input?.path) {
@@ -128,7 +172,7 @@ export default function (pi: ExtensionAPI) {
     }
   });
 
-  pi.on("tool_result", (event) => {
+  pi.on("tool_result", (event, ctx) => {
     if (event.isError) {
       writeTargetExisted.delete(event.toolCallId);
       return;
@@ -139,57 +183,67 @@ export default function (pi: ExtensionAPI) {
         .split("\n")
         .filter((line) => line.startsWith("+"))
         .map((line) => line.slice(1));
-      if (!path || !added.length) return;
-      const message = runGuard("Edit", {
-        file_path: path,
-        new_string: added.join("\n"),
-        old_string: "",
-      });
-      if (message) {
-        return { content: [{ type: "text", text: message }], isError: true };
+      if (path && added.length) {
+        const message = runGuard("Edit", {
+          file_path: path,
+          new_string: added.join("\n"),
+          old_string: "",
+        });
+        if (message) {
+          return { content: [{ type: "text", text: message }], isError: true };
+        }
       }
-      return;
     }
     if (event.toolName === "write") {
-      if (writeTargetExisted.get(event.toolCallId) !== false) return;
+      const targetExisted = writeTargetExisted.get(event.toolCallId);
       writeTargetExisted.delete(event.toolCallId);
-      const path = String(event.input?.path ?? "");
-      if (!path) return;
-      const message = runGuard(
-        "Write",
-        { file_path: path, content: String(event.input?.content ?? "") },
-        "Created",
-      );
-      if (message) {
-        return { content: [{ type: "text", text: message }], isError: true };
+      if (targetExisted === false) {
+        const path = String(event.input?.path ?? "");
+        if (path) {
+          const message = runGuard(
+            "Write",
+            { file_path: path, content: String(event.input?.content ?? "") },
+            "Created",
+          );
+          if (message) {
+            return { content: [{ type: "text", text: message }], isError: true };
+          }
+        }
       }
     }
+
+    const context = nestedClaudeContext(
+      String(ctx?.cwd ?? process.cwd()),
+      event.toolName,
+      String(event.input?.path ?? ""),
+      loadedNestedClaudeMd,
+    );
+    if (!context) return;
+    return {
+      content: [...event.content, { type: "text" as const, text: context }],
+    };
   });
 
+  const rearmNestedClaudeMd = (): void => {
+    loadedNestedClaudeMd.clear();
+  };
+  pi.on("session_compact", rearmNestedClaudeMd);
+  pi.on("session_tree", rearmNestedClaudeMd);
+  pi.on("session_shutdown", rearmNestedClaudeMd);
+
   pi.on("session_start", (_event, ctx) => {
+    loadedNestedClaudeMd.clear();
     const cwd = String(ctx?.cwd ?? process.cwd());
-    const parts: string[] = [];
     const wtState = wtSessionState(cwd);
-    if (wtState) {
-      parts.unshift(
+    if (!wtState) return;
+    try {
+      pi.sendMessage(
         `Worktree/card state (tools/wt.sh hook-session):\n\n${wtState}`,
-      );
-    }
-    const deeper = deeperClaudeMd(cwd);
-    if (deeper.length) {
-      parts.push(
-        `CLAUDE.md files below the working directory; read the one covering a directory before editing files in it:\n${deeper.map((p) => `- ${p}`).join("\n")}`,
-      );
-    }
-    if (parts.length) {
-      try {
-        pi.sendMessage(parts.join("\n\n"), {
+        {
           deliverAs: "nextTurn",
           attribution: "agent",
-        });
-      } catch {
-        // Injection is advisory; a delivery failure must not kill the session.
-      }
-    }
+        },
+      );
+    } catch {}
   });
 }
