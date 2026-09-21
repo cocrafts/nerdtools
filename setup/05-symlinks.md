@@ -214,6 +214,8 @@ un-escape before comparing), not by timestamp.
 
 Windows uses **directory junctions** instead of `ln -sfn`. Junctions need no admin (unlike
 `SymbolicLink`), and the target app sees the real repo files — so Wezterm hot-reloads natively.
+Run this block in **pwsh 7** (`pwsh`): with Developer Mode on, its `SymbolicLink` lines
+create file links without elevation.
 
 ```powershell
 # entry.ps1 sets XDG_CONFIG_HOME=~/.config, so Neovim reads ~/.config/nvim (like Unix).
@@ -259,9 +261,8 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 ```
 
 - Junctions replace the whole target dir, so they are idempotent with `-Force`.
-- The file symlinks (`AGENTS.md`, `statusline.sh`) require Windows
-  Developer Mode or an elevated shell. `~/.agents/skills` stays junctions so Codex
-  works without it.
+- The file symlinks (`AGENTS.md`, `statusline.sh`, `omp/plugins/*`) need Developer Mode
+  and a pwsh 7 shell. `~/.agents/skills` stays junctions so Codex works without it.
 - Keep the two Codex fallback keys above in `$HOME\.codex\config.toml`; that file remains machine-local.
 - Apps that read `%APPDATA%`/`%LOCALAPPDATA%` instead of `~/.config` on Windows (e.g. lazygit)
   need their own junction to the platform path; add per-app as needed.
