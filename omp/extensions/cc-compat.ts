@@ -169,24 +169,6 @@ export default function (pi: ExtensionAPI) {
   pi.on("session_start", (_event, ctx) => {
     const cwd = String(ctx?.cwd ?? process.cwd());
     const parts: string[] = [];
-    const memoryPath = join(
-      HOME,
-      ".claude",
-      "projects",
-      cwd.replace(/[^a-zA-Z0-9]/g, "-"),
-      "memory",
-      "MEMORY.md",
-    );
-    try {
-      const memory = readFileSync(memoryPath, "utf8").trim();
-      if (memory) {
-        parts.push(
-          `Claude Code memory index for this directory (${memoryPath}); follow its pointers at session start:\n\n${memory}`,
-        );
-      }
-    } catch {
-      // No store for this cwd: nothing to inject.
-    }
     const wtState = wtSessionState(cwd);
     if (wtState) {
       parts.unshift(
