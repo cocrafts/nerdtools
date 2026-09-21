@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import { join } from "node:path";
 import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
 
-const HOME = process.env.HOME ?? "";
+const HOME = process.env.HOME ?? process.env.USERPROFILE ?? "";
 const GUARD = join(HOME, "nerdtools", "claude", "hooks", "comment-guard.sh");
 
 const SKIP_DIRS: Record<string, true> = {
@@ -12,7 +12,8 @@ const SKIP_DIRS: Record<string, true> = {
   out: true,
   build: true,
   dist: true,
-  vendor: true,
+  plugins: true,
+  jobs: true,
   target: true,
   ".venv": true,
 };
@@ -25,7 +26,7 @@ function runGuard(
   toolResponse?: string,
 ): string | null {
   try {
-    const res = spawnSync(GUARD, {
+    const res = spawnSync("bash", [GUARD], {
       input: JSON.stringify({
         tool_name: toolName,
         tool_input: toolInput,
@@ -110,6 +111,7 @@ function wtSessionState(cwd: string): string | null {
     return null;
   }
 }
+
 export default function (pi: ExtensionAPI) {
   const writeTargetExisted = new Map<string, boolean>();
 
@@ -127,7 +129,10 @@ export default function (pi: ExtensionAPI) {
   });
 
   pi.on("tool_result", (event) => {
-    if (event.isError) return;
+    if (event.isError) {
+      writeTargetExisted.delete(event.toolCallId);
+      return;
+    }
     if (event.toolName === "edit") {
       const path = String(event.input?.path ?? "");
       const added = String(event.input?.input ?? "")
