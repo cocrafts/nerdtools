@@ -1,4 +1,4 @@
-import json, os, re, subprocess, sys
+import json, os, re, subprocess, sys, tempfile
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -62,18 +62,35 @@ def emit_coach():
     print("Do not read worker transcripts unless the board says an arc is behind.")
 
 
+def already_said(sid, key):
+    if not sid:
+        return False
+    d = os.path.join(tempfile.gettempdir(), "claude-arc-context")
+    f = os.path.join(d, re.sub(r"[^A-Za-z0-9_-]", "_", sid))
+    try:
+        if os.path.isfile(f) and open(f, encoding="utf-8").read().strip() == key:
+            return True
+        os.makedirs(d, exist_ok=True)
+        open(f, "w", encoding="utf-8").write(key)
+    except Exception:
+        pass
+    return False
+
+
 def main():
     data = json.load(sys.stdin)
     cwd = data.get("cwd") or os.getcwd()
     if not under(cwd, WS):
         return
     sid = str(data.get("session_id", ""))
+    repeatable = str(data.get("hook_event_name", "")) == "SessionStart"
     marker = os.path.join(WS, ".coach", "session-id")
     if sid and os.path.isfile(marker) and open(marker, encoding="utf-8").read().strip() == sid:
-        emit_coach()
+        if repeatable or not already_said(sid, "coach"):
+            emit_coach()
         return
     m = re.match(r"^wt/(.+)$", branch(cwd))
-    if m:
+    if m and (repeatable or not already_said(sid, m.group(1))):
         emit_card(m.group(1))
 
 
