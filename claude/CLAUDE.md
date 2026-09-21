@@ -14,12 +14,8 @@ Commit through `/split-commit` unless the user specifies otherwise.
 
 ## Documentation — `docs/`, READMEs, design notes
 
-**Source code is the truth.** A doc owns exactly what the code cannot say about itself — a
-number that was measured, an approach that was tried and rejected, an anchor into another
-repo, why this shape and not the other — and **points** at everything grep already gives
-back: field lists, signatures, which file holds what, what a commit did.
-
-Before writing or editing one, read `~/nerdtools/claude/playbooks/documentation.md`.
+**Source code is the truth: a doc owns only what the code cannot say about itself, and points
+at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks/documentation.md`.
 
 ## Skills
 
