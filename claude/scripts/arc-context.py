@@ -5,21 +5,38 @@ try:
 except Exception:
     pass
 
-WS = os.path.join(os.path.expanduser("~"), "metascript")
 INLINE_LIMIT = 150
+HOME = os.path.realpath(os.path.expanduser("~"))
 
 
-def under(path, root):
-    try:
-        return os.path.commonpath([os.path.realpath(path), os.path.realpath(root)]) == os.path.realpath(root)
-    except Exception:
-        return False
+def coached_workspace(cwd):
+    d = os.path.realpath(cwd)
+    while True:
+        if os.path.isdir(os.path.join(d, ".coach")):
+            return d
+        if d == HOME:
+            return None
+        parent = os.path.dirname(d)
+        if parent == d:
+            return None
+        d = parent
 
 
-def branch(cwd):
-    out = subprocess.run(["git", "-C", cwd, "rev-parse", "--abbrev-ref", "HEAD"],
-                         capture_output=True, text=True, timeout=10)
+def run(args):
+    out = subprocess.run(args, capture_output=True, text=True, timeout=10)
     return out.stdout.strip() if out.returncode == 0 else ""
+
+
+def card_path(ws, cwd, name):
+    here = os.path.join(ws, ".wt", "%s.md" % name)
+    if os.path.isfile(here):
+        return here
+    main = run(["git", "-C", cwd, "worktree", "list", "--porcelain"]).splitlines()
+    if main and main[0].startswith("worktree "):
+        there = os.path.join(main[0][len("worktree "):], ".cards", "%s.md" % name)
+        if os.path.isfile(there):
+            return there
+    return here
 
 
 def section(text, name):
@@ -27,8 +44,7 @@ def section(text, name):
     return m.group(0).rstrip() if m else ""
 
 
-def emit_card(name):
-    path = os.path.join(WS, ".wt", "%s.md" % name)
+def emit_card(path):
     if not os.path.isfile(path):
         print("ARC CARD: none at %s — this worktree has no card yet." % path)
         return
@@ -52,13 +68,14 @@ def emit_card(name):
     print("Sections: " + ", ".join(re.findall(r"^##+ (.+)$", text, re.M)[:20]))
 
 
-def emit_coach():
-    print("You are the coach for ~/metascript. Read, in this order:")
+def emit_coach(ws):
+    board = os.path.join(ws, ".coach")
+    print("You are the coach for %s. Read, in this order:" % ws)
     print("  ~/nerdtools/claude/playbooks/coach.md   the practice")
-    print("  ~/metascript/CLAUDE.md  section Coaching")
-    print("  ~/metascript/.coach/metascript.md       the board")
-    print("  ~/metascript/.coach/log.tsv             the ledger")
-    print("Then ListAgents, and the .wt/ card of every worker it lists as alive.")
+    print("  %s   what this workspace turns on" % os.path.join(ws, "CLAUDE.md"))
+    print("  %s   the board" % os.path.join(board, "%s.md" % os.path.basename(ws)))
+    print("  %s   the ledger" % os.path.join(board, "log.tsv"))
+    print("Then ListAgents, and the card of every worker it lists as alive.")
     print("Do not read worker transcripts unless the board says an arc is behind.")
 
 
@@ -80,18 +97,19 @@ def already_said(sid, key):
 def main():
     data = json.load(sys.stdin)
     cwd = data.get("cwd") or os.getcwd()
-    if not under(cwd, WS):
+    ws = coached_workspace(cwd)
+    if not ws:
         return
     sid = str(data.get("session_id", ""))
     repeatable = str(data.get("hook_event_name", "")) == "SessionStart"
-    marker = os.path.join(WS, ".coach", "session-id")
+    marker = os.path.join(ws, ".coach", "session-id")
     if sid and os.path.isfile(marker) and open(marker, encoding="utf-8").read().strip() == sid:
         if repeatable or not already_said(sid, "coach"):
-            emit_coach()
+            emit_coach(ws)
         return
-    m = re.match(r"^wt/(.+)$", branch(cwd))
+    m = re.match(r"^wt/(.+)$", run(["git", "-C", cwd, "rev-parse", "--abbrev-ref", "HEAD"]))
     if m and (repeatable or not already_said(sid, m.group(1))):
-        emit_card(m.group(1))
+        emit_card(card_path(ws, cwd, m.group(1)))
 
 
 try:
