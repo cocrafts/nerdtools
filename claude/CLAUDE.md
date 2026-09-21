@@ -55,10 +55,6 @@ at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks
 **Pattern**: ui/content/layout/features split, NOT strict Atomic atoms/molecules/organisms.
 **Trigger**: starting a React/Vue/Svelte project | refactoring `components/` | choosing where a new component lives | asked about Atomic Design.
 
-## Claude Code Hooks
-
-Global hooks are in `~/.claude/settings.json`, a project's hooks in `<repo>/.claude/settings.json` (NOT hooks.json). Change either through the `update-config` skill.
-
 ## Defaults
 
 - **Tool priority**: MCP first where one is connected (search → exa; browser → `rexa web` inside a Rexa terminal, playwright where the project configures it, else claude-in-chrome), then built-ins; document why you fell back. Built-in Read/Write/Edit/Grep/Task are used directly.
