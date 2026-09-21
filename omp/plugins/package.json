@@ -1,0 +1,7 @@
+{
+  "name": "omp-plugins",
+  "private": true,
+  "dependencies": {
+    "@fractaal/pi-cross-agent-memory": "^0.3.1"
+  }
+}
