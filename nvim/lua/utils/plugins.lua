@@ -9,11 +9,6 @@ return {
 		end,
 	},
 	{
-		"nvim-treesitter/playground",
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
-		cmd = "TSPlaygroundToggle",
-	},
-	{
 		"iamcco/markdown-preview.nvim",
 		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
 		ft = { "markdown" },
@@ -160,7 +155,6 @@ return {
 					require("crates").setup()
 				end,
 			},
-			{ "szebniok/tree-sitter-wgsl" },
 			{
 				"MysticalDevil/inlay-hints.nvim",
 				event = "LspAttach",
@@ -309,7 +303,6 @@ return {
 		},
 		cmd = "Cheatsheet",
 	},
-	{ "nvim-treesitter/playground", lazy = true },
 	{
 		"nvim-treesitter/nvim-treesitter",
 		branch = "master", -- config uses the master API (require("nvim-treesitter.configs")); `main` is the incompatible rewrite
