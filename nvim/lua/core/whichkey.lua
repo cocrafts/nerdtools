@@ -1,4 +1,6 @@
 local M = {}
+local config = require("utils.config")
+local pick = config.use_telescope and require("core.telescope") or require("core.fzf")
 local helper = require("utils.helper")
 local icons = require("utils.icons")
 
@@ -33,7 +35,7 @@ M.configure = function()
 					-- Restore register
 					vim.fn.setreg('"', save_reg, save_regtype)
 
-					require("core.fzf").live_grep_args({
+					pick.live_grep_args({
 						prompt_title = "Live grep (full): ",
 						search = selected_text,
 					})
@@ -73,20 +75,19 @@ M.configure = function()
 				"<cmd>e<CR>",
 				desc = "Reload buffer",
 			},
-			{
-				"<leader>z",
-				"<cmd>FzfLua files cwd=~<CR>",
-				desc = "Zoxide list (use z command)",
-			},
-			{ "<leader>u", "<cmd>lua require('core.fzf').recent_files()<CR>", desc = "Recent files" },
+			{ "<leader>u", function() pick.recent_files() end, desc = "Recent files" },
 			{
 				"<leader>U",
-				"<cmd>lua require('core.fzf').changed_git_files()<CR>",
+				function()
+					pick.changed_git_files()
+				end,
 				desc = "Open changed file",
 			},
 			{
 				"<leader>i",
-				"<cmd>FzfLua live_grep<CR>",
+				function()
+					pick.live_grep()
+				end,
 				desc = "Live grep (lite)",
 			},
 			{
@@ -94,7 +95,7 @@ M.configure = function()
 				function()
 					local path = vim.api.nvim_buf_get_name(0)
 					local directory = path:match("(.-)[^/]*$")
-					require("core.fzf").live_grep_args({
+					pick.live_grep_args({
 						prompt_title = string.format("Grep under: %s", directory),
 						search_dirs = { directory },
 					})
@@ -105,7 +106,7 @@ M.configure = function()
 				"<leader>F",
 				function()
 					local word_under_cursor = vim.fn.expand("<cword>")
-					require("core.fzf").live_grep_args({
+					pick.live_grep_args({
 						prompt_title = "Live grep (full): ",
 						search = word_under_cursor,
 					})
@@ -115,7 +116,7 @@ M.configure = function()
 			{
 				"<leader>o",
 				function()
-					require("fzf-lua").files({
+					pick.files({
 						previewer = true,
 						git_icons = true,
 						file_icons = true,
@@ -123,11 +124,11 @@ M.configure = function()
 				end,
 				desc = "Find File",
 			},
-			{ "<leader>O", "<cmd>FzfLua files<CR>", desc = "File search" },
+			{ "<leader>O", function() pick.files() end, desc = "File search" },
 
 			{ "<leader>b", group = "Buffer" },
 			{ "<leader>bj", "<cmd>bufferlinepick<CR>", desc = "jump" },
-			{ "<leader>bf", "<cmd>FzfLua buffers<CR>", desc = "find" },
+			{ "<leader>bf", function() pick.buffers() end, desc = "find" },
 			{ "<leader>bw", "<cmd>bufferwipeout<CR>", desc = "wipeout" },
 
 			{ "<leader>j", group = "Jumps" },
@@ -140,7 +141,7 @@ M.configure = function()
 			},
 			{ "<leader>jD", "<cmd>lua vim.diagnostic.reset()<CR>", desc = "Clear diagnostics" },
 			{ "<leader>jm", "<cmd>MarkdownPreviewToggle<CR>", desc = "Preview markdown" },
-			{ "<leader>J", "<cmd>FzfLua buffers<CR>", desc = "Find buffers" },
+			{ "<leader>J", function() pick.buffers() end, desc = "Find buffers" },
 
 			{ "<leader>T", group = "Treesitter" },
 			{ "<leader>Ti", ":InspectTree<CR>", desc = "Inspect tree" },

@@ -1,5 +1,6 @@
 local M = {}
 local icons = require("utils.icons")
+local config = require("utils.config")
 
 M.configure = function()
 	local fzf = require("fzf-lua")
@@ -112,8 +113,21 @@ M.configure = function()
 		},
 	})
 
-	-- Register fzf-lua as the default UI select
-	fzf.register_ui_select()
+	if not config.use_telescope then
+		fzf.register_ui_select()
+	end
+end
+
+M.files = function(opts)
+	require("fzf-lua").files(opts or {})
+end
+
+M.live_grep = function(opts)
+	require("fzf-lua").live_grep(opts or {})
+end
+
+M.buffers = function(opts)
+	require("fzf-lua").buffers(opts or {})
 end
 
 -- Helper function for live grep with args (similar to telescope-live-grep-args)
