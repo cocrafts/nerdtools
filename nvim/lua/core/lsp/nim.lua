@@ -1,7 +1,8 @@
 local M = {}
 
-M.configure = function(lspconfig)
-	lspconfig.nimls.setup({})
+M.configure = function()
+	vim.lsp.config("nimls", {})
+		vim.lsp.enable("nimls")
 end
 
 return M

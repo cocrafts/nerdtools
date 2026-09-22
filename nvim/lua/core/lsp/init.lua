@@ -6,7 +6,6 @@ local M = {}
 
 M.configure = function()
 	local lsp = require("lsp-zero")
-	local lspconfig = require("lspconfig")
 
 	require("neodev").setup()
 
@@ -44,7 +43,11 @@ M.configure = function()
 		end)
 
 		mapkey("n", "gD", "Goto implementations", function()
-			fzf.lsp_implementations()
+			if config.use_telescope then
+				require("telescope.builtin").lsp_implementations()
+			else
+				fzf.lsp_implementations()
+			end
 		end)
 
 		mapkey("n", "gs", "Incoming calls", function()
@@ -66,26 +69,26 @@ M.configure = function()
 
 	lsp.setup()
 
-	require("core.lsp.terraform").configure(lspconfig)
-	require("core.lsp.eslint").configure(lspconfig)
+	require("core.lsp.terraform").configure()
+	require("core.lsp.eslint").configure()
 	require("core.lsp.typescript-tools").configure()
-	require("core.lsp.terminal").configureBash(lspconfig)
-	require("core.lsp.terminal").configureNushell(lspconfig)
-	require("core.lsp.cmake").configure(lspconfig)
-	require("core.lsp.html").configure(lspconfig)
-	require("core.lsp.json").configure(lspconfig)
-	require("core.lsp.toml").configure(lspconfig)
-	require("core.lsp.graphql").configure(lspconfig)
+	require("core.lsp.terminal").configureBash()
+	require("core.lsp.terminal").configureNushell()
+	require("core.lsp.cmake").configure()
+	require("core.lsp.html").configure()
+	require("core.lsp.json").configure()
+	require("core.lsp.toml").configure()
+	require("core.lsp.graphql").configure()
 	require("core.lsp.none-ls").configure()
-	require("core.lsp.nim").configure(lspconfig)
-	require("core.lsp.zls").configure(lspconfig)
-	require("core.lsp.sql").configure(lspconfig)
-	-- require("core.lsp.wgsl").configure(lspconfig)
-	require("core.lsp.odin").configure(lspconfig)
-	require("core.lsp.swift").configure(lspconfig)
+	require("core.lsp.nim").configure()
+	require("core.lsp.zls").configure()
+	require("core.lsp.sql").configure()
+	-- require("core.lsp.wgsl").configure()
+	require("core.lsp.odin").configure()
+	require("core.lsp.swift").configure()
 	require("core.lsp.rust").configure()
-	require("core.lsp.ruby-lsp").configure(lspconfig)
-	require("core.lsp.haxe").configure(lspconfig)
+	require("core.lsp.ruby-lsp").configure()
+	require("core.lsp.haxe").configure()
 	require("core.lsp.metascript").configure()
 
 	if config.use_svelte then
@@ -93,15 +96,15 @@ M.configure = function()
 	end
 
 	if config.use_lua then
-		require("core.lsp.lua-ls").configure(lspconfig)
+		require("core.lsp.lua-ls").configure()
 	end
 
 	if config.use_python then
-		require("core.lsp.python").configure(lspconfig)
+		require("core.lsp.python").configure()
 	end
 
 	if config.use_gleam then
-		require("core.lsp.gleam").configure(lspconfig)
+		require("core.lsp.gleam").configure()
 	end
 
 	if config.use_elixir then
@@ -109,16 +112,16 @@ M.configure = function()
 	end
 
 	if config.use_clang then
-		require("core.lsp.clang").configure(lspconfig)
-		require("core.lsp.meson").configure(lspconfig)
+		require("core.lsp.clang").configure()
+		require("core.lsp.meson").configure()
 	end
 
 	if config.use_go then
-		require("core.lsp.go").configure(lspconfig)
+		require("core.lsp.go").configure()
 	end
 
 	if config.use_godot then
-		require("core.lsp.godot").configure(lspconfig)
+		require("core.lsp.godot").configure()
 	end
 end
 

@@ -43,10 +43,7 @@ return {
 			-- itself, and regardless of what the checkout directory is named.
 			local config = vim.fn.stdpath("config")
 			local root = vim.uv.fs_realpath(config) or config
-			local plugin = vim.fs.joinpath(
-				vim.fs.dirname(root),
-				"conf/herdr/vim-herdr-navigation/editor/nvim.lua"
-			)
+			local plugin = vim.fs.joinpath(vim.fs.dirname(root), "conf/herdr/vim-herdr-navigation/editor/nvim.lua")
 			if vim.uv.fs_stat(plugin) then
 				dofile(plugin)
 			else
@@ -119,7 +116,7 @@ return {
 			{ "jparise/vim-graphql" },
 			{ "alaviss/nim.nvim" },
 			{ "tact-lang/tact.vim" },
-			{ "simrat39/rust-tools.nvim" },
+			{ "mrcjkb/rustaceanvim", version = "^6" },
 			{
 				"elixir-tools/elixir-tools.nvim",
 				dependencies = { "nvim-lua/plenary.nvim" },
@@ -170,13 +167,6 @@ return {
 				dependencies = { "neovim/nvim-lspconfig" },
 				config = function()
 					require("inlay-hints").setup()
-				end,
-			},
-			{
-				"TabbyML/vim-tabby",
-				event = { "InsertEnter" },
-				config = function()
-					require("core.tabby").configure()
 				end,
 			},
 			{
@@ -253,13 +243,13 @@ return {
 			require("core.lualine").configure()
 		end,
 	},
-	{ "folke/lazy.nvim",       tag = "stable" },
+	{ "folke/lazy.nvim", tag = "stable" },
 	{
 		"metascriptlang/metascript.nvim",
 		event = "VeryLazy",
 		ft = "metascript",
 	},
-	{ "folke/neodev.nvim",     lazy = true },
+	{ "folke/neodev.nvim", lazy = true },
 	{
 		"folke/noice.nvim",
 		lazy = false,
@@ -293,6 +283,25 @@ return {
 		end,
 	},
 	{
+		"nvim-telescope/telescope.nvim",
+		dependencies = {
+			{ "nvim-lua/plenary.nvim" },
+			{ "nvim-tree/nvim-web-devicons" },
+			{
+				"nvim-telescope/telescope-fzf-native.nvim",
+				build = vim.fn.has("win32") == 1
+						and "cmake -S . -B build -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build"
+					or "make",
+			},
+			{ "nvim-telescope/telescope-live-grep-args.nvim" },
+			{ "smartpde/telescope-recent-files" },
+			{ "nvim-telescope/telescope-ui-select.nvim" },
+		},
+		config = function()
+			require("core.telescope").configure()
+		end,
+	},
+	{
 		"sudormrfbin/cheatsheet.nvim",
 		dependencies = {
 			"nvim-lua/popup.nvim",
@@ -323,7 +332,12 @@ return {
 		event = "BufReadPost",
 		cmd = "Meister",
 		keys = {
-			{ "<leader>ma", "<Plug>(meister-annotate)", mode = { "n", "x" }, desc = "Meister: annotate" },
+			{
+				"<leader>ma",
+				"<Plug>(meister-annotate)",
+				mode = { "n", "x" },
+				desc = "Meister: annotate",
+			},
 			{ "<leader>ms", "<Plug>(meister-send-all)", desc = "Meister: send all annotations" },
 			{ "<leader>mS", "<Plug>(meister-send-file)", desc = "Meister: send current file" },
 			{ "<leader>mr", "<Plug>(meister-run-file)", desc = "Meister: send + run current file" },
@@ -381,7 +395,7 @@ return {
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 	},
 	{ "windwp/nvim-ts-autotag" },
-	{ "wakatime/vim-wakatime" },
+	-- { "wakatime/vim-wakatime" },
 	{
 		"ethanholz/nvim-lastplace",
 		config = function()
@@ -466,50 +480,24 @@ return {
 		end,
 	},
 	{
-		"claude-ide",
-		name = "claude-ide",
-		dir = vim.fn.stdpath("config") .. "/lua/plugins/claude",
-		lazy = false, -- Load immediately
-		priority = 100, -- Load early
-		config = function()
-			local claude = require("plugins.claude")
-
-			-- Setup Claude IDE
-			local success, err = claude.setup({
-				port_min = 10000,
-				port_max = 65535,
-				reuse_port = true,
-				log_level = vim.log.levels.ERROR, -- Only show errors by default
-			})
-
-			if not success then
-				vim.notify("Failed to start Claude IDE: " .. (err or "unknown error"), vim.log.levels.ERROR)
-				return
-			end
-
-			-- Create user commands
-			claude.create_commands()
-		end,
-	},
-	{
 		"bngarren/checkmate.nvim",
 		ft = "markdown", -- Lazy loads for Markdown files matching patterns in 'files'
 		config = function()
 			require("core.markdown").configureCheckmate()
 		end,
 	},
-	{
-		"sphamba/smear-cursor.nvim",
-		opts = {
-			cursor_color = "none",
-			stiffness = 0.3,
-			trailing_stiffness = 0.1,
-			damping = 0.5,
-			trailing_exponent = 5,
-			never_draw_over_target = true,
-			hide_target_hack = true,
-			gamma = 1,
-			time_interval = 3,
-		},
-	},
+	-- {
+	-- 	"sphamba/smear-cursor.nvim",
+	-- 	opts = {
+	-- 		cursor_color = "none",
+	-- 		stiffness = 0.3,
+	-- 		trailing_stiffness = 0.1,
+	-- 		damping = 0.5,
+	-- 		trailing_exponent = 5,
+	-- 		never_draw_over_target = true,
+	-- 		hide_target_hack = true,
+	-- 		gamma = 1,
+	-- 		time_interval = 3,
+	-- 	},
+	-- },
 }

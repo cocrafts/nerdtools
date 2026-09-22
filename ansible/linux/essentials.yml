@@ -28,7 +28,6 @@
           - python3-pip
           - curl
           - ripgrep
-          - zoxide
           - file
           - git
           - fzf

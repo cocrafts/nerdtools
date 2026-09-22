@@ -51,12 +51,9 @@ if (Get-Module -ListAvailable PSReadLine) {
 # --- posh-git (git status in the prompt, if installed) ---
 if (Get-Module -ListAvailable posh-git) { Import-Module posh-git }
 
-# --- Tool init (starship / zoxide / mise) ---
+# --- Tool init (starship / mise) ---
 if (Get-Command starship -ErrorAction SilentlyContinue) {
     Invoke-Expression (&starship init powershell)
-}
-if (Get-Command zoxide -ErrorAction SilentlyContinue) {
-    Invoke-Expression (& { (zoxide init powershell | Out-String) })
 }
 if (Get-Command mise -ErrorAction SilentlyContinue) {
     Invoke-Expression (& { (mise activate pwsh | Out-String) })

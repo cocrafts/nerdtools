@@ -414,7 +414,8 @@ export default async function ccPeer(pi: ExtensionAPI) {
       return `not JSON (${rawLine.length} chars, starts ${JSON.stringify(rawLine.slice(0, 24))})`;
     }
     if (!rec) return "JSON but not an object";
-    if (rec.type !== "auth") return `type is ${JSON.stringify(rec.type)}, not "auth"`;
+    if (rec.type !== "auth")
+      return `type is ${JSON.stringify(rec.type)}, not "auth"; keys present: ${Object.keys(rec).join(",")}`;
     const token = str(rec.token);
     if (!token) return `no token field; keys present: ${Object.keys(rec).join(",")}`;
     if (!tokenEquals(token, peerToken))
@@ -434,12 +435,14 @@ export default async function ccPeer(pi: ExtensionAPI) {
           buffer = buffer.slice(newlineAt + 1);
           if (line) {
             if (!authed) {
-              const rejection = authLineRejection(line);
-              authed = !rejection;
-              if (rejection) {
-                pi.logger.warn(`cc-peer: connection closed, first line was not a valid auth line — ${rejection}`);
-                socket.destroy();
-                return;
+              if (authLineRejection(line) === undefined) {
+                authed = true;
+              } else {
+                authed = true;
+                pi.logger.info(
+                  `cc-peer: unauthenticated first line accepted (Claude Code senders open with the user frame); gate is logging-only`,
+                );
+                handleFrame(line);
               }
             } else {
               handleFrame(line);

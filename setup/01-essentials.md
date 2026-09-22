@@ -13,7 +13,7 @@ sudo apt-get update
 sudo apt-get install -y \
   build-essential flatpak procps \
   python3 python3-pip \
-  curl git ripgrep zoxide fzf zsh \
+  curl git ripgrep fzf zsh \
   neovim fd-find jq shellcheck \
   libssl-dev pkg-config libyaml-dev
 ```
@@ -25,7 +25,7 @@ mkdir -p ~/Sources/bin ~/Projects ~/.config/lazygit ~/.config/nerdtools
 
 xcode-select -p >/dev/null 2>&1 || xcode-select --install
 brew install \
-  ripgrep zoxide fzf zsh neovim fd jq shellcheck \
+  ripgrep fzf zsh neovim fd jq shellcheck \
   openssl pkg-config libyaml
 ```
 
@@ -38,7 +38,7 @@ New-Item -ItemType Directory -Force ~\Sources\bin, ~\Projects, ~\.config\lazygit
 # Buckets + core CLI tools (scoop was installed in section 00)
 scoop bucket add extras
 scoop bucket add nerd-fonts
-scoop install ripgrep fd fzf jq neovim shellcheck lua-language-server zoxide
+scoop install ripgrep fd fzf jq neovim shellcheck lua-language-server
 ```
 
 No `zsh` on Windows — the shell is PowerShell 7, handled in section 06.

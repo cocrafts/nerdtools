@@ -1,7 +1,8 @@
 local M = {}
 
-M.configure = function(lspconfig)
-	lspconfig.terraformls.setup({})
+M.configure = function()
+	vim.lsp.config("terraformls", {})
+		vim.lsp.enable("terraformls")
 end
 
 return M

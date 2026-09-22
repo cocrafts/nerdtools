@@ -1,9 +1,11 @@
 local M = {}
 
 M.configureImage = function()
-	require("image").setup({
-		processor = "magick_cli",
-	})
+	if vim.fn.has("win32") ~= 1 then
+		require("image").setup({
+			processor = "magick_cli",
+		})
+	end
 
 	-- disable conceal for Markdown, force accurate Image rendering
 	vim.api.nvim_create_autocmd("FileType", {

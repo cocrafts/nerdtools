@@ -1,7 +1,8 @@
 local M = {}
 
-M.configure = function(lspconfig)
-	lspconfig.zls.setup({})
+M.configure = function()
+	vim.lsp.config("zls", {})
+		vim.lsp.enable("zls")
 end
 
 return M

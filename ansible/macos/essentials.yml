@@ -63,11 +63,6 @@
       args:
         creates: /usr/local/bin/starship
 
-    - name: Install zoxide
-      shell: brew install zoxide
-      args:
-        creates: /usr/local/bin/zoxide
-
     - name: Install fzf
       shell: |
         brew install fzf

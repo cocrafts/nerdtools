@@ -73,14 +73,21 @@ def emit_card(path):
 
 
 def emit_coach(ws):
-    board = os.path.join(ws, ".coach", "%s.md" % os.path.basename(ws))
+    coach = os.path.join(ws, ".coach")
+    board = os.path.join(coach, "%s.md" % os.path.basename(ws))
+    reentry = os.path.join(coach, "reentry.md")
     print("You are the coach for %s, standing in its .coach directory." % ws)
     print("Practice: ~/nerdtools/claude/playbooks/coach.md")
-    print("Ledger:   %s — append-only, the history lives there" % os.path.join(ws, ".coach", "log.tsv"))
+    print("Ledger:   %s — append-only, the history lives there" % os.path.join(coach, "log.tsv"))
     print("Rules:    %s" % os.path.join(ws, "CLAUDE.md"))
-    print("Then ListAgents, and the card of every worker it lists as alive.")
+    print("Then list your peer sessions, and read the card of every worker still alive.")
     print("Do not read worker transcripts unless the board says an arc is behind.")
     print("")
+    if os.path.isfile(reentry):
+        print("HANDOFF %s — written by the previous coach, read it before the board:" % reentry)
+        print("")
+        inline(reentry)
+        print("")
     if not os.path.isfile(board):
         print("BOARD: none at %s yet." % board)
         return

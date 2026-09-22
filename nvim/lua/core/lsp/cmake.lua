@@ -1,7 +1,8 @@
 local M = {}
 
-M.configure = function(lspconfig)
-	lspconfig.neocmake.setup({})
+M.configure = function()
+	vim.lsp.config("neocmake", {})
+		vim.lsp.enable("neocmake")
 end
 
 return M

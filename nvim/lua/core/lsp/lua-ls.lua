@@ -1,7 +1,7 @@
 local M = {}
 
-M.configure = function(lspconfig)
-	lspconfig.lua_ls.setup({
+M.configure = function()
+	vim.lsp.config("lua_ls", {
 		settings = {
 			Lua = {
 				hint = { enable = true },
@@ -39,6 +39,7 @@ M.configure = function(lspconfig)
 			return true
 		end,
 	})
+		vim.lsp.enable("lua_ls")
 end
 
 return M
