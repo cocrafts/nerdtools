@@ -44,7 +44,7 @@ chsh -s "$ZSH_PATH"
 ## Windows (PowerShell 7 — the `entry.ps1` contract)
 
 Windows doesn't run zsh. Its contract counterpart is **`pwsh/entry.ps1`**, loaded from the
-PowerShell 7 profile. Everything `entry.sh` provides (PATH, starship/zoxide/mise init, history
+PowerShell 7 profile. Everything `entry.sh` provides (PATH, starship/mise init, history
 prediction, aliases) is mirrored there — so the *experience* matches even though the shell differs.
 
 ```powershell

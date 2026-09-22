@@ -29,7 +29,6 @@ export REACT_EDITOR=nvim
 
 eval "$($HOME/.cargo/bin/mise activate zsh)"
 eval "$(starship init zsh)" # load starship theme
-eval "$(zoxide init zsh)"
 
 # Exclude common command from Zsh command history
 HISTORY_IGNORE="(clear|ls|cd|pwd|exit|history)"
