@@ -38,16 +38,16 @@ stands in `wt/<name>`; a coach knows it is the coach because it stands in `.coac
 survives what context does not** — `/clear`, a compaction, a restart all leave cwd where it was,
 so nothing has to be registered, remembered or re-declared.
 
-The hook `~/nerdtools/claude/scripts/arc-context.py` fires on session start, on entering a
-directory and on a worktree being created. It walks up from cwd to the first ancestor holding a
-`.coach/` directory — that is the workspace, and a tree without one never sees the hook at all.
-Then:
+Worker and coach context have separate owners:
 
-    <workspace>/.coach       →  the brief, and the board inlined
-    wt/<name> worktree       →  <workspace>/.wt/<name>.md, or <main checkout>/.cards/<name>.md
+    wt/<name> worktree       →  ~/nerdtools/claude/tools/wt.sh context
+    <workspace>/.coach       →  ~/nerdtools/claude/scripts/arc-context.py
 
-Both are inlined only up to a page. Past that the hook prints the path and the State section, so
-a card or a board that has grown into a record costs its own reader the context it saved.
+The shared worktree command resolves `<workspace>/.wt/<name>.md` or
+`<main checkout>/.cards/<name>.md`; it is the only card reader used by Claude Code and
+omp. The coach hook walks up from cwd to the first ancestor holding `.coach/`, then
+inlines the board only up to a page. Past that it prints the path and State section, so a
+board that has grown into a record costs its own reader the context it saved.
 
 ## The shape
 

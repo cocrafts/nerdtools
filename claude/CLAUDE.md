@@ -38,15 +38,10 @@ at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks
 - **Say it when the approach turned out worse.** Surface it with the new facts that changed the estimate and recommend reversing; do not grind on to something mediocre.
 - **Audit by yourself.** Reviews and audits are read and verified in the main session, not fanned out to agents.
 - **Explain like a CTO brief.** The symptom as code, working beside broken, two to four plain sentences, then the choice. No theory survey unless asked.
+- **A red is yours only when it is new against what the project records as known red.**
+- **A bug in another repo's code is fixed by a session started in that repo.** From here it gets a reproduction and a note where that project keeps them.
+- **A tool or the harness that refuses an action on purpose is left alone and reported, never routed around.**
 
-## Arcs and cards
-
-- A feature or named arc has a card: `<main checkout>/.cards/<name>.md`, untracked (ignored through `~/.config/git/ignore`) and shared by every worktree of the repo, unless a workspace or project file names another place. It holds the Goal, a "Done when" a session can run, and a State of a few lines naming the step in flight. Memory points at the card and never copies it; the card is deleted once "Done when" holds on the main branch.
-- Where a repo works in worktrees: one worktree per arc, reused by every session of that arc; sequential steps are commits in it, never new worktrees; a slice lands as soon as it stands alone; the main checkout only receives lands.
-- A session ends with its work committed and the card's State current.
-- A red is yours only when it is new against what the project records as known red.
-- A bug in another repo's code is fixed by a session started in that repo; from here it gets a reproduction and a note where that project keeps them.
-- A tool or the harness that refuses an action on purpose is left alone and reported, never routed around.
 
 ## Frontend Component Architecture
 
