@@ -18,6 +18,7 @@ import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
 
 const HOME = process.env.HOME ?? process.env.USERPROFILE ?? "";
 const GUARD = join(HOME, "nerdtools", "claude", "hooks", "comment-guard.sh");
+const ARC_CONTEXT = join(HOME, "nerdtools", "claude", "scripts", "arc-context.py");
 
 
 // The guard speaks the Claude Code hook protocol (stdin JSON, exit 2 = deny);
@@ -155,6 +156,40 @@ function wtSessionState(cwd: string): string | null {
   }
 }
 
+// arc-context.py is the shared session-start brief: it walks up to the
+// workspace holding .coach, then hands a coach its handoff and board, or a
+// wt/<name> worktree its card. Claude Code runs it as a SessionStart hook with
+// the event JSON on stdin; run the same script the same way, so both harnesses
+// share one implementation and one fix reaches both.
+function arcContext(cwd: string, sessionId: string): string | null {
+  try {
+    const res = spawnSync("python", [ARC_CONTEXT], {
+      cwd,
+      encoding: "utf8",
+      timeout: 15_000,
+      input: JSON.stringify({
+        cwd,
+        session_id: sessionId,
+        hook_event_name: "SessionStart",
+      }),
+    });
+    const out = (res.stdout ?? "").trim();
+    return out.length ? out : null;
+  } catch {
+    return null;
+  }
+}
+
+// wt.sh hook-session prints the card AND the compiler inbox tally. When
+// arc-context has already supplied the card, keep only the tally, which starts
+// at "<n> card(s) in <dir>:". recompiler owns that script, so the split is made
+// here rather than by giving it a tally-only subcommand.
+function inboxTallyOnly(wtState: string): string | null {
+  const at = wtState.search(/^\d+ card\(s\) in /m);
+  if (at === -1) return null;
+  return wtState.slice(at).trim() || null;
+}
+
 export default function (pi: ExtensionAPI) {
   const writeTargetExisted = new Map<string, boolean>();
   const loadedNestedClaudeMd = new Set<string>();
@@ -234,16 +269,25 @@ export default function (pi: ExtensionAPI) {
   pi.on("session_start", (_event, ctx) => {
     loadedNestedClaudeMd.clear();
     const cwd = String(ctx?.cwd ?? process.cwd());
+    const sessionId = String(ctx?.sessionManager?.getSessionId?.() ?? "");
+    const arc = arcContext(cwd, sessionId);
     const wtState = wtSessionState(cwd);
-    if (!wtState) return;
+    const parts: string[] = [];
+    if (arc) parts.push(arc);
+    if (wtState) {
+      // Outside a coached workspace arc-context prints nothing, so wt.sh is
+      // still the only source of the card and is passed through whole.
+      const tail = arc ? inboxTallyOnly(wtState) : wtState;
+      if (tail) {
+        parts.push(`Worktree/card state (tools/wt.sh hook-session):\n\n${tail}`);
+      }
+    }
+    if (!parts.length) return;
     try {
-      pi.sendMessage(
-        `Worktree/card state (tools/wt.sh hook-session):\n\n${wtState}`,
-        {
-          deliverAs: "nextTurn",
-          attribution: "agent",
-        },
-      );
+      pi.sendMessage(parts.join("\n\n"), {
+        deliverAs: "nextTurn",
+        attribution: "agent",
+      });
     } catch {}
   });
 }
