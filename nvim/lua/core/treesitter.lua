@@ -120,6 +120,19 @@ M.configure = function()
 		},
 	})
 
+	-- nvim-treesitter master's markdown queries predate nvim 0.12's node API:
+	-- their `set-lang-from-info-string!` directive crashes the native highlighter
+	-- (treesitter.lua get_range). Load the queries bundled with nvim instead,
+	-- until the migration to nvim-treesitter's main branch.
+	for _, ft in ipairs({ "markdown", "markdown_inline" }) do
+		for _, kind in ipairs({ "highlights", "injections" }) do
+			local path = vim.fs.joinpath(vim.env.VIMRUNTIME, "queries", ft, kind .. ".scm")
+			if vim.fn.filereadable(path) == 1 then
+				vim.treesitter.query.set(ft, kind, table.concat(vim.fn.readfile(path), "\n"))
+			end
+		end
+	end
+
 	local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
 	parser_config.haxe = {
 		install_info = {
