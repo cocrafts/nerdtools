@@ -19,10 +19,8 @@ at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks
 
 ## Reporting — HARD RULE
 
-- **After a lane (suite/guard/corpus/SAN)**: line 1 = verdict with numbers and the diff against the known-red set; then the single next action. ≤ 5 lines, no headers, no tables unless it is an A/B.
 - **Background lanes**: launch in the background, report on the notification. The user does not poll.
 - **When the agent commits on its own, the report ends with one git line**: `commit <sha…> · land <sha | not yet, because …> · tree clean | left: <path> (why)`. Anything edited outside the repo (memory, inbox, plans) is named there too — `git status` does not show it.
-- **A report that closes a fix opens with one classification line**, above the verdict: `layer: <compiler/<phase> | runtime | std | the consuming repo — and where the bug surfaced, when that differs> · kind: <type-identity | inference | narrowing | resolution | transform-lowering | codegen-emit | DRC/lifetime | runtime-ABI | std-API | perf> · fix: <one clause> · mechanism: <existing | loosens an existing gate, naming what that gate still protects | **NEW MECHANISM**, naming what it adds and what can regress>`. The kind list is closed: a fix that fits none of them says so and proposes the word. **NEW MECHANISM** is written in bold capitals, and the session raises it the moment the need is known, not at report time — a mechanism the design does not have is a question, not a decision.
 - **No narrative reports**: no "history", no process retelling, no `★ Insight`, no headers in messages under ~500 words. Never Read a file > 300 lines whole; summarise logs by script to ≤ 20 lines.
 
 ## Working with the user
@@ -61,4 +59,3 @@ at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks
 - **Code**: follow existing patterns, edit > create, no unsolicited docs, absolute paths, avoid emojis, match surrounding style.
 - **Config priority**: project CLAUDE.md → this global → tool defaults → built-in behaviour.
 - **Todos**: strikethrough (`~~text~~`) for completed items; in-progress and pending render plain.
-- **Voice mode**: `min_listen_duration=5` (prevents cutoffs during pauses).
