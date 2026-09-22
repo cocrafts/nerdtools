@@ -127,27 +127,15 @@ function nestedClaudeContext(
   ].join("\n");
 }
 
-// wt.sh hook-session prints the worktree's card and the compiler inbox
-// tally on stdout; like Claude Code's SessionStart wiring, run the main
-// checkout's copy with CLAUDE_PROJECT_DIR pointing at this session's cwd.
 function wtSessionState(cwd: string): string | null {
   try {
-    const list = spawnSync("git", ["worktree", "list", "--porcelain"], {
-      cwd,
-      encoding: "utf8",
-      timeout: 5_000,
-    });
-    const mainLine = (list.stdout ?? "")
-      .split("\n")
-      .find((line) => line.startsWith("worktree "));
-    if (!mainLine) return null;
-    const wtSh = join(mainLine.slice("worktree ".length), "tools", "wt.sh");
+    const wtSh = join(HOME, "nerdtools", "claude", "tools", "wt.sh");
     if (!existsSync(wtSh)) return null;
-    const res = spawnSync("bash", [wtSh, "hook-session"], {
+    const res = spawnSync("bash", [wtSh, "context"], {
       cwd,
       encoding: "utf8",
       timeout: 15_000,
-      env: { ...process.env, CLAUDE_PROJECT_DIR: cwd },
+      env: { ...process.env, WT_CWD: cwd },
     });
     const out = (res.stdout ?? "").trim();
     return out.length ? out : null;
@@ -156,11 +144,9 @@ function wtSessionState(cwd: string): string | null {
   }
 }
 
-// arc-context.py is the shared session-start brief: it walks up to the
-// workspace holding .coach, then hands a coach its handoff and board, or a
-// wt/<name> worktree its card. Claude Code runs it as a SessionStart hook with
-// the event JSON on stdin; run the same script the same way, so both harnesses
-// share one implementation and one fix reaches both.
+// arc-context.py owns the coached-workspace board and reentry handoff.
+// Claude Code runs it as a SessionStart hook with the event JSON on stdin;
+// run the same script the same way so both harnesses share that context.
 function arcContext(cwd: string, sessionId: string): string | null {
   try {
     const res = spawnSync("python", [ARC_CONTEXT], {
@@ -178,16 +164,6 @@ function arcContext(cwd: string, sessionId: string): string | null {
   } catch {
     return null;
   }
-}
-
-// wt.sh hook-session prints the card AND the compiler inbox tally. When
-// arc-context has already supplied the card, keep only the tally, which starts
-// at "<n> card(s) in <dir>:". recompiler owns that script, so the split is made
-// here rather than by giving it a tally-only subcommand.
-function inboxTallyOnly(wtState: string): string | null {
-  const at = wtState.search(/^\d+ card\(s\) in /m);
-  if (at === -1) return null;
-  return wtState.slice(at).trim() || null;
 }
 
 export default function (pi: ExtensionAPI) {
@@ -274,14 +250,7 @@ export default function (pi: ExtensionAPI) {
     const wtState = wtSessionState(cwd);
     const parts: string[] = [];
     if (arc) parts.push(arc);
-    if (wtState) {
-      // Outside a coached workspace arc-context prints nothing, so wt.sh is
-      // still the only source of the card and is passed through whole.
-      const tail = arc ? inboxTallyOnly(wtState) : wtState;
-      if (tail) {
-        parts.push(`Worktree/card state (tools/wt.sh hook-session):\n\n${tail}`);
-      }
-    }
+    if (wtState) parts.push(`Worktree/card state:\n\n${wtState}`);
     if (!parts.length) return;
     try {
       pi.sendMessage(parts.join("\n\n"), {
