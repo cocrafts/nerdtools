@@ -33,6 +33,8 @@ claude/*
 !claude/commands/**
 !claude/scripts/
 !claude/scripts/**
+!claude/tools/
+!claude/tools/**
 !claude/skills/
 !claude/skills/**
 !claude/themes/
