@@ -2,34 +2,10 @@ enabledProviders:
   - claude
 memory:
   backend: "off"
-providers:
-  webSearchOrder:
-    - zai
-    - parallel
-    - perplexity
-    - gemini
-    - anthropic
-    - codex
-    - xai
-    - exa
-    - tinyfish
-    - jina
-    - kagi
-    - tavily
-    - firecrawl
-    - brave
-    - kimi
-    - synthetic
-    - ollama
-    - searxng
-    - startpage
-    - duckduckgo
-    - ecosia
-    - google
-    - mojeek
-    - public
 modelRoles:
-  default: zai/glm-5.3:high
+  web: web/zai
+  smol: zai/glm-5.3
+  default: zai/glm-5.3
 symbolPreset: nerd
 hideThinkingBlock: true
 composer:
@@ -42,7 +18,9 @@ tui:
   textSizing: true
   codexResetFireworks: true
   hyperlinks: always
+  mouse: false
   tight: false
+  vimMode: true
 terminal:
   showProgress: false
 display:
@@ -70,3 +48,36 @@ statusLine:
       showStaged: true
       showUnstaged: true
       showUntracked: true
+retry:
+  fallbackChains:
+    web:
+      - web/parallel
+      - web/perplexity
+      - google/gemini-2.5-flash
+      - anthropic/claude-haiku-4-5
+      - openai-codex/gpt-5.6-luna
+      - xai/grok-4.5
+      - web/exa
+      - web/tinyfish
+      - web/jina
+      - web/kagi
+      - web/tavily
+      - web/firecrawl
+      - web/brave
+      - web/kimi
+      - web/synthetic
+      - web/ollama
+      - web/searxng
+      - web/startpage
+      - web/duckduckgo
+      - web/ecosia
+      - web/google
+      - web/mojeek
+      - web/public
+      - google-antigravity/gemini-2.5-flash
+      - openai-codex/gpt-5.6
+      - openai-codex/gpt-5.5
+      - xai-oauth/grok-4.5
+dev:
+  autoqaConsent: granted
+extendedContext: false
