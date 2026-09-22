@@ -1,7 +1,8 @@
 local M = {}
 
-M.configure = function(lspconfig)
-	lspconfig.gleam.setup({})
+M.configure = function()
+	vim.lsp.config("gleam", {})
+		vim.lsp.enable("gleam")
 end
 
 return M

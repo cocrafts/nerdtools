@@ -1,7 +1,7 @@
 local M = {}
 
-M.configure = function(lspconfig)
-	lspconfig.clangd.setup({
+M.configure = function()
+	vim.lsp.config("clangd", {
 		settings = {
 			clangd = {
 				InlayHints = {
@@ -14,6 +14,7 @@ M.configure = function(lspconfig)
 			},
 		}
 	})
+		vim.lsp.enable("clangd")
 end
 
 return M

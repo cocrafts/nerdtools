@@ -1,7 +1,8 @@
 local M = {}
 
-M.configure = function(lspconfig)
-	lspconfig.swift_mesonls.setup({})
+M.configure = function()
+	vim.lsp.config("swift_mesonls", {})
+		vim.lsp.enable("swift_mesonls")
 end
 
 return M

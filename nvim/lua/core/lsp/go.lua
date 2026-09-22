@@ -2,7 +2,7 @@ local config = require("utils.config")
 local icons = require("utils.icons")
 local M = {}
 
-M.configure = function(lspconfig)
+M.configure = function()
 	require("go").setup({
 		goimports = "gopls",
 		fillstruct = "gopls",
@@ -45,7 +45,8 @@ M.configure = function(lspconfig)
 		},
 	})
 
-	lspconfig.gopls.setup(lsp_config)
+	vim.lsp.config("gopls", lsp_config)
+		vim.lsp.enable("gopls")
 end
 
 return M

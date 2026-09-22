@@ -1,7 +1,8 @@
 local M = {}
 
-M.configure = function(lspconfig)
-	lspconfig.taplo.setup({})
+M.configure = function()
+	vim.lsp.config("taplo", {})
+		vim.lsp.enable("taplo")
 end
 
 return M
