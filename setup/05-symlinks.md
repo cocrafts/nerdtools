@@ -53,7 +53,19 @@ for skill in ~/nerdtools/claude/skills/*; do
   ln -sfn "$skill" ~/.claude/skills/"$(basename "$skill")"
   ln -sfn "$skill" ~/.agents/skills/"$(basename "$skill")"
 done
+
+commitHook=~/nerdtools/claude/hooks/commit-msg
+for repo in ~/metascript/{recompiler,yoga,void,neon,ion,lightcube}; do
+  [ -e "$repo/.git" ] || continue
+  hookDir=$(git -C "$repo" rev-parse --path-format=absolute --git-path hooks)
+  mkdir -p "$hookDir"
+  ln -sfn "$commitHook" "$hookDir/commit-msg"
+done
 ```
+
+The hook loop asks Git for each repository's effective hook directory instead of
+changing `core.hooksPath`. Existing repository hooks remain active, and linked
+worktrees inherit the hook from their common Git directory.
 
 `~/.claude/CLAUDE.md` is a **real file, not a symlink** — one `@` import of the shared
 config, then room for rules that belong to this machine alone. Claude Code expands `@`,

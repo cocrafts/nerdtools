@@ -40,6 +40,7 @@ claude/*
 !claude/hooks/
 claude/hooks/*
 !claude/hooks/comment-guard.sh
+!claude/hooks/commit-msg
 
 # local again — inside a shared folder, but this machine's own
 claude/settings.local.json
