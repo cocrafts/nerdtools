@@ -25,10 +25,10 @@ a destructive action; anything else becomes a construction step, not a rule.
 - **NO attribution footer** (no Co-Authored-By / Generated-with — attribution is disabled globally in his settings).
 - Match the repo's scope convention first: `git log --oneline -15`.
 
-In `~/metascript` these are enforced by `.githooks/commit-msg` (via
-`core.hooksPath`, inherited by linked worktrees): a non-conforming subject, any
-body, or attribution makes a red commit. `Merge`, `Revert`, `fixup!`, `squash!`
-are exempt.
+In `~/metascript` the tracked `~/nerdtools/claude/hooks/commit-msg` is linked
+into each repo's effective Git hook directory; linked worktrees share it. A
+non-conforming subject, any body, or attribution makes a red commit. `Merge`,
+`Revert`, `fixup!`, and `squash!` are exempt.
 
 ## Which path — decided by the tree, not by judgment
 

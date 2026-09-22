@@ -1,0 +1,26 @@
+#!/bin/sh
+set -eu
+
+messageFile=$1
+message=$(git stripspace --strip-comments < "$messageFile")
+subject=$(printf '%s\n' "$message" | sed -n '1p')
+
+case "$subject" in
+  Merge\ *|Revert\ *|fixup!\ *|squash!\ *) exit 0 ;;
+esac
+
+if ! printf '%s\n' "$subject" | grep -Eq '^(feat|fix|refactor|docs|test|chore|perf|ci|build)(\([[:alnum:]./_-]+\))?!?: [^[:space:]].*$'; then
+  printf '%s\n' 'commit-msg: expected type(scope): subject with an approved conventional type' >&2
+  exit 1
+fi
+
+lineCount=$(printf '%s\n' "$message" | sed '/^[[:space:]]*$/d' | wc -l | tr -d '[:space:]')
+if [ "$lineCount" -ne 1 ]; then
+  printf '%s\n' 'commit-msg: commit messages must contain one subject line and no body' >&2
+  exit 1
+fi
+
+if printf '%s\n' "$message" | grep -Eiq '(Co-Authored-By|Generated-with):'; then
+  printf '%s\n' 'commit-msg: attribution footers are disabled' >&2
+  exit 1
+fi

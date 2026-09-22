@@ -19,10 +19,8 @@ at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks
 
 ## Reporting — HARD RULE
 
-- **After a lane (suite/guard/corpus/SAN)**: line 1 = verdict with numbers and the diff against the known-red set; then the single next action. ≤ 5 lines, no headers, no tables unless it is an A/B.
 - **Background lanes**: launch in the background, report on the notification. The user does not poll.
 - **When the agent commits on its own, the report ends with one git line**: `commit <sha…> · land <sha | not yet, because …> · tree clean | left: <path> (why)`. Anything edited outside the repo (memory, inbox, plans) is named there too — `git status` does not show it.
-- **A report that closes a fix opens with one classification line**, above the verdict: `layer: <compiler/<phase> | runtime | std | the consuming repo — and where the bug surfaced, when that differs> · kind: <type-identity | inference | narrowing | resolution | transform-lowering | codegen-emit | DRC/lifetime | runtime-ABI | std-API | perf> · fix: <one clause> · mechanism: <existing | loosens an existing gate, naming what that gate still protects | **NEW MECHANISM**, naming what it adds and what can regress>`. The kind list is closed: a fix that fits none of them says so and proposes the word. **NEW MECHANISM** is written in bold capitals, and the session raises it the moment the need is known, not at report time — a mechanism the design does not have is a question, not a decision.
 - **No narrative reports**: no "history", no process retelling, no `★ Insight`, no headers in messages under ~500 words. Never Read a file > 300 lines whole; summarise logs by script to ≤ 20 lines.
 
 ## Working with the user
@@ -40,15 +38,10 @@ at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks
 - **Say it when the approach turned out worse.** Surface it with the new facts that changed the estimate and recommend reversing; do not grind on to something mediocre.
 - **Audit by yourself.** Reviews and audits are read and verified in the main session, not fanned out to agents.
 - **Explain like a CTO brief.** The symptom as code, working beside broken, two to four plain sentences, then the choice. No theory survey unless asked.
+- **A red is yours only when it is new against what the project records as known red.**
+- **A bug in another repo's code is fixed by a session started in that repo.** From here it gets a reproduction and a note where that project keeps them.
+- **A tool or the harness that refuses an action on purpose is left alone and reported, never routed around.**
 
-## Arcs and cards
-
-- A feature or named arc has a card: `<main checkout>/.cards/<name>.md`, untracked (ignored through `~/.config/git/ignore`) and shared by every worktree of the repo, unless a workspace or project file names another place. It holds the Goal, a "Done when" a session can run, and a State of a few lines naming the step in flight. Memory points at the card and never copies it; the card is deleted once "Done when" holds on the main branch.
-- Where a repo works in worktrees: one worktree per arc, reused by every session of that arc; sequential steps are commits in it, never new worktrees; a slice lands as soon as it stands alone; the main checkout only receives lands.
-- A session ends with its work committed and the card's State current.
-- A red is yours only when it is new against what the project records as known red.
-- A bug in another repo's code is fixed by a session started in that repo; from here it gets a reproduction and a note where that project keeps them.
-- A tool or the harness that refuses an action on purpose is left alone and reported, never routed around.
 
 ## Frontend Component Architecture
 
@@ -61,4 +54,3 @@ at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks
 - **Code**: follow existing patterns, edit > create, no unsolicited docs, absolute paths, avoid emojis, match surrounding style.
 - **Config priority**: project CLAUDE.md → this global → tool defaults → built-in behaviour.
 - **Todos**: strikethrough (`~~text~~`) for completed items; in-progress and pending render plain.
-- **Voice mode**: `min_listen_duration=5` (prevents cutoffs during pauses).

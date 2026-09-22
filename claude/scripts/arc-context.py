@@ -1,4 +1,4 @@
-import json, os, re, subprocess, sys, tempfile
+import json, os, re, sys, tempfile
 
 try:
     sys.stdout.reconfigure(encoding="utf-8")
@@ -22,23 +22,6 @@ def coached_workspace(cwd):
         d = parent
 
 
-def run(args):
-    out = subprocess.run(args, capture_output=True, text=True, timeout=10)
-    return out.stdout.strip() if out.returncode == 0 else ""
-
-
-def card_path(ws, cwd, name):
-    here = os.path.join(ws, ".wt", "%s.md" % name)
-    if os.path.isfile(here):
-        return here
-    main = run(["git", "-C", cwd, "worktree", "list", "--porcelain"]).splitlines()
-    if main and main[0].startswith("worktree "):
-        there = os.path.join(main[0][len("worktree "):], ".cards", "%s.md" % name)
-        if os.path.isfile(there):
-            return there
-    return here
-
-
 def section(text, name):
     m = re.search(r"^##+ %s\b.*?(?=^##+ |\Z)" % name, text, re.M | re.S)
     return m.group(0).rstrip() if m else ""
@@ -59,17 +42,6 @@ def inline(path):
     print(chr(10).join(text.splitlines()[:40]).rstrip())
     print("")
     print("Sections: " + ", ".join(re.findall(r"^##+ (.+)$", text, re.M)[:20]))
-
-
-def emit_card(path):
-    if not os.path.isfile(path):
-        print("ARC CARD: none at %s — this worktree has no card yet." % path)
-        return
-    print("ARC CARD for this worktree: %s" % path)
-    print("You and the coach both write it. Edit your own sections in place, re-read it")
-    print("immediately before writing, never write the file whole.")
-    print("")
-    inline(path)
 
 
 def emit_coach(ws):
@@ -123,9 +95,6 @@ def main():
         if repeatable or not already_said(sid, "coach"):
             emit_coach(ws)
         return
-    m = re.match(r"^wt/(.+)$", run(["git", "-C", cwd, "rev-parse", "--abbrev-ref", "HEAD"]))
-    if m and (repeatable or not already_said(sid, m.group(1))):
-        emit_card(card_path(ws, cwd, m.group(1)))
 
 
 try:
