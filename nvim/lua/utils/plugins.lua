@@ -52,7 +52,6 @@ return {
 		dependencies = {
 			{ "neovim/nvim-lspconfig" },
 			{ "nvimtools/none-ls.nvim" },
-			{ "nvimdev/guard.nvim" },
 			{
 				"williamboman/mason.nvim",
 				build = function()
