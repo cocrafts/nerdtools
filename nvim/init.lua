@@ -1,8 +1,8 @@
 -- scoop shim spawns cost ~20-27ms extra each (nvim libuv bench 2026-09-21:
--- rg 53→26ms, fzf 119→97ms); resolve the hot search binaries directly.
+-- rg 53→26ms); resolve the hot search binaries directly.
 if vim.fn.has("win32") == 1 then
 	local direct = {}
-	for _, app in ipairs({ "ripgrep", "fd", "fzf" }) do
+	for _, app in ipairs({ "ripgrep", "fd" }) do
 		local dir = vim.fn.expand("~/scoop/apps/" .. app .. "/current")
 		if vim.fn.isdirectory(dir) == 1 then
 			table.insert(direct, dir)

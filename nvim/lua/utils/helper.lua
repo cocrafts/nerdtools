@@ -54,21 +54,11 @@ M.layouts = {
 M.find_project_files = function(opts)
 	opts = opts or {}
 
-	if require("utils.config").use_telescope then
-		local builtin = require("telescope.builtin")
-		local ok = pcall(builtin.git_files, opts)
-
-		if not ok then
-			builtin.find_files(opts)
-		end
-		return
-	end
-
-	local fzf = require("fzf-lua")
-	local ok = pcall(fzf.git_files, opts)
+	local builtin = require("telescope.builtin")
+	local ok = pcall(builtin.git_files, opts)
 
 	if not ok then
-		fzf.files(opts)
+		builtin.find_files(opts)
 	end
 end
 
@@ -96,22 +86,7 @@ M.open_lsp_definitions = function()
 					vim.lsp.util.show_document(filtered_results[1], "utf-8", { focus = true })
 					return
 				elseif #filtered_results > 1 then
-					if require("utils.config").use_telescope then
-						require("telescope.builtin").lsp_definitions(M.layouts.full_cursor())
-					else
-						require("fzf-lua").lsp_definitions({
-							winopts = {
-								relative = "cursor",
-								width = 0.6,
-								height = 0.5,
-								row = 1,
-								col = 0,
-								preview = {
-									vertical = "up:60%",
-								},
-							},
-						})
-					end
+					require("telescope.builtin").lsp_definitions(M.layouts.full_cursor())
 					return
 				end
 			end

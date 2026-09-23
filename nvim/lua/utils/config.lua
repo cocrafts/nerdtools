@@ -2,7 +2,6 @@ return {
 	indent_size = 2,
 	json_indent_size = 2,
 	use_icons = true,
-	use_telescope = true,
 	use_noice = true,
 	use_lua = true,
 	use_python = true,

@@ -31,11 +31,7 @@ local on_attach = function(bufnr)
 	end)
 
 	mapkey("n", "gD", "Goto implementations", function()
-		if config.use_telescope then
-			require("telescope.builtin").lsp_implementations()
-		else
-			require("fzf-lua").lsp_implementations()
-		end
+		require("telescope.builtin").lsp_implementations()
 	end)
 
 	mapkey("n", "gs", "Incoming calls", function()

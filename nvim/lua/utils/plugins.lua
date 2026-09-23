@@ -272,16 +272,6 @@ return {
 	},
 	{ "nvim-lua/plenary.nvim", lazy = true },
 	{
-		"ibhagwan/fzf-lua",
-		cmd = "FzfLua",
-		dependencies = {
-			{ "nvim-tree/nvim-web-devicons" },
-		},
-		config = function()
-			require("core.fzf").configure()
-		end,
-	},
-	{
 		"nvim-telescope/telescope.nvim",
 		cmd = "Telescope",
 		init = function()

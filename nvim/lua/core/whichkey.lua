@@ -1,6 +1,5 @@
 local M = {}
-local config = require("utils.config")
-local pick = config.use_telescope and require("core.telescope") or require("core.fzf")
+local pick = require("core.telescope")
 local helper = require("utils.helper")
 local icons = require("utils.icons")
 
@@ -165,23 +164,23 @@ M.configure = function()
 			{ "<leader>pm", "<cmd>Mason<CR>", desc = "Mason" },
 
 			{ "<leader>f", group = "Finder" },
-			{ "<leader>ff", "<cmd>FzfLua resume<CR>", desc = "Resume last search" },
-			{ "<leader>fh", "<cmd>FzfLua help_tags<CR>", desc = "Help tags" },
+			{ "<leader>ff", "<cmd>Telescope resume<CR>", desc = "Resume last search" },
+			{ "<leader>fh", "<cmd>Telescope help_tags<CR>", desc = "Help tags" },
 			{
 				"<leader>fH",
-				"<cmd>FzfLua highlights<CR>",
+				"<cmd>Telescope highlights<CR>",
 				desc = "Find highlight groups",
 			},
-			{ "<leader>fr", "<cmd>FzfLua registers<CR>", desc = "Registers" },
-			{ "<leader>fk", "<cmd>FzfLua keymaps<CR>", desc = "Keymaps" },
-			{ "<leader>fc", "<cmd>FzfLua commands<CR>", desc = "Commands" },
-			{ "<leader>fC", "<cmd>FzfLua colorschemes<CR>", desc = "Colorsheme" },
-			{ "<leader>fm", "<cmd>FzfLua manpages<CR>", desc = "Man pages" },
+			{ "<leader>fr", "<cmd>Telescope registers<CR>", desc = "Registers" },
+			{ "<leader>fk", "<cmd>Telescope keymaps<CR>", desc = "Keymaps" },
+			{ "<leader>fc", "<cmd>Telescope commands<CR>", desc = "Commands" },
+			{ "<leader>fC", "<cmd>Telescope colorscheme<CR>", desc = "Colorsheme" },
+			{ "<leader>fm", "<cmd>Telescope man_pages<CR>", desc = "Man pages" },
 			{ "<leader>fj", "<cmd>Cheatsheet<CR>", desc = "Cheatsheet" },
 			{
 				"<leader>fe",
-				"<cmd>FzfLua lines<CR>",
-				desc = "Search lines in buffers",
+				"<cmd>Telescope current_buffer_fuzzy_find<CR>",
+				desc = "Search lines in buffer",
 			},
 
 			{ "<leader>g", group = "Git" },
@@ -205,11 +204,11 @@ M.configure = function()
 			{ "<leader>gW", "<cmd>GitBlameCopyFileURL<CR>", desc = "Copy line url" },
 			{ "<leader>gc", "<cmd>GitBlameOpenCommitURL<CR>", desc = "Open commit url" },
 			{ "<leader>gC", "<cmd>GitBlameCopyCommitURL<CR>", desc = "Copy commit url" },
-			{ "<leader>gb", "<cmd>FzfLua git_branches<CR>", desc = "Checkout branch" },
-			{ "<leader>gu", "<cmd>FzfLua git_commits<CR>", desc = "Checkout commit" },
+			{ "<leader>gb", "<cmd>Telescope git_branches<CR>", desc = "Checkout branch" },
+			{ "<leader>gu", "<cmd>Telescope git_commits<CR>", desc = "Checkout commit" },
 			{
 				"<leader>gU",
-				"<cmd>FzfLua git_bcommits<CR>",
+				"<cmd>Telescope git_bcommits<CR>",
 				desc = "Checkout commit (current file)",
 			},
 			{ "<leader>gf", ":DiffviewFileHistory %<CR>", desc = "File history %" },
@@ -223,7 +222,7 @@ M.configure = function()
 			{ "<leader>lA", "<cmd>lua vim.lsp.codelens.run()<CR>", desc = "CodeLens Action" },
 			{
 				"<leader>le",
-				"<cmd>FzfLua diagnostics_document<CR>",
+				"<cmd>Telescope diagnostics bufnr=0<CR>",
 				desc = "Document Dianogstics",
 			},
 			{ "<leader>lf", "<cmd>lua vim.lsp.buf.format()<CR>", desc = "Format" },
@@ -239,28 +238,17 @@ M.configure = function()
 			{
 				"<leader>li",
 				function()
-					require("fzf-lua").lsp_references({
-						winopts = {
-							relative = "cursor",
-							width = 0.6,
-							height = 0.5,
-							row = 1,
-							col = 0,
-							preview = {
-								vertical = "up:60%",
-							},
-						},
-					})
+					require("telescope.builtin").lsp_references(helper.layouts.full_cursor())
 				end,
 				desc = "References",
 			},
-			{ "<leader>lI", "<cmd>FzfLua lsp_implementations<CR>", desc = "Implementations" },
-			{ "<leader>ld", "<cmd>FzfLua lsp_definitions<CR>", desc = "Definitions" },
-			{ "<leader>lD", "<cmd>FzfLua lsp_typedefs<CR>", desc = "Type definitions" },
-			{ "<leader>lc", "<cmd>FzfLua lsp_incoming_calls<CR>", desc = "Incoming calls" },
-			{ "<leader>lC", "<cmd>FzfLua lsp_outgoing_calls<CR>", desc = "Outgoing calls" },
-			{ "<leader>ls", "<cmd>FzfLua lsp_document_symbols<CR>", desc = "Document Symbols" },
-			{ "<leader>lS", "<cmd>FzfLua lsp_workspace_symbols<CR>", desc = "Workspace symbols" },
+			{ "<leader>lI", "<cmd>Telescope lsp_implementations<CR>", desc = "Implementations" },
+			{ "<leader>ld", "<cmd>Telescope lsp_definitions<CR>", desc = "Definitions" },
+			{ "<leader>lD", "<cmd>Telescope lsp_type_definitions<CR>", desc = "Type definitions" },
+			{ "<leader>lc", "<cmd>Telescope lsp_incoming_calls<CR>", desc = "Incoming calls" },
+			{ "<leader>lC", "<cmd>Telescope lsp_outgoing_calls<CR>", desc = "Outgoing calls" },
+			{ "<leader>ls", "<cmd>Telescope lsp_document_symbols<CR>", desc = "Document Symbols" },
+			{ "<leader>lS", "<cmd>Telescope lsp_dynamic_workspace_symbols<CR>", desc = "Workspace symbols" },
 			{ "<leader>lp", "<cmd>Telescope package_info<CR>", desc = "Package actions" },
 			{ "<leader>lh", "<cmd>InlayHintsEnable<CR>", desc = "Enable Inlay-hints" },
 			{ "<leader>lH", "<cmd>InlayHintsDisable<CR>", desc = "Disable Inlay-hints" },
