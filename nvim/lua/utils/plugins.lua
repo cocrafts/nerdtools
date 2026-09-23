@@ -401,7 +401,7 @@ return {
 		end,
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 	},
-	{ "windwp/nvim-ts-autotag", event = "User FileOpened" },
+	{ "windwp/nvim-ts-autotag", event = "User FileOpened", opts = {} },
 	-- { "wakatime/vim-wakatime" },
 	{
 		"ethanholz/nvim-lastplace",

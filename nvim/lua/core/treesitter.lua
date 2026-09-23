@@ -41,9 +41,6 @@ M.configure = function()
 			"godot_resource",
 		},
 		ignore_install = {},
-		autotag = {
-			enable = true,
-		},
 		highlight = { enabled = true },
 		-- rainbow = { enable = true },
 		indent = { enable = true },
