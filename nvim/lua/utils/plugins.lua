@@ -108,7 +108,7 @@ return {
 				},
 			},
 			{ "nanotee/sqls.nvim", lazy = true },
-			{ "mrcjkb/rustaceanvim", version = "^6" },
+			{ "mrcjkb/rustaceanvim", version = "^9" },
 			{
 				"elixir-tools/elixir-tools.nvim",
 				dependencies = { "nvim-lua/plenary.nvim" },
