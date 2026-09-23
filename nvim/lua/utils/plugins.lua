@@ -107,10 +107,7 @@ return {
 					},
 				},
 			},
-			{ "nanotee/sqls.nvim" },
-			{ "jparise/vim-graphql" },
-			{ "alaviss/nim.nvim" },
-			{ "tact-lang/tact.vim" },
+			{ "nanotee/sqls.nvim", lazy = true },
 			{ "mrcjkb/rustaceanvim", version = "^6" },
 			{
 				"elixir-tools/elixir-tools.nvim",
@@ -124,6 +121,7 @@ return {
 			},
 			{
 				"jellydn/hurl.nvim",
+				ft = "hurl",
 				dependencies = {
 					"MunifTanjim/nui.nvim",
 					"nvim-lua/plenary.nvim",
@@ -133,10 +131,6 @@ return {
 					require("core.hurl").configure()
 				end,
 			},
-			{ "yuezk/vim-js" },
-			{ "HerringtonDarkholme/yats.vim" },
-			{ "maxmellon/vim-jsx-pretty" },
-			{ "lbrayner/vim-rzip" },
 			{
 				"ray-x/go.nvim",
 				dependencies = {
@@ -150,6 +144,7 @@ return {
 			},
 			{
 				"saecki/crates.nvim",
+				event = "BufRead Cargo.toml",
 				dependencies = { "nvim-lua/plenary.nvim" },
 				config = function()
 					require("crates").setup()
@@ -190,6 +185,13 @@ return {
 		end,
 	},
 	{ "echasnovski/mini.icons", lazy = true },
+	{ "lbrayner/vim-rzip" },
+	{ "jparise/vim-graphql", ft = "graphql" },
+	{ "alaviss/nim.nvim", ft = "nim" },
+	{ "tact-lang/tact.vim", ft = "tact" },
+	{ "yuezk/vim-js", ft = { "javascript", "javascriptreact" } },
+	{ "HerringtonDarkholme/yats.vim", ft = { "typescript", "typescriptreact" } },
+	{ "maxmellon/vim-jsx-pretty", ft = { "javascriptreact", "typescriptreact" } },
 	{
 		"miversen33/sunglasses.nvim",
 		event = "UIEnter",
