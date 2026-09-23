@@ -11,6 +11,7 @@ local globals = {
 	gitblame_delay = 0,
 	tmux_navigator_no_wrap = 1,
 	tmux_navigator_disable_when_zoomed = 1,
+	tmux_navigator_no_mappings = 1,
 }
 
 local opts = {

@@ -388,7 +388,7 @@ return {
 		"akinsho/toggleterm.nvim",
 		version = "*",
 		cmd = { "ToggleTerm", "TermExec", "ToggleTermToggleAll", "TermSelect" },
-		keys = { { [[<c-\>]], mode = "i" } },
+		keys = { { [[<c-\>]], mode = { "n", "i" } } },
 		config = function()
 			require("core.toggleterm").configure()
 		end,
