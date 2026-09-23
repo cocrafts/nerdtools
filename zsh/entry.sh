@@ -55,3 +55,5 @@ if [[ -d "$llvm_dir" ]]; then
 		export PATH="$PATH:$llvm_latest_version/bin"
 	fi
 fi
+
+[[ -f "$HOME/.config/nerdtools/local.zsh" ]] && source "$HOME/.config/nerdtools/local.zsh"
