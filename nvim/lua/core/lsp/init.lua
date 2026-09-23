@@ -7,8 +7,6 @@ local M = {}
 M.configure = function()
 	local lsp = require("lsp-zero")
 
-	require("neodev").setup()
-
 	if config.use_live_diagnostic then
 		vim.diagnostic.config({
 			update_in_insert = true,

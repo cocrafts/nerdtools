@@ -25,7 +25,6 @@ M.configure = function()
 					workspace = {
 						library = {
 							vim.fn.expand("$VIMRUNTIME"),
-							require("neodev.config").types(),
 						},
 						maxPreload = 5000,
 						preloadFileSize = 10000,

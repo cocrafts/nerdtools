@@ -242,7 +242,7 @@ return {
 		event = "VeryLazy",
 		ft = "metascript",
 	},
-	{ "folke/neodev.nvim", lazy = true },
+	{ "folke/lazydev.nvim", ft = "lua", opts = {} },
 	{
 		"folke/noice.nvim",
 		lazy = false,
