@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEFAULT_MODEL="Opus 5"
+DEFAULT_MODEL="Opus 5.5"
 
 input=$(cat)
 
