@@ -1,9 +1,10 @@
 return {
-	{ "folke/tokyonight.nvim" },
-	{ "lukas-reineke/onedark.nvim" },
-	{ "catppuccin/nvim" },
+	{ "folke/tokyonight.nvim", lazy = true },
+	{ "lukas-reineke/onedark.nvim", lazy = true },
+	{ "catppuccin/nvim", lazy = true },
 	{
 		"nmac427/guess-indent.nvim",
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			require("core.guess-indent").configure()
 		end,
@@ -188,7 +189,7 @@ return {
 			require("core.lsp").configure()
 		end,
 	},
-	{ "echasnovski/mini.icons" },
+	{ "echasnovski/mini.icons", lazy = true },
 	{
 		"miversen33/sunglasses.nvim",
 		event = "UIEnter",
@@ -219,6 +220,7 @@ return {
 	{
 		"kevinhwang91/nvim-ufo",
 		dependencies = { "kevinhwang91/promise-async" },
+		event = "User FileOpened",
 		config = function()
 			require("core.fold").configure()
 		end,
@@ -245,8 +247,7 @@ return {
 	{ "folke/lazydev.nvim", ft = "lua", opts = {} },
 	{
 		"folke/noice.nvim",
-		lazy = false,
-		priority = 1000,
+		event = "VeryLazy",
 		dependencies = { "MunifTanjim/nui.nvim" },
 		config = function()
 			require("core.noice").configure()
@@ -254,6 +255,7 @@ return {
 	},
 	{
 		"vuki656/package-info.nvim",
+		event = "BufRead package.json",
 		dependencies = { "MunifTanjim/nui.nvim" },
 		config = function()
 			require("core.package-info").configure()
@@ -261,6 +263,7 @@ return {
 	},
 	{
 		"folke/which-key.nvim",
+		event = "VeryLazy",
 		config = function()
 			require("core.whichkey").configure()
 		end,
@@ -277,6 +280,14 @@ return {
 	},
 	{
 		"nvim-telescope/telescope.nvim",
+		cmd = "Telescope",
+		init = function()
+			---@diagnostic disable-next-line: duplicate-set-field
+			vim.ui.select = function(...)
+				require("lazy").load({ plugins = { "telescope.nvim" } })
+				return vim.ui.select(...)
+			end
+		end,
 		dependencies = {
 			{ "nvim-lua/plenary.nvim" },
 			{ "nvim-tree/nvim-web-devicons" },
@@ -313,6 +324,14 @@ return {
 	},
 	{
 		"sindrets/diffview.nvim",
+		cmd = {
+			"DiffviewOpen",
+			"DiffviewClose",
+			"DiffviewFileHistory",
+			"DiffviewToggleFiles",
+			"DiffviewFocusFiles",
+			"DiffviewRefresh",
+		},
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
 			require("core.diff").configureDiffview()
@@ -349,16 +368,17 @@ return {
 			require("core.gitsigns").configure()
 		end,
 	},
-	{ "f-person/git-blame.nvim" },
+	{ "f-person/git-blame.nvim", event = "User FileOpened" },
 	{
 		"FabijanZulj/blame.nvim",
-		lazy = false,
+		cmd = "BlameToggle",
 		config = function()
 			require("core.diff").configureBlame()
 		end,
 	},
 	{
 		"lewis6991/satellite.nvim",
+		event = "User FileOpened",
 		config = function()
 			require("core.satellite").configure()
 		end,
@@ -374,6 +394,8 @@ return {
 	{
 		"akinsho/toggleterm.nvim",
 		version = "*",
+		cmd = { "ToggleTerm", "TermExec", "ToggleTermToggleAll", "TermSelect" },
+		keys = { { [[<c-\>]], mode = "i" } },
 		config = function()
 			require("core.toggleterm").configure()
 		end,
@@ -386,15 +408,16 @@ return {
 		end,
 		dependencies = { "nvim-treesitter/nvim-treesitter" },
 	},
-	{ "windwp/nvim-ts-autotag" },
+	{ "windwp/nvim-ts-autotag", event = "User FileOpened" },
 	-- { "wakatime/vim-wakatime" },
 	{
 		"ethanholz/nvim-lastplace",
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			require("core.lastplace").configure()
 		end,
 	},
-	{ "JoosepAlviste/nvim-ts-context-commentstring" },
+	{ "JoosepAlviste/nvim-ts-context-commentstring", lazy = true },
 	{
 		"numToStr/Comment.nvim",
 		config = function()
@@ -412,6 +435,7 @@ return {
 	},
 	{
 		"HiPhish/rainbow-delimiters.nvim",
+		event = "User FileOpened",
 		config = function()
 			require("core.rainbow").configure()
 		end,
@@ -452,6 +476,7 @@ return {
 	{
 		-- highlight other uses of the word under the cursor using regex matching
 		"RRethy/vim-illuminate",
+		event = "User FileOpened",
 		config = function()
 			require("core.illuminate").configure()
 		end,
@@ -459,6 +484,7 @@ return {
 	{
 		-- highlight/preview color code
 		"brenoprata10/nvim-highlight-colors",
+		event = "User FileOpened",
 		config = function()
 			require("core.highlight-colors").configure()
 		end,
