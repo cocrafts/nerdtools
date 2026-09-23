@@ -13,7 +13,6 @@ M.configure = function()
 	local cmp_types = require("cmp.types.cmp")
 	local cmp_window = require("cmp.config.window")
 	local cmp_mapping = require("cmp.config.mapping")
-	local action = require("lsp-zero").cmp_action()
 	local ConfirmBehavior = cmp_types.ConfirmBehavior
 	local max_width = 0
 	local duplicates_default = 0
@@ -68,8 +67,20 @@ M.configure = function()
 		-- Ctrl+Space to trigger completion menu
 		["<C-Space>"] = cmp.mapping.complete(),
 		-- Navigate between snippet placeholder
-		["<C-f>"] = action.luasnip_jump_forward(),
-		["<C-b>"] = action.luasnip_jump_backward(),
+		["<C-f>"] = cmp_mapping(function(fallback)
+			if luasnip.jumpable(1) then
+				luasnip.jump(1)
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
+		["<C-b>"] = cmp_mapping(function(fallback)
+			if luasnip.jumpable(-1) then
+				luasnip.jump(-1)
+			else
+				fallback()
+			end
+		end, { "i", "s" }),
 	})
 
 	---@class cmp.FormattingConfig
@@ -132,13 +143,13 @@ M.configure = function()
 		mapping = mapping,
 		formatting = formatting,
 		sources = {
-			{ name = "crates",     priority = 19 },
-			{ name = "nvim_lsp",   priority = 12 },
-			{ name = "path",       priority = 10 },
-			{ name = "luasnip",    priority = 8, keyword_length = 2 },
+			{ name = "crates", priority = 19 },
+			{ name = "nvim_lsp", priority = 12 },
+			{ name = "path", priority = 10 },
+			{ name = "luasnip", priority = 8, keyword_length = 2 },
 			{ name = "treesitter", priority = 7 },
-			{ name = "codeium",    priority = 6 },
-			{ name = "buffer",     priority = 6, keyword_length = 3 },
+			{ name = "codeium", priority = 6 },
+			{ name = "buffer", priority = 6, keyword_length = 3 },
 		},
 		window = {
 			completion = bordered_window,

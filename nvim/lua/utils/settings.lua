@@ -30,6 +30,7 @@ local opts = {
 	number = true,        -- show line numbers
 	relativenumber = true, -- show relative numbers
 	numberwidth = 3,
+	signcolumn = "yes",
 	termguicolors = true,
 	-- invisible characters
 	list = true,

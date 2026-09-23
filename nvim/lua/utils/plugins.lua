@@ -48,10 +48,10 @@ return {
 		end,
 	},
 	{
-		"VonHeikemen/lsp-zero.nvim",
-		branch = "v3.x",
+		"neovim/nvim-lspconfig",
+		event = { "BufReadPre", "BufNewFile" },
+		cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUpdate", "MasonLog" },
 		dependencies = {
-			{ "neovim/nvim-lspconfig" },
 			{ "nvimtools/none-ls.nvim" },
 			{
 				"williamboman/mason.nvim",

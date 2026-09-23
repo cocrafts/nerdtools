@@ -1,11 +1,62 @@
-local fzf = require("fzf-lua")
 local config = require("utils.config")
 local helper = require("utils.helper")
 
 local M = {}
 
+local on_attach = function(bufnr)
+	local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+	local mapkey = function(mode, key, desc, cb)
+		vim.keymap.set(mode, key, cb, {
+			desc = desc,
+			buffer = bufnr,
+			remap = false,
+		})
+	end
+
+	if filetype == "rust" then
+		vim.cmd("set autoindent tabstop=2 shiftwidth=2")
+	elseif filetype == "json" then
+		vim.cmd("set expandtab shiftwidth=2")
+	end
+
+	mapkey("n", "K", "Preview signature", function()
+		local winid = require("ufo").peekFoldedLinesUnderCursor()
+		if not winid then
+			vim.lsp.buf.hover()
+		end
+	end)
+
+	mapkey("n", "gd", "Goto definition", function()
+		helper.open_lsp_definitions()
+	end)
+
+	mapkey("n", "gD", "Goto implementations", function()
+		if config.use_telescope then
+			require("telescope.builtin").lsp_implementations()
+		else
+			require("fzf-lua").lsp_implementations()
+		end
+	end)
+
+	mapkey("n", "gs", "Incoming calls", function()
+		vim.lsp.buf.incoming_calls()
+	end)
+
+	mapkey("n", "gS", "Outgoing calls", function()
+		vim.lsp.buf.outgoing_calls()
+	end)
+
+	mapkey("n", "[d", "Previous diagnostic", function()
+		vim.diagnostic.jump({ count = -1, float = true })
+	end)
+
+	mapkey("n", "]d", "Next diagnostic", function()
+		vim.diagnostic.jump({ count = 1, float = true })
+	end)
+end
+
 M.configure = function()
-	local lsp = require("lsp-zero")
+	vim.diagnostic.config({ float = { border = "rounded" } })
 
 	if config.use_live_diagnostic then
 		vim.diagnostic.config({
@@ -13,59 +64,12 @@ M.configure = function()
 		})
 	end
 
-	lsp.on_attach(function(client, bufnr)
-		local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
-		local mapkey = function(mode, key, desc, cb)
-			vim.keymap.set(mode, key, cb, {
-				desc = desc,
-				buffer = bufnr,
-				remap = false,
-			})
-		end
-
-		if filetype == "rust" then
-			vim.cmd("set autoindent tabstop=2 shiftwidth=2")
-		elseif filetype == "json" then
-			vim.cmd("set expandtab shiftwidth=2")
-		end
-
-		mapkey("n", "K", "Preview signature", function()
-			local winid = require("ufo").peekFoldedLinesUnderCursor()
-			if not winid then
-				vim.lsp.buf.hover()
-			end
-		end)
-
-		mapkey("n", "gd", "Goto definition", function()
-			helper.open_lsp_definitions()
-		end)
-
-		mapkey("n", "gD", "Goto implementations", function()
-			if config.use_telescope then
-				require("telescope.builtin").lsp_implementations()
-			else
-				fzf.lsp_implementations()
-			end
-		end)
-
-		mapkey("n", "gs", "Incoming calls", function()
-			vim.lsp.buf.incoming_calls()
-		end)
-
-		mapkey("n", "gS", "Outgoing calls", function()
-			vim.lsp.buf.outgoing_calls()
-		end)
-
-		mapkey("n", "[d", "Previous diagnostic", function()
-			vim.diagnostic.jump({ count = -1, float = true })
-		end)
-
-		mapkey("n", "]d", "Next diagnostic", function()
-			vim.diagnostic.jump({ count = 1, float = true })
-		end)
-	end)
-
-	lsp.setup()
+	vim.api.nvim_create_autocmd("LspAttach", {
+		group = vim.api.nvim_create_augroup("core_lsp_attach", { clear = true }),
+		callback = function(args)
+			on_attach(args.buf)
+		end,
+	})
 
 	require("core.lsp.terraform").configure()
 	require("core.lsp.eslint").configure()
