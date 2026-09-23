@@ -24,6 +24,22 @@ transcript. Memory points to the card and never copies it.
 Update State before a session ends. Delete the card only after Done when holds on the main
 branch and every fact worth keeping has moved into code, tests, or tracked documentation.
 
+## Kickstart — the line the person pastes
+
+A session that leaves work for another session ends its reply with one line per session to
+open, in the order to run them, each marked with when: now, after `<name>` lands, or when a
+worker slot is free. The person pastes the line and nothing else.
+
+- **A worktree exists:** `cd <worktree>; claude`. The context hook injects the card, so the
+  line carries no prompt.
+- **No worktree yet:** this covers a brief for another repository, whose worktree only a
+  session started there may create, and an inbox note. The line is
+  `cd <main checkout>; claude "Read <absolute path of the brief> and run it."`, and the brief
+  says which worktree to create.
+
+A card or brief ends with the same line under `Kickstart:`, so a later reader finds it without
+the transcript. The line runs unchanged in PowerShell, bash and zsh.
+
 ## Session lifecycle
 
 At session start, read the card injected by the context hook and state the current step in
