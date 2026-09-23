@@ -57,11 +57,11 @@ M.configure = function()
 		end)
 
 		mapkey("n", "[d", "Previous diagnostic", function()
-			vim.diagnostic.goto_prev()
+			vim.diagnostic.jump({ count = -1, float = true })
 		end)
 
 		mapkey("n", "]d", "Next diagnostic", function()
-			vim.diagnostic.goto_next()
+			vim.diagnostic.jump({ count = 1, float = true })
 		end)
 	end)
 

@@ -5,7 +5,7 @@ local M = {}
 
 M.initialize = function()
 	-- Auto-install lazy.nvim if not present
-	if not vim.loop.fs_stat(lazypath) then
+	if not vim.uv.fs_stat(lazypath) then
 		print("Installing lazy.nvim....")
 
 		vim.fn.system({

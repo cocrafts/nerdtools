@@ -7,7 +7,7 @@ local ensure_installed = {
 }
 
 M.configure = function()
-	local sysname = vim.loop.os_uname().sysname
+	local sysname = vim.uv.os_uname().sysname
 	-- macOS and Windows get LSP servers auto-installed through Mason (on
 	-- Windows they need node from mise as the runtime for the npm-based ones).
 	-- Linux stays opted out for now.

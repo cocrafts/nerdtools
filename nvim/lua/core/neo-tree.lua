@@ -1,6 +1,6 @@
 local M = {}
 local icons = require("utils.icons")
-local uv = vim.loop
+local uv = vim.uv
 
 M.open = function(path)
 	if uv.os_uname().sysname == "Darwin" then

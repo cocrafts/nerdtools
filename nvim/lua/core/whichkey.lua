@@ -61,7 +61,7 @@ M.configure = function()
 			{
 				"<leader>e",
 				function()
-					require("neo-tree.command").execute({ toggle = true, dir = vim.loop.cwd() })
+					require("neo-tree.command").execute({ toggle = true, dir = vim.uv.cwd() })
 				end,
 				desc = "Clipboard history",
 			},
@@ -229,10 +229,10 @@ M.configure = function()
 			{ "<leader>lf", "<cmd>lua vim.lsp.buf.format()<CR>", desc = "Format" },
 			{ "<leader>ll", "<cmd>LspInfo<CR>", desc = "Info" },
 			{ "<leader>lL", "<cmd>LspInstallInfo<CR>", desc = "Installer Info" },
-			{ "<leader>lj", "<cmd>lua vim.diagnostic.goto_next()<CR>", desc = "Next Dianogstics" },
+			{ "<leader>lj", "<cmd>lua vim.diagnostic.jump({ count = 1, float = true })<CR>", desc = "Next Dianogstics" },
 			{
 				"<leader>lk",
-				"<cmd>lua vim.diagnostic.goto_prev()<CR>",
+				"<cmd>lua vim.diagnostic.jump({ count = -1, float = true })<CR>",
 				desc = "Previous Dianogstics",
 			},
 			{ "<leader>lr", "<cmd>lua vim.lsp.buf.rename()<CR>", desc = "Rename" },
