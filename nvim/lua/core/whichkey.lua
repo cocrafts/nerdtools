@@ -184,17 +184,6 @@ M.configure = function()
 			},
 
 			{ "<leader>g", group = "Git" },
-			{
-				"<leader>gj",
-				"<cmd>Telescope advanced_git_search diff_commit_file<CR>",
-				desc = "File affected commits",
-			},
-			{ "<leader>gl", "<cmd>Telescope advanced_git_search search_log_content<CR>", desc = "Search log contents" },
-			{
-				"<leader>gL",
-				"<cmd>Telescope advanced_git_search diff_commit_line<CR>",
-				desc = "Line affected commits",
-			},
 			{ "<leader>gp", "<cmd>lua require('gitsigns').preview_hunk()<CR>", desc = "Preview hunk" },
 			{ "<leader>gr", "<cmd>lua require('gitsigns').reset_hunk()<CR>", desc = "Reset hunk" },
 			{ "<leader>gR", "<cmd>lua require('gitsigns').reset_buffer()<CR>", desc = "Reset buffer" },
@@ -226,8 +215,8 @@ M.configure = function()
 				desc = "Document Dianogstics",
 			},
 			{ "<leader>lf", "<cmd>lua vim.lsp.buf.format()<CR>", desc = "Format" },
-			{ "<leader>ll", "<cmd>LspInfo<CR>", desc = "Info" },
-			{ "<leader>lL", "<cmd>LspInstallInfo<CR>", desc = "Installer Info" },
+			{ "<leader>ll", "<cmd>checkhealth vim.lsp<CR>", desc = "Info" },
+			{ "<leader>lL", "<cmd>Mason<CR>", desc = "Installer Info" },
 			{ "<leader>lj", "<cmd>lua vim.diagnostic.jump({ count = 1, float = true })<CR>", desc = "Next Dianogstics" },
 			{
 				"<leader>lk",
