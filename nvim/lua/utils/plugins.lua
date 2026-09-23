@@ -273,6 +273,7 @@ return {
 	{ "nvim-lua/plenary.nvim", lazy = true },
 	{
 		"ibhagwan/fzf-lua",
+		cmd = "FzfLua",
 		dependencies = {
 			{ "nvim-tree/nvim-web-devicons" },
 		},
