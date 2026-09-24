@@ -27,7 +27,6 @@ case "$effort" in
   high)   ecolor=$'\033[92m' ;;
   xhigh)  ecolor=$'\033[93m' ;;
   max)    ecolor=$'\033[91m' ;;
-  ultracode) ecolor=$'\033[95m' ;;
   *)      ecolor='' ;;
 esac
 ereset=''
