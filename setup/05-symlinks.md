@@ -238,6 +238,14 @@ New-Item -ItemType Junction -Force -Path "$env:LOCALAPPDATA\nvim" -Target "$HOME
 # Wezterm reads ~/.config on Windows too
 New-Item -ItemType Junction -Force -Path "$HOME\.config\wezterm" -Target "$HOME\nerdtools\conf\wezterm" | Out-Null
 
+# Alacritty ignores ~/.config on Windows and reads only %APPDATA%\alacritty
+New-Item -ItemType Junction -Force -Path "$env:APPDATA\alacritty" -Target "$HOME\nerdtools\conf\alacritty" | Out-Null
+# Its default shell is Windows PowerShell 5.1, which skips entry.ps1 (no XDG_CONFIG_HOME, so herdr
+# falls back to %APPDATA%\herdr). windows.toml opens pwsh 7 like Wezterm and swaps the font; alacritty.toml
+# imports this path after defaults.toml, so it overrides; macOS/Linux have no such file and keep defaults.toml.
+New-Item -ItemType Directory -Force -Path "$HOME\.config\nerdtools" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\nerdtools\alacritty.toml" -Target "$HOME\nerdtools\conf\alacritty\windows.toml" | Out-Null
+
 # git's default core.excludesfile. A file needs SymbolicLink (junctions are directories only),
 # so this line needs Developer Mode or an elevated shell — or copy the file and re-copy on change.
 New-Item -ItemType Directory -Force -Path "$HOME\.config\git" | Out-Null
