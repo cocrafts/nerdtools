@@ -51,8 +51,8 @@ onboarding = false
 # manifest_check = true
 
 [keys]
-focus_agent = "cmd+1..9"
-switch_workspace = "cmd+ctrl+1..9"
+focus_agent = ["cmd+ctrl+1..9", "alt+shift+1..9"]
+switch_workspace = ["cmd+1..9", "alt+1..9"]
 next_tab = ["prefix+n", "ctrl+tab"]
 previous_tab = ["prefix+p", "ctrl+shift+tab"]
 new_tab = ["prefix+c", "cmd+t"]
