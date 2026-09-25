@@ -287,25 +287,25 @@ pane_history = false
 # scrollback_limit_bytes = 10000000
 
 [[keys.command]]
-key = "ctrl+h"
+key = ["ctrl+h", "alt+shift+h"]
 type = "plugin_action"
 command = "vim-herdr-navigation.left"
 description = "navigate left (vim/herdr)"
 
 [[keys.command]]
-key = "ctrl+j"
+key = ["ctrl+j", "alt+shift+j"]
 type = "plugin_action"
 command = "vim-herdr-navigation.down"
 description = "navigate down (vim/herdr)"
 
 [[keys.command]]
-key = "ctrl+k"
+key = ["ctrl+k", "alt+shift+k"]
 type = "plugin_action"
 command = "vim-herdr-navigation.up"
 description = "navigate up (vim/herdr)"
 
 [[keys.command]]
-key = "ctrl+l"
+key = ["ctrl+l", "alt+shift+l"]
 type = "plugin_action"
 command = "vim-herdr-navigation.right"
 description = "navigate right (vim/herdr)"
