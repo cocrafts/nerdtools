@@ -1,0 +1,26 @@
+[font]
+size = 10.8
+
+[font.bold]
+family = "Operator Saigon"
+style = "Regular"
+
+[font.bold_italic]
+family = "Operator Saigon"
+style = "Italic"
+
+[font.italic]
+family = "Operator Saigon"
+style = "Italic"
+
+[font.normal]
+family = "Operator Saigon"
+style = "Regular"
+
+[font.offset]
+x = 1
+y = 2
+
+[terminal.shell]
+program = "pwsh.exe"
+args = ["-NoLogo"]

@@ -1,0 +1,22 @@
+[font]
+size = 14.2
+
+[font.bold]
+family = "OperatorMono Nerd Font Mono"
+style = "Medium"
+
+[font.bold_italic]
+family = "OperatorMono Nerd Font Mono"
+style = "Medium"
+
+[font.italic]
+family = "OperatorMono Nerd Font Mono"
+style = "Medium"
+
+[font.normal]
+family = "OperatorMono Nerd Font Mono"
+style = "Medium"
+
+[font.offset]
+x = 1
+y = 4
