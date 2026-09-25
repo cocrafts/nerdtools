@@ -209,6 +209,10 @@ hide_tab_bar_when_single_tab = true
 
 # Background notification popup delivery
 agent_panel_sort = "spaces"
+
+[ui.sidebar.agents]
+rows = [["state_icon", "machine", "workspace", "tab"], ["terminal_title_stripped"]]
+
 [ui.toast]
 # off = disable pop-up notifications
 # herdr = show in-app toasts
