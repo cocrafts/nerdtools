@@ -15,5 +15,10 @@ chars = "\f"
 key = "K"
 mods = "Command"
 
+[[keyboard.bindings]]
+chars = "\u001B\r"
+key = "Return"
+mods = "Shift"
+
 [window]
 decorations = "full"
