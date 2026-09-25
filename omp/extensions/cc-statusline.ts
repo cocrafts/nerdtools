@@ -35,8 +35,8 @@ interface UsageReport {
 }
 
 interface AuthStorageLike {
-	fetchUsageReports(options?: { signal?: AbortSignal }): Promise<UsageReport[] | null>;
-	getOAuthAccountIdentity?(provider: string): { email?: string } | undefined;
+	usage: { reports(options?: { signal?: AbortSignal }): Promise<UsageReport[] | null> };
+	oauth: { identity(provider: string): { email?: string } | undefined };
 }
 
 interface StatusContext {
@@ -150,7 +150,7 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 			const now = Date.now();
 			if (now - lastFetch > QUOTA_REFRESH_MS) {
 				lastFetch = now;
-				cachedReports = await auth.fetchUsageReports().catch(() => null);
+				cachedReports = await auth.usage.reports().catch(() => null);
 			}
 			const report = cachedReports?.find(r => r.provider === provider);
 			if (report) {
@@ -161,7 +161,7 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 				if (fiveHour) parts.push(quotaText(usedFraction(fiveHour) ?? 0, fiveHour.window?.resetsAt));
 				if (sevenDay) parts.push(quotaText(usedFraction(sevenDay) ?? 0, sevenDay.window?.resetsAt));
 			}
-			const email = auth.getOAuthAccountIdentity?.(provider)?.email;
+			const email = auth.oauth.identity(provider)?.email;
 			if (email) parts.push(`${GRAY}${email}${FG_DEFAULT}`);
 		}
 

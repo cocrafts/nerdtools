@@ -30,6 +30,7 @@ USAGE
 
 die() { printf 'wt: %s\n' "$*" >&2; exit 1; }
 say() { printf '%s\n' "$*" >&2; }
+native_dir() { (cd "$1" && pwd -W 2>/dev/null) || printf '%s\n' "$1"; }
 
 COMMAND=${1:-help}
 case "$COMMAND" in
@@ -318,10 +319,10 @@ wt_hook_field() {
 }
 
 cmd_hook_create() {
-  local name
+  local name w
   name=$(wt_hook_field name)
   [ -n "$name" ] || die "hook-create: input has no name"
-  cmd_new "$name"
+  w=$(cmd_new "$name") && native_dir "$w"
 }
 
 cmd_hook_remove() {
