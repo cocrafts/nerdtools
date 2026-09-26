@@ -81,6 +81,14 @@ M.configure = function()
 		},
 		filesystem = {
 			commands = {},
+			window = {
+				-- Telex IMEs (UniKey) send <BS> to place a tone mark ("y" then "j" becomes <BS> "ỵ"),
+				-- so <bs> must stay off navigate_up in every source.
+				mappings = {
+					["<bs>"] = "none",
+					["-"] = "navigate_up",
+				},
+			},
 			follow_current_file = {
 				enabled = true,
 			},
@@ -106,6 +114,14 @@ M.configure = function()
 					".DS_Store",
 				},
 				never_show_by_pattern = {},
+			},
+		},
+		buffers = {
+			window = {
+				mappings = {
+					["<bs>"] = "none",
+					["-"] = "navigate_up",
+				},
 			},
 		},
 		default_component_configs = {
