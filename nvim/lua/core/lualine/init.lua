@@ -17,7 +17,7 @@ M.configure = function()
 			-- section_separators = vim.g.neovide and { left = "", right = "" } or { left = "", right = "" },
 			section_separators = { left = "", right = "" },
 			-- section_separators = { left = "", right = "" },
-			disabled_filetypes = { "alpha" },
+			disabled_filetypes = { "ministarter" },
 		},
 		sections = {
 			lualine_a = {

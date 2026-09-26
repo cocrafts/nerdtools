@@ -185,6 +185,12 @@ return {
 		end,
 	},
 	{ "echasnovski/mini.icons", lazy = true },
+	{
+		"echasnovski/mini.starter",
+		config = function()
+			require("core.starter").configure()
+		end,
+	},
 	{ "lbrayner/vim-rzip" },
 	{ "jparise/vim-graphql", ft = "graphql" },
 	{ "alaviss/nim.nvim", ft = "nim" },
