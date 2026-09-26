@@ -64,7 +64,7 @@ function sameMods(send: BitSet<Mod>): BitSet<PcMod> {
 
 export function pcChord(key: Key, send: BitSet<Mod>): Result<PcChord, PcError> {
 	if (passesThrough(send)) {
-		return Result.ok({ key: key, mods: sameMods(send) });
+		return Result.ok({ key, mods: sameMods(send) });
 	}
 	for (const translation of translations) {
 		if (translation.key == key && translation.send == send) {

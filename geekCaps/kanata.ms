@@ -104,11 +104,19 @@ function macChordName(mods: BitSet<Mod>, key: Key): string {
 	return name + kanataKey(key);
 }
 
+function heldKeyNames(): string {
+	const names: string[] = [];
+	for (const position of heldPositions) {
+		names.push(position.key);
+	}
+	return names.join(" ");
+}
+
 function heldCondition(held: BitSet<Mod>): string {
 	let pressed = "";
 	let released = "";
 	for (const position of heldPositions) {
-		const check = " (input real " + position.key + ")";
+		const check = ` (input real ${position.key})`;
 		if (held.has(position.mod)) {
 			pressed += check;
 		} else {
@@ -116,24 +124,20 @@ function heldCondition(held: BitSet<Mod>): string {
 		}
 	}
 	if (pressed == "") {
-		return "((not" + released + "))";
+		return `((not${released}))`;
 	}
 	if (released == "") {
-		return "((and" + pressed + "))";
+		return `((and${pressed}))`;
 	}
-	return "((and" + pressed + " (not" + released + ")))";
+	return `((and${pressed} (not${released})))`;
 }
 
 function chordAction(chord: PcChord): string {
-	let release = "";
-	for (const position of heldPositions) {
-		release += (release == "" ? "" : " ") + position.key;
-	}
 	let keys = "";
 	for (const mod of chord.mods) {
-		keys += pcModKey(mod) + " ";
+		keys += `${pcModKey(mod)} `;
 	}
-	return "(unmod (" + release + ") " + keys + kanataKey(chord.key) + ")";
+	return `(unmod (${heldKeyNames()}) ${keys}${kanataKey(chord.key)})`;
 }
 
 function containsKey(keys: Span<Key>, key: Key): boolean {
@@ -175,49 +179,57 @@ export function kanataConfig(this geek: GeekCaps): Result<string, string> {
 					continue;
 				}
 				for (const variation of map.variations) {
-					const label = "Caps+" + macChordName(variation.held, from);
+					const label = `Caps+${macChordName(variation.held, from)}`;
 					if (variation.held.has(Mod.Fn)) {
-						problems += label + ": Fn cannot be held on a PC keyboard\n";
+						problems += `${label}: Fn cannot be held on a PC keyboard\n`;
 						continue;
 					}
 					if (containsMods(seen, variation.held)) {
-						problems += label + ": mapped twice\n";
+						problems += `${label}: mapped twice\n`;
 						continue;
 					}
 					seen.push(variation.held);
 					const chord = pcChord(map.to, variation.send);
 					if (!chord.ok) {
 						const mac = macChordName(variation.send, map.to);
-						problems += label + ": no PC chord for " + mac + "\n";
+						problems += `${label}: no PC chord for ${mac}\n`;
 						continue;
 					}
-					cases += "\n    " + heldCondition(variation.held) + " " +
-						chordAction(chord.value) + " break";
+					const action = chordAction(chord.value);
+					cases += `\n    ${heldCondition(variation.held)} ${action} break`;
 				}
 			}
 		}
-		const alias = "g-" + kanataKey(from);
-		aliases += "\n  " + alias + " (switch" + cases + ")";
-		layerRows += "\n  " + kanataKey(from) + " @" + alias;
+		const alias = `g-${kanataKey(from)}`;
+		aliases += `\n  ${alias} (switch${cases})`;
+		layerRows += `\n  ${kanataKey(from)} @${alias}`;
 	}
 	if (problems != "") {
 		return Result.err(problems);
 	}
-	let heldKeys = "";
-	for (const position of heldPositions) {
-		heldKeys += (heldKeys == "" ? "" : " ") + position.key;
-	}
 	let remapRows = "";
 	for (const remap of geek.remaps) {
-		remapRows += "\n  " + kanataKey(remap.from) + " " + kanataKey(remap.to);
+		remapRows += `\n  ${kanataKey(remap.from)} ${kanataKey(remap.to)}`;
 	}
-	const layerKey = "geek (tap-hold-press " + String(tapRepressMs) + " " + String(holdMs) + " " +
-		kanataKey(geek.layer.tap) + " (layer-while-held geek))";
-	return Result.ok(
-		"(defcfg\n  process-unmapped-keys yes\n)\n\n" +
-		"(defsrc\n  " + heldKeys + "\n)\n\n" +
-		"(defalias\n  " + layerKey + aliases + "\n)\n\n" +
-		"(deflayermap (base)\n  " + kanataKey(geek.layer.key) + " @geek" + remapRows + "\n)\n\n" +
-		"(deflayermap (geek)" + layerRows + "\n  ___ XX\n)\n",
-	);
+	const tap = kanataKey(geek.layer.tap);
+	return Result.ok(`(defcfg
+  process-unmapped-keys yes
+)
+
+(defsrc
+  ${heldKeyNames()}
+)
+
+(defalias
+  geek (tap-hold-press ${tapRepressMs} ${holdMs} ${tap} (layer-while-held geek))${aliases}
+)
+
+(deflayermap (base)
+  ${kanataKey(geek.layer.key)} @geek${remapRows}
+)
+
+(deflayermap (geek)${layerRows}
+  ___ XX
+)
+`);
 }
