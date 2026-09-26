@@ -9,7 +9,9 @@ usage: wt.sh <command> [args]
   card [name|path]              print a worktree card
   ls                            list linked worktrees and their card goals
   rm <name|path> [--force]      retire a worktree after safety checks
-  context                       print session context for the current worktree
+  context                       print session context for the current worktree: the
+                                handoff at <card root>/handoff/<name>.md if one exists,
+                                then the card
   land [name|path] [options]    rebase, gate and fast-forward the main checkout
 
 land options:
@@ -72,6 +74,7 @@ WT_WORKTREE_ROOT=${WT_WORKTREE_ROOT:-$(dirname "$WT_MAIN")}
 
 wt_slug() { printf '%s' "$1" | tr '/' '-'; }
 wt_card_path() { printf '%s/%s.md\n' "$WT_CARD_ROOT" "$(wt_slug "$1")"; }
+wt_handoff_path() { printf '%s/handoff/%s.md\n' "$WT_CARD_ROOT" "$(wt_slug "$1")"; }
 wt_worktree_path() { printf '%s/%s-wt-%s\n' "$WT_WORKTREE_ROOT" "$(basename "$WT_MAIN")" "$(wt_slug "$1")"; }
 
 wt_branch_name() {
@@ -200,6 +203,17 @@ wt_context_inbox() {
   count=$(find "$dir" -maxdepth 1 -name '*.md' 2>/dev/null | wc -l | tr -d ' ')
   [ "$count" -gt 0 ] || return 0
   printf '%s note(s) in %s — read them before other work\n' "$count" "$dir"
+}
+
+wt_context_handoff() {
+  local name handoff
+  name=$(wt_card_name "$WT_CURRENT") || return 0
+  handoff=$(wt_handoff_path "$name")
+  [ -f "$handoff" ] || return 0
+  printf 'Handoff from the previous session, %s, written %s. Read it before the card and check the local state it names. Delete it once your first step is under way. Where it disagrees with the card, the card wins.\n' \
+    "$handoff" "$(date -r "$handoff" '+%Y-%m-%d %H:%M' 2>/dev/null || printf 'at an unknown time')"
+  cat "$handoff"
+  printf '\n'
 }
 
 cmd_context() {
@@ -347,7 +361,7 @@ case "$COMMAND" in
   card) cmd_card "$@" ;;
   ls) cmd_ls "$@" ;;
   rm) cmd_rm "$@" ;;
-  context) cmd_context "$@" ;;
+  context) wt_context_handoff; cmd_context "$@" ;;
   land) cmd_land "$@" ;;
   hook-create) cmd_hook_create ;;
   hook-remove) cmd_hook_remove ;;
