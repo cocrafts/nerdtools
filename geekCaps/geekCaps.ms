@@ -1,6 +1,7 @@
 import { ensureDir, writeFile } from "std/fs";
 import { homeDir } from "std/os";
 import { exit } from "std/process";
+import { Keyboard, kanataConfig } from "./kanata";
 import { geekCaps } from "./rules/index";
 
 // PARKED: std/os does not resolve on Raiser, and its header import fails on Windows C. Cards:
@@ -24,19 +25,14 @@ function writeConfig(dir: string, file: string, text: string): Result<string, st
 }
 
 when (macos) {
-	import { karabinerJson } from "./karabiner";
-
-	function generate(): Result<string, string> {
-		const dir = `${configHome()}/karabiner/assets/complex_modifications`;
-		return writeConfig(dir, "capslock.json", `${geekCaps.karabinerJson()}\n`);
-	}
+	const keyboard = Keyboard.Mac;
 } else {
-	import { kanataConfig } from "./kanata";
+	const keyboard = Keyboard.Pc;
+}
 
-	function generate(): Result<string, string> {
-		const config = try geekCaps.kanataConfig();
-		return writeConfig(`${configHome()}/kanata`, "kanata.kbd", config);
-	}
+function generate(): Result<string, string> {
+	const config = try geekCaps.kanataConfig(keyboard);
+	return writeConfig(`${configHome()}/kanata`, "kanata.kbd", config);
 }
 
 function main(): int32 {

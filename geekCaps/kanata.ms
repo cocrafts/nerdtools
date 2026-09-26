@@ -1,12 +1,24 @@
 import { GeekCaps, Key, Mod } from "./layout";
-import { PcChord, PcMod, pcChord } from "./pc";
+import { PcError, PcMod, pcChord } from "./pc";
+
+export enum Keyboard {
+	Mac,
+	Pc,
+}
 
 struct HeldPosition {
 	mod: Mod;
 	key: string;
 }
 
-const heldPositions: HeldPosition[] = [
+const macHeld: HeldPosition[] = [
+	{ mod: Mod.Cmd, key: "lmet" },
+	{ mod: Mod.Opt, key: "lalt" },
+	{ mod: Mod.Ctrl, key: "lctl" },
+	{ mod: Mod.Shift, key: "lsft" },
+];
+
+const pcHeld: HeldPosition[] = [
 	{ mod: Mod.Cmd, key: "lalt" },
 	{ mod: Mod.Opt, key: "lmet" },
 	{ mod: Mod.Ctrl, key: "lctl" },
@@ -16,7 +28,21 @@ const heldPositions: HeldPosition[] = [
 const tapRepressMs: int32 = 200;
 const holdMs: int32 = 1000;
 
-function kanataKey(key: Key): string {
+function heldPositions(this keyboard: Keyboard): HeldPosition[] {
+	return match (keyboard) {
+		Keyboard.Mac => macHeld,
+		Keyboard.Pc => pcHeld,
+	};
+}
+
+function rightCommandKey(this keyboard: Keyboard): string {
+	return match (keyboard) {
+		Keyboard.Mac => "rmet",
+		Keyboard.Pc => "ralt",
+	};
+}
+
+function kanataKey(this keyboard: Keyboard, key: Key): string {
 	return match (key) {
 		Key.Num0 => "0",
 		Key.Num1 => "1",
@@ -67,13 +93,23 @@ function kanataKey(key: Key): string {
 		Key.Period => "Period",
 		Key.Quote => "apos",
 		Key.RightArrow => "rght",
-		Key.RightCommand => "ralt",
+		Key.RightCommand => keyboard.rightCommandKey(),
 		Key.RightControl => "rctl",
 		Key.Semicolon => "scln",
 		Key.Slash => "Slash",
 		Key.Spacebar => "spc",
 		Key.Tab => "tab",
 		Key.UpArrow => "up",
+	};
+}
+
+function macModKey(mod: Mod): string {
+	return match (mod) {
+		Mod.Cmd => "lmet",
+		Mod.Opt => "lalt",
+		Mod.Ctrl => "lctl",
+		Mod.Shift => "lsft",
+		Mod.Fn => "fn",
 	};
 }
 
@@ -101,21 +137,45 @@ function macChordName(mods: BitSet<Mod>, key: Key): string {
 	for (const mod of mods) {
 		name += macModName(mod) + "+";
 	}
-	return name + kanataKey(key);
+	return name + Keyboard.Mac.kanataKey(key);
 }
 
-function heldKeyNames(): string {
+function macKeys(key: Key, send: BitSet<Mod>): string {
+	let keys = "";
+	for (const mod of send) {
+		keys += `${macModKey(mod)} `;
+	}
+	return keys + Keyboard.Mac.kanataKey(key);
+}
+
+function pcKeys(key: Key, send: BitSet<Mod>): Result<string, PcError> {
+	const chord = try pcChord(key, send);
+	let keys = "";
+	for (const mod of chord.mods) {
+		keys += `${pcModKey(mod)} `;
+	}
+	return Result.ok(keys + Keyboard.Pc.kanataKey(chord.key));
+}
+
+function sendKeys(this keyboard: Keyboard, key: Key, send: BitSet<Mod>): Result<string, PcError> {
+	return match (keyboard) {
+		Keyboard.Mac => Result.ok(macKeys(key, send)),
+		Keyboard.Pc => pcKeys(key, send),
+	};
+}
+
+function heldKeyNames(this keyboard: Keyboard): string {
 	const names: string[] = [];
-	for (const position of heldPositions) {
+	for (const position of keyboard.heldPositions()) {
 		names.push(position.key);
 	}
 	return names.join(" ");
 }
 
-function heldCondition(held: BitSet<Mod>): string {
+function heldCondition(this keyboard: Keyboard, held: BitSet<Mod>): string {
 	let pressed = "";
 	let released = "";
-	for (const position of heldPositions) {
+	for (const position of keyboard.heldPositions()) {
 		const check = ` (input real ${position.key})`;
 		if (held.has(position.mod)) {
 			pressed += check;
@@ -130,14 +190,6 @@ function heldCondition(held: BitSet<Mod>): string {
 		return `((and${pressed}))`;
 	}
 	return `((and${pressed} (not${released})))`;
-}
-
-function chordAction(chord: PcChord): string {
-	let keys = "";
-	for (const mod of chord.mods) {
-		keys += `${pcModKey(mod)} `;
-	}
-	return `(unmod (${heldKeyNames()}) ${keys}${kanataKey(chord.key)})`;
 }
 
 function containsKey(keys: Span<Key>, key: Key): boolean {
@@ -158,7 +210,7 @@ function containsMods(sets: Span<BitSet<Mod>>, mods: BitSet<Mod>): boolean {
 	return false;
 }
 
-export function kanataConfig(this geek: GeekCaps): Result<string, string> {
+export function kanataConfig(this geek: GeekCaps, keyboard: Keyboard): Result<string, string> {
 	const fromKeys: Key[] = [];
 	for (const group of geek.groups) {
 		for (const map of group.maps) {
@@ -167,6 +219,7 @@ export function kanataConfig(this geek: GeekCaps): Result<string, string> {
 			}
 		}
 	}
+	const held = keyboard.heldKeyNames();
 	let aliases = "";
 	let layerRows = "";
 	let problems = "";
@@ -181,7 +234,7 @@ export function kanataConfig(this geek: GeekCaps): Result<string, string> {
 				for (const variation of map.variations) {
 					const label = `Caps+${macChordName(variation.held, from)}`;
 					if (variation.held.has(Mod.Fn)) {
-						problems += `${label}: Fn cannot be held on a PC keyboard\n`;
+						problems += `${label}: Fn cannot be held\n`;
 						continue;
 					}
 					if (containsMods(seen, variation.held)) {
@@ -189,35 +242,35 @@ export function kanataConfig(this geek: GeekCaps): Result<string, string> {
 						continue;
 					}
 					seen.push(variation.held);
-					const chord = pcChord(map.to, variation.send);
-					if (!chord.ok) {
+					const keys = keyboard.sendKeys(map.to, variation.send);
+					if (!keys.ok) {
 						const mac = macChordName(variation.send, map.to);
 						problems += `${label}: no PC chord for ${mac}\n`;
 						continue;
 					}
-					const action = chordAction(chord.value);
-					cases += `\n    ${heldCondition(variation.held)} ${action} break`;
+					const condition = keyboard.heldCondition(variation.held);
+					cases += `\n    ${condition} (unmod (${held}) ${keys.value}) break`;
 				}
 			}
 		}
-		const alias = `g-${kanataKey(from)}`;
+		const alias = `g-${keyboard.kanataKey(from)}`;
 		aliases += `\n  ${alias} (switch${cases})`;
-		layerRows += `\n  ${kanataKey(from)} @${alias}`;
+		layerRows += `\n  ${keyboard.kanataKey(from)} @${alias}`;
 	}
 	if (problems != "") {
 		return Result.err(problems);
 	}
 	let remapRows = "";
 	for (const remap of geek.remaps) {
-		remapRows += `\n  ${kanataKey(remap.from)} ${kanataKey(remap.to)}`;
+		remapRows += `\n  ${keyboard.kanataKey(remap.from)} ${keyboard.kanataKey(remap.to)}`;
 	}
-	const tap = kanataKey(geek.layer.tap);
+	const tap = keyboard.kanataKey(geek.layer.tap);
 	return Result.ok(`(defcfg
   process-unmapped-keys yes
 )
 
 (defsrc
-  ${heldKeyNames()}
+  ${held}
 )
 
 (defalias
@@ -225,7 +278,7 @@ export function kanataConfig(this geek: GeekCaps): Result<string, string> {
 )
 
 (deflayermap (base)
-  ${kanataKey(geek.layer.key)} @geek${remapRows}
+  ${keyboard.kanataKey(geek.layer.key)} @geek${remapRows}
 )
 
 (deflayermap (geek)${layerRows}
