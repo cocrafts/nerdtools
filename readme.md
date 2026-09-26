@@ -9,7 +9,7 @@ Personal development environment, synced across macOS and Linux machines via Syn
 | [`zsh/entry.sh`](zsh/entry.sh) | Canonical shell contract — sourced from `~/.zshrc` on every machine |
 | [`setup/`](setup/) | LLM-driven machine setup procedure (recipes that satisfy the contract) |
 | [`nvim/`](nvim/) | Neovim configuration (Lazy.nvim, 15+ language LSPs) |
-| [`geekCaps/`](geekCaps/) | Karabiner-Elements config built from Nim |
+| [`geekCaps/`](geekCaps/) | Caps Lock layer for Kanata, generated with MetaScript |
 | [`conf/`](conf/) | Terminal + tool configs (alacritty, wezterm, kitty, ghostty, tmux, nushell, lazygit, starship, aider) |
 | [`claude/`](claude/) | Claude Code config — agents, commands, hooks, rules, skills |
 | [`bin/`](bin/) | Personal utility scripts |
@@ -48,7 +48,7 @@ Anything not safe to sync (API keys, work-only env, host-specific aliases) lives
 ## Components
 
 - **Neovim** — see [`nvim/readme.md`](nvim/readme.md). Lazy-loaded plugins, LSPs for 15+ languages.
-- **GeekCaps** — Karabiner config in Nim. Build with `cd geekCaps && nimble configure`.
+- **GeekCaps** — Caps Lock layer for Kanata. Build with `msc run geekCaps/geekCaps.ms --target=raiser`.
 - **Claude Code** — agents, slash commands, hooks under [`claude/`](claude/). Loaded by Claude Code from `~/.claude/`.
 
 ## Notes
