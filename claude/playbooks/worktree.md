@@ -24,14 +24,20 @@ transcript. Memory points to the card and never copies it.
 Update State before a session ends. Delete the card only after Done when holds on the main
 branch and every fact worth keeping has moved into code, tests, or tracked documentation.
 
+A session that hands its worktree to a fresh one also writes `<card root>/handoff/<name>.md`.
+That file holds what is true now but not durable: local artifacts, machine conditions, traps met,
+and the person's recent words. It lives for one session. The context hook prints it before the
+card, and the receiving session deletes it once its first step is under way. The
+`worktree-relaunch` skill is the procedure.
+
 ## Kickstart — the line the person pastes
 
 A session that leaves work for another session ends its reply with one line per session to
 open, in the order to run them, each marked with when: now, after `<name>` lands, or when a
 worker slot is free. The person pastes the line and nothing else.
 
-- **A worktree exists:** `cd <worktree>; claude`. The context hook injects the card, so the
-  line carries no prompt.
+- **A worktree exists:** `cd <worktree>; claude`. The context hook injects the handoff (if any)
+  and the card, so the line carries no prompt.
 - **No worktree yet:** this covers a brief for another repository, whose worktree only a
   session started there may create, and an inbox note. The line is
   `cd <main checkout>; claude "Read <absolute path of the brief> and run it."`, and the brief
