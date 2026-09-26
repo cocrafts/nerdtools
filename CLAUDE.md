@@ -14,7 +14,7 @@ Personal dev environment for macOS + Linux. Synced between machines via **git** 
 ## Commands
 
 ```bash
-msc run geekCaps/geekCaps.ms --target=raiser   # write the Karabiner rules
+msc run geekCaps/geekCaps.ms --target=raiser   # write Karabiner (macOS) or Kanata (Windows/Linux) rules
 stylua nvim/ && selene nvim/      # format + lint Lua
 typos                             # spellcheck
 ```
