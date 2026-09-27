@@ -20,9 +20,11 @@ Rust toolchain + formatters + linters + LSPs.
   starship@latest \
   taplo@latest \
   typos@latest \
+  delta@latest \
   github:Kampfkarren/selene \
   github:nushell/nushell \
-  github:Decodetalkers/neocmakelsp
+  github:Decodetalkers/neocmakelsp \
+  github:Wilfred/difftastic
 
 # Defensive: mise's github backend sometimes loses +x on zip extracts (e.g. selene).
 # chmod every binary in mise github installs.
@@ -52,6 +54,7 @@ rustup component add rust-analyzer
 mise use -g bat@latest stylua@latest starship@latest taplo@latest typos@latest
 mise use -g github:Kampfkarren/selene github:nushell/nushell
 mise use -g lazygit@latest shfmt@latest gofumpt@latest
+mise use -g delta@latest github:Wilfred/difftastic
 ```
 
 - **zig** is a drop-in C/C++ compiler (`zig cc`) for crates/plugins that build C without MSVC.
@@ -70,23 +73,24 @@ mise use -g lazygit@latest shfmt@latest gofumpt@latest
 ## Verify
 
 ```bash
-for t in rust-analyzer bat stylua starship taplo typos selene nu neocmakelsp lazygit shfmt gofumpt revive; do
+for t in rust-analyzer bat stylua starship taplo typos selene nu neocmakelsp lazygit shfmt gofumpt revive delta difft; do
   command -v "$t" >/dev/null 2>&1 && echo "$t: ok" || echo "$t: MISSING"
 done
 ```
 
 Windows verify:
 ```powershell
-foreach ($t in "rust-analyzer","cargo","zig","bat","stylua","starship","taplo","typos","selene","nu","lazygit","shfmt","gofumpt") {
+foreach ($t in "rust-analyzer","cargo","zig","bat","stylua","starship","taplo","typos","selene","nu","lazygit","shfmt","gofumpt","delta","difft") {
   if (Get-Command $t -EA SilentlyContinue) { "$t: ok" } else { "$t: MISSING" }
 }
 ```
 
-Expect 13 lines all `ok` (after section 06 wires `entry.sh` and PATH includes mise shims).
+Expect 15 lines all `ok` (after section 06 wires `entry.sh` and PATH includes mise shims).
 
 ## Notes
 
 - `--no-modify-path` for rustup: `entry.sh` adds `~/.cargo/bin` to `PATH` if it exists. Letting rustup also append risks duplicate entries.
 - `mise use -g github:owner/repo` installs the latest github release, auto-detecting platform/arch. No manual arch detection needed.
+- `difftastic` goes through `github:`: the registry's aqua entry expects the pre-0.71 asset name and fails with "no asset found" (seen on mise 2026.6.14, Windows).
 - `mise use -g` and `go install` are both idempotent — safe to re-run.
 - All tools land in mise shims (`~/.local/share/mise/shims/`) except `rust-analyzer` (`~/.cargo/bin/`).
