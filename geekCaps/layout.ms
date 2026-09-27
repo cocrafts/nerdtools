@@ -32,7 +32,6 @@ export enum Key {
 	F11,
 	Backslash,
 	Backspace,
-	CapsLock,
 	CloseBracket,
 	Comma,
 	DeleteForward,
@@ -44,12 +43,16 @@ export enum Key {
 	Home,
 	Hyphen,
 	LeftArrow,
+	LeftCommand,
+	LeftControl,
+	LeftOption,
 	OpenBracket,
 	Period,
 	Quote,
 	RightArrow,
 	RightCommand,
 	RightControl,
+	RightOption,
 	Semicolon,
 	Slash,
 	Spacebar,
@@ -100,6 +103,7 @@ export struct Remap {
 
 export struct GeekCaps {
 	layer: Layer;
-	remaps: Remap[];
+	macRemaps: Remap[];
+	pcRemaps: Remap[];
 	groups: RuleGroup[];
 }

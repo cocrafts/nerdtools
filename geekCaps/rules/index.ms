@@ -6,7 +6,13 @@ import { shifter } from "./shifter";
 import { windowControl } from "./windowControl";
 
 export const geekCaps: GeekCaps = {
-	layer: { key: Key.CapsLock, tap: Key.Escape },
-	remaps: [{ from: Key.RightCommand, to: Key.RightControl }],
+	layer: { key: Key.LeftControl, tap: Key.Escape },
+	macRemaps: [{ from: Key.RightCommand, to: Key.RightControl }],
+	pcRemaps: [
+		{ from: Key.LeftCommand, to: Key.LeftControl },
+		{ from: Key.LeftOption, to: Key.LeftCommand },
+		{ from: Key.RightCommand, to: Key.LeftOption },
+		{ from: Key.RightOption, to: Key.RightCommand },
+	],
 	groups: [misc, navigation, shifter, windowControl, developer],
 };

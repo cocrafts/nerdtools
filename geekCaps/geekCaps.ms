@@ -1,7 +1,7 @@
 import { ensureDir, writeFile } from "std/fs";
 import { homeDir } from "std/os";
 import { exit } from "std/process";
-import { Keyboard, kanataConfig } from "./kanata";
+import { Host, kanataConfig } from "./kanata";
 import { geekCaps } from "./rules/index";
 
 function configHome(): string {
@@ -22,13 +22,13 @@ function writeConfig(dir: string, file: string, text: string): Result<string, st
 }
 
 when (macos) {
-	const keyboard = Keyboard.Mac;
+	const host = Host.Mac;
 } else {
-	const keyboard = Keyboard.Pc;
+	const host = Host.Pc;
 }
 
 function generate(): Result<string, string> {
-	const config = try geekCaps.kanataConfig(keyboard);
+	const config = try geekCaps.kanataConfig(host);
 	return writeConfig(`${configHome()}/kanata`, "kanata.kbd", config);
 }
 
