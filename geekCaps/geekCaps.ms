@@ -4,9 +4,6 @@ import { exit } from "std/process";
 import { Keyboard, kanataConfig } from "./kanata";
 import { geekCaps } from "./rules/index";
 
-// PARKED: std/os does not resolve on Raiser, and its header import fails on Windows C. Cards:
-// ~/metascript/.inbox/compiler/2026-09-26-raiser-std-os-missing.md
-// ~/metascript/.inbox/compiler/2026-09-26-c-header-import-windows-no-sysroot.md
 function configHome(): string {
 	return `${homeDir()}/.config`;
 }
