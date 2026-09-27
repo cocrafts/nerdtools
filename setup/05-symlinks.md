@@ -251,6 +251,11 @@ New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\nerdtools\alacritty.
 New-Item -ItemType Directory -Force -Path "$HOME\.config\git" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\git\ignore" -Target "$HOME\nerdtools\conf\git\ignore" | Out-Null
 
+# lazygit honors XDG_CONFIG_HOME (set by entry.ps1), so it reads ~/.config like Unix. Its pagers
+# (delta, difft) come from 04-tools.
+New-Item -ItemType Directory -Force -Path "$HOME\.config\lazygit" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\lazygit\config.yml" -Target "$HOME\nerdtools\conf\lazygit.yml" | Out-Null
+
 # ~/.claude stays a real directory; only the tracked items are linked into it.
 New-Item -ItemType Directory -Force -Path "$HOME\.claude\skills", "$HOME\.codex", "$HOME\.agents\skills" | Out-Null
 Set-Content -Path "$HOME\.claude\CLAUDE.md" -Value '@~/nerdtools/claude/CLAUDE.md' -Encoding utf8NoBOM
@@ -284,8 +289,9 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 - The file symlinks (`AGENTS.md`, `statusline.sh`, `omp/plugins/*`) need Developer Mode
   and a pwsh 7 shell. `~/.agents/skills` stays junctions so Codex works without it.
 - Keep the two Codex fallback keys above in `$HOME\.codex\config.toml`; that file remains machine-local.
-- Apps that read `%APPDATA%`/`%LOCALAPPDATA%` instead of `~/.config` on Windows (e.g. lazygit)
-  need their own junction to the platform path; add per-app as needed.
+- Apps that read `%APPDATA%`/`%LOCALAPPDATA%` instead of `~/.config` on Windows (e.g. Alacritty)
+  need their own junction to the platform path; add per-app as needed. Check with the app's own
+  config-dir report (`lazygit --print-config-dir`) before assuming either path.
 
 ## Verify
 
