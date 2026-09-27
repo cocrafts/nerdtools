@@ -246,8 +246,10 @@ export function kanataConfig(this geek: GeekCaps, host: Host): Result<string, st
 					seen.push(variation.held);
 					const keys = host.sendKeys(map.to, variation.send);
 					if (!keys.ok) {
-						const mac = macChordName(variation.send, map.to);
-						problems += `${label}: no PC chord for ${mac}\n`;
+						if (keys.error == PcError.Untranslated) {
+							const mac = macChordName(variation.send, map.to);
+							problems += `${label}: no PC chord for ${mac}\n`;
+						}
 						continue;
 					}
 					const condition = heldCondition(variation.held);

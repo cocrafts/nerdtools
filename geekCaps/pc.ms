@@ -1,4 +1,4 @@
-import { Key, Mod, cmd, opt, shift } from "./layout";
+import { Key, Mod, cmd, fn, none, opt, shift } from "./layout";
 
 export enum PcMod {
 	Ctrl,
@@ -11,6 +11,7 @@ export const pcNone = 0 as BitSet<PcMod>;
 export const pcCtrl = pcNone.incl(PcMod.Ctrl);
 export const pcAlt = pcNone.incl(PcMod.Alt);
 export const pcShift = pcNone.incl(PcMod.Shift);
+const pcWin = pcNone.incl(PcMod.Win);
 const pcCtrlShift = pcCtrl | pcShift;
 
 export struct PcChord {
@@ -20,6 +21,12 @@ export struct PcChord {
 
 export enum PcError {
 	Untranslated,
+	NoEquivalent,
+}
+
+struct MacChord {
+	key: Key;
+	send: BitSet<Mod>;
 }
 
 struct Translation {
@@ -45,7 +52,12 @@ const translations: Translation[] = [
 	{ key: Key.RightArrow, send: opt | shift, chord: { key: Key.RightArrow, mods: pcCtrlShift } },
 	{ key: Key.UpArrow, send: opt | shift, chord: { key: Key.UpArrow, mods: pcCtrlShift } },
 	{ key: Key.DownArrow, send: opt | shift, chord: { key: Key.DownArrow, mods: pcCtrlShift } },
+	{ key: Key.Escape, send: cmd | opt | shift, chord: { key: Key.F4, mods: pcAlt } },
+	{ key: Key.F4, send: fn, chord: { key: Key.S, mods: pcWin } },
+	{ key: Key.F11, send: none, chord: { key: Key.D, mods: pcWin } },
 ];
+
+const noEquivalents: MacChord[] = [{ key: Key.Grave, send: cmd }];
 
 function passesThrough(send: BitSet<Mod>): boolean {
 	return !send.has(Mod.Cmd) && !send.has(Mod.Opt) && !send.has(Mod.Fn);
@@ -63,13 +75,18 @@ function sameMods(send: BitSet<Mod>): BitSet<PcMod> {
 }
 
 export function pcChord(key: Key, send: BitSet<Mod>): Result<PcChord, PcError> {
-	if (passesThrough(send)) {
-		return Result.ok({ key, mods: sameMods(send) });
-	}
 	for (const translation of translations) {
 		if (translation.key == key && translation.send == send) {
 			return Result.ok(translation.chord);
 		}
+	}
+	for (const chord of noEquivalents) {
+		if (chord.key == key && chord.send == send) {
+			return Result.err(PcError.NoEquivalent);
+		}
+	}
+	if (passesThrough(send)) {
+		return Result.ok({ key, mods: sameMods(send) });
 	}
 	return Result.err(PcError.Untranslated);
 }
