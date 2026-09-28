@@ -119,6 +119,14 @@ The `vim-herdr-navigation` plugin (seamless `Ctrl+h/j/k/l` across herdr panes an
 herdr plugin link ~/nerdtools/conf/herdr/vim-herdr-navigation && herdr server reload-config
 ```
 
+`pane-split` (`~/nerdtools/conf/herdr/pane-split`) backs `Ctrl+Shift+h/k`: herdr only splits right/down, and a
+`type = "shell"` command runs through `cmd.exe` on Windows, where `"$HERDR_BIN_PATH"` never expands. A plugin
+action runs `bash` directly on every OS. Link it the same way (needs `jq`):
+
+```bash
+herdr plugin link ~/nerdtools/conf/herdr/pane-split && herdr server reload-config
+```
+
 ## oh-my-pi (omp)
 
 `~/.omp/agent` stays a **real directory** for the same reason `~/.claude` does: it holds

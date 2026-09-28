@@ -1,0 +1,18 @@
+id = "pane-split"
+name = "Pane Split"
+version = "0.1.0"
+min_herdr_version = "0.7.0"
+description = "Split the focused pane left or up; herdr only splits right and down"
+platforms = ["linux", "macos", "windows"]
+
+[[actions]]
+id = "left"
+title = "Split left"
+contexts = ["global"]
+command = ["bash", "split.sh", "left"]
+
+[[actions]]
+id = "up"
+title = "Split up"
+contexts = ["global"]
+command = ["bash", "split.sh", "up"]

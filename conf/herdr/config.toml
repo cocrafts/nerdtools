@@ -56,9 +56,10 @@ switch_workspace = ["cmd+1..9", "alt+1..9"]
 next_tab = ["prefix+n", "ctrl+tab"]
 previous_tab = ["prefix+p", "ctrl+shift+tab"]
 new_tab = ["prefix+c", "cmd+t"]
-close_pane = ["prefix+x", "cmd+w"]
-split_vertical = ["prefix+v", "cmd+shift+l"]
-split_horizontal = ["prefix+minus", "cmd+shift+j"]
+close_pane = ["prefix+x", "cmd+w", "alt+w"]
+split_vertical = ["prefix+v", "cmd+shift+l", "ctrl+shift+l"]
+split_horizontal = ["prefix+minus", "cmd+shift+j", "ctrl+shift+j"]
+zoom = ["prefix+z", "ctrl+enter"]
 # Prefix key to enter prefix mode (default: "ctrl+b")
 # Examples: "ctrl+b", "f12", "esc", "-"
 # Action bindings use explicit syntax: "prefix+n" requires the prefix;
@@ -291,25 +292,25 @@ pane_history = false
 # scrollback_limit_bytes = 10000000
 
 [[keys.command]]
-key = ["ctrl+h", "alt+shift+h"]
+key = ["ctrl+h", "alt+h"]
 type = "plugin_action"
 command = "vim-herdr-navigation.left"
 description = "navigate left (vim/herdr)"
 
 [[keys.command]]
-key = ["ctrl+j", "alt+shift+j"]
+key = ["ctrl+j", "alt+j"]
 type = "plugin_action"
 command = "vim-herdr-navigation.down"
 description = "navigate down (vim/herdr)"
 
 [[keys.command]]
-key = ["ctrl+k", "alt+shift+k"]
+key = ["ctrl+k", "alt+k"]
 type = "plugin_action"
 command = "vim-herdr-navigation.up"
 description = "navigate up (vim/herdr)"
 
 [[keys.command]]
-key = ["ctrl+l", "alt+shift+l"]
+key = ["ctrl+l", "alt+l"]
 type = "plugin_action"
 command = "vim-herdr-navigation.right"
 description = "navigate right (vim/herdr)"
@@ -324,4 +325,16 @@ description = "split left"
 key = "cmd+shift+k"
 type = "shell"
 command = "\"$HERDR_BIN_PATH\" pane split --pane \"$HERDR_ACTIVE_PANE_ID\" --direction down --focus && \"$HERDR_BIN_PATH\" pane swap --direction up"
+description = "split up"
+
+[[keys.command]]
+key = "ctrl+shift+h"
+type = "plugin_action"
+command = "pane-split.left"
+description = "split left"
+
+[[keys.command]]
+key = "ctrl+shift+k"
+type = "plugin_action"
+command = "pane-split.up"
 description = "split up"
