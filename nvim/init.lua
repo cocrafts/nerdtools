@@ -12,6 +12,7 @@ if vim.fn.has("win32") == 1 then
 		vim.env.PATH = table.concat(direct, ";") .. ";" .. vim.env.PATH
 	end
 end
+
 require("utils.settings")
 require("utils.commands")
 require("utils.autocmds")
