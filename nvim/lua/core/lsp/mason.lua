@@ -3,7 +3,7 @@ local M = {}
 
 local ensure_installed = {
 	"graphql",
-	"tailwindcss",
+	-- "tailwindcss",
 }
 
 M.configure = function()

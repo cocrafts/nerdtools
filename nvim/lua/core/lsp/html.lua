@@ -19,30 +19,33 @@ M.configure = function()
 	})
 		vim.lsp.enable("cssls")
 
+	-- Tailwind CSS LSP starts only in projects with a Tailwind config.
 	vim.lsp.config("tailwindcss", {
 		settings = {
 			tailwindCSS = {
 				experimental = {
 					classRegex = {
+						-- Standard patterns
 						{ "class:\\s*([^=]+)",                    "[\"'`]([^\"'`]*).*?[\"'`]" },
 						{ "class=\\s*[\"'`]([^\"'`]*).*?[\"'`]",  "[\"'`]([^\"'`]*).*?[\"'`]" },
 						{ ":class=\\s*[\"'`]([^\"'`]*).*?[\"'`]", "[\"'`]([^\"'`]*).*?[\"'`]" },
 					},
 				},
 				includeLanguages = {
-					typescript = "javascript",
-					typescriptreact = "javascript",
 					svelte = "html",
+					heex = "html",    -- Phoenix LiveView support
+					eex = "html",
+					elixir = "html",
 				},
 				validate = true,
 			},
 		},
 		filetypes = {
-			"svelte",
 			"html",
-			"css",
-			"javascript",
-			"typescript",
+			"heex",
+			"eex",
+			"elixir",
+			"svelte",
 			"javascriptreact",
 			"typescriptreact",
 		},
@@ -51,11 +54,8 @@ M.configure = function()
 			"tailwind.config.ts",
 			"tailwind.config.cjs",
 			"tailwind.config.mjs",
-			"postcss.config.js",
-			"postcss.config.ts",
 		},
 	})
-		vim.lsp.enable("tailwindcss")
 end
 
 return M
