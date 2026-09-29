@@ -27,14 +27,16 @@ M.configure = function()
 
 			vim.defer_fn(function()
 				for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
-					if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "neo-tree" then
-						-- Navigate to file and center
-						pcall(require("neo-tree.sources.filesystem").navigate, nil, file)
-						vim.defer_fn(function()
-							vim.api.nvim_win_call(win, function()
-								vim.cmd("normal! zz")
-							end)
-						end, 100)
+					local buf = vim.api.nvim_win_get_buf(win)
+					if vim.bo[buf].filetype == "neo-tree" then
+						if vim.b[buf].neo_tree_source == "filesystem" then
+							pcall(require("neo-tree.sources.filesystem").navigate, nil, file)
+							vim.defer_fn(function()
+								vim.api.nvim_win_call(win, function()
+									vim.cmd("normal! zz")
+								end)
+							end, 100)
+						end
 						break
 					end
 				end
@@ -54,6 +56,7 @@ M.configure = function()
 	neotree.setup({
 		close_if_last_window = true, -- Close Neo-tree if it is the last window left in the tab
 		popup_border_style = "rounded",
+		default_source = "last",
 		enable_git_status = true,
 		enable_diagnostics = true,
 		open_files_do_not_replace_types = { "terminal", "trouble", "qf", "Outline" }, -- when opening files, do not use windows containing these filetypes or buftypes
