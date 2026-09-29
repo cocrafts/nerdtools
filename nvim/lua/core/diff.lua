@@ -11,6 +11,7 @@ M.configureDiffview = function()
 
 	require("diffview").setup({
 		enhanced_diff_hl = true,
+		diffopt = { linematch = 60 },
 		use_icons = true,
 		icons = { -- Only applies when use_icons is true.
 			folder_closed = icons.ui.Folder,
