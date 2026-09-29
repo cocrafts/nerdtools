@@ -8,7 +8,7 @@ return {
 	use_gleam = true,
 	use_elixir = true,
 	use_clang = true,
-	use_go = false,
+	use_go = true,
 	use_godot = true,
 	theme = require("themes.tokyonight"),
 }

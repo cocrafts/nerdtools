@@ -69,7 +69,7 @@ M.configure = function()
 
 	require("core.lsp.terraform").configure()
 	require("core.lsp.eslint").configure()
-	require("core.lsp.typescript-tools").configure()
+	require("core.lsp.typescript-tools").configure() -- Temporarily disabled for ms-tls testing
 	require("core.lsp.terminal").configureBash()
 	require("core.lsp.terminal").configureNushell()
 	require("core.lsp.cmake").configure()
@@ -77,6 +77,10 @@ M.configure = function()
 	require("core.lsp.json").configure()
 	require("core.lsp.toml").configure()
 	require("core.lsp.graphql").configure()
+	-- go before none-ls: its go.null_ls sources need require("go").setup()
+	if config.use_go then
+		require("core.lsp.go").configure()
+	end
 	require("core.lsp.none-ls").configure()
 	require("core.lsp.nim").configure()
 	require("core.lsp.zls").configure()
@@ -111,10 +115,6 @@ M.configure = function()
 	if config.use_clang then
 		require("core.lsp.clang").configure()
 		require("core.lsp.meson").configure()
-	end
-
-	if config.use_go then
-		require("core.lsp.go").configure()
 	end
 
 	if config.use_godot then
