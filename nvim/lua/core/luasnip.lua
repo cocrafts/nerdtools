@@ -9,6 +9,10 @@ M.configure = function()
 		paths = "./lua/snippets",
 	})
 
+	-- NOTE: Not using filetype_extend because it causes snippet reuse
+	-- Instead, typescript.lua/typescriptreact.lua/javascriptreact.lua
+	-- use dofile() to load fresh instances of JavaScript snippets
+
 	snip.config.set_config({
 		history = true,
 		updateevents = "TextChanged,TextChangedI",
