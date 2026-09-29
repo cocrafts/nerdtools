@@ -329,6 +329,12 @@ command = "vim-herdr-navigation.right"
 description = "navigate right (vim/herdr)"
 
 [[keys.command]]
+key = "ctrl+w"
+type = "plugin_action"
+command = "vim-herdr-navigation.close"
+description = "close pane (vim/herdr)"
+
+[[keys.command]]
 key = "cmd+shift+h"
 type = "shell"
 command = "\"$HERDR_BIN_PATH\" pane split --pane \"$HERDR_ACTIVE_PANE_ID\" --direction right --focus && \"$HERDR_BIN_PATH\" pane swap --direction left"

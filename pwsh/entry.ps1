@@ -46,6 +46,8 @@ if (Get-Module -ListAvailable PSReadLine) {
     Set-PSReadLineKeyHandler -Key Tab       -Function MenuComplete
     Set-PSReadLineKeyHandler -Key UpArrow   -Function HistorySearchBackward
     Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward
+    # Ctrl+w closes this window: herdr owns the key when attached (vim-herdr-navigation.close).
+    Set-PSReadLineKeyHandler -Key Ctrl+w -ScriptBlock { [Environment]::Exit(0) }
 }
 
 # --- posh-git (git status in the prompt, if installed) ---

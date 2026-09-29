@@ -7,6 +7,9 @@ move between herdr panes everywhere else. It's
 [`vim-tmux-navigator`](https://github.com/christoomey/vim-tmux-navigator),
 ported to herdr's CLI.
 
+`Ctrl+w` closes the focused herdr pane — unless Vim/Neovim is focused, where
+the key is forwarded so Vim keeps its native `Ctrl+w` window commands.
+
 ## How it works
 
 Two cooperating sides, like `vim-tmux-navigator`:
@@ -15,7 +18,8 @@ Two cooperating sides, like `vim-tmux-navigator`:
   plugin action. On each press the action checks the focused pane's _foreground_
   process via `herdr pane process-info`. If it's Vim/Neovim it forwards the key
   into that pane with `herdr pane send-keys`; otherwise it moves herdr's focus
-  with `herdr pane focus --direction`.
+  with `herdr pane focus --direction`. The `close` action runs the same check:
+  Vim gets `ctrl+w` forwarded, anything else closes via `herdr pane close`.
 - **editor side** (`editor/nvim.lua`, `editor/vim.vim`): maps the same keys to
   `wincmd h/j/k/l`. If the window didn't change (Vim is at an edge), it calls
   `herdr pane focus --direction` to cross into the neighbouring herdr pane. Vim
@@ -63,6 +67,12 @@ key = "ctrl+l"
 type = "plugin_action"
 command = "vim-herdr-navigation.right"
 description = "navigate right (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+w"
+type = "plugin_action"
+command = "vim-herdr-navigation.close"
+description = "close pane (vim/herdr)"
 ```
 
 Reload herdr's config (`prefix+shift+r`) or restart.
