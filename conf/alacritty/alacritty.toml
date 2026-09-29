@@ -1,54 +1,33 @@
 [general]
 import = [
   "~/nerdtools/conf/alacritty/themes/tokyo-night.toml",
-  "~/nerdtools/conf/alacritty/defaults.toml",
   "~/.config/nerdtools/alacritty.toml",
 ]
 
-[[keyboard.bindings]]
-chars = " w"
-key = "S"
-mods = "Command"
+[font.bold]
+family = "Operator Saigon"
+style = "Regular"
 
-[[keyboard.bindings]]
-chars = "\f"
-key = "K"
-mods = "Command"
+[font.bold_italic]
+family = "Operator Saigon"
+style = "Italic"
+
+[font.italic]
+family = "Operator Saigon"
+style = "Italic"
+
+[font.normal]
+family = "Operator Saigon"
+style = "Regular"
+
+[font.offset]
+x = 1
+y = 2
 
 [[keyboard.bindings]]
 chars = "\u001B[13;2u"
 key = "Return"
 mods = "Shift"
-
-[[keyboard.bindings]]
-chars = "\u001B[13;5u"
-key = "Return"
-mods = "Control"
-
-[[keyboard.bindings]]
-chars = "\u001B[104;6u"
-key = "H"
-mods = "Control|Shift"
-
-[[keyboard.bindings]]
-chars = "\u001B[106;6u"
-key = "J"
-mods = "Control|Shift"
-
-[[keyboard.bindings]]
-chars = "\u001B[107;6u"
-key = "K"
-mods = "Control|Shift"
-
-[[keyboard.bindings]]
-chars = "\u001B[108;6u"
-key = "L"
-mods = "Control|Shift"
-
-[[keyboard.bindings]]
-action = "ReceiveChar"
-key = "Return"
-mods = "Alt"
 
 [window]
 decorations = "full"

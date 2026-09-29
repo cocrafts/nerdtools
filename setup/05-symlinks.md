@@ -18,7 +18,16 @@ ln -sfn ~/nerdtools/conf/zls.json       ~/.config/zls.json
 ln -sfn ~/nerdtools/conf/tmux           ~/.config/tmux
 mkdir -p ~/.config/herdr && ln -sfn ~/nerdtools/conf/herdr/config.toml ~/.config/herdr/config.toml
 mkdir -p ~/.config/git && ln -sfn ~/nerdtools/conf/git/ignore ~/.config/git/ignore
+[ "$(uname)" = Darwin ] && mkdir -p ~/.config/nerdtools && ln -sfn ~/nerdtools/conf/alacritty/mac.toml ~/.config/nerdtools/alacritty.toml
 ```
+
+`~/.config/nerdtools/alacritty.toml` is the per-OS slot `conf/alacritty/alacritty.toml` imports:
+macOS links `mac.toml`, Windows links `windows.toml` (see Windows), Linux leaves it empty. Alacritty
+cannot branch on the OS itself, so a key only one OS wants goes in that OS's file; `alacritty.toml`
+keeps what every OS shares. The importing file loads last and wins, so a value the OSes disagree on
+(`font.size`) must live only in the OS files — set in `alacritty.toml`, no OS file can override it.
+Binding lists are the exception: they append rather than replace (`merge` in Alacritty's
+`alacritty/src/config/serde_utils.rs` at v0.17.0), so shared and per-OS keys all load.
 
 `~/.config/git/ignore` is git's default `core.excludesfile` (same path on Windows).
 It carries the patterns every repo needs and no repo should have to declare:
@@ -249,8 +258,7 @@ New-Item -ItemType Junction -Force -Path "$HOME\.config\wezterm" -Target "$HOME\
 # Alacritty ignores ~/.config on Windows and reads only %APPDATA%\alacritty
 New-Item -ItemType Junction -Force -Path "$env:APPDATA\alacritty" -Target "$HOME\nerdtools\conf\alacritty" | Out-Null
 # Its default shell is Windows PowerShell 5.1, which skips entry.ps1 (no XDG_CONFIG_HOME, so herdr
-# falls back to %APPDATA%\herdr). windows.toml opens pwsh 7 like Wezterm and swaps the font; alacritty.toml
-# imports this path after defaults.toml, so it overrides; macOS/Linux have no such file and keep defaults.toml.
+# falls back to %APPDATA%\herdr). windows.toml opens pwsh 7 like Wezterm and sets the font size.
 New-Item -ItemType Directory -Force -Path "$HOME\.config\nerdtools" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\nerdtools\alacritty.toml" -Target "$HOME\nerdtools\conf\alacritty\windows.toml" | Out-Null
 
@@ -316,6 +324,7 @@ for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushe
 done
 
 head -1 ~/.claude/CLAUDE.md   # a real file, must print: @~/nerdtools/claude/CLAUDE.md
+[ "$(uname)" = Darwin ] && readlink ~/.config/nerdtools/alacritty.toml   # macOS: ~/nerdtools/conf/alacritty/mac.toml
 ```
 
 ## Notes
