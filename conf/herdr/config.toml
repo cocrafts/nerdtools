@@ -25,6 +25,9 @@ onboarding = false
 # red = "#ff6188"
 # green = "#a6e3a1"
 
+[theme.custom]
+active_row_bg = "#1E202F"
+
 [terminal]
 # Executable used for new interactive panes.
 # Empty means $SHELL, then /bin/sh.
@@ -59,7 +62,7 @@ new_tab = ["prefix+c", "cmd+t"]
 close_pane = ["prefix+x", "cmd+w", "alt+w"]
 split_vertical = ["prefix+v", "cmd+shift+l", "ctrl+shift+l"]
 split_horizontal = ["prefix+minus", "cmd+shift+j", "ctrl+shift+j"]
-zoom = ["prefix+z", "ctrl+enter"]
+zoom = ["prefix+z", "cmd+enter", "ctrl+z", "ctrl+enter"]
 # Prefix key to enter prefix mode (default: "ctrl+b")
 # Examples: "ctrl+b", "f12", "esc", "-"
 # Action bindings use explicit syntax: "prefix+n" requires the prefix;
@@ -185,7 +188,7 @@ zoom = ["prefix+z", "ctrl+enter"]
 
 # Ask for a tab name before creating a new tab.
 # Set false to create tabs immediately with generated names.
-# prompt_new_tab_name = true
+prompt_new_tab_name = false
 
 # Draw borders around split panes.
 # pane_borders = true
@@ -212,7 +215,17 @@ hide_tab_bar_when_single_tab = true
 agent_panel_sort = "spaces"
 
 [ui.sidebar.agents]
-rows = [["state_icon", "machine", "workspace", "tab"], ["terminal_title_stripped"]]
+rows = [
+  [
+    "state_icon",
+    "machine",
+    "workspace",
+    "tab",
+  ],
+  [
+    "terminal_title_stripped",
+  ],
+]
 
 [ui.toast]
 # off = disable pop-up notifications
@@ -338,3 +351,9 @@ key = "ctrl+shift+k"
 type = "plugin_action"
 command = "pane-split.up"
 description = "split up"
+
+[[keys.command]]
+key = "prefix+d"
+type = "pane"
+command = "lumen diff"
+description = "review diff với lumen"
