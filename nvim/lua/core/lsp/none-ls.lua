@@ -16,7 +16,7 @@ M.configure = function()
 		-- json.jqfmt,
 		terraform.format,
 		-- zig
-		nim.format,
+		-- nim.format,
 		zig.format,
 		-- metascript: disabled, mls LSP handles formatting with Trans-Am cache
 		-- metascript.format,
