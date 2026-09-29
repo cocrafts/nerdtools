@@ -5,19 +5,17 @@ M.configure = function()
 		settings = {
 			separate_diagnostic_server = false,
 			publish_diagnostic_on = "insert_leave",
-			tsserver_plugins = {
-				"@styled/typescript-styled-plugin",
-			},
-			-- Reduce memory usage by limiting inlay hints
+			tsserver_plugins = {},
+			-- Completely disable all inlay hints to prevent crashes
 			tsserver_file_preferences = {
-				includeInlayParameterNameHints = "literals",               -- Changed from "all"
-				includeInlayParameterNameHintsWhenArgumentMatchesName = false, -- Changed from true
-				includeInlayFunctionParameterTypeHints = true,
+				includeInlayParameterNameHints = "none",
+				includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+				includeInlayFunctionParameterTypeHints = false,
 				includeInlayVariableTypeHints = false,
-				includeInlayVariableTypeHintsWhenTypeMatchesName = false, -- Changed from true
-				includeInlayPropertyDeclarationTypeHints = false,     -- Changed from true
+				includeInlayVariableTypeHintsWhenTypeMatchesName = false,
+				includeInlayPropertyDeclarationTypeHints = false,
 				includeInlayFunctionLikeReturnTypeHints = false,
-				includeInlayEnumMemberValueHints = false,             -- Changed from true
+				includeInlayEnumMemberValueHints = false,
 				includeCompletionsForModuleExports = true,
 				quotePreference = "auto",
 			},
@@ -26,14 +24,14 @@ M.configure = function()
 				allowRenameOfImportPath = false,
 				convertTabsToSpaces = true,
 			},
-			-- Add memory limit to prevent excessive memory usage
-			tsserver_max_memory = 3072, -- Limit to 3GB max
+			tsserver_max_memory = 3072,
 		},
-		-- Add timeout to prevent hanging processes
 		on_attach = function(client, bufnr)
 			-- Disable formatting to prevent conflicts with prettier/eslint
 			client.server_capabilities.documentFormattingProvider = false
 			client.server_capabilities.documentRangeFormattingProvider = false
+			-- Disable inlay hints to prevent crashes
+			client.server_capabilities.inlayHintProvider = false
 		end,
 	})
 end
