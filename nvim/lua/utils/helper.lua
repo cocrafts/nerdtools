@@ -24,6 +24,7 @@ end
 
 M.close_other_buffers = function()
 	local current_buf = vim.api.nvim_get_current_buf()
+	local buf_kill = require("core.bufferline").buf_kill
 	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
 		local buf_name = vim.fn.bufname(buf)
 		-- Keep: the current buffer, neo-tree, running terminals (deleting them
@@ -32,8 +33,8 @@ M.close_other_buffers = function()
 			or string.sub(buf_name, 1, 8) == "neo-tree"
 			or vim.bo[buf].buftype == "terminal"
 			or vim.bo[buf].modified
-		if not keep then
-			pcall(vim.api.nvim_buf_delete, buf, {})
+		if not keep and vim.api.nvim_buf_is_loaded(buf) then
+			pcall(buf_kill, "bd", buf, true)
 		end
 	end
 end
