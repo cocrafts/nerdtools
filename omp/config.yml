@@ -20,7 +20,7 @@ tui:
   hyperlinks: always
   mouse: false
   tight: false
-  vimMode: true
+  vimMode: false
 terminal:
   showProgress: false
 display:
@@ -83,3 +83,5 @@ dev:
 extendedContext: true
 codexResets:
   autoRedeem: "no"
+generate_image:
+  enabled: false
