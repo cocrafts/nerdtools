@@ -25,7 +25,8 @@ const udsForm = (pipe: string): string => `uds:${pipe}`;
 const pipeFromUds = (address: string): string | undefined => {
   if (!address.startsWith("uds:")) return undefined;
   const rest = address.slice(4);
-  return rest.startsWith("\\\\.\\pipe\\") ? rest : undefined;
+  if (process.platform === "win32") return rest.startsWith("\\\\.\\pipe\\") ? rest : undefined;
+  return path.isAbsolute(rest) ? rest : undefined;
 };
 
 const asRecord = (value: unknown): Record<string, unknown> | undefined =>
@@ -94,13 +95,15 @@ const readProcStartViaKernel32 = async (targetPid: number): Promise<string | und
   }
 };
 
-const procStartFromProcFs = (targetPid: number): string | undefined => {
-  try {
-    const stat = fs.readFileSync(`/proc/${targetPid}/stat`, "utf8");
-    return stat.slice(stat.lastIndexOf(")") + 2).split(" ")[19];
-  } catch {
-    return undefined;
-  }
+const procStartViaPs = (targetPid: number): Promise<string | undefined> => {
+  const { promise, resolve } = Promise.withResolvers<string | undefined>();
+  execFile(
+    "ps",
+    ["-o", "lstart=", "-p", String(targetPid)],
+    { timeout: 1_000, env: { ...process.env, LC_ALL: "C", TZ: "UTC" } },
+    (err, stdout) => resolve(err ? undefined : stdout.trim() || undefined),
+  );
+  return promise;
 };
 
 const procStartViaPowerShell = (targetPid: number): Promise<string> => {
@@ -118,15 +121,30 @@ const procStartViaPowerShell = (targetPid: number): Promise<string> => {
   return promise;
 };
 
-export const readSelfProcStart = async (): Promise<string> => {
-  if (process.platform !== "win32") return procStartFromProcFs(process.pid) ?? "";
-  return (await readProcStartViaKernel32(process.pid)) ?? (await procStartViaPowerShell(process.pid));
+export const readSelfProcStart = async (): Promise<string | undefined> => {
+  if (process.platform === "darwin") return procStartViaPs(process.pid);
+  return (
+    (await readProcStartViaKernel32(process.pid)) ?? ((await procStartViaPowerShell(process.pid)) || undefined)
+  );
 };
 
 export const readProcStartForLiveness = async (targetPid: number): Promise<string | undefined> => {
-  if (process.platform !== "win32") return procStartFromProcFs(targetPid);
+  if (process.platform === "darwin") return procStartViaPs(targetPid);
   return readProcStartViaKernel32(targetPid);
 };
+
+const pidDomainForPlatform = (): string => {
+  if (process.platform === "win32") return `win32:${os.hostname().toLowerCase()}`;
+  if (process.platform === "darwin") return "darwin";
+  throw new Error(
+    `cc-peer: no Claude Code pidDomain for platform '${process.platform}'; only win32 and darwin are implemented`,
+  );
+};
+
+const messagingSocketPathForPlatform = (pid: number): string =>
+  process.platform === "win32"
+    ? `\\\\.\\pipe\\LOCAL\\cc-msg-${randomBytes(16).toString("hex")}`
+    : path.join("/tmp/cc-socks", `${pid}.sock`);
 
 type RegistryEntry = {
   pid: number;
@@ -140,7 +158,7 @@ type RegistryEntry = {
   pidDomain?: string;
 };
 
-type PeerCredential = { peerToken: string; procStartFt?: string };
+type PeerCredential = { peerToken: string; procStartFt?: string; procStart?: string };
 
 const readRegistry = (): { entries: RegistryEntry[]; keyedPids: Set<number> } => {
   const files = fs.existsSync(registryDir) ? fs.readdirSync(registryDir) : [];
@@ -188,7 +206,7 @@ const readPeerCredential = (targetPid: number): PeerCredential | undefined => {
     const parsed = asRecord(JSON.parse(fs.readFileSync(path.join(registryDir, keyFile), "utf8")));
     const peerToken = str(parsed?.peerToken);
     if (!peerToken) return undefined;
-    return { peerToken, procStartFt: str(parsed?.procStartFt) };
+    return { peerToken, procStartFt: str(parsed?.procStartFt), procStart: str(parsed?.procStart) };
   } catch {
     return undefined;
   }
@@ -222,8 +240,8 @@ const dialPipe = (pipe: string, timeoutMs: number): Promise<net.Socket> => {
 export default async function ccPeer(pi: ExtensionAPI) {
   const pid = process.pid;
   const peerToken = randomBytes(16).toString("hex");
-  const pidDomain = `${process.platform}:${os.hostname().toLowerCase()}`;
-  const messagingSocketPath = `\\\\.\\pipe\\LOCAL\\cc-msg-${randomBytes(16).toString("hex")}`;
+  const pidDomain = pidDomainForPlatform();
+  const messagingSocketPath = messagingSocketPathForPlatform(pid);
   const explicitName = process.env.CC_PEER_NAME?.trim() || "";
   const versionString = process.env.CC_PEER_VERSION?.trim() || "18.2.6";
   const fromMode = process.env.CC_PEER_FROM_MODE?.trim() || "bypass";
@@ -271,7 +289,8 @@ export default async function ccPeer(pi: ExtensionAPI) {
     try {
       pipeServer?.close();
     } catch {}
-    for (const f of [entryPath, keyPath]) {
+    const owned = process.platform === "win32" ? [entryPath, keyPath] : [entryPath, keyPath, messagingSocketPath];
+    for (const f of owned) {
       try {
         fs.unlinkSync(f);
       } catch {}
@@ -454,6 +473,10 @@ export default async function ccPeer(pi: ExtensionAPI) {
       socket.on("error", () => {});
     });
     server.once("error", (err) => pi.logger.warn(`peer pipe server error: ${String(err)}`));
+    if (process.platform !== "win32") {
+      fs.mkdirSync(path.dirname(messagingSocketPath), { recursive: true, mode: 0o700 });
+      fs.rmSync(messagingSocketPath, { force: true });
+    }
     server.listen(messagingSocketPath);
     return server;
   };
@@ -469,6 +492,10 @@ export default async function ccPeer(pi: ExtensionAPI) {
     }
     if (!peerName) peerName = `omp-${pid}`;
     const procStart = await procStartPromise;
+    if (!procStart) {
+      pi.logger.warn(`cc-peer: own process start time unreadable on ${process.platform}; not registering as a peer`);
+      return;
+    }
     const now = Date.now();
     base = {
       pid,
@@ -492,7 +519,8 @@ export default async function ccPeer(pi: ExtensionAPI) {
     };
     lastStatus = "idle";
     fs.mkdirSync(registryDir, { recursive: true });
-    writeAtomic(keyPath, JSON.stringify({ peerToken, procStartFt: procStart, pidDomain }));
+    const keyProcStart = process.platform === "win32" ? { procStartFt: procStart } : { procStart };
+    writeAtomic(keyPath, JSON.stringify({ peerToken, ...keyProcStart, pidDomain }));
     writeAtomic(entryPath, JSON.stringify(base));
     pipeServer = startPipeServer();
   });
@@ -651,7 +679,7 @@ export default async function ccPeer(pi: ExtensionAPI) {
         };
       }
       const liveProcStart = await readProcStartForLiveness(peer.pid);
-      const recordedProcStart = credential.procStartFt ?? peer.procStart;
+      const recordedProcStart = credential.procStartFt ?? credential.procStart ?? peer.procStart;
       if (liveProcStart && recordedProcStart && liveProcStart !== recordedProcStart) {
         return {
           content: [
