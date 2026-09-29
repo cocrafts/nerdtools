@@ -159,6 +159,13 @@ return {
 					require("inlay-hints").setup()
 				end,
 			},
+			-- {
+			-- 	"TabbyML/vim-tabby",
+			-- 	event = { "InsertEnter" },
+			-- 	config = function()
+			-- 		require("core.tabby").configure()
+			-- 	end,
+			-- },
 			{
 				"L3MON4D3/LuaSnip",
 				dependencies = { "friendly-snippets" },
@@ -339,7 +346,7 @@ return {
 	},
 	{
 		"fluctlight-kayaba/meister.nvim",
-		dependencies = { "nickjvandyke/opencode.nvim", "sindrets/diffview.nvim" },
+		dependencies = { "nickjvandyke/opencode.nvim", "dlyongemallo/diffview-plus.nvim" },
 		event = "BufReadPost",
 		cmd = "Meister",
 		keys = {
@@ -498,15 +505,95 @@ return {
 		end,
 	},
 	{
+		"claude-ide",
+		name = "claude-ide",
+		dir = vim.fn.stdpath("config") .. "/lua/plugins/claude",
+		enabled = false,
+		lazy = false, -- Load immediately
+		priority = 100, -- Load early
+		config = function()
+			local claude = require("plugins.claude")
+
+			-- Setup Claude IDE
+			local success, err = claude.setup({
+				port_min = 10000,
+				port_max = 65535,
+				reuse_port = true,
+				log_level = vim.log.levels.ERROR, -- Only show errors by default
+			})
+
+			if not success then
+				vim.notify("Failed to start Claude IDE: " .. (err or "unknown error"), vim.log.levels.ERROR)
+				return
+			end
+
+			-- Create user commands
+			claude.create_commands()
+		end,
+	},
+	{
 		"bngarren/checkmate.nvim",
 		ft = "markdown", -- Lazy loads for Markdown files matching patterns in 'files'
 		config = function()
 			require("core.markdown").configureCheckmate()
 		end,
 	},
+	{
+		"nickjvandyke/opencode.nvim",
+		version = "*", -- Latest stable release
+		config = function()
+			---@type opencode.Opts
+			vim.g.opencode_opts = {
+				-- Your configuration, if any; goto definition on the type for details
+			}
+
+			vim.o.autoread = true -- Required for `vim.g.opencode_opts.events.reload`
+			-- Recommended/example keymaps
+			vim.keymap.set({ "n", "x" }, "<leader>oa", function()
+				require("opencode").ask("@this: ")
+			end, { desc = "Ask OpenCode…" })
+			vim.keymap.set({ "n", "x" }, "<leader>os", function()
+				require("opencode").select()
+			end, { desc = "Select OpenCode…" })
+
+			vim.keymap.set({ "n", "x" }, "go", function()
+				return require("opencode").operator("@this ")
+			end, { desc = "Append range to OpenCode", expr = true })
+			vim.keymap.set("n", "goo", function()
+				return require("opencode").operator("@this ") .. "_"
+			end, { desc = "Append line to OpenCode", expr = true })
+
+			vim.keymap.set("n", "<S-C-u>", function()
+				require("opencode").command("session.half.page.up")
+			end, { desc = "Scroll OpenCode up" })
+			vim.keymap.set("n", "<S-C-d>", function()
+				require("opencode").command("session.half.page.down")
+			end, { desc = "Scroll OpenCode down" })
+		end,
+	},
 	-- {
 	-- 	"sphamba/smear-cursor.nvim",
 	-- 	opts = {
+	-- 		-- cursor_color = "#ff4000",
+	-- 		-- particles_enabled = true,
+	-- 		-- stiffness = 0.5,
+	-- 		-- trailing_stiffness = 0.2,
+	-- 		-- trailing_exponent = 5,
+	-- 		-- damping = 0.6,
+	-- 		-- gradient_exponent = 0,
+	-- 		-- gamma = 1,
+	-- 		-- never_draw_over_target = true, -- if you want to actually see under the cursor
+	-- 		-- hide_target_hack = true,    -- same
+	-- 		-- particle_spread = 1,
+	-- 		-- particles_per_second = 500,
+	-- 		-- particles_per_length = 50,
+	-- 		-- particle_max_lifetime = 800,
+	-- 		-- particle_max_initial_velocity = 20,
+	-- 		-- particle_velocity_from_cursor = 0.5,
+	-- 		-- particle_damping = 0.15,
+	-- 		-- particle_gravity = -50,
+	-- 		-- min_distance_emit_particles = 0,
+
 	-- 		cursor_color = "none",
 	-- 		stiffness = 0.3,
 	-- 		trailing_stiffness = 0.1,
