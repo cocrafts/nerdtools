@@ -6,8 +6,8 @@
 #   2. config generated (first run)
 #   3. daemon running (hidden)
 #   4. folder <FolderId> at <Path>, send/receive, trashcan versioning (30d)
-#   5. .stignore that syncs ONLY $SyncFiles (negations MUST come before the
-#      catch-all — syncthing uses FIRST-match-wins, unlike gitignore)
+#   5. no .stignore — the WHOLE folder syncs (a legacy per-file whitelist is
+#      removed if found; it hides every other file from the remote)
 #   6. scheduled task "Syncthing" at logon (hidden, via wscript wrapper)
 #
 # Identity (cert.pem/key.pem) and the index database stay machine-local on
@@ -16,8 +16,7 @@
 [CmdletBinding()]
 param(
     [string]$FolderId = "compiler-docs",
-    [string]$Path = "$HOME\projects\compiler\docs",
-    [string[]]$SyncFiles = @("NIM-REF.md")
+    [string]$Path = "$HOME\projects\compiler\docs"
 )
 $ErrorActionPreference = "Stop"
 
@@ -77,18 +76,16 @@ Step "ensuring trashcan versioning (30 days)"
 syncthing cli config folders $FolderId versioning type set trashcan | Out-Null
 syncthing cli config folders $FolderId versioning params set cleanoutDays 30 | Out-Null
 
-# --- 5. .stignore ------------------------------------------------------------
-# First pattern that matches wins: negations first, catch-all last.
-$stignore = (@($SyncFiles | ForEach-Object { "!/$_" }) + @("*")) -join "`n"
+# --- 5. ignore file -----------------------------------------------------------
 $stignorePath = Join-Path $Path ".stignore"
-if (-not (Test-Path $stignorePath) -or (Get-Content $stignorePath -Raw) -ne $stignore + "`n") {
-    Step "writing $stignorePath"
-    [System.IO.File]::WriteAllText($stignorePath, $stignore + "`n")
+if (Test-Path $stignorePath) {
+    Step "removing legacy $stignorePath (whole-folder sync)"
+    Remove-Item -LiteralPath $stignorePath
 } else {
-    Step ".stignore already correct"
+    Step "no .stignore (whole-folder sync)"
 }
 
-# force a rescan so the ignore patterns apply immediately
+# force a rescan so the removal takes effect immediately
 $apikey = [regex]::Match((Get-Content $configXml -Raw), '<apikey>([^<]+)</apikey>').Groups[1].Value
 Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8384/rest/db/scan?folder=$FolderId" -Headers @{ "X-API-Key" = $apikey } | Out-Null
 Start-Sleep -Seconds 3
