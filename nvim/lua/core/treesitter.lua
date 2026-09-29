@@ -132,6 +132,7 @@ M.configure = function()
 		},
 		filetype = "d2",
 	}
+
 end
 
 return M
