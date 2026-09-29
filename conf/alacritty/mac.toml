@@ -1,0 +1,53 @@
+[[keyboard.bindings]]
+chars = "\u001B[49;9u"
+key = "1"
+mode = "Alt"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[50;9u"
+key = "2"
+mode = "Alt"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[51;9u"
+key = "3"
+mode = "Alt"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[52;9u"
+key = "4"
+mode = "Alt"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[53;9u"
+key = "5"
+mode = "Alt"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[54;9u"
+key = "6"
+mode = "Alt"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[55;9u"
+key = "7"
+mode = "Alt"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[56;9u"
+key = "8"
+mode = "Alt"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u001B[57;9u"
+key = "9"
+mode = "Alt"
+mods = "Command"
