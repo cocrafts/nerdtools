@@ -17,6 +17,14 @@ divergences are (or should be) recorded, with DIVERGE-INTENTIONAL / SAME verdict
 
 ## Hard rules
 
+- **TS → Nim → Safety frames every verdict.** `~/metascript/CLAUDE.md` §Language
+  behaviour is the rule and §Reporting the five lines that open the report. Walk them
+  before choosing a fix: does what the TS author writes keep its meaning on Nim's
+  mechanism; if not, is it because Nim does not cover the case or because the TS
+  behaviour is unsafe; can Nim's mechanism be extended to keep it (**NEW MECHANISM**,
+  with what it adds and can regress); if not, safety wins and the person decides. A
+  trace that finds the Nim algorithm but never says what the TS author keeps or loses
+  is not finished.
 - **Empirical, never recall.** READ the actual Nim `.nim` source and the actual
   recompiler `.ms` source this session. Do not trust memory of "how Nim works."
   Confirm behavior by emitting C (`msc build f.ms --gc=drc --emit=c --output=f.c`,
@@ -106,6 +114,8 @@ Grep `paper/NIM-REF.md` for the mechanism:
   clearly isn't, that's the smoking gun — an undocumented workaround crept in.)
 
 ### 6. Produce the report
+- **The five TS → Nim → Safety lines** of `~/metascript/CLAUDE.md` §Reporting, first,
+  before anything below.
 - **The repro set** (step 1): the trigger boundary sentence + the passing
   neighbours that bound it.
 - **The invariant** violated + empirical evidence (emitted C, falsifiable
