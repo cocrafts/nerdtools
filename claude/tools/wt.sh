@@ -290,7 +290,7 @@ cmd_rm() {
 }
 
 cmd_land() {
-  local target="" gate=${WT_GATE:-} no_gate=0 path branch old new arg
+  local target="" gate=${WT_GATE:-} no_gate=0 path branch old new arg held verdict
   while [ $# -gt 0 ]; do
     arg=$1
     case "$arg" in
@@ -318,13 +318,23 @@ cmd_land() {
   new=$(git -C "$path" rev-parse HEAD)
   [ "$new" != "$old" ] || die "land: nothing to land"
   wt_before_land "$path" "$old" "$new" || die "land: local before hook failed"
+  held=$(git -C "$path" diff --name-only --no-renames "$old" "$new" | while IFS= read -r file; do
+    git -C "$WT_MAIN" status --porcelain --untracked-files=all -- "$file"
+  done)
+  [ -z "$held" ] || die "land: the main checkout holds uncommitted work on paths this land writes; clear it, then land again (no gate ran):
+$(printf '%s\n' "$held" | sed 's/^/  /')"
+  verdict="$(git -C "$path" rev-parse --absolute-git-dir)/wt-land-verdict"
   if [ "$no_gate" -eq 1 ]; then
     say "land: --no-gate"
+  elif [ -f "$verdict" ] && [ "$(sed -n 1p "$verdict")" = "$new $old" ] && [ "$(sed -n 3p "$verdict")" = "$gate" ]; then
+    say "land: reusing the green gate of $(sed -n 2p "$verdict") for $(git -C "$path" rev-parse --short "$new")"
   else
+    rm -f "$verdict"
     wt_gate "$path" "$gate" || die "land: gate failed"
+    printf '%s %s\n%s\n%s\n' "$new" "$old" "$(date +%Y-%m-%dT%H:%M:%S)" "$gate" >"$verdict"
   fi
   [ "$(git -C "$WT_MAIN" rev-parse "$WT_BASE")" = "$old" ] || die "land: $WT_BASE moved during the gate; run land again"
-  git -C "$WT_MAIN" merge --ff-only "$new" || die "land: main checkout refused the fast-forward"
+  git -C "$WT_MAIN" merge --ff-only "$new" || die "land: main checkout refused the fast-forward; the green gate is recorded, so clear it and land again"
   wt_after_land "$path" "$old" "$new" || die "land: local after hook failed"
   say "landed $branch at $(git -C "$WT_MAIN" rev-parse --short "$new")"
 }
