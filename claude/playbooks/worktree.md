@@ -56,7 +56,10 @@ decision.
 A slice lands when it stands alone and another consumer needs it, when the session ends,
 or when it has drifted far enough from main that delaying the rebase adds risk. Rebase,
 run the repository gate against the rebased tree, then fast-forward main. Never push
-without explicit approval.
+without explicit approval. A green gate belongs to its commit and its base: a land
+refused after it, for a reason outside the branch, lands again on that verdict, and only
+a new commit or a base that moved where a lane looks runs the gate again. Check what can
+refuse the land before the gate, not after it.
 
 Retire a worktree from outside it. Refuse removal while it contains uncommitted files,
 unlanded commits, or live processes unless the person explicitly chooses to discard the
