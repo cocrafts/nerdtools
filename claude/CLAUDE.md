@@ -17,6 +17,12 @@ Commit through `/split-commit` unless the user specifies otherwise.
 **Source code is the truth: a doc owns only what the code cannot say about itself, and points
 at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks/documentation.md`.
 
+## Workflow — instructions and memory
+
+**An instruction says what to do and why; a mistake is fixed in the instruction that produced it.**
+Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory, read
+`~/nerdtools/claude/playbooks/workflow.md`.
+
 ## Reporting — HARD RULE
 
 - **Background lanes**: launch in the background, report on the notification. The user does not poll.
