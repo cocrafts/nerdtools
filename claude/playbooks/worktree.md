@@ -54,12 +54,21 @@ stopping at phase boundaries; stop only for a destructive action, push, or open 
 decision.
 
 A slice lands when it stands alone and another consumer needs it, when the session ends,
-or when it has drifted far enough from main that delaying the rebase adds risk. Rebase,
-run the repository gate against the rebased tree, then fast-forward main. Never push
-without explicit approval. A green gate belongs to its commit and its base: a land
-refused after it, for a reason outside the branch, lands again on that verdict, and only
-a new commit or a base that moved where a lane looks runs the gate again. Check what can
-refuse the land before the gate, not after it.
+or when it has drifted far enough from main that delaying the rebase adds risk.
+
+Before landing, check what can refuse the transaction and rebase onto the intended main.
+Compare the resulting changes with the scope of the recorded verification: which behavior,
+inputs, toolchain and settings its checks observed. Choose verification by the global
+CLAUDE.md rule, then satisfy that decision and fast-forward main. Push on the user's explicit
+approval, because it publishes the work beyond the local checkout.
+
+Carry a GREEN result forward when that checked scope is unchanged, including after a commit,
+rebase or refused land. When something in its scope changes, rerun the affected checks.
+Record the checked commit and base as provenance along with the scope and result, so another
+session can establish whether the evidence still applies rather than inferring it from a SHA.
+When the tool cannot carry applicable evidence into the transaction, name that tooling gap
+and resolve the supported path before another expensive run; the verification decision
+belongs to the change, not to the default behavior of the land command.
 
 Retire a worktree from outside it. Refuse removal while it contains uncommitted files,
 unlanded commits, or live processes unless the person explicitly chooses to discard the
