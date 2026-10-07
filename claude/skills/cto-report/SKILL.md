@@ -1,6 +1,6 @@
 ---
 name: cto-report
-description: Report on a requested subject to the user in CTO mode — business-first answer, one bridging visual, then stop. Use when the user types /cto-report with a subject, or asks for a status, decision, or findings brief framed for a technical CTO who sets direction and carries the detail himself.
+description: Report on a requested subject in CTO mode — product-level answer first, evidence and recommendation as needed. Use for an explicit /cto-report request or a product-level status, decision, or findings brief, not ordinary technical questions or progress replies.
 ---
 
 # /cto-report
@@ -12,13 +12,15 @@ give the product-level answer; the detail waits until it is asked for.
 
 ## Shape
 
-1. **Workspace criteria first.** When the workspace `CLAUDE.md` names criteria a report opens
-   with, answer them first, in its order, one line each.
-2. **One business sentence.** What changes for the product, the app author or the team. No
-   file paths, no internals.
-3. **One visual that bridges to the system.** Before/after, status matrix, or option table.
-   It shows what the user sees, not the module graph.
-4. **Stop.** Algorithms, paths, edge cases only when asked.
+1. **Answer first.** Say what changes for the product, the app author or the team, without
+   making the user read a checklist or internals to find the conclusion.
+2. **Enough evidence to judge it.** Include the proof, trade-off and recommendation relevant
+   to the request. Follow workspace criteria where they apply, without turning them into
+   repeated labels; reference anchors support the answer rather than precede it.
+3. **A visual only when useful.** A small before/after, status matrix or option table can
+   clarify an app-visible difference; omit it when prose already says it clearly.
+4. **Stop at the next action or decision.** Keep necessary evidence; leave algorithm walkthroughs
+   and unrelated edge cases for a follow-up, so the brief stays focused on the user's call.
 
 Scale to the stakes: a status check or yes/no is one line with no structure. A decision is
 the options with their trade-offs, your recommendation, and one question. Confusion at the
