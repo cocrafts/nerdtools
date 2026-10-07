@@ -1,0 +1,14 @@
+{
+  "name": "neon-format",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "diff": "9.0.0",
+    "highlight.js": "11.12.0"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*"
+  }
+}
