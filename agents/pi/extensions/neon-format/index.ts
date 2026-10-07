@@ -44,6 +44,23 @@ export class ToolCallLine implements Component {
 	invalidate(): void {}
 }
 
+export class OutputPreview implements Component {
+	private body: Text;
+
+	constructor(output: string, private theme: Theme, color: "dim" | "toolOutput" | "error", private padding = 0) {
+		this.body = new Text(theme.fg(color, output), padding, 0);
+	}
+
+	render(width: number): string[] {
+		const rows = this.body.render(width);
+		if (rows.length <= 5) return rows;
+		const hint = this.theme.fg("dim", `… ${rows.length - 5} more lines · `) + keyHint("app.tools.expand", "to expand");
+		return [...rows.slice(0, 5), truncateToWidth(" ".repeat(Math.min(this.padding, Math.max(0, width - 1))) + hint, width, "…")];
+	}
+
+	invalidate(): void { this.body.invalidate(); }
+}
+
 export default function neonFormat(pi: ExtensionAPI): void {
 	registerSkillInput(pi);
 	let context: ExtensionContext | undefined;
@@ -59,20 +76,18 @@ export default function neonFormat(pi: ExtensionAPI): void {
 		}).finally(() => { editorOpen = false; });
 	};
 	pi.registerToolRenderer((name, next) => {
-		if (name === "cc_list_peers") {
+		if (!Object.hasOwn(labels, name)) {
+			const original = next();
+			if (name !== "cc_list_peers" && original?.renderResult) return original;
 			return {
-				...next(),
+				...original,
 				renderResult(result, options, theme, context) {
 					const output = result.content.filter(block => block.type === "text").map(block => block.text).join("\n");
-					const lines = output ? output.split("\n") : [];
-					const visible = options.expanded ? lines : lines.slice(0, 10);
-					const remaining = lines.length - visible.length;
-					const hint = remaining > 0 ? theme.fg("dim", `\n... (${remaining} more lines, `) + keyHint("app.tools.expand", "to expand") + theme.fg("dim", ")") : "";
-					return new Text(theme.fg(context.isError ? "error" : "dim", visible.join("\n")) + hint, 0, 0);
+					const color = context.isError ? "error" : name === "cc_list_peers" ? "dim" : "toolOutput";
+					return options.expanded ? new Text(theme.fg(color, output), 0, 0) : new OutputPreview(output, theme, color);
 				},
 			};
 		}
-		if (!Object.hasOwn(labels, name)) return next();
 		const original = next();
 		return {
 			renderShell: "self",
@@ -109,9 +124,7 @@ export default function neonFormat(pi: ExtensionAPI): void {
 				if (options.expanded) return new Text(theme.fg(context.isError ? "error" : name === "bash" ? "dim" : "toolOutput", output), 1, 0);
 				const lines = output ? output.split("\n") : [];
 				if (context.isError || name === "bash") {
-					const preview = lines.slice(0, 10).join("\n");
-					const hint = lines.length > 10 ? `\n… ${lines.length - 10} more lines · ctrl+e to expand` : "";
-					return new Text(theme.fg(context.isError ? "error" : "dim", preview + hint), 1, 0);
+					return new OutputPreview(output, theme, context.isError ? "error" : "dim", 1);
 				}
 				const summary = name === "write" ? "Written" : `${lines.length} lines`;
 				return new Text(theme.fg("dim", `  ${summary} · ctrl+e to expand`), 0, 0);

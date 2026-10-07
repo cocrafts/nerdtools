@@ -48,7 +48,7 @@ try {
 	let peersRows = peers.render(100);
 	assert.ok(peersRows.some(line => line.includes("pi-0") && line.includes(theme.theme.getFgAnsi("dim"))));
 	assert.ok(!plain(peersRows.join("\n")).includes("pi-14"));
-	assert.ok(plain(peersRows.join("\n")).includes("5 more lines"));
+	assert.ok(plain(peersRows.join("\n")).includes("10 more lines"));
 	assert.ok(plain(peersRows.join("\n")).includes("cc_list_peers"));
 	peers.setExpanded(true);
 	peersRows = peers.render(100);
@@ -59,7 +59,29 @@ try {
 	assert.ok(peers.render(100).some(line => line.includes("peer discovery failed") && line.includes(theme.theme.getFgAnsi("error"))));
 
 	const read = pi.createReadToolDefinition(cwd);
-	assert.equal(resolver("other", () => read), read);
+	const specialized = { renderResult: () => new tui.Text("specialized") };
+	assert.equal(resolver("other", () => specialized), specialized);
+	const wrappedOutput = Array.from({ length: 12 }, (_, index) => `row-${index}: long wrapped output with 🌙 Unicode and more text`).join("\n");
+	for (const width of [8, 40, 100]) {
+		const complete = new tui.Text(theme.theme.fg("dim", wrappedOutput), 1, 0).render(width);
+		const preview = new extension.OutputPreview(wrappedOutput, theme.theme, "dim", 1).render(width);
+		assert.equal(preview.length, 6);
+		assert.deepEqual(preview.slice(0, 5), complete.slice(0, 5));
+		for (const line of preview) assert.ok(tui.visibleWidth(line) <= width);
+	}
+	const genericResult = { content: [{ type: "text", text: wrappedOutput }], details: {} };
+	const genericBefore = JSON.stringify(genericResult);
+	const genericRenderer = resolver("plain-tool", () => undefined);
+	const generic = new pi.ToolExecutionComponent("plain-tool", "plain-test", {}, {}, genericRenderer, { requestRender() {} }, cwd);
+	generic.updateResult(genericResult, false);
+	assert.ok(!plain(generic.render(40).join("\n")).includes("row-11"));
+	generic.setExpanded(true);
+	assert.ok(plain(generic.render(100).join("\n")).includes("row-11"));
+	assert.equal(JSON.stringify(genericResult), genericBefore);
+	const previewOptions = { expanded: false, isPartial: false };
+	const previewContext = { args: {}, isError: false };
+	assert.equal(genericRenderer.renderResult(genericResult, previewOptions, theme.theme, previewContext).render(40).length, 6);
+	assert.equal(resolver("bash", () => undefined).renderResult(genericResult, previewOptions, theme.theme, previewContext).render(40).length, 6);
 	const args = { path: join(cwd, "hello.ms") };
 	const ui = { requestRender() {} };
 	const component = new pi.ToolExecutionComponent("read", "read-test", args, {}, resolver("read", () => read), ui, cwd);
