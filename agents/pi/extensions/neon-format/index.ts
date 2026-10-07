@@ -1,5 +1,5 @@
 import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
-import { highlightCode } from "@earendil-works/pi-coding-agent";
+import { highlightCode, keyHint } from "@earendil-works/pi-coding-agent";
 import type { Component, TuiMouseEvent, TuiMouseEventResult } from "@earendil-works/pi-tui";
 import { Container, Text, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import { displayPath, resolveFileLink, type FileLink } from "./file-link.ts";
@@ -59,6 +59,19 @@ export default function neonFormat(pi: ExtensionAPI): void {
 		}).finally(() => { editorOpen = false; });
 	};
 	pi.registerToolRenderer((name, next) => {
+		if (name === "cc_list_peers") {
+			return {
+				...next(),
+				renderResult(result, options, theme, context) {
+					const output = result.content.filter(block => block.type === "text").map(block => block.text).join("\n");
+					const lines = output ? output.split("\n") : [];
+					const visible = options.expanded ? lines : lines.slice(0, 10);
+					const remaining = lines.length - visible.length;
+					const hint = remaining > 0 ? theme.fg("dim", `\n... (${remaining} more lines, `) + keyHint("app.tools.expand", "to expand") + theme.fg("dim", ")") : "";
+					return new Text(theme.fg(context.isError ? "error" : "dim", visible.join("\n")) + hint, 0, 0);
+				},
+			};
+		}
 		if (!Object.hasOwn(labels, name)) return next();
 		const original = next();
 		return {
