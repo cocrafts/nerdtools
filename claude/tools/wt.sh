@@ -16,7 +16,7 @@ usage: wt.sh <command> [args]
 
 land options:
   --gate '<command>'            gate to run in the rebased worktree
-  --no-gate                     skip the gate only by explicit user decision
+  --no-gate                     skip the gate when the worktree playbook's no-gate rule holds
 
 env:
   WT_CWD                        repository directory; defaults to CLAUDE_PROJECT_DIR or cwd
@@ -290,7 +290,7 @@ cmd_rm() {
 }
 
 cmd_land() {
-  local target="" gate=${WT_GATE:-} no_gate=0 path branch old new arg held verdict
+  local target="" gate=${WT_GATE:-} no_gate=0 path branch old new arg held verdict tip fork both landlog kind
   while [ $# -gt 0 ]; do
     arg=$1
     case "$arg" in
@@ -311,6 +311,13 @@ cmd_land() {
   case "$branch" in wt/*) ;; *) die "land: branch must be wt/<name>" ;; esac
   [ -z "$(wt_dirty "$path")" ] || die "land: $path has uncommitted files"
   old=$(git -C "$WT_MAIN" rev-parse "$WT_BASE") || die "land: cannot resolve $WT_BASE"
+  tip=$(git -C "$path" rev-parse HEAD)
+  fork=$(git -C "$path" merge-base "$tip" "$old")
+  both=$(comm -12 <(git -C "$path" diff --name-only "$fork" "$tip" | sort) \
+    <(git -C "$path" diff --name-only "$fork" "$old" | sort) | paste -sd ' ')
+  landlog="$(git -C "$WT_MAIN" rev-parse --path-format=absolute --git-common-dir)/wt-land.log"
+  say "land: files changed on both sides: ${both:-none}"
+  say "land: previous land: $( [ -f "$landlog" ] && tail -n 1 "$landlog" | cut -d' ' -f2 || echo unrecorded)"
   git -C "$path" rebase "$old" || {
     git -C "$path" rebase --abort >/dev/null 2>&1 || true
     die "land: rebase onto $WT_BASE failed"
@@ -324,7 +331,9 @@ cmd_land() {
   [ -z "$held" ] || die "land: the main checkout holds uncommitted work on paths this land writes; clear it, then land again (no gate ran):
 $(printf '%s\n' "$held" | sed 's/^/  /')"
   verdict="$(git -C "$path" rev-parse --absolute-git-dir)/wt-land-verdict"
+  kind=gated
   if [ "$no_gate" -eq 1 ]; then
+    kind=no-gate
     say "land: --no-gate"
   elif [ -f "$verdict" ] && [ "$(sed -n 1p "$verdict")" = "$new $old" ] && [ "$(sed -n 3p "$verdict")" = "$gate" ]; then
     say "land: reusing the green gate of $(sed -n 2p "$verdict") for $(git -C "$path" rev-parse --short "$new")"
@@ -335,6 +344,7 @@ $(printf '%s\n' "$held" | sed 's/^/  /')"
   fi
   [ "$(git -C "$WT_MAIN" rev-parse "$WT_BASE")" = "$old" ] || die "land: $WT_BASE moved during the gate; run land again"
   git -C "$WT_MAIN" merge --ff-only "$new" || die "land: main checkout refused the fast-forward; the green gate is recorded, so clear it and land again"
+  printf '%s %s %s\n' "$(git -C "$path" rev-parse --short "$new")" "$kind" "$(date +%Y-%m-%dT%H:%M:%S)" >>"$landlog"
   wt_after_land "$path" "$old" "$new" || die "land: local after hook failed"
   say "landed $branch at $(git -C "$WT_MAIN" rev-parse --short "$new")"
 }

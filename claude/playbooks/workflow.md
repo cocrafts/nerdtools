@@ -48,16 +48,16 @@ that governs that work, a technical fact in a test, a tool or a doc, so the next
 reads it where it acts. When a correction arrives, follow the steps above; when memory
 already holds a lesson, move it into its instruction layer and delete the memory file.
 
-## Worked example — the land gate
+## Validate an instruction as a decision
 
-A session bumped `VERSION` in `src/compiler/usage.ms` and queued the land for a full gate.
-The string is read only by `msc --version`, and no test or corpus program pins it, so no
-lane could observe the change.
+Before adopting a rule, read it as the steps a session will take:
 
-- Decision that went wrong: "every land is gated" instead of "this change reaches no lane".
-- Passages: the repository and workspace texts described the land queue (it rebases, gates,
-  lands) as the procedure, and left "what a lane looks at" to `gate.sh`'s path map; the only
-  text on the other case was "an agent does not reach for `--no-gate` on its own".
-- New text: decide what verification a change needs from what it can alter and which lane
-  observes that; queue the land when a lane can, and when none can, show the evidence and
-  land with `--no-gate` on the person's yes.
+1. Identify the condition that starts the decision and the information the session needs.
+2. State the action for each relevant condition, including when existing evidence already
+   satisfies the decision, so the session can choose without inventing a procedure.
+3. Check that the reason explains the action in neighboring cases as well as the case that
+   prompted the rule; this is what makes the instruction reusable.
+4. Compare the decision with the tools and instructions that carry it out. Resolve a mismatch
+   in the layer that owns it, so a tool default does not silently replace the decision.
+5. When an example helps, show the intended action and the evidence that selects it. Keep the
+   incident's history in its issue or commit, so the instruction teaches how to act.

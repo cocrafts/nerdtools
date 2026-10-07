@@ -81,10 +81,21 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   proves only its unit. A control answers only the question it isolates: list every variable that
   differs between the broken and the working run before blaming one. Change a status claim in a
   doc after running it; quote the output and say what was not verified.
-- **Size the verification to what the change can reach.** Before running a check, name what the
-  change can alter and which check observes that, then run that check. When nothing a check runs
-  can observe the change, say so with the evidence (who reads it, which test pins it). A tool's
-  default selection by paths or globs stands in for this judgment; it does not replace it.
+- **Choose verification from the change's effect.** Before running a check, identify the changed
+  behavior or inputs, their consumers, and the checks that observe the affected contract. Run
+  the smallest set that proves that contract; apply the repository's release checks when cutting
+  a release, because a release proves a broader contract than an individual change.
+- **Reuse evidence while its checked scope remains valid.** Compare the current state with the
+  behavior, inputs, toolchain and settings covered by the recorded result. When those are
+  unchanged, carry the result into the next commit or land; when they change, rerun the affected
+  checks, because evidence belongs to what was checked rather than to a Git operation.
+- **Explain when a check has nothing new to observe.** Name the consumers and test dependencies
+  that establish why the change is outside its scope, then leave that check unrun. When the
+  impact is unclear, inspect those dependencies before choosing verification, so the decision
+  rests on evidence rather than on the file's name.
+- **Tools carry out the verification decision.** Treat path-based selection and default commands
+  as proposed checks, compare them with the scope above, and resolve any mismatch before starting
+  the run, because a tool's default cannot establish which behavior a change reaches.
 - **Fail loud.** An unhandled branch reports an error that names the case. An unsafe shape is an
   error at its declaration, so the author fixes it where it was written instead of meeting a
   silent fallback, an auto-repair or a warning later.
