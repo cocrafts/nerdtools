@@ -68,7 +68,7 @@ function providerIdentity(provider: string): string | undefined {
 	return undefined;
 }
 
-function statusLine(pi: ExtensionAPI, ctx: ExtensionContext, identity: string | undefined, quota: string): string {
+function statusLine(pi: ExtensionAPI, ctx: ExtensionContext, identity: string | undefined, quota: string, branchLabel: string): string {
 	const parts: string[] = [];
 	const usage = ctx.getContextUsage();
 	if (usage) {
@@ -81,7 +81,7 @@ function statusLine(pi: ExtensionAPI, ctx: ExtensionContext, identity: string | 
 	}
 
 	const cwd = basename(ctx.cwd) || ctx.cwd;
-	parts.push(`${GRAY}${cwd}${FG_DEFAULT}`);
+	parts.push(branchLabel || `${GRAY}${cwd}${FG_DEFAULT}`);
 	if (quota) parts.push(quota);
 	if (identity) parts.push(`${GRAY}${identity.replace(/@[^@]+$/, "")}${FG_DEFAULT}`);
 
@@ -221,7 +221,7 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 					}
 					const statsWidth = Math.max(0, width - 2);
 					const branch = footerData.getGitBranch();
-					const branchLabel = branch && branch !== "main" ? `${theme.fg("toolDiffAdded", ` ${branch}`)} · ` : "";
+					const branchLabel = branch && branch !== "main" ? theme.fg("toolDiffAdded", branch) : "";
 					const modelId = context.model?.id;
 					const modelLabel = modelId === "gpt-6.1-sol" ? "Sol 6.1" : modelId ?? "no-model";
 					const modelColor = /(?:^|[-\s])sol(?:$|[-\s])/i.test(modelLabel) ? "toolDiffAdded"
@@ -231,7 +231,7 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 						: cacheHit >= 95 ? `\x1b[38;2;255;158;100m${cacheText}${FG_DEFAULT}` : theme.fg("error", cacheText);
 					const speedLabel = `${GRAY} ${tokensPerSecond === undefined ? "—" : tokensPerSecond.toFixed(1)} tok/s${FG_DEFAULT}`;
 					const left = truncateToWidth(
-						`${theme.fg(modelColor, modelLabel)} · ${branchLabel}${GRAY}↑${formatTokens(input)}${FG_DEFAULT} ${theme.fg("toolDiffAdded", `↓${formatTokens(output)}`)} · ${speedLabel} · ${cacheLabel}`,
+						`${theme.fg(modelColor, modelLabel)} · ${GRAY}↑${formatTokens(input)}${FG_DEFAULT} ${theme.fg("toolDiffAdded", `↓${formatTokens(output)}`)} · ${speedLabel} · ${cacheLabel}`,
 						statsWidth,
 						"…",
 					);
@@ -242,7 +242,7 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 					const statsLine = width < 2 ? " ".repeat(Math.max(0, width))
 						: truncateToWidth(` ${stats}${" ".repeat(Math.max(0, statsWidth - visibleWidth(stats)))} `, width, "…");
 					const quota = quotaWindows.length ? quotaWindows.map(quotaLabel).join(" · ") : theme.fg("dim", quotaState);
-					const firstContent = truncateToWidth(statusLine(pi, context, identity, quota), Math.max(0, width - 1), "…");
+					const firstContent = truncateToWidth(statusLine(pi, context, identity, quota, branchLabel), Math.max(0, width - 1), "…");
 					const firstLine = truncateToWidth(`${firstContent}${" ".repeat(Math.max(0, width - visibleWidth(firstContent)))}`, width, "…");
 					return [firstLine, statsLine];
 				},
