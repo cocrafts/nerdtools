@@ -5,6 +5,7 @@ import { Container, Text, truncateToWidth, visibleWidth } from "@earendil-works/
 import { displayPath, resolveFileLink, type FileLink } from "./file-link.ts";
 import { onFileLink } from "./on-file-link.ts";
 import { highlightFile } from "./code-highlight.ts";
+import { registerSkillInput } from "./skill-input.ts";
 import { SyntaxDiff } from "./syntax-diff.ts";
 
 const labels: Record<string, string> = {
@@ -44,6 +45,7 @@ export class ToolCallLine implements Component {
 }
 
 export default function neonFormat(pi: ExtensionAPI): void {
+	registerSkillInput(pi);
 	let context: ExtensionContext | undefined;
 	let editorOpen = false;
 	pi.on("session_start", (_event, ctx) => { context = ctx; });
