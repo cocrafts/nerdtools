@@ -66,9 +66,13 @@ Carry a GREEN result forward when that checked scope is unchanged, including aft
 rebase or refused land. When something in its scope changes, rerun the affected checks.
 Record the checked commit and base as provenance along with the scope and result, so another
 session can establish whether the evidence still applies rather than inferring it from a SHA.
-When the tool cannot carry applicable evidence into the transaction, name that tooling gap
-and resolve the supported path before another expensive run; the verification decision
-belongs to the change, not to the default behavior of the land command.
+
+Land with `--no-gate`, without asking, when all of these hold: the branch's card quotes a
+GREEN gate result with its commit and toolchain, main's last land was gated GREEN on the same
+toolchain, `land` prints `files changed on both sides: none`, and it prints
+`previous land: gated`. Record the reason in the card. When any of them fails, run the gate,
+because two GREEN sides that share a file, or a chain of ungated lands, leave the combination
+unobserved; a gated land after every ungated one keeps that window to a single land.
 
 Retire a worktree from outside it. Refuse removal while it contains uncommitted files,
 unlanded commits, or live processes unless the person explicitly chooses to discard the
