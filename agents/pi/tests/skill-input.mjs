@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { EventEmitter } from "node:events";
+import { mkdtempSync, rmSync, writeFileSync, unlinkSync } from "node:fs";
 import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
@@ -11,17 +12,14 @@ const require = createRequire(join(root, "package.json"));
 const { createJiti } = require("jiti");
 const agentPath = join(root, "dist/index.js");
 const tuiPath = join(root, "node_modules/@earendil-works/pi-tui/dist/index.js");
-const jiti = createJiti(import.meta.url, { alias: {
-	"@earendil-works/pi-coding-agent": agentPath,
-	"@earendil-works/pi-tui": tuiPath,
-} });
+const jiti = createJiti(import.meta.url, { alias: { "@earendil-works/pi-coding-agent": agentPath, "@earendil-works/pi-tui": tuiPath } });
 const helper = await jiti.import(resolve(dirname(fileURLToPath(import.meta.url)), "../extensions/neon-format/skill-input.ts"));
+const submit = await jiti.import(resolve(dirname(fileURLToPath(import.meta.url)), "../extensions/neon-format/skill-submit.ts"));
 const pi = await import(pathToFileURL(agentPath).href);
 const tui = await import(pathToFileURL(tuiPath).href);
 const themeModule = await import(pathToFileURL(join(root, "dist/modes/interactive/theme/theme.js")).href);
 const { KeybindingsManager } = await import(pathToFileURL(join(root, "dist/core/keybindings.js")).href);
 const { InteractiveMode } = await import(pathToFileURL(join(root, "dist/modes/interactive/interactive-mode.js")).href);
-const { AgentSession } = await import(pathToFileURL(join(root, "dist/core/agent-session.js")).href);
 pi.initTheme("dark");
 const editorTheme = { borderColor: text => text, selectList: Object.fromEntries(["selectedPrefix", "selectedText", "description", "scrollInfo", "noMatch"].map(key => [key, text => text])) };
 const fakeTui = { terminal: { rows: 40 }, setFocus(editor) { editor.focused = true; }, requestRender() {} };
@@ -30,124 +28,183 @@ const defaultEditor = new pi.CustomEditor(fakeTui, editorTheme, keys, { embedWor
 let submitted;
 defaultEditor.onSubmit = text => submitted = text;
 defaultEditor.onChange = () => {};
-const clearAction = () => {};
-defaultEditor.actionHandlers.set("app.clear", clearAction);
-const mode = {
-	defaultEditor, editor: defaultEditor, ui: fakeTui, keybindings: keys,
-	editorContainer: new tui.Container(), disposeActiveSelector() {},
-	autocompleteProvider: new tui.CombinedAutocompleteProvider([{ name: "skill:worktree-relaunch", description: "relaunch" }], process.cwd()),
-};
-const ctx = { mode: "tui", ui: {
+let appCalls = 0;
+defaultEditor.actionHandlers.set("app.model.cycleForward", () => appCalls++);
+const mode = { defaultEditor, editor: defaultEditor, ui: fakeTui, keybindings: keys, editorContainer: new tui.Container(), disposeActiveSelector() {}, autocompleteProvider: new tui.CombinedAutocompleteProvider([{ name: "skill:trace-nim" }, { name: "skill:split-commit" }, { name: "model" }], process.cwd()) };
+const errors = [];
+const ctx = { mode: "tui", sessionManager: { getSessionId: () => "skill-test" }, ui: {
 	get theme() { return themeModule.theme; },
-	getEditorText: () => mode.editor.getExpandedText(),
-	setEditorText: text => mode.editor.setText(text),
+	getEditorText: () => mode.editor.getExpandedText(), setEditorText: text => mode.editor.setText(text),
 	setEditorComponent: factory => InteractiveMode.prototype.setCustomEditorComponent.call(mode, factory),
+	notify: (text, kind) => errors.push({ text, kind }),
 } };
-const handlers = new Map();
-helper.registerSkillInput({
-	getCommands: () => [{ source: "skill", name: "skill:worktree-relaunch" }, { source: "extension", name: "not-a-skill" }],
-	on: (name, handler) => handlers.set(name, handler),
-});
-const command = "/skill:worktree-relaunch";
-const label = " worktree-relaunch";
+const scratch = mkdtempSync(join(tmpdir(), "pi-atomic-input-"));
+const bus = new EventEmitter();
+const events = { on: (name, fn) => { bus.on(name, fn); return () => bus.off(name, fn); }, emit: (name, data) => bus.emit(name, data) };
+const files = new Map(["trace-nim", "split-commit"].map(name => {
+	const path = join(scratch, `${name}.md`);
+	writeFileSync(path, `---\nname: ${name}\ndescription: fixture\n---\nBody ${name}. A literal /skill:split-commit in this file must not be rescanned.\n`);
+	return [name, path];
+}));
+let handlers;
+let markdown;
+const register = () => {
+	handlers = new Map();
+	helper.registerSkillInput({ getCommands: () => [...files].map(([name, path]) => ({ source: "skill", name: `skill:${name}`, sourceInfo: { path } })), on: (name, fn) => handlers.set(name, fn), events, registerMarkdownTransformer: fn => markdown = fn });
+};
 const plain = tui.stripTerminalSequences;
-const longPaste = "preserve pasted draft\n".repeat(80);
-defaultEditor.handleInput(`\x1b[200~${longPaste}\x1b[201~`);
-assert.notEqual(defaultEditor.getText(), longPaste);
-assert.equal(defaultEditor.getExpandedText(), longPaste);
-await handlers.get("session_start")({}, ctx);
-assert.equal(mode.editor.getExpandedText(), longPaste);
-assert.equal(mode.editor.onSubmit, defaultEditor.onSubmit);
-assert.equal(mode.editor.onChange, defaultEditor.onChange);
-assert.equal(mode.editor.actionHandlers.get("app.clear"), clearAction);
-const editor = mode.editor;
-assert.equal(editor.embedWorkingStatus, defaultEditor.embedWorkingStatus);
-editor.setText(command);
-let lines = editor.render(80);
-assert.ok(plain(lines[1]).includes(label));
-assert.ok(!plain(lines[1]).includes("/skill:"));
-assert.equal(editor.getText(), command);
-assert.equal(editor.getExpandedText(), command);
-assert.equal(tui.visibleWidth(lines[1].split(tui.CURSOR_MARKER)[0]), tui.visibleWidth(label));
-editor.handleInput("\r");
-assert.equal(submitted, command);
-editor.setText(command + " continue 🌙");
-lines = editor.render(80);
-assert.ok(plain(lines[1]).includes(label + " continue 🌙"));
-const event = { type: "click", button: "left", x: tui.visibleWidth(label + " ") + 3, y: 1, screenX: 0, screenY: 1, width: 80, height: 3, shift: false, alt: false, ctrl: false };
-assert.equal(editor.handleMouse(event).handled, true);
-assert.equal(editor.getCursor().col, command.length + 4);
-assert.equal(editor.handleMouse({ ...event, x: 3 }).handled, true);
-assert.equal(editor.getCursor().col, command.length);
-assert.equal(editor.handleMouse({ ...event, type: "drag" }), undefined);
-editor.handleInput("\x1b[H");
-assert.ok(plain(editor.render(80)[1]).includes("/skill:worktree-relaunch"));
-for (const width of [8, 20, 40, 80]) for (const padding of [0, 2]) {
-	editor.setPaddingX(padding);
-	editor.setText(command + " continue 🌙");
-	for (const line of editor.render(width)) assert.ok(tui.visibleWidth(line) <= width);
-}
-editor.setPaddingX(2);
-editor.setText(command + " continue");
-editor.render(80);
-editor.handleMouse({ ...event, x: tui.visibleWidth(label + " ") + 3 + 2 });
-assert.equal(editor.getCursor().col, command.length + 4);
-editor.setPaddingX(0);
-editor.setText(command);
-const dark = editor.render(80)[1];
-pi.initTheme("light");
-const light = editor.render(80)[1];
-assert.notEqual(light, dark);
-assert.equal(plain(light), plain(dark));
-for (const text of ["/skill:missing", command + ".", command + "\ncontinue", "explain " + command]) {
-	editor.setText(text);
-	assert.ok(!plain(editor.render(80).join("\n")).includes(label));
-}
-editor.setText("/skill:work");
-editor.handleInput("\t");
-await new Promise(resolve => setTimeout(resolve, 40));
-editor.handleInput("\t");
-assert.equal(editor.getText().trim(), command);
-assert.ok(plain(editor.render(80)[1]).includes(label));
-editor.setAutocompleteProvider({ getSuggestions: async () => null, applyCompletion() { throw new Error("unused"); } });
-editor.setText("");
-editor.handleInput(`\x1b[200~${command}\x1b[201~`);
-assert.equal(editor.getExpandedText(), command);
-assert.ok(plain(editor.render(80)[1]).includes(label));
-editor.handleInput("\x7f");
-assert.equal(editor.getText(), command.slice(0, -1));
-assert.ok(!plain(editor.render(80)[1]).includes(label));
-const known = new Set(["worktree-relaunch"]);
-assert.equal(helper.expandSkillChip(label + " continue", known), command + " continue");
-assert.equal(helper.expandSkillChip(" missing", known), " missing");
-assert.equal(helper.expandSkillChip("example: " + label, known), "example: " + label);
-assert.deepEqual(await handlers.get("input")({ text: label + " continue" }, ctx), { action: "transform", text: command + " continue" });
-assert.equal(await handlers.get("input")({ text: command }, ctx), undefined);
-assert.equal(await handlers.get("input")({ text: label }, { mode: "rpc" }), undefined);
-const scratch = mkdtempSync(join(tmpdir(), "pi-skill-input-"));
+const tick = () => new Promise(resolve => setTimeout(resolve, 40));
 try {
-	const filePath = join(scratch, "SKILL.md");
-	writeFileSync(filePath, "---\nname: worktree-relaunch\ndescription: fixture\n---\n## Handoff\nKeep the card and handoff.\n");
-	const resourceLoader = { getSkills: () => ({ skills: [{ name: "worktree-relaunch", filePath, baseDir: scratch }] }) };
-	editor.setText(command + " continue");
-	editor.render(80);
-	editor.handleInput("\r");
-	const expanded = AgentSession.prototype._expandSkillCommand.call({ resourceLoader }, submitted);
-	const parsed = pi.parseSkillBlock(expanded);
-	assert.equal(parsed.name, "worktree-relaunch");
-	assert.ok(parsed.content.includes("Keep the card and handoff."));
-	assert.ok(!parsed.content.includes("description: fixture"));
-	assert.equal(parsed.userMessage, "continue");
-} finally {
-	rmSync(scratch, { recursive: true, force: true });
-}
-editor.setText("");
-editor.handleInput(`\x1b[200~${longPaste}\x1b[201~`);
-await handlers.get("session_shutdown")({ reason: "reload" }, ctx);
-assert.equal(mode.editor, defaultEditor);
-assert.equal(defaultEditor.getExpandedText(), longPaste);
-await handlers.get("session_start")({}, ctx);
-assert.equal(mode.editor.getExpandedText(), longPaste);
-mode.editor.setText(command);
-assert.ok(plain(mode.editor.render(80)[1]).includes(label));
-console.log("PASS: actual Pi editor installation, input chip/cursor/mouse, native autocomplete/paste/submit/skill expansion, unchanged canonical text, clipboard label conversion, theme/narrow/wrapped fallbacks, reload preserves draft.");
+	register();
+	const longPaste = "preserve pasted draft\n".repeat(80);
+	defaultEditor.handleInput(`\x1b[200~${longPaste}\x1b[201~`);
+	await handlers.get("session_start")({}, ctx);
+	let editor = mode.editor;
+	assert.equal(editor.getExpandedText(), longPaste);
+	assert.equal(editor.onSubmit, defaultEditor.onSubmit);
+	assert.equal(editor.onChange, defaultEditor.onChange);
+	assert.equal(editor.actionHandlers.get("app.model.cycleForward"), defaultEditor.actionHandlers.get("app.model.cycleForward"));
+	const original = "Review /skill:trace-nim rồi /skill:split-commit";
+	editor.setText(original);
+	assert.equal(editor.getText(), "Review  trace-nim rồi  split-commit");
+	assert.equal(editor.getExpandedText(), original);
+	for (const width of [1, 2, 8, 20, 40, 80, 120]) for (const padding of [0, 2]) {
+		editor.setPaddingX(padding);
+		for (const line of editor.render(width)) assert.ok(tui.visibleWidth(line) <= width, `${width}: ${plain(line)}`);
+	}
+	editor.setPaddingX(0); editor.render(80);
+	const event = { type: "click", button: "left", x: 11, y: 1, screenX: 11, screenY: 1, width: 80, height: 3, shift: false, alt: false, ctrl: false };
+	assert.equal(editor.handleMouse(event).handled, true);
+	assert.equal(editor.getCursor().col, 11);
+	assert.equal(editor.handleMouse({ ...event, type: "drag" }), undefined);
+	editor.handleInput("\x7f");
+	assert.equal(editor.getText(), "Review  rồi  split-commit");
+	editor.handleInput("\x1f");
+	assert.equal(editor.getExpandedText(), original);
+	editor.setText(original); editor.handleInput("\r");
+	assert.equal(submitted, original);
+	assert.equal(editor.getText(), "");
+	const transformed = await handlers.get("input")({ text: submitted, source: "interactive" }, ctx);
+	assert.equal(transformed.action, "transform");
+	assert.equal((transformed.text.match(/<skill name=/g) ?? []).length, 2);
+	assert.ok(transformed.text.indexOf('name="trace-nim"') < transformed.text.indexOf('name="split-commit"'));
+	assert.ok(transformed.text.endsWith(original));
+	assert.ok(!transformed.text.includes("description: fixture"));
+	const first = pi.parseSkillBlock(transformed.text);
+	assert.equal(first.name, "trace-nim");
+	assert.equal(markdown(first.userMessage, { messageType: "user" }), "Review  trace-nim rồi  split-commit");
+	assert.equal(markdown(first.userMessage, { messageType: "assistant" }), first.userMessage);
+	assert.equal(await handlers.get("input")({ text: original, source: "extension" }, ctx), undefined);
+	for (const text of ["!echo /skill:trace-nim", "/model /skill:trace-nim", "Use /skill:missing", "Use `/skill:trace-nim` literally"]) assert.equal(await handlers.get("input")({ text, source: "interactive" }, ctx), undefined);
+	assert.equal(submit.skillPromptInput(transformed.text), original);
+	editor.addToHistory(transformed.text);
+	editor.handleInput("\x1b[A"); assert.equal(editor.getExpandedText(), original);
+	editor.handleInput("\x1b[B"); assert.equal(editor.getText(), "");
+	editor.setText("Review "); editor.handleInput("/");
+	await tick(); assert.equal(editor.isShowingAutocomplete(), true, "Inline slash must open the skill menu");
+	assert.ok(plain(editor.render(80).join("\n")).includes("/skill:trace-nim"));
+	editor.handleInput("tra"); await tick();
+	assert.equal(editor.isShowingAutocomplete(), true, "Inline slash must filter skill names");
+	editor.handleInput("\t");
+	assert.equal(editor.getExpandedText(), "Review /skill:trace-nim ");
+	editor.handleInput("then /"); await tick();
+	assert.equal(editor.isShowingAutocomplete(), true, "Inline slash must work after an existing chip");
+	editor.handleInput("split"); await tick(); editor.handleInput("\t");
+	assert.equal(editor.getExpandedText(), "Review /skill:trace-nim then /skill:split-commit ");
+	editor.setText("Review /skill:tra"); editor.handleInput("\t"); await tick();
+	if (editor.isShowingAutocomplete()) editor.handleInput("\t");
+	assert.equal(editor.getText(), "Review  trace-nim ");
+	assert.equal(editor.getExpandedText(), "Review /skill:trace-nim ");
+	editor.handleInput("\x1f"); assert.equal(editor.getText(), "Review /skill:tra");
+	editor.setText("");
+	for (const char of "Review /skill:trace-nim then ") editor.handleInput(char);
+	assert.equal(editor.getText(), "Review  trace-nim then ");
+	editor.setText("/mo"); editor.handleInput("\t"); await tick();
+	if (editor.isShowingAutocomplete()) editor.handleInput("\t");
+	assert.equal(editor.getText().trim(), "/model");
+	editor.setText("before"); editor.handleInput("\x10"); assert.equal(appCalls, 1);
+	editor.setText("abc def"); editor.handleInput("\x17"); assert.equal(editor.getText(), "abc ");
+	editor.handleInput("\x19"); assert.equal(editor.getText(), "abc def");
+	editor.handleInput("\x01"); assert.equal(editor.getCursor().col, 0);
+	editor.handleInput("\x05"); assert.equal(editor.getCursor().col, 7);
+	editor.setText("line\\"); editor.handleInput("\r"); assert.equal(editor.getText(), "line\n");
+	editor.setText("line"); editor.handleInput("\n"); assert.equal(editor.getText(), "line\n");
+	editor.setText(""); editor.handleInput("\x1b[200~" + original.slice(0, 12)); editor.handleInput(original.slice(12) + "\x1b[201~tail");
+	assert.equal(editor.getExpandedText(), original + "tail");
+	editor.setText(""); editor.handleInput(`\x1b[200~${longPaste}\x1b[201~`);
+	assert.ok(editor.getText().startsWith("[Paste #"));
+	assert.equal(editor.getExpandedText().trim(), longPaste.trim());
+	const saved = editor.getDraft();
+	await handlers.get("session_shutdown")({ reason: "reload" }, ctx);
+	assert.equal(mode.editor, defaultEditor);
+	register(); await handlers.get("session_start")({}, ctx); editor = mode.editor;
+	assert.deepEqual(editor.getDraft(), saved);
+	editor.handleInput(`\x1b[200~${longPaste}second\x1b[201~`);
+	assert.ok(editor.getExpandedText().includes("second"));
+	editor.setText("/skill:trace-nim");
+	const dark = editor.render(80).join("\n"); pi.initTheme("light");
+	const light = editor.render(80).join("\n"); assert.notEqual(dark, light); assert.equal(plain(dark), plain(light));
+	let requests = 0;
+	const pending = [];
+	editor.setAutocompleteProvider({
+		triggerCharacters: ["%"],
+		getSuggestions: (_lines, _line, _col, options) => {
+			requests++;
+			return new Promise(resolve => pending.push({ resolve, signal: options.signal }));
+		},
+		applyCompletion: () => { throw new Error("Unused completion"); },
+	});
+	editor.setText("");
+	for (const char of "ordinary prompt without completion") editor.handleInput(char);
+	await tick();
+	assert.equal(requests, 0, "Plain typing must not query autocomplete");
+	editor.setText("Check "); editor.handleInput("@s");
+	assert.equal(requests, 1);
+	pending.shift().resolve({ prefix: "@s", items: [{ value: "src", label: "src" }, { value: "setup", label: "setup" }] });
+	await tick();
+	assert.equal(editor.isShowingAutocomplete(), true);
+	const menuHeight = editor.render(80).length;
+	editor.handleInput("r");
+	assert.equal(requests, 2);
+	assert.equal(editor.isShowingAutocomplete(), true, "Pending refresh must keep the visible popup");
+	assert.equal(editor.render(80).length, menuHeight, "Pending refresh must not shrink the editor");
+	pending.shift().resolve({ prefix: "@sr", items: [{ value: "src", label: "src" }] });
+	await tick();
+	editor.handleInput(" ");
+	await tick();
+	assert.equal(requests, 2, "Space ending a completion must stop requests");
+	assert.equal(editor.isShowingAutocomplete(), false);
+	editor.setText("Check "); editor.handleInput("%x");
+	assert.equal(requests, 3, "Provider trigger characters must still work");
+	const obsolete = pending.shift();
+	editor.handleInput(" ");
+	assert.equal(obsolete.signal.aborted, true);
+	obsolete.resolve({ prefix: "%x", items: [{ value: "obsolete", label: "obsolete" }] });
+	await tick(); assert.equal(editor.isShowingAutocomplete(), false, "Stale results must not reopen the popup");
+	editor.setText("read fi"); editor.handleInput("\t");
+	assert.equal(requests, 4, "Explicit Tab must still query ordinary file tokens");
+	pending.shift().resolve({ prefix: "fi", items: [{ value: "file", label: "file" }, { value: "fixture", label: "fixture" }] });
+	await tick(); editor.handleInput("l");
+	assert.equal(requests, 5, "Explicit file completion must keep updating within its token");
+	pending.shift().resolve(null);
+	await tick(); assert.equal(editor.isShowingAutocomplete(), false, "Empty results must dismiss the previous popup");
+	editor.setText("/skill:trace-nim");
+	unlinkSync(files.get("trace-nim"));
+	editor.handleInput("\r"); assert.equal(editor.getExpandedText(), "/skill:trace-nim"); assert.equal(errors.at(-1).kind, "error");
+	const broken = await handlers.get("input")({ text: original, source: "interactive" }, ctx);
+	assert.equal(broken.action, "handled");
+	assert.ok(errors.at(-1).text.includes("trace-nim"));
+	const palette = () => themeModule.theme;
+	for (let steps = 0; steps < 15; steps++) for (const text of ["foo bar", "can't stop", "foo-bar/baz.qux", "hello 🌙 world", "a\nline two", "é 👩🏽‍💻 foo"]) {
+		for (const input of ["\x1bb", "\x1bf", "\x17", "\x1bd", "\x15", "\x0b", "\x01", "\x05", "\x1b[A", "\x1b[B", "\x1b[D", "\x7f"]) {
+			const native = new pi.CustomEditor(fakeTui, editorTheme, keys);
+			const atomic = new helper.SkillInputEditor(fakeTui, editorTheme, keys, () => new Set(), palette);
+			native.setText(text); atomic.setText(text); native.render(80); atomic.render(80);
+			for (let move = 0; move < steps; move++) { native.handleInput("\x1b[D"); atomic.handleInput("\x1b[D"); }
+			native.handleInput(input); atomic.handleInput(input);
+			assert.equal(atomic.getText(), native.getText(), JSON.stringify({ text, steps, input }));
+			assert.deepEqual(atomic.getCursor(), native.getCursor(), JSON.stringify({ text, steps, input }));
+		}
+	}
+} finally { rmSync(scratch, { recursive: true, force: true }); }
+console.log("PASS: native Pi editor factory/callbacks; inline/multiple atoms; autocomplete/typing/paste; whole-chip Backspace/undo; wrap 1–120, cursor/mouse/theme; canonical submit + native skill blocks; history/kill/yank/app keys; plain typing skips autocomplete; pending popup stays stable, stale results discarded; provider triggers/explicit Tab preserved; reload preserves opaque paste; missing source blocks submission.");

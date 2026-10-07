@@ -34,7 +34,7 @@ try {
 	pi.initTheme("dark");
 	let resolver;
 	const lifecycle = new Map();
-	extension.default({ registerToolRenderer: value => resolver = value, on: (name, handler) => lifecycle.set(name, handler) });
+	extension.default({ registerToolRenderer: value => resolver = value, registerMarkdownTransformer() {}, on: (name, handler) => lifecycle.set(name, handler) });
 	let opened = 0;
 	await lifecycle.get("session_start")({}, { cwd, mode: "tui", isIdle: () => true, ui: {
 		custom: async factory => { assert.equal(typeof factory, "function"); opened++; return { status: 0 }; },
