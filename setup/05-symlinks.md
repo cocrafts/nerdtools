@@ -190,6 +190,53 @@ wrapper. The rule that decides: an agent that expands `@` gets a wrapper, an
 agent that does not gets the symlink — never a copy of the content. Claude Code expands
 `@`, so it is on the wrapper side too.
 
+## Pi
+
+**Goal:** share Pi configuration and extensions without syncing credentials or sessions.
+
+**Preconditions:** Pi 1.0.4 and Node/npm are installed; the shared Claude setup above is complete.
+The commands below use Bash. Native Windows needs permission to create real symlinks.
+
+**Steps:**
+
+Keep `~/.pi/agent` a real directory: credentials, session transcripts, trust decisions,
+installed npm packages, and caches stay machine-local. Shared sources live in
+`~/nerdtools/agents/pi`; skills link to the existing Claude source rather than a separate copy.
+Before replacing an existing real settings file or extensions directory, move it to a
+local backup and preserve its integrations in the repo source.
+
+```bash
+mkdir -p ~/.pi/agent
+ln -sfn ~/nerdtools/agents/pi/settings.json ~/.pi/agent/settings.json
+ln -sfn ~/nerdtools/agents/pi/AGENTS.md     ~/.pi/agent/AGENTS.md
+ln -sfn ~/nerdtools/agents/pi/extensions   ~/.pi/agent/extensions
+mkdir -p ~/.pi/agent/skills
+for skill in ~/nerdtools/claude/skills/*; do
+  [ -f "$skill/SKILL.md" ] || continue
+  ln -sfn "$skill" ~/.pi/agent/skills/"$(basename "$skill")"
+done
+pi install npm:pi-web-access
+pi install npm:@fractaal/pi-cross-agent-memory@0.3.1
+npm ci --ignore-scripts --legacy-peer-deps --prefix ~/nerdtools/agents/pi/extensions/neon-format
+pi
+```
+
+**Skip rule:** skip linking paths already pointing at these sources; do not replace a real
+file or directory without first backing it up locally. Skip dependency installation only
+when the installed dependencies match the extension's lockfile.
+
+**Verify:** Pi should start without extension-load errors. Check the theme, skill input chip,
+collapsed tool output and footer interactively. For renderer regression checks:
+
+```bash
+PI_PACKAGE_ROOT="$(npm root -g)/@earendil-works/pi-coding-agent" \
+  node ~/nerdtools/agents/pi/tests/neon-format.mjs
+```
+
+**Notes:** use `/login` for a provider and `/model` to select it. OMP credentials are not migrated.
+Keep `~/.pi/web-search.json` local because it can contain provider keys.
+Windows runtime parity still needs a smoke test on Windows; the shared files alone do not prove it.
+
 ## Syncthing (compiler docs)
 
 The whole `docs/` folder syncs between machines via Syncthing — live WIP docs
