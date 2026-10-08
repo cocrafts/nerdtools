@@ -132,12 +132,12 @@ export class AtomicSkillEditor extends CustomEditor {
 			for (const cell of row.cells) {
 				let shown = cell.text;
 				if (cell.atom?.expansion?.startsWith("/skill:") && this.known().has(cell.atom.expansion.slice(7))) shown = this.palette().style(shown, { fg: "customMessageLabel", bg: "customMessageBg", bold: true });
-				if (showCursor && (cell.start === this.buffer.getCursor() || (bodyWidth === 1 && cell === row.cells.at(-1) && this.buffer.getCursor() === row.end && !row.softBreak))) shown = CURSOR_MARKER + `\x1b[7m${shown}\x1b[27m`;
+				if (showCursor && (cell.start === this.buffer.getCursor() || (bodyWidth === 1 && cell === row.cells.at(-1) && this.buffer.getCursor() === row.end && !row.softBreak))) shown = CURSOR_MARKER + this.palette().style(cell.text, { fg: this.palette().colors.customMessageBg, bg: this.palette().colors.muted });
 				text += shown;
 				columns += cell.columns;
 			}
 			if (showCursor && this.buffer.getCursor() === row.end && !row.softBreak && columns < bodyWidth) {
-				text += CURSOR_MARKER + "\x1b[7m \x1b[27m";
+				text += CURSOR_MARKER + this.palette().style(" ", { fg: this.palette().colors.customMessageBg, bg: this.palette().colors.muted });
 				columns++;
 			}
 			text += " ".repeat(Math.max(0, bodyWidth - columns) + this.renderedPadding);

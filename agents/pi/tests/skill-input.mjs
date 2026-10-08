@@ -72,11 +72,11 @@ try {
 			for (const width of [1, 2, 8, 80]) {
 				editor.focused = false;
 				const blurred = editor.render(width).join("\n");
-				assert.ok(!blurred.includes("\x1b[7m"), "Blurred input must not draw a cursor block");
+				assert.ok(!blurred.includes(themeModule.theme.style("cursor", { bg: themeModule.theme.colors.muted }).split("cursor")[0]), "Blurred input must not draw a cursor block");
 				assert.ok(!blurred.includes(tui.CURSOR_MARKER), "Blurred input must not expose a hardware cursor marker");
 				editor.focused = true;
 				const focused = editor.render(width).join("\n");
-				assert.ok(focused.includes("\x1b[7m") && focused.includes(tui.CURSOR_MARKER), "Focused input must restore its cursor block");
+				assert.ok(focused.includes(themeModule.theme.style("cursor", { bg: themeModule.theme.colors.muted }).split("cursor")[0]) && focused.includes(tui.CURSOR_MARKER), "Focused input must restore its cursor block");
 				assert.equal(editor.getDraft().cursor, cursor, "Focus changes must preserve cursor position");
 			}
 		}
