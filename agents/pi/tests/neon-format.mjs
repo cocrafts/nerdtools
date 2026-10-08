@@ -215,6 +215,7 @@ try {
 		["unused() { rm secret; }; node -e 'console.log(\"git\")'", "node"],
 		["bash -c 'git status'", "bash"],
 		["git status && git diff | head -5", "git, head"],
+		["python3 - <<'PY'\nimport importlib.util,json\nfrom pathlib import Path\ns=importlib.util.spec_from_file_location('hook','/Users/le/nerdtools/claude/hooks/worktree-checkpoint.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h)\npaths=[Path('/Users/le/.claude/projects/-Users-le-metascript-recompiler/99e31fa2-10ef-405b-a630-80bdc925e241.jsonl'),max(Path('/Users/le/.claude/projects/-Users-le-nerdtools').glob('*.jsonl'),key=lambda p:p.stat().st_mtime)]\nfor p in paths:\n text,model=h.conversation(p);print(p.name,'active messages:',len(json.loads(text)),'chars:',len(text),'model:',model)\nPY", "python3"],
 		["$UNKNOWN --flag", "shell"],
 		["python3 - <<'PY'", "shell (name unavailable)"],
 	]) assert.equal(await shellNames.shellCommandNames(command), expected, command);
