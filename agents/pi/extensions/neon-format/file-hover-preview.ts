@@ -9,7 +9,7 @@ const maxPreviewBytes = 256 * 1024;
 const hoverMs = 350;
 const contains = (bounds: OverlayBounds | undefined, x: number, y: number): boolean => !!bounds && x >= bounds.col && x < bounds.col + bounds.width && y >= bounds.row && y < bounds.row + bounds.height;
 
-function previewFrame(title: string, body: Component, theme: Theme): Component {
+function previewFrame(title: string, body: Component, theme: Theme, lineCount: number): Component {
 	return {
 		render(width) {
 			const inner = Math.max(0, width - 4);
@@ -17,8 +17,9 @@ function previewFrame(title: string, body: Component, theme: Theme): Component {
 				const clipped = truncateToWidth(value, inner, "…");
 				return truncateToWidth(theme.fg("muted", "│ ") + clipped + " ".repeat(Math.max(0, inner - visibleWidth(clipped))) + theme.fg("muted", " │"), width, "");
 			};
+			const bodyRows = body.render(inner);
 			const border = (left: string, right: string) => truncateToWidth(theme.fg("muted", left + "─".repeat(Math.max(0, width - 2)) + right), width, "");
-			return [border("╭", "╮"), frame(theme.fg("mdLink", stripTerminalSequences(title).replace(/[\r\n\t]/g, " "))), ...body.render(inner).map(frame), border("╰", "╯")];
+			return [border("╭", "╮"), frame(theme.fg("mdLink", stripTerminalSequences(title).replace(/[\r\n\t]/g, " "))), ...Array.from({ length: lineCount }, (_, index) => frame(bodyRows[index] ?? "")), border("╰", "╯")];
 		},
 		handleMouse: event => body.handleMouse?.(event) ?? { handled: true, render: false },
 		invalidate: () => body.invalidate(),
@@ -28,13 +29,13 @@ function previewFrame(title: string, body: Component, theme: Theme): Component {
 export function diffPreview(link: FileLink, cwd: string, theme: Theme, diff: string, lineCount: number, width: number): { component: Component; height: number } {
 	const title = `${displayPath(link.path, cwd)} · diff`;
 	if (Buffer.byteLength(diff, "utf8") > maxPreviewBytes) return {
-		height: 4,
-		component: previewFrame(title, { render: () => [theme.fg("dim", "Diff preview limited to 256 KiB; expand tool instead")], invalidate() {} }, theme),
+		height: lineCount + 3,
+		component: previewFrame(title, { render: () => [theme.fg("dim", "Diff preview limited to 256 KiB; expand tool instead")], invalidate() {} }, theme, lineCount),
 	};
 	const syntax = new SyntaxDiff(stripTerminalSequences(diff), link.path, theme);
 	let contentWidth = Math.max(0, width - 4);
 	let rows = syntax.render(contentWidth);
-	const height = Math.min(lineCount, rows.length);
+	const height = lineCount;
 	let offset = Math.max(0, Math.min(syntax.firstChangedRow - 3, rows.length - height));
 	return {
 		height: height + 3,
@@ -50,7 +51,7 @@ export function diffPreview(link: FileLink, cwd: string, theme: Theme, diff: str
 				return { handled: true, render: true };
 			},
 			invalidate: () => { syntax.invalidate(); contentWidth = -1; },
-		}, theme),
+		}, theme, lineCount),
 	};
 }
 
@@ -88,8 +89,8 @@ export function filePreview(link: FileLink, cwd: string, theme: Theme, lineCount
 		rows = [theme.fg("dim", error instanceof Error ? error.message : String(error))];
 	}
 	return {
-		height: rows.length + 3,
-		component: previewFrame(title, { render: () => rows, invalidate() {} }, theme),
+		height: lineCount + 3,
+		component: previewFrame(title, { render: () => rows, invalidate() {} }, theme, lineCount),
 	};
 }
 
@@ -153,16 +154,17 @@ export class FileHoverPreview {
 			this.timer = undefined;
 			if (this.getContext() !== ctx || this.getTui() !== tui || tui.hasOverlay() || !this.source) { this.close(); return; }
 			const above = Math.max(0, this.source.row - 1), below = Math.max(0, tui.terminal.rows - this.source.row - 2);
-			const available = Math.min(15, Math.max(above, below));
+			const useBelow = below >= above;
+			const available = useBelow ? below : above;
 			if (available < 6 || tui.terminal.columns < 24) { this.close(); return; }
-			const width = Math.min(90, tui.terminal.columns - 2);
+			const width = tui.terminal.columns - 2;
 			const preview = diff === undefined ? filePreview(link, ctx.cwd, ctx.ui.theme, available - 3)
 				: diffPreview(link, ctx.cwd, ctx.ui.theme, diff, available - 3, width);
 			this.focus = tui instanceof TuiAltScreen ? tui.getFocusedComponent() : undefined;
 			this.handle = tui.showOverlay(preview.component, {
 				nonCapturing: true, width,
-				row: below >= preview.height ? this.source.row + 1 : this.source.row - preview.height,
-				col: Math.max(1, this.source.col), margin: 1,
+				row: useBelow ? this.source.row + 1 : this.source.row - preview.height,
+				col: 1, margin: 1,
 			});
 		}, hoverMs);
 		this.timer.unref?.();

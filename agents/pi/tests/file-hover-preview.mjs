@@ -31,6 +31,9 @@ nativeInput.on("paste", text => input(`\x1b[200~${text}\x1b[201~`));
 const baseline = process.stdin.listenerCount("data");
 const terminal = { rows: 30, columns: 100, kittyProtocolActive: false, write: text => writes.push(text), start: handler => { input = handler; process.stdin.on("data", feedNative); }, stop() { process.stdin.off("data", feedNative); }, hideCursor() {}, showCursor() {} };
 const ui = new tui.TuiAltScreen(terminal, false);
+let latestOverlay;
+const nativeShowOverlay = ui.showOverlay.bind(ui);
+mock.method(ui, "showOverlay", (component, options) => { latestOverlay = nativeShowOverlay(component, options); return latestOverlay; });
 const editor = new pi.CustomEditor(ui, { borderColor: text => text, selectList: {} }, new KeybindingsManager({}));
 let context = { mode: "tui", cwd: scratch, ui: { theme, onTerminalInput: handler => ui.addInputListener(handler) } };
 const preview = new FileHoverPreview(() => context, () => ui);
@@ -90,6 +93,7 @@ try {
   mock.timers.tick(1);
   assert.equal(ui.hasOverlay(), true, "Native SGR hover over header must open public overlay after 350ms");
   ui.renderNow(true);
+  assert.deepEqual(latestOverlay.getBounds(), { row: 1, col: 1, width: 98, height: 28 }, "Upper-half hover must fill available lower area and terminal width");
   assert.equal(ui.getFocusedComponent(), editor);
   assert.equal(editor.getText(), "unchanged draft");
   assert.ok(writes.join("").includes("example.ts:15"));
@@ -102,6 +106,16 @@ try {
   input("\x1b");
   assert.equal(ui.hasOverlay(), false);
   assert.equal(editor.getText(), "unchanged draft");
+  const shortPath = join(scratch, "short.ts");
+  writeFileSync(shortPath, "const short = 1;");
+  const bottomHeader = new ToolCallLine(" Read", "short.ts", "", theme, { path: shortPath }, () => {}, undefined, (link, event, start, end) => preview.hover(link, event, start, end));
+  layout.clear();
+  layout.addChild(new tui.Text(Array.from({ length: 20 }, (_, i) => `above-${i}`).join("\n"), 0, 0));
+  layout.addChild(bottomHeader); layout.addChild(editor);
+  ui.renderNow(true); mouse(10, 20); mock.timers.tick(350); ui.renderNow(true);
+  assert.deepEqual(latestOverlay.getBounds(), { row: 1, col: 1, width: 98, height: 19 }, "Lower-half hover must fill upper area even for one-line content");
+  assert.equal(ui.getFocusedComponent(), editor);
+  preview.close(); layout.clear(); layout.addChild(header); layout.addChild(editor); ui.renderNow(true);
   mouse(10, 0); mock.timers.tick(350); ui.renderNow(true);
   input("x");
   assert.equal(ui.hasOverlay(), false);
@@ -158,6 +172,7 @@ try {
   assert.equal(ui.getFocusedComponent(), mode.editor);
   process.stdin.emit("data", "\x1b"); mock.timers.tick(10);
   assert.equal(ui.hasOverlay(), false);
+  terminal.rows = 14;
   const editTool = pi.createEditTool(scratch);
   const editArgs = { path, edits: [
     { oldText: 'const value14: string = "line 14";', newText: 'const value14: string = "ALPHA_FIRST_EDIT";' },
@@ -178,6 +193,7 @@ try {
   ui.renderNow(true);
   mouse(10, 1); mock.timers.tick(350); writes.length = 0; ui.renderNow(true);
   assert.equal(ui.hasOverlay(), true);
+  assert.deepEqual(latestOverlay.getBounds(), { row: 2, col: 1, width: 98, height: 11 });
   assert.ok(tui.stripTerminalSequences(writes.join("")).includes("ALPHA_FIRST_EDIT"), "Hover must use this real Edit result, not the current file");
   assert.ok(!tui.stripTerminalSequences(writes.join("")).includes("CURRENT_FILE_NOT_THIS_EDIT"));
   assert.ok(!tui.stripTerminalSequences(writes.join("")).includes("OMEGA_FIRST_EDIT"), "Initial viewport stays at the first hunk");
@@ -223,5 +239,6 @@ try {
   nativeInput.destroy();
   assert.equal(process.stdin.listenerCount("data"), baseline, "Preview must clean up its non-consuming observer");
   mock.timers.reset();
+  mock.restoreAll();
   rmSync(scratch, { recursive: true, force: true });
 }
