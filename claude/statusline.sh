@@ -24,7 +24,7 @@ input=$(cat)
 case "$effort" in
   low)    ecolor=$'\033[2m' ;;
   medium) ecolor=$'\033[39m' ;;
-  high)   ecolor=$'\033[92m' ;;
+  high)   ecolor=$'\033[94m' ;;
   xhigh)  ecolor=$'\033[93m' ;;
   max)    ecolor=$'\033[91m' ;;
   *)      ecolor='' ;;

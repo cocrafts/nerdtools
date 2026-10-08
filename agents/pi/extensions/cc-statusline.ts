@@ -9,9 +9,9 @@ const FG_DEFAULT = "\x1b[39m";
 
 const EFFORT_COLORS: Record<string, string> = {
 	minimal: "\x1b[90m",
-	low: "\x1b[90m",
-	medium: "\x1b[94m",
-	high: "\x1b[92m",
+	low: "\x1b[2m",
+	medium: "\x1b[39m",
+	high: "\x1b[94m",
 	xhigh: "\x1b[93m",
 	max: "\x1b[91m",
 };
