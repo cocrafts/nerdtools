@@ -147,7 +147,7 @@ try {
 	let finished;
 	let now = 1_000_000;
 	Date.now = () => now;
-	const realCtx = { mode: "tui", model: { provider: "openai-codex" }, ui: {
+	const realCtx = { mode: "tui", sessionManager: { getSessionId: () => "quota-test" }, model: { provider: "openai-codex" }, ui: {
 		notify: message => { throw new Error(message); },
 		setFooter: factory => {
 			if (factory) footer = factory({ requestRender() {} }, theme, { onBranchChange: () => () => {} });

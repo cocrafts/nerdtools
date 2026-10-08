@@ -1,7 +1,7 @@
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { readStoredCredential } from "@earendil-works/pi-coding-agent";
 import { basename } from "node:path";
-import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
+import { type TuiMouseEvent, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 const RESET = "\x1b[0m";
 const GRAY = "\x1b[90m";
@@ -100,6 +100,8 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 	let lastQuotaFetch = 0;
 	let quotaRequest: AbortController | undefined;
 	let quotaTimer: ReturnType<typeof setInterval> | undefined;
+	let todoPanelVisible = false;
+	let unsubscribeTodoVisibility: (() => void) | undefined;
 
 	const stopQuota = () => {
 		if (quotaTimer) clearInterval(quotaTimer);
@@ -161,6 +163,9 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 
 	const clear = () => {
 		stopQuota();
+		unsubscribeTodoVisibility?.();
+		unsubscribeTodoVisibility = undefined;
+		todoPanelVisible = false;
 		const previous = context;
 		context = undefined;
 		requestRender = undefined;
@@ -183,40 +188,62 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 		if (ctx.mode !== "tui") return;
 		context = ctx;
 		identity = ctx.model ? providerIdentity(ctx.model.provider) : undefined;
+		unsubscribeTodoVisibility = pi.events.on("rpiv-todo-panel-visibility", (data) => {
+			const state = data as { sessionId?: unknown; visible?: unknown };
+			if (!context || state?.sessionId !== context.sessionManager.getSessionId()) return;
+			if (typeof state.visible !== "boolean") throw new Error("Todo panel visibility requires visible boolean");
+			if (todoPanelVisible === state.visible) return;
+			todoPanelVisible = state.visible;
+			requestRender?.();
+		});
 		ctx.ui.setFooter((tui, theme, footerData) => {
 			requestRender = () => tui.requestRender();
 			const unsubscribe = footerData.onBranchChange(() => tui.requestRender());
 			let statsKey: object | undefined;
 			let statsCount = -1;
-			let input = 0;
-			let output = 0;
 			let cacheHit: number | undefined;
+			let cavemanLevel = "off";
+			let todoManager: object | undefined;
+			let todoLeaf: string | null | undefined;
+			let todoLabel = "";
+			let todoHitRange: { start: number; end: number } | undefined;
 			return {
 				render(width: number) {
+					todoHitRange = undefined;
 					if (!context) return [];
 					const manager = context.sessionManager;
 					const count = manager.getEntryCount();
 					if (statsKey !== manager || statsCount !== count) {
 						statsKey = manager;
 						statsCount = count;
-						input = 0;
-						output = 0;
 						cacheHit = undefined;
+						cavemanLevel = "off";
 						for (const entry of manager.getEntries()) {
-							let usage;
+							if (entry.type === "custom" && entry.customType === "caveman-level") {
+								const level = (entry.data as { level?: unknown })?.level;
+								if (typeof level === "string") cavemanLevel = level;
+							}
 							if (entry.type === "message" && entry.message.role === "assistant") {
-								usage = entry.message.usage;
+								const usage = entry.message.usage;
 								const prompt = usage.input + usage.cacheRead + usage.cacheWrite;
 								cacheHit = prompt > 0 ? usage.cacheRead / prompt * 100 : undefined;
-							} else if (entry.type === "message" && entry.message.role === "toolResult") {
-								usage = entry.message.usage;
-							} else if (entry.type === "usage" || entry.type === "compaction" || entry.type === "branch_summary") {
-								usage = entry.usage;
 							}
-							if (usage) {
-								input += usage.input;
-								output += usage.output;
-							}
+						}
+					}
+					const leaf = manager.getLeafId();
+					if (todoManager !== manager || todoLeaf !== leaf) {
+						todoManager = manager;
+						todoLeaf = leaf;
+						todoLabel = "";
+						const branchEntries = manager.getBranch();
+						for (let i = branchEntries.length - 1; i >= 0; i--) {
+							const entry = branchEntries[i];
+							if (entry.type !== "message" || entry.message.role !== "toolResult" || entry.message.toolName !== "todo") continue;
+							const details = entry.message.details as { tasks?: { status: string }[]; nextId?: number } | undefined;
+							if (!Array.isArray(details?.tasks) || typeof details.nextId !== "number") continue;
+							const tasks = details.tasks.filter(task => task.status !== "deleted");
+							if (tasks.length) todoLabel = `(${tasks.filter(task => task.status === "completed").length}/${tasks.length})`;
+							break;
 						}
 					}
 					const statsWidth = Math.max(0, width - 2);
@@ -227,18 +254,39 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 					const modelColor = /(?:^|[-\s])sol(?:$|[-\s])/i.test(modelLabel) ? "toolDiffAdded"
 						: /(?:^|[-\s])astra(?:$|[-\s])/i.test(modelLabel) ? "error" : "dim";
 					const cacheText = cacheHit === undefined ? " —" : ` ${cacheHit.toFixed(2)}%`;
-					const cacheLabel = cacheHit === undefined || cacheHit > 98 ? `${GRAY}${cacheText}${FG_DEFAULT}`
+					const cacheLabel = cacheHit === undefined || cacheHit > 98 ? ""
 						: cacheHit >= 95 ? `\x1b[38;2;255;158;100m${cacheText}${FG_DEFAULT}` : theme.fg("error", cacheText);
 					const speedLabel = `${GRAY} ${tokensPerSecond === undefined ? "—" : tokensPerSecond.toFixed(1)} tok/s${FG_DEFAULT}`;
+					const cavemanIcons: Record<string, string> = {
+						off: "○", lite: "󰧑", full: "󰈸", ultra: "󰓅",
+						"wenyan-lite": "󰧑", wenyan: "󰈸", "wenyan-ultra": "󰓅", micro: "󰓅",
+					};
+					const cavemanIcon = cavemanIcons[cavemanLevel];
+					if (!cavemanIcon) throw new Error(`Unknown caveman level: ${cavemanLevel}`);
+					const cavemanColor = cavemanLevel === "off" ? "\x1b[2m"
+						: cavemanLevel === "lite" || cavemanLevel === "wenyan-lite" ? "\x1b[97m"
+						: cavemanLevel === "full" || cavemanLevel === "wenyan" ? "\x1b[91m" : "\x1b[95m";
 					const left = truncateToWidth(
-						`${theme.fg(modelColor, modelLabel)} · ${GRAY}↑${formatTokens(input)}${FG_DEFAULT} ${theme.fg("toolDiffAdded", `↓${formatTokens(output)}`)} · ${speedLabel} · ${cacheLabel}`,
+						`${cavemanColor}${cavemanIcon}${RESET} ${theme.fg(modelColor, modelLabel)} · ${speedLabel}${cacheLabel ? ` · ${cacheLabel}` : ""}`,
 						statsWidth,
 						"…",
 					);
 					const sessionName = manager.getSessionName();
-					const right = sessionName ? `${GRAY}${sessionName}${FG_DEFAULT}` : "";
-					const padding = statsWidth - visibleWidth(left) - visibleWidth(right);
-					const stats = padding >= 2 ? left + " ".repeat(padding) + right : left;
+					const rightWidth = Math.max(0, statsWidth - visibleWidth(cavemanIcon) - 4);
+					const nameWidth = Math.max(0, rightWidth - (todoLabel ? visibleWidth(todoLabel) + 3 : 0));
+					const nameLabel = sessionName ? truncateToWidth(sessionName, nameWidth, "…") : "";
+					const rightText = [nameLabel, todoLabel].filter(Boolean).join(" · ");
+					const rightStyled = [
+						nameLabel ? `${GRAY}${nameLabel}${FG_DEFAULT}` : "",
+						todoLabel ? theme.fg(todoPanelVisible ? "toolDiffAdded" : "dim", todoLabel) : "",
+					].filter(Boolean).join(" · ");
+					const right = rightStyled ? truncateToWidth(rightStyled, rightWidth, "…") : "";
+					if (todoLabel && visibleWidth(rightText) <= rightWidth) {
+						todoHitRange = { start: width - 1 - visibleWidth(todoLabel), end: width - 1 };
+					}
+					const fittedLeft = right ? truncateToWidth(left, Math.max(0, statsWidth - visibleWidth(right) - 2), "…") : left;
+					const padding = Math.max(0, statsWidth - visibleWidth(fittedLeft) - visibleWidth(right));
+					const stats = fittedLeft + " ".repeat(padding) + right;
 					const statsLine = width < 2 ? " ".repeat(Math.max(0, width))
 						: truncateToWidth(` ${stats}${" ".repeat(Math.max(0, statsWidth - visibleWidth(stats)))} `, width, "…");
 					const quota = quotaWindows.length ? quotaWindows.map(quotaLabel).join(" · ") : theme.fg("dim", quotaState);
@@ -246,15 +294,27 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 					const firstLine = truncateToWidth(`${firstContent}${" ".repeat(Math.max(0, width - visibleWidth(firstContent)))}`, width, "…");
 					return [firstLine, statsLine];
 				},
-				invalidate() {},
+				handleMouse(event: TuiMouseEvent) {
+					if (!context || !todoHitRange || event.y !== 1 || event.x < todoHitRange.start || event.x >= todoHitRange.end
+						|| event.button !== "left" || event.shift || event.alt || event.ctrl) return;
+					if (event.type === "click") {
+						pi.events.emit("rpiv-todo-toggle-panel", { sessionId: context.sessionManager.getSessionId() });
+						return { handled: true };
+					}
+					if (event.type === "press" || event.type === "release") return { handled: true, render: false };
+				},
+				invalidate() { todoHitRange = undefined; },
 				dispose() {
 					stopQuota();
+					unsubscribeTodoVisibility?.();
+					unsubscribeTodoVisibility = undefined;
 					unsubscribe();
 					context = undefined;
 					requestRender = undefined;
 				},
 			};
 		});
+		pi.events.emit("rpiv-todo-panel-visibility-request", { sessionId: ctx.sessionManager.getSessionId() });
 		void refreshQuota();
 		quotaTimer = setInterval(() => {
 			void refreshQuota();
