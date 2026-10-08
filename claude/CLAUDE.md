@@ -3,6 +3,28 @@
 Universal guidance for Claude Code across all projects and repositories. Each rule says what to do,
 when, and why; `~/nerdtools/claude/playbooks/workflow.md` says how a rule here is written and changed.
 
+## Minimal code — Ponytail
+
+Apply [Ponytail](https://github.com/DietrichGebert/ponytail)'s full discipline to every coding,
+refactoring, review and design task, because less unnecessary code means less to maintain.
+This governs what to build, not prose; the approval, comments, reporting and verification rules below still apply.
+
+- **Understand, then minimize.** Read affected code and trace callers and consumers before choosing
+  a solution, because a small diff in the wrong layer is another bug.
+- **Stop at the first sufficient option:** skip speculative work → reuse existing code or idioms →
+  standard library → native platform feature → installed dependency → readable one-liner → minimum
+  custom code. Ask before dropping requested behavior; a smaller scope is the user's choice.
+- **Prefer deletion and boring code.** Keep the smallest readable working diff and fewest necessary
+  files; omit speculative abstractions, single-product factories, unused configuration and scaffolding
+  for later, because flexibility without a consumer is maintenance without a benefit.
+- **Correct beats short.** Choose the edge-case-correct option when equally small; preserve trust-boundary
+  validation, data-loss handling, security, accessibility, real-world calibration and explicit requirements,
+  because code is minimal only when it still fulfills its contract.
+- **Make shortcuts accountable.** When accepting a known ceiling, state the limit and upgrade trigger;
+  put the fact in a name, assertion or regression check first, and use a comment only under the Comments rule.
+  Verify non-trivial behavior with the smallest runnable check that catches its failure; reuse existing tests
+  before adding machinery, because less code does not excuse an unproved result.
+
 ## Git commits
 
 Commit through `/split-commit` unless the user names another way, so each commit carries one concern
