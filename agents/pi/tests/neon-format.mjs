@@ -48,8 +48,12 @@ try {
 	let peersRows = peers.render(100);
 	assert.ok(peersRows.some(line => line.includes("pi-0") && line.includes(theme.theme.getFgAnsi("dim"))));
 	assert.ok(!plain(peersRows.join("\n")).includes("pi-14"));
-	assert.ok(plain(peersRows.join("\n")).includes("12 more lines"));
-	assert.ok(plain(peersRows.join("\n")).includes("cc_list_peers"));
+	assert.ok(plain(peersRows.join("\n")).includes("…"));
+	assert.ok(!plain(peersRows.join("\n")).includes("more lines"));
+	assert.ok(!plain(peersRows.join("\n")).includes("to expand"));
+	assert.ok(plain(peersRows.join("\n")).includes(" › Peers"));
+	assert.ok(!plain(peersRows.join("\n")).includes("cc_list_peers"));
+	for (const row of peersRows.filter(row => plain(row).includes("pi-"))) assert.ok(plain(row).startsWith(" ") && plain(row).endsWith(" "));
 	peers.setExpanded(true);
 	peersRows = peers.render(100);
 	assert.ok(peersRows.some(line => line.includes("pi-14") && line.includes(theme.theme.getFgAnsi("dim"))));
@@ -68,6 +72,8 @@ try {
 		const preview = new extension.OutputPreview(wrappedOutput, theme.theme, "dim", 1).render(width);
 		assert.equal(preview.length, 3);
 		assert.deepEqual(preview.slice(0, 2), complete.slice(0, 2));
+		assert.ok(!plain(preview.join("\n")).includes("to expand"));
+		assert.ok(plain(preview[2]).endsWith("… "));
 		for (const line of preview) assert.ok(tui.visibleWidth(line) <= width);
 	}
 	const genericResult = { content: [{ type: "text", text: wrappedOutput }], details: {} };

@@ -1,5 +1,5 @@
 import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
-import { highlightCode, keyHint } from "@earendil-works/pi-coding-agent";
+import { highlightCode } from "@earendil-works/pi-coding-agent";
 import type { Component, TuiMouseEvent, TuiMouseEventResult } from "@earendil-works/pi-tui";
 import { Container, Text, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import { displayPath, resolveFileLink, type FileLink } from "./file-link.ts";
@@ -62,8 +62,9 @@ export class OutputPreview implements Component {
 	render(width: number): string[] {
 		const rows = this.body.render(width);
 		if (rows.length <= 3) return rows;
-		const hint = this.theme.fg("dim", ` … ${rows.length - 3} more lines · `) + keyHint("app.tools.expand", "to expand");
-		return [...rows.slice(0, 2), truncateToWidth(rows[2], Math.max(0, width - visibleWidth(hint)), "") + truncateToWidth(hint, Math.max(0, width), "…")];
+		const hint = this.theme.fg("dim", " …");
+		const available = Math.max(0, width - this.padding);
+		return [...rows.slice(0, 2), truncateToWidth(rows[2], Math.max(0, available - visibleWidth(hint)), "") + truncateToWidth(hint, available, "…") + " ".repeat(Math.min(this.padding, Math.max(0, width)))];
 	}
 
 	invalidate(): void { this.body.invalidate(); }
@@ -95,10 +96,12 @@ export default function neonFormat(pi: ExtensionAPI): void {
 			if (name !== "cc_list_peers" && original?.renderResult) return original;
 			return {
 				...original,
+				...(name === "cc_list_peers" ? { renderShell: "self" as const, renderCall: (_args: unknown, theme: Theme) => new Text(theme.fg("dim", " › Peers"), 0, 0) } : {}),
 				renderResult(result, options, theme, context) {
 					const output = result.content.filter(block => block.type === "text").map(block => block.text).join("\n");
 					const color = context.isError ? "error" : name === "cc_list_peers" ? "dim" : "toolOutput";
-					return options.expanded ? new Text(theme.fg(color, output), 0, 0) : new OutputPreview(output, theme, color);
+					const padding = name === "cc_list_peers" ? 1 : 0;
+					return options.expanded ? new Text(theme.fg(color, output), padding, 0) : new OutputPreview(output, theme, color, padding);
 				},
 			};
 		}
