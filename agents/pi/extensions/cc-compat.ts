@@ -261,8 +261,9 @@ export default function (pi: ExtensionAPI) {
   pi.on("session_tree", rearmNestedClaudeMd);
   pi.on("session_shutdown", rearmNestedClaudeMd);
 
-  pi.on("session_start", (_event, ctx) => {
+  pi.on("session_start", (event, ctx) => {
     loadedNestedClaudeMd.clear();
+    if (event.reason === "reload") return;
     const cwd = String(ctx?.cwd ?? process.cwd());
     const sessionId = String(ctx?.sessionManager?.getSessionId?.() ?? "");
     const arc = arcContext(cwd, sessionId);

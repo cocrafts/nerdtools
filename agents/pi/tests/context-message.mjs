@@ -74,7 +74,7 @@ try {
 		void delivery.sendCustomMessage(message, options);
 	};
 	const startup = loaded.extensions[0].handlers.get("session_start")[0];
-	await startup({}, { cwd: fixture, sessionManager: { getSessionId: () => "context-startup-test" } });
+	await startup({ reason: "startup" }, { cwd: fixture, sessionManager: { getSessionId: () => "context-startup-test" } });
 	assert.equal(delivered.length, 1, "context must append before the first user prompt");
 	assert.equal(delivery._pendingNextTurnMessages.length, 0);
 	assert.equal(delivered[0].display, true);
@@ -82,6 +82,11 @@ try {
 	const liveRenderer = loaded.extensions[0].messageRenderers.get("claude-context");
 	const startupComponent = new pi.CustomMessageComponent(delivered[0], liveRenderer);
 	assert.equal(plain(startupComponent.render(80).join("\n")).trim(), "▸ probe.md");
+	writeFileSync(join(fixture, ".cards/probe.md"), "# probe\n\n## State\nChanged card must not be reinjected by reload.\n");
+	for (let reload = 0; reload < 3; reload++) await startup({ reason: "reload" }, { cwd: fixture, sessionManager: { getSessionId: () => "context-startup-test" } });
+	assert.equal(delivered.length, 1, "Reload must not inject context, even if the card changed");
+	for (const reason of ["new", "resume", "fork"]) await startup({ reason }, { cwd: fixture, sessionManager: { getSessionId: () => `context-${reason}-test` } });
+	assert.equal(delivered.length, 4, "New/resume/fork still receive worktree context");
 } finally {
 	rmSync(temp, { recursive: true, force: true });
 }
