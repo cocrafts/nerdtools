@@ -1,11 +1,12 @@
 import { CustomEditor, type KeybindingsManager, type Theme } from "@earendil-works/pi-coding-agent";
-import { CURSOR_MARKER, SelectList, decodeKittyPrintable, isKeyRelease, matchesKey, parseKey, visibleWidth, type AutocompleteProvider, type AutocompleteSuggestions, type EditorTheme, type TUI, type TuiMouseEvent, type TuiMouseEventResult } from "@earendil-works/pi-tui";
+import { CURSOR_MARKER, SelectList, decodeKittyPrintable, isKeyRelease, matchesKey, parseColor, parseKey, stripTerminalSequences, visibleWidth, type AutocompleteProvider, type AutocompleteSuggestions, type EditorTheme, type TUI, type TuiMouseEvent, type TuiMouseEventResult } from "@earendil-works/pi-tui";
 import { AtomBuffer } from "./atom-buffer.ts";
 import { layoutAtoms, caretInRows, cursorInRow, type AtomRow } from "./atom-layout.ts";
 import { SKILL_CHIP_PATTERN, allowsSkillTokens, collapseSkillTokens } from "./skill-atoms.ts";
 import { skillPromptInput } from "./skill-submit.ts";
 
 export interface SkillDraft { text: string; cursor: number; atoms: [string, string][] }
+const herdrPaneBorder = parseColor("#89b4fa");
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 const printable = (data: string): string | undefined => {
 	const key = parseKey(data);
@@ -124,6 +125,7 @@ export class AtomicSkillEditor extends CustomEditor {
 		const visible = this.rows.slice(this.firstVisible, this.firstVisible + maxRows);
 		this.visibleRows = visible.length;
 		const showCursor = this.focused && this.terminalFocused;
+		this.borderColor = text => this.palette().style(text, { fg: showCursor ? herdrPaneBorder : "dim" });
 		const output = [this.renderTopBorder(width, this.firstVisible)];
 		for (let index = 0; index < visible.length; index++) {
 			const row = visible[index];
@@ -145,7 +147,7 @@ export class AtomicSkillEditor extends CustomEditor {
 		}
 		output.push(this.renderBottomBorder(width, Math.max(0, this.rows.length - this.firstVisible - visible.length)));
 		if (this.menu) for (const line of this.menu.render(bodyWidth)) output.push(" ".repeat(this.renderedPadding) + line + " ".repeat(this.renderedPadding));
-		return output;
+		return showCursor ? output : output.map(line => this.palette().fg("dim", stripTerminalSequences(line)));
 	}
 
 	handleMouse(event: TuiMouseEvent): TuiMouseEventResult | undefined {

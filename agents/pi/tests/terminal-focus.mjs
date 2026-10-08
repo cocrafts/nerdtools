@@ -64,17 +64,33 @@ const ctx = {
 const feed = data => process.stdin.emit("data", data);
 const frame = () => { writes.length = 0; ui.renderNow(true); return writes.join(""); };
 const cursorBackground = themeModule.theme.style("cursor", { bg: themeModule.theme.colors.muted }).split("cursor")[0];
-const focused = () => assert.ok(frame().includes(cursorBackground));
-const blurred = () => assert.ok(!frame().includes(cursorBackground), "Window focus-out must remove the software cursor while editor remains focused");
+const focused = () => {
+	assert.ok(frame().includes(cursorBackground));
+	const rows = mode.editor.render(80);
+	for (const row of [rows[0], rows.at(-1)]) assert.equal(row, themeModule.theme.style(tui.stripTerminalSequences(row), { fg: tui.parseColor("#89b4fa") }), "Focused input border must match Herdr blue");
+};
+const dimmed = () => {
+	for (const row of mode.editor.render(80)) assert.equal(row, themeModule.theme.fg("dim", tui.stripTerminalSequences(row)), "Unfocused input border and all text, including skill chips, must be dim");
+};
+const blurred = () => {
+	assert.ok(!frame().includes(cursorBackground), "Window focus-out must remove the software cursor while editor remains focused");
+	dimmed();
+};
 try {
-	const getTui = registerSkillInput({ getCommands: () => [], on: (name, handler) => handlers.set(name, handler), registerMarkdownTransformer() {}, events: pi.createEventBus() });
+	const getTui = registerSkillInput({ getCommands: () => [{ source: "skill", name: "skill:focus-probe", sourceInfo: { path: "/tmp/focus-probe-skill/SKILL.md" } }], on: (name, handler) => handlers.set(name, handler), registerMarkdownTransformer() {}, events: pi.createEventBus() });
 	assert.equal(getTui(), undefined);
 	ui.start();
 	await handlers.get("session_start")({}, ctx);
 	assert.equal(getTui(), ui, "Hover preview must receive the native editor TUI");
 	assert.equal(writes.includes("\x1b[?1004h"), !fullscreen, "Only regular mode must enable its own focus reporting");
-	mode.editor.setText("draft");
+	mode.editor.setText("draft /skill:focus-probe");
+	assert.ok(mode.editor.getText().includes(" focus-probe"));
+	mode.editor.borderColor = text => themeModule.theme.fg("thinkingHigh", text);
 	focused();
+	const dialog = ui.showOverlay(new tui.Text("dialog", 0, 0), { width: 20 });
+	assert.equal(mode.editor.focused, false);
+	dimmed();
+	dialog.hide(); focused();
 	const before = mode.editor.getDraft();
 	writes.length = 0;
 	feed("\x1b[O");
@@ -99,7 +115,7 @@ try {
 	assert.equal(process.stdin.listenerCount("data"), count, "Reload must restore only one observer");
 	feed("\x1b[O"); blurred();
 	feed("\x1b[I"); focused();
-	console.log(`PASS terminal focus (${fullscreen ? "fullscreen" : "regular"}): native routing, editor stays focused, redraw, split/batched reports, paste isolation, draft preservation, reload cleanup`);
+	console.log(`PASS terminal focus (${fullscreen ? "fullscreen" : "regular"}): Herdr-blue border overrides effort color; terminal and dialog blur dim border/text/chips; native routing, cursor, redraw, split/batched reports, paste isolation, draft preservation, reload cleanup`);
 } finally {
 	await handlers.get("session_shutdown")?.({ reason: "shutdown" }, ctx);
 	ui.stop(); nativeInput.destroy();
