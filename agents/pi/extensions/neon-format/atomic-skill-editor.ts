@@ -40,6 +40,7 @@ export class AtomicSkillEditor extends CustomEditor {
 	private lastKill?: "backward" | "forward";
 	private yankSpan?: { start: number; end: number; index: number };
 	private jumpDirection?: "forward" | "backward";
+	private terminalFocused = true;
 
 	constructor(tui: TUI, theme: EditorTheme, keys: KeybindingsManager, private known: () => ReadonlySet<string>, private palette: () => Theme, private beforeSubmit: (text: string) => boolean = () => true, private reportError: (error: Error) => void = error => { throw error; }) {
 		super(tui, theme, keys, { embedWorkingStatus: true });
@@ -86,6 +87,11 @@ export class AtomicSkillEditor extends CustomEditor {
 		this.completionTrigger = new RegExp('(?:^|\\s)[([{<`]*(?:@"[^"]*|[' + characters + '][^\\s]*)$', "u");
 	}
 	isShowingAutocomplete(): boolean { return Boolean(this.menu); }
+	setTerminalFocused(focused: boolean): void {
+		if (this.terminalFocused === focused) return;
+		this.terminalFocused = focused;
+		this.tui.requestRender();
+	}
 	dispose(): void { this.closeMenu(); }
 	invalidate(): void { this.layoutKey = ""; this.menu?.invalidate(); }
 	addToHistory(text: string): void {
@@ -117,6 +123,7 @@ export class AtomicSkillEditor extends CustomEditor {
 		if (caret.row >= this.firstVisible + maxRows) this.firstVisible = caret.row - maxRows + 1;
 		const visible = this.rows.slice(this.firstVisible, this.firstVisible + maxRows);
 		this.visibleRows = visible.length;
+		const showCursor = this.focused && this.terminalFocused;
 		const output = [this.renderTopBorder(width, this.firstVisible)];
 		for (let index = 0; index < visible.length; index++) {
 			const row = visible[index];
@@ -125,12 +132,12 @@ export class AtomicSkillEditor extends CustomEditor {
 			for (const cell of row.cells) {
 				let shown = cell.text;
 				if (cell.atom?.expansion?.startsWith("/skill:") && this.known().has(cell.atom.expansion.slice(7))) shown = this.palette().style(shown, { fg: "customMessageLabel", bg: "customMessageBg", bold: true });
-				if (cell.start === this.buffer.getCursor() || (bodyWidth === 1 && cell === row.cells.at(-1) && this.buffer.getCursor() === row.end && !row.softBreak)) shown = (this.focused ? CURSOR_MARKER : "") + `\x1b[7m${shown}\x1b[27m`;
+				if (showCursor && (cell.start === this.buffer.getCursor() || (bodyWidth === 1 && cell === row.cells.at(-1) && this.buffer.getCursor() === row.end && !row.softBreak))) shown = CURSOR_MARKER + `\x1b[7m${shown}\x1b[27m`;
 				text += shown;
 				columns += cell.columns;
 			}
-			if (this.buffer.getCursor() === row.end && !row.softBreak && columns < bodyWidth) {
-				text += (this.focused ? CURSOR_MARKER : "") + "\x1b[7m \x1b[27m";
+			if (showCursor && this.buffer.getCursor() === row.end && !row.softBreak && columns < bodyWidth) {
+				text += CURSOR_MARKER + "\x1b[7m \x1b[27m";
 				columns++;
 			}
 			text += " ".repeat(Math.max(0, bodyWidth - columns) + this.renderedPadding);

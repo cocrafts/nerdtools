@@ -22,7 +22,7 @@ const { KeybindingsManager } = await import(pathToFileURL(join(root, "dist/core/
 const { InteractiveMode } = await import(pathToFileURL(join(root, "dist/modes/interactive/interactive-mode.js")).href);
 pi.initTheme("dark");
 const editorTheme = { borderColor: text => text, selectList: Object.fromEntries(["selectedPrefix", "selectedText", "description", "scrollInfo", "noMatch"].map(key => [key, text => text])) };
-const fakeTui = { terminal: { rows: 40 }, setFocus(editor) { editor.focused = true; }, requestRender() {} };
+const fakeTui = { terminal: { rows: 40, write() {} }, setFocus(editor) { editor.focused = true; }, requestRender() {} };
 const keys = new KeybindingsManager({});
 const defaultEditor = new pi.CustomEditor(fakeTui, editorTheme, keys, { embedWorkingStatus: true });
 let submitted;
@@ -64,6 +64,23 @@ try {
 	assert.equal(editor.onSubmit, defaultEditor.onSubmit);
 	assert.equal(editor.onChange, defaultEditor.onChange);
 	assert.equal(editor.actionHandlers.get("app.model.cycleForward"), defaultEditor.actionHandlers.get("app.model.cycleForward"));
+	for (const text of ["", "abc", "/skill:trace-nim", "ab\ncd"]) {
+		editor.setText(text);
+		const draft = editor.getDraft();
+		for (const cursor of [0, draft.text.length]) {
+			editor.restoreDraft({ ...draft, cursor });
+			for (const width of [1, 2, 8, 80]) {
+				editor.focused = false;
+				const blurred = editor.render(width).join("\n");
+				assert.ok(!blurred.includes("\x1b[7m"), "Blurred input must not draw a cursor block");
+				assert.ok(!blurred.includes(tui.CURSOR_MARKER), "Blurred input must not expose a hardware cursor marker");
+				editor.focused = true;
+				const focused = editor.render(width).join("\n");
+				assert.ok(focused.includes("\x1b[7m") && focused.includes(tui.CURSOR_MARKER), "Focused input must restore its cursor block");
+				assert.equal(editor.getDraft().cursor, cursor, "Focus changes must preserve cursor position");
+			}
+		}
+	}
 	const original = "Review /skill:trace-nim rồi /skill:split-commit";
 	editor.setText(original);
 	assert.equal(editor.getText(), "Review  trace-nim rồi  split-commit");

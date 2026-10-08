@@ -1,0 +1,103 @@
+import assert from "node:assert/strict";
+import { createRequire } from "node:module";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const root = process.env.PI_PACKAGE_ROOT;
+if (!root) throw new Error("Set PI_PACKAGE_ROOT to the installed @earendil-works/pi-coding-agent directory");
+const require = createRequire(join(root, "package.json"));
+const { createJiti } = require("jiti");
+const loader = createJiti(import.meta.url, { alias: {
+	"@earendil-works/pi-coding-agent": join(root, "dist/index.js"),
+	"@earendil-works/pi-tui": join(root, "node_modules/@earendil-works/pi-tui/dist/index.js"),
+} });
+const { registerSkillInput } = await loader.import(fileURLToPath(new URL("../extensions/neon-format/skill-input.ts", import.meta.url)));
+const pi = await loader.import(join(root, "dist/index.js"));
+const tui = await loader.import(join(root, "node_modules/@earendil-works/pi-tui/dist/index.js"));
+const { KeybindingsManager } = await loader.import(join(root, "dist/core/keybindings.js"));
+const { InteractiveMode } = await loader.import(join(root, "dist/modes/interactive/interactive-mode.js"));
+pi.initTheme("dark");
+const themeModule = await loader.import(join(root, "dist/modes/interactive/theme/theme.js"));
+const keys = new KeybindingsManager({});
+const editorTheme = { borderColor: text => text, selectList: {} };
+const tick = () => new Promise(resolve => setTimeout(resolve, 40));
+const baseline = process.stdin.listenerCount("data");
+const writes = [];
+const nativeInput = new tui.StdinBuffer();
+let nativeHandler;
+const feedNative = chunk => nativeInput.process(chunk);
+const terminal = {
+	rows: 24, columns: 80, kittyProtocolActive: false,
+	write: data => writes.push(data), hideCursor() {}, showCursor() {},
+	start(handler) {
+		nativeHandler = handler;
+		process.stdin.on("data", feedNative);
+	},
+	stop() { process.stdin.off("data", feedNative); },
+};
+nativeInput.on("data", data => nativeHandler(data));
+nativeInput.on("paste", text => nativeHandler(`\x1b[200~${text}\x1b[201~`));
+const fullscreen = process.env.PI_FOCUS_TEST_MODE !== "regular";
+const ui = new (fullscreen ? tui.TuiAltScreen : tui.TuiMainScreen)(terminal, false);
+let hookReports = 0;
+ui.addInputListener(data => { if (data === "\x1b[I" || data === "\x1b[O") hookReports++; });
+const defaultEditor = new pi.CustomEditor(ui, editorTheme, keys);
+const container = new tui.Container();
+container.addChild(defaultEditor);
+ui.addChild(container);
+ui.setFocus(defaultEditor);
+const mode = {
+	defaultEditor, editor: defaultEditor, ui, keybindings: keys, editorContainer: container,
+	disposeActiveSelector() {}, autocompleteProvider: new tui.CombinedAutocompleteProvider([], process.cwd()),
+};
+const handlers = new Map();
+const ctx = {
+	mode: "tui", sessionManager: { getSessionId: () => "focus-test" },
+	ui: {
+		get theme() { return themeModule.theme; },
+		getEditorText: () => mode.editor.getExpandedText(),
+		setEditorText: text => mode.editor.setText(text),
+		setEditorComponent: factory => InteractiveMode.prototype.setCustomEditorComponent.call(mode, factory),
+		notify: text => { throw new Error(text); },
+	},
+};
+const feed = data => process.stdin.emit("data", data);
+const frame = () => { writes.length = 0; ui.renderNow(true); return writes.join(""); };
+const focused = () => assert.ok(frame().includes("\x1b[7m"));
+const blurred = () => assert.ok(!frame().includes("\x1b[7m"), "Window focus-out must remove the software cursor while editor remains focused");
+try {
+	registerSkillInput({ getCommands: () => [], on: (name, handler) => handlers.set(name, handler), registerMarkdownTransformer() {}, events: pi.createEventBus() });
+	ui.start();
+	await handlers.get("session_start")({}, ctx);
+	assert.equal(writes.includes("\x1b[?1004h"), !fullscreen, "Only regular mode must enable its own focus reporting");
+	mode.editor.setText("draft");
+	focused();
+	const before = mode.editor.getDraft();
+	writes.length = 0;
+	feed("\x1b[O");
+	await tick();
+	assert.ok(writes.length > 0, "Window focus-out must request a redraw");
+	assert.equal(mode.editor.focused, true);
+	blurred();
+	assert.deepEqual(mode.editor.getDraft(), before);
+	feed("\x1b[I"); focused();
+	feed("\x1b["); feed("O"); blurred();
+	feed("\x1b[I\x1b[O"); blurred();
+	feed("\x1b[I"); focused();
+	feed("\x1b[200~literal \x1b[O\x1b[201~"); focused();
+	if (fullscreen) assert.equal(hookReports, 0, "Native fullscreen consumes focus before public input hooks");
+	else assert.ok(hookReports > 0);
+	const count = process.stdin.listenerCount("data");
+	await handlers.get("session_shutdown")({ reason: "reload" }, ctx);
+	assert.equal(process.stdin.listenerCount("data"), count - 1, "Reload must remove the raw focus observer");
+	assert.equal(writes.includes("\x1b[?1004l"), !fullscreen, "Only regular mode must disable its owned focus reporting");
+	await handlers.get("session_start")({}, ctx);
+	assert.equal(process.stdin.listenerCount("data"), count, "Reload must restore only one observer");
+	feed("\x1b[O"); blurred();
+	feed("\x1b[I"); focused();
+	console.log(`PASS terminal focus (${fullscreen ? "fullscreen" : "regular"}): native routing, editor stays focused, redraw, split/batched reports, paste isolation, draft preservation, reload cleanup`);
+} finally {
+	await handlers.get("session_shutdown")?.({ reason: "shutdown" }, ctx);
+	ui.stop(); nativeInput.destroy();
+	assert.equal(process.stdin.listenerCount("data"), baseline);
+}

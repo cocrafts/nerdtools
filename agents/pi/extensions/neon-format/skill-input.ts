@@ -1,4 +1,5 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { StdinBuffer, isViewportTUI } from "@earendil-works/pi-tui";
 import { AtomicSkillEditor, type SkillDraft } from "./atomic-skill-editor.ts";
 import { SKILL_CHIP_PATTERN, allowsSkillTokens } from "./skill-atoms.ts";
 import { expandSkills, skillPromptDisplay, type SkillSource } from "./skill-submit.ts";
@@ -17,6 +18,8 @@ export function registerSkillInput(pi: ExtensionAPI): void {
 	let known = new Set<string>();
 	let sources = new Map<string, SkillSource>();
 	let editor: AtomicSkillEditor | undefined;
+	let terminalFocused = true;
+	let unsubscribeFocus: (() => void) | undefined;
 	const prepared = new Map<string, string[]>();
 	pi.registerMarkdownTransformer((markdown, context) => context.messageType === "user" ? skillPromptDisplay(markdown, known) : markdown);
 	pi.on("session_start", (_event, ctx) => {
@@ -42,6 +45,23 @@ export function registerSkillInput(pi: ExtensionAPI): void {
 					return true;
 				} catch (error) { ctx.ui.notify(error instanceof Error ? error.message : String(error), "error"); return false; }
 			}, error => ctx.ui.notify(error.message, "error"));
+			unsubscribeFocus?.();
+			const input = new StdinBuffer();
+			const onInput = (chunk: string | Buffer) => input.process(chunk);
+			input.on("data", data => {
+				if (data !== "\x1b[I" && data !== "\x1b[O") return;
+				terminalFocused = data === "\x1b[I";
+				editor?.setTerminalFocused(terminalFocused);
+			});
+			const ownsFocusReporting = !isViewportTUI(tui);
+			if (ownsFocusReporting) tui.terminal.write("\x1b[?1004h");
+			process.stdin.on("data", onInput);
+			unsubscribeFocus = () => {
+				process.stdin.off("data", onInput);
+				input.destroy();
+				if (ownsFocusReporting) tui.terminal.write("\x1b[?1004l");
+			};
+			editor.setTerminalFocused(terminalFocused);
 			return editor;
 		});
 		ctx.ui.setEditorText(draft);
@@ -61,6 +81,8 @@ export function registerSkillInput(pi: ExtensionAPI): void {
 		}
 	});
 	pi.on("session_shutdown", (event, ctx) => {
+		unsubscribeFocus?.();
+		unsubscribeFocus = undefined;
 		editor?.dispose();
 		if (event.reason !== "reload" || ctx.mode !== "tui") return;
 		const snapshot = editor?.getDraft();
