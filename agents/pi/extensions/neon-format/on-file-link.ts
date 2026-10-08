@@ -17,7 +17,7 @@ export async function onFileLink(
 	clearScreen: () => void = () => { process.stdout.write("\x1b[2J\x1b[H"); },
 ): Promise<void> {
 	if (ctx.mode !== "tui") throw new Error("Neovim file links require interactive Pi");
-	if (!ctx.isIdle()) throw new Error("Wait for Pi to finish its turn before opening Neovim");
+	if (!ctx.isIdle()) return;
 	if (!resolveFileLink(link.path, ctx.cwd)) throw new Error(`File link is missing or outside the active workspace: ${link.path}`);
 	for (const position of [link.line, link.column]) {
 		if (position !== undefined && (!Number.isSafeInteger(position) || position < 1)) throw new Error("File link line and column must be positive integers");

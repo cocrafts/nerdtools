@@ -37,7 +37,9 @@ try {
 		await assert.rejects(onFileLink(link, ctx, fail, () => {}));
 		assert.deepEqual(events, ["stop", "start", "render", "done"]);
 	}
-	await assert.rejects(onFileLink(link, { ...ctx, isIdle: () => false }, run, () => {}), /finish its turn/);
+	events.length = 0;
+	await onFileLink(link, { ...ctx, isIdle: () => false }, () => { throw new Error("Busy clicks must not spawn Neovim"); }, () => { throw new Error("Busy clicks must not clear the screen"); });
+	assert.deepEqual(events, [], "Busy clicks must not take over terminal or show an error");
 	await assert.rejects(onFileLink(link, { ...ctx, mode: "print" }, run, () => {}), /interactive Pi/);
 	await assert.rejects(onFileLink({ ...link, line: 0 }, ctx, run, () => {}), /positive integers/);
 	symlinkSync(process.execPath, join(cwd, "outside"));
