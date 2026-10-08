@@ -5,7 +5,7 @@ memory:
 modelRoles:
   web: web/zai
   smol: zai/glm-5.3
-  default: zai/glm-5.3:max
+  default: openai-codex/gpt-6.1-sol:high
 symbolPreset: nerd
 hideThinkingBlock: true
 composer:
