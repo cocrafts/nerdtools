@@ -63,12 +63,15 @@ const ctx = {
 };
 const feed = data => process.stdin.emit("data", data);
 const frame = () => { writes.length = 0; ui.renderNow(true); return writes.join(""); };
-const focused = () => assert.ok(frame().includes("\x1b[7m"));
-const blurred = () => assert.ok(!frame().includes("\x1b[7m"), "Window focus-out must remove the software cursor while editor remains focused");
+const cursorBackground = themeModule.theme.style("cursor", { bg: themeModule.theme.colors.muted }).split("cursor")[0];
+const focused = () => assert.ok(frame().includes(cursorBackground));
+const blurred = () => assert.ok(!frame().includes(cursorBackground), "Window focus-out must remove the software cursor while editor remains focused");
 try {
-	registerSkillInput({ getCommands: () => [], on: (name, handler) => handlers.set(name, handler), registerMarkdownTransformer() {}, events: pi.createEventBus() });
+	const getTui = registerSkillInput({ getCommands: () => [], on: (name, handler) => handlers.set(name, handler), registerMarkdownTransformer() {}, events: pi.createEventBus() });
+	assert.equal(getTui(), undefined);
 	ui.start();
 	await handlers.get("session_start")({}, ctx);
+	assert.equal(getTui(), ui, "Hover preview must receive the native editor TUI");
 	assert.equal(writes.includes("\x1b[?1004h"), !fullscreen, "Only regular mode must enable its own focus reporting");
 	mode.editor.setText("draft");
 	focused();
@@ -89,6 +92,7 @@ try {
 	else assert.ok(hookReports > 0);
 	const count = process.stdin.listenerCount("data");
 	await handlers.get("session_shutdown")({ reason: "reload" }, ctx);
+	assert.equal(getTui(), undefined, "Shutdown must release the preview TUI reference");
 	assert.equal(process.stdin.listenerCount("data"), count - 1, "Reload must remove the raw focus observer");
 	assert.equal(writes.includes("\x1b[?1004l"), !fullscreen, "Only regular mode must disable its owned focus reporting");
 	await handlers.get("session_start")({}, ctx);

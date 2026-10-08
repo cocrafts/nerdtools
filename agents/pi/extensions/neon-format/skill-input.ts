@@ -1,5 +1,5 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { StdinBuffer, isViewportTUI } from "@earendil-works/pi-tui";
+import { StdinBuffer, isViewportTUI, type TUI } from "@earendil-works/pi-tui";
 import { AtomicSkillEditor, type SkillDraft } from "./atomic-skill-editor.ts";
 import { SKILL_CHIP_PATTERN, allowsSkillTokens } from "./skill-atoms.ts";
 import { expandSkills, skillPromptDisplay, type SkillSource } from "./skill-submit.ts";
@@ -14,7 +14,8 @@ export function expandSkillChip(text: string, known: ReadonlySet<string>): strin
 interface DraftRequest { sessionId: string; restore: (draft: SkillDraft) => void }
 const draftChannel = "neon-format:skill-input-draft";
 
-export function registerSkillInput(pi: ExtensionAPI): void {
+export function registerSkillInput(pi: ExtensionAPI): () => TUI | undefined {
+	let activeTui: TUI | undefined;
 	let known = new Set<string>();
 	let sources = new Map<string, SkillSource>();
 	let editor: AtomicSkillEditor | undefined;
@@ -23,6 +24,7 @@ export function registerSkillInput(pi: ExtensionAPI): void {
 	const prepared = new Map<string, string[]>();
 	pi.registerMarkdownTransformer((markdown, context) => context.messageType === "user" ? skillPromptDisplay(markdown, known) : markdown);
 	pi.on("session_start", (_event, ctx) => {
+		activeTui = undefined;
 		sources = new Map(pi.getCommands().filter(command => command.source === "skill").map(command => {
 			const name = command.name.replace(/^skill:/, "");
 			const path = command.sourceInfo?.path;
@@ -33,6 +35,7 @@ export function registerSkillInput(pi: ExtensionAPI): void {
 		if (ctx.mode !== "tui") return;
 		const draft = ctx.ui.getEditorText();
 		ctx.ui.setEditorComponent((tui, theme, keys) => {
+			activeTui = tui;
 			editor = new AtomicSkillEditor(tui, theme, keys, () => known, () => ctx.ui.theme, text => {
 				try {
 					const canonical = text.trim();
@@ -81,6 +84,7 @@ export function registerSkillInput(pi: ExtensionAPI): void {
 		}
 	});
 	pi.on("session_shutdown", (event, ctx) => {
+		activeTui = undefined;
 		unsubscribeFocus?.();
 		unsubscribeFocus = undefined;
 		editor?.dispose();
@@ -99,4 +103,5 @@ export function registerSkillInput(pi: ExtensionAPI): void {
 		ctx.ui.setEditorComponent(undefined);
 		ctx.ui.setEditorText(draft);
 	});
+	return () => activeTui;
 }

@@ -48,7 +48,7 @@ try {
 	let peersRows = peers.render(100);
 	assert.ok(peersRows.some(line => line.includes("pi-0") && line.includes(theme.theme.getFgAnsi("dim"))));
 	assert.ok(!plain(peersRows.join("\n")).includes("pi-14"));
-	assert.ok(plain(peersRows.join("\n")).includes("10 more lines"));
+	assert.ok(plain(peersRows.join("\n")).includes("12 more lines"));
 	assert.ok(plain(peersRows.join("\n")).includes("cc_list_peers"));
 	peers.setExpanded(true);
 	peersRows = peers.render(100);
@@ -61,12 +61,13 @@ try {
 	const read = pi.createReadToolDefinition(cwd);
 	const specialized = { renderResult: () => new tui.Text("specialized") };
 	assert.equal(resolver("other", () => specialized), specialized);
+	assert.equal(resolver("cc_send_message", () => specialized), specialized);
 	const wrappedOutput = Array.from({ length: 12 }, (_, index) => `row-${index}: long wrapped output with 🌙 Unicode and more text`).join("\n");
 	for (const width of [8, 40, 100]) {
 		const complete = new tui.Text(theme.theme.fg("dim", wrappedOutput), 1, 0).render(width);
 		const preview = new extension.OutputPreview(wrappedOutput, theme.theme, "dim", 1).render(width);
-		assert.equal(preview.length, 6);
-		assert.deepEqual(preview.slice(0, 5), complete.slice(0, 5));
+		assert.equal(preview.length, 3);
+		assert.deepEqual(preview.slice(0, 2), complete.slice(0, 2));
 		for (const line of preview) assert.ok(tui.visibleWidth(line) <= width);
 	}
 	const genericResult = { content: [{ type: "text", text: wrappedOutput }], details: {} };
@@ -79,9 +80,11 @@ try {
 	assert.ok(plain(generic.render(100).join("\n")).includes("row-11"));
 	assert.equal(JSON.stringify(genericResult), genericBefore);
 	const previewOptions = { expanded: false, isPartial: false };
-	const previewContext = { args: {}, isError: false };
-	assert.equal(genericRenderer.renderResult(genericResult, previewOptions, theme.theme, previewContext).render(40).length, 6);
-	assert.equal(resolver("bash", () => undefined).renderResult(genericResult, previewOptions, theme.theme, previewContext).render(40).length, 6);
+	const previewContext = { args: {}, isError: false, state: {}, invalidate() {} };
+	assert.equal(genericRenderer.renderResult(genericResult, previewOptions, theme.theme, previewContext).render(40).length, 3);
+	assert.equal(plain(resolver("bash", () => undefined).renderResult(genericResult, previewOptions, theme.theme, previewContext).render(40).join("\n")).trim(), "Run command: shell");
+	const multiContext = { args: {}, isError: false, state: { summaryRequested: true, shellSummary: "node, tsc" }, invalidate() {} };
+	assert.equal(plain(resolver("bash", () => undefined).renderResult(genericResult, previewOptions, theme.theme, multiContext).render(80).join("\n")).trim(), "Run command: node, tsc");
 	const args = { path: join(cwd, "hello.ms") };
 	const ui = { requestRender() {} };
 	const component = new pi.ToolExecutionComponent("read", "read-test", args, {}, resolver("read", () => read), ui, cwd);
@@ -91,7 +94,7 @@ try {
 	for (const width of [1, 8, 40, 120]) {
 		for (const line of component.render(width)) assert.ok(tui.visibleWidth(line) <= width);
 	}
-	assert.ok(component.render(80).join("\n").includes("Read"));
+	assert.ok(component.render(80).join("\n").includes(" Read"));
 	assert.ok(!component.render(80).join("\n").includes("let x = 1"));
 	component.setExpanded(true);
 	assert.ok(plain(component.render(80).join("\n")).includes("let x = 1"));
@@ -173,17 +176,42 @@ try {
 	const bashResult = await bash.execute("bash-test", bashArgs, undefined, () => {}, { cwd, sessionManager: { getSessionId: () => "neon-format-test", getSessionFile: () => undefined } });
 	const bashUnchanged = JSON.stringify(bashResult);
 	const bashComponent = new pi.ToolExecutionComponent("bash", "bash-test", bashArgs, {}, resolver("bash", () => bash), ui, cwd);
+	bashComponent.markExecutionStarted();
+	bashComponent.updateResult(genericResult, true);
+	const running = bashComponent.render(120).join("\n");
+	assert.ok(running.includes(theme.theme.fg("syntaxKeyword", "if")));
+	assert.ok(plain(running).includes(bashArgs.command));
+	assert.ok(plain(running).includes("row-11"), "Running output must remain fully visible");
 	bashComponent.updateResult(bashResult, false);
 	const bashRendered = bashComponent.render(120).join("\n");
-	assert.ok(bashRendered.includes(theme.theme.fg("syntaxKeyword", "if")));
-	assert.ok(plain(bashRendered).includes(bashArgs.command));
-	assert.ok(plain(bashRendered).includes("hello"));
+	assert.ok(plain(bashRendered).includes("Run command: shell"));
+	for (let attempt = 0; attempt < 100 && !plain(bashComponent.render(120).join("\n")).includes("Run command: printf"); attempt++) await new Promise(resolve => setTimeout(resolve, 20));
+	assert.ok(plain(bashComponent.render(120).join("\n")).includes("Run command: printf"));
+	assert.ok(bashRendered.includes(theme.theme.getFgAnsi("dim")));
+	assert.ok(!plain(bashRendered).includes(bashArgs.command));
+	assert.ok(!plain(bashRendered).includes("hello"));
 	const dimHello = theme.theme.fg("dim", "hello").replace(/\x1b\[39m$/, "");
-	assert.ok(bashRendered.includes(dimHello));
 	bashComponent.setExpanded(true);
-	assert.ok(bashComponent.render(120).join("\n").includes(dimHello));
+	const expandedBash = bashComponent.render(120).join("\n");
+	assert.ok(expandedBash.includes(dimHello));
+	assert.ok(expandedBash.includes(theme.theme.fg("syntaxKeyword", "if")));
+	assert.ok(plain(expandedBash).includes(bashArgs.command));
 	assert.equal(JSON.stringify(bashResult), bashUnchanged);
 	for (const width of [1, 8, 40, 120]) for (const line of bashComponent.render(width)) assert.ok(tui.visibleWidth(line) <= width);
+	bashComponent.setExpanded(false);
+	bashComponent.updateResult({ content: [{ type: "text", text: "shell failed" }], details: {}, isError: true }, false);
+	assert.ok(bashComponent.render(120).join("\n").includes(theme.theme.fg("error", "shell failed")));
+	assert.ok(!plain(bashComponent.render(120).join("\n")).includes("Run command: printf"));
+	const shellNames = await jiti.import(join(extensionDir, "shell-command-names.ts"));
+	for (const [command, expected] of [
+		["set -e; MODE=x env -u KEY python3 - <<'PY'\nprint('git status; msc')\nPY\ngit status", "python3, git"],
+		["if true; then '/usr/bin/git' status; fi; command -- msc run file.ms", "git, msc"],
+		["unused() { rm secret; }; node -e 'console.log(\"git\")'", "node"],
+		["bash -c 'git status'", "bash"],
+		["git status && git diff | head -5", "git, head"],
+		["$UNKNOWN --flag", "shell"],
+		["python3 - <<'PY'", "shell (name unavailable)"],
+	]) assert.equal(await shellNames.shellCommandNames(command), expected, command);
 	const syntaxDiff = await jiti.import(join(extensionDir, "syntax-diff.ts"));
 	const diffText = ' 1 /* comment\n 2 still comment */\n-3 const answer: i32 = 42;\n+3 const answer: i32 = 43;';
 	for (const path of ["sample.ms", "sample.ts"]) {

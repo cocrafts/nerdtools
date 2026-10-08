@@ -7,9 +7,11 @@ import { onFileLink } from "./on-file-link.ts";
 import { highlightFile } from "./code-highlight.ts";
 import { registerSkillInput } from "./skill-input.ts";
 import { SyntaxDiff } from "./syntax-diff.ts";
+import { shellCommandNames } from "./shell-command-names.ts";
+import { FileHoverPreview } from "./file-hover-preview.ts";
 
 const labels: Record<string, string> = {
-	read: "→ Read", edit: "← Edit", write: "← Write", bash: "$", grep: "✱ Grep", find: "✱ Find", ls: "→ List",
+	read: " Read", edit: "← Edit", write: "← Write", bash: "$", grep: "✱ Grep", find: "✱ Find", ls: "→ List",
 };
 
 export class ToolCallLine implements Component {
@@ -24,6 +26,7 @@ export class ToolCallLine implements Component {
 		private link: FileLink | undefined,
 		private activate: (link: FileLink) => void,
 		private language?: string,
+		private hover?: (link: FileLink, event: TuiMouseEvent, start: number, end: number) => void,
 	) {}
 
 	render(width: number): string[] {
@@ -36,7 +39,12 @@ export class ToolCallLine implements Component {
 	}
 
 	handleMouse(event: TuiMouseEvent): TuiMouseEventResult | undefined {
-		if (!this.link || event.y !== 0 || event.x < this.pathStart || event.x >= this.pathEnd || event.button !== "left" || event.type !== "click") return undefined;
+		if (!this.link || event.y !== 0 || event.x < this.pathStart || event.x >= this.pathEnd) return undefined;
+		if (event.type === "move" && event.button === "none") {
+			this.hover?.(this.link, event, this.pathStart, this.pathEnd);
+			return { handled: true, render: false };
+		}
+		if (event.button !== "left" || event.type !== "click") return undefined;
 		this.activate(this.link);
 		return { handled: true, render: false };
 	}
@@ -53,21 +61,27 @@ export class OutputPreview implements Component {
 
 	render(width: number): string[] {
 		const rows = this.body.render(width);
-		if (rows.length <= 5) return rows;
-		const hint = this.theme.fg("dim", `… ${rows.length - 5} more lines · `) + keyHint("app.tools.expand", "to expand");
-		return [...rows.slice(0, 5), truncateToWidth(" ".repeat(Math.min(this.padding, Math.max(0, width - 1))) + hint, width, "…")];
+		if (rows.length <= 3) return rows;
+		const hint = this.theme.fg("dim", ` … ${rows.length - 3} more lines · `) + keyHint("app.tools.expand", "to expand");
+		return [...rows.slice(0, 2), truncateToWidth(rows[2], Math.max(0, width - visibleWidth(hint)), "") + truncateToWidth(hint, Math.max(0, width), "…")];
 	}
 
 	invalidate(): void { this.body.invalidate(); }
 }
 
 export default function neonFormat(pi: ExtensionAPI): void {
-	registerSkillInput(pi);
+	const getTui = registerSkillInput(pi);
 	let context: ExtensionContext | undefined;
+	const preview = new FileHoverPreview(() => context, getTui);
 	let editorOpen = false;
-	pi.on("session_start", (_event, ctx) => { context = ctx; });
-	pi.on("session_shutdown", () => { context = undefined; });
+	pi.on("session_start", (_event, ctx) => { preview.close(); context = ctx; });
+	pi.on("session_shutdown", () => { preview.close(); context = undefined; });
+	pi.on("session_before_switch", preview.close);
+	pi.on("session_before_tree", preview.close);
+	pi.on("session_before_fork", preview.close);
+	pi.on("input", preview.close);
 	const activateFile = (link: FileLink): void => {
+		preview.close();
 		const ctx = context;
 		if (!ctx || editorOpen) return;
 		editorOpen = true;
@@ -92,19 +106,44 @@ export default function neonFormat(pi: ExtensionAPI): void {
 		return {
 			renderShell: "self",
 			renderCall(args, theme, context) {
+				if (name === "bash") return {
+					render: (width: number) => context.state.complete && !context.expanded && !context.isError ? []
+						: new Text(` ${theme.fg("muted", "$ ")}${highlightCode(String((args as { command?: unknown }).command ?? ""), "bash").join("\n")}`, 0, 0).render(width),
+					invalidate() {},
+				};
 				const path = typeof args.path === "string" ? args.path : "";
-				const value = name === "bash" ? String(args.command ?? "").split("\n")[0]
-					: name === "grep" || name === "find" ? String(args.pattern ?? "")
+				const value = name === "grep" || name === "find" ? String(args.pattern ?? "")
 					: path ? displayPath(path, context.cwd) : context.argsComplete ? "." : "…";
 				const link = path && !["bash", "grep", "find"].includes(name) ? resolveFileLink(path, context.cwd) : undefined;
 				if (link && name === "read" && Number.isSafeInteger(args.offset) && args.offset > 0) link.line = args.offset;
 				const suffix = name === "read" && args.offset ? `:${args.offset}`
 					: (name === "grep" || name === "find") && path ? ` in ${displayPath(path, context.cwd)}` : "";
-				return new ToolCallLine(labels[name], value, suffix, theme, link, activateFile, name === "bash" ? "bash" : undefined);
+				return new ToolCallLine(labels[name], value, suffix, theme, link, activateFile, undefined,
+					(link, event, start, end) => { if (!editorOpen) preview.hover(link, event, start, end); });
 			},
 			renderResult(result, options, theme, context) {
 				if (result.content.some(block => block.type === "image") && original?.renderResult) return original.renderResult(result, options, theme, context);
 				const output = result.content.filter(block => block.type === "text").map(block => block.text).join("\n");
+				if (name === "bash") {
+					context.state.complete = !options.isPartial;
+					if (options.isPartial) return new Text(output ? theme.fg("dim", output) : theme.fg("warning", "  Running…"), 1, 0);
+					if (!options.expanded && !context.isError) {
+						if (!context.state.summaryRequested) {
+							context.state.summaryRequested = true;
+							void shellCommandNames(String((context.args as { command?: unknown }).command ?? "")).then(names => {
+								context.state.shellSummary = names;
+								context.invalidate();
+							});
+						}
+						return {
+							render: (width: number) => {
+								const names = context.state.shellSummary ?? "shell";
+								return new Text(theme.fg("dim", `  Run command: ${names}`), 0, 0).render(width);
+							},
+							invalidate() {},
+						};
+					}
+				}
 				if (options.isPartial) return new Text(theme.fg("warning", "  Running…"), 0, 0);
 				const diff = (result.details as { diff?: unknown } | undefined)?.diff;
 				if (!context.isError && name === "edit" && typeof diff === "string") {
