@@ -73,9 +73,13 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   when an "ok" answers a question with several branches, ask which branch; when a tool is named in
   passing, ask what the user needs from it before designing around it. Ask whenever you are not
   confident or not willing: asking is the normal path, and a session that guesses costs more.
-- **When something needs the user's call, stop and ask in plain prose that ends the turn.** Give the
-  context the choice depends on first; use an options picker (`AskUserQuestion`) only once the user
-  already knows what the choice is about.
+- **When something needs the user's call, ask it in full `/cto-report` shape every time it is
+  raised, the first ask and every reminder in a later report alike**: what it means for the product
+  or the app author, a small table or before/after, a code sample when the choice changes what
+  author code means, the options with their cost, and your recommendation, then end the turn. A
+  pointer like "Q9 still waits" makes the user ask again for the context they have forgotten, which
+  costs a round trip; a status report that lists waiting decisions restates each one in full. Use
+  an options picker (`AskUserQuestion`) only once the user already knows what the choice is about.
 - **Explain from the user's seat first, technical second.** For a product or language decision,
   start with what changes for the app author, then the mechanism and evidence needed to judge it.
   Add a small code example or before/after only when it makes the difference clearer. For a
