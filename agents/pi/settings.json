@@ -1,14 +1,19 @@
 {
-  "lastChangelogVersion": "1.0.4",
+  "lastChangelogVersion": "1.1.0",
   "theme": "saigon-night",
-  "themes": ["~/nerdtools/agents/pi/themes"],
+  "themes": [
+    "~/nerdtools/agents/pi/themes"
+  ],
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "medium",
   "hideThinkingBlock": true,
   "packages": [
     "npm:pi-web-access",
-    "npm:@fractaal/pi-cross-agent-memory@0.3.1"
+    "npm:@fractaal/pi-cross-agent-memory@0.3.1",
+    "npm:pi-caveman",
+    "~/nerdtools/agents/pi/packages/rpiv-todo",
+    "npm:pi-claude-bridge"
   ],
   "deviceId": "10949172-1946-4ef1-a383-35d7ba5a9458"
 }
