@@ -3,10 +3,56 @@ import type { ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
 import { StdinBuffer, TuiAltScreen, matchesKey, stripTerminalSequences, truncateToWidth, visibleWidth, type Component, type OverlayBounds, type OverlayHandle, type TUI, type TuiMouseEvent } from "@earendil-works/pi-tui";
 import { displayPath, resolveFileLink, type FileLink } from "./file-link.ts";
 import { highlightFile } from "./code-highlight.ts";
+import { SyntaxDiff } from "./syntax-diff.ts";
 
 const maxPreviewBytes = 256 * 1024;
 const hoverMs = 350;
 const contains = (bounds: OverlayBounds | undefined, x: number, y: number): boolean => !!bounds && x >= bounds.col && x < bounds.col + bounds.width && y >= bounds.row && y < bounds.row + bounds.height;
+
+function previewFrame(title: string, body: Component, theme: Theme): Component {
+	return {
+		render(width) {
+			const inner = Math.max(0, width - 4);
+			const frame = (value: string): string => {
+				const clipped = truncateToWidth(value, inner, "…");
+				return truncateToWidth(theme.fg("muted", "│ ") + clipped + " ".repeat(Math.max(0, inner - visibleWidth(clipped))) + theme.fg("muted", " │"), width, "");
+			};
+			const border = (left: string, right: string) => truncateToWidth(theme.fg("muted", left + "─".repeat(Math.max(0, width - 2)) + right), width, "");
+			return [border("╭", "╮"), frame(theme.fg("mdLink", stripTerminalSequences(title).replace(/[\r\n\t]/g, " "))), ...body.render(inner).map(frame), border("╰", "╯")];
+		},
+		handleMouse: event => body.handleMouse?.(event) ?? { handled: true, render: false },
+		invalidate: () => body.invalidate(),
+	};
+}
+
+export function diffPreview(link: FileLink, cwd: string, theme: Theme, diff: string, lineCount: number, width: number): { component: Component; height: number } {
+	const title = `${displayPath(link.path, cwd)} · diff`;
+	if (Buffer.byteLength(diff, "utf8") > maxPreviewBytes) return {
+		height: 4,
+		component: previewFrame(title, { render: () => [theme.fg("dim", "Diff preview limited to 256 KiB; expand tool instead")], invalidate() {} }, theme),
+	};
+	const syntax = new SyntaxDiff(stripTerminalSequences(diff), link.path, theme);
+	let contentWidth = Math.max(0, width - 4);
+	let rows = syntax.render(contentWidth);
+	const height = Math.min(lineCount, rows.length);
+	let offset = Math.max(0, Math.min(syntax.firstChangedRow - 3, rows.length - height));
+	return {
+		height: height + 3,
+		component: previewFrame(title, {
+			render(inner) {
+				if (inner !== contentWidth) { rows = syntax.render(inner); contentWidth = inner; }
+				offset = Math.max(0, Math.min(offset, rows.length - height));
+				return rows.slice(offset, offset + height);
+			},
+			handleMouse(event) {
+				if (event.type !== "wheel") return undefined;
+				offset = Math.max(0, Math.min(offset + (event.wheelDelta ?? 0), rows.length - height));
+				return { handled: true, render: true };
+			},
+			invalidate: () => { syntax.invalidate(); contentWidth = -1; },
+		}, theme),
+	};
+}
 
 export function filePreview(link: FileLink, cwd: string, theme: Theme, lineCount = 12): { component: Component; height: number } {
 	let title = displayPath(link.path, cwd);
@@ -43,19 +89,7 @@ export function filePreview(link: FileLink, cwd: string, theme: Theme, lineCount
 	}
 	return {
 		height: rows.length + 3,
-		component: {
-			render(width) {
-				const inner = Math.max(0, width - 4);
-				const frame = (value: string): string => {
-					const clipped = truncateToWidth(value, inner, "…");
-					return truncateToWidth(theme.fg("muted", "│ ") + clipped + " ".repeat(Math.max(0, inner - visibleWidth(clipped))) + theme.fg("muted", " │"), width, "");
-				};
-				const border = (left: string, right: string) => truncateToWidth(theme.fg("muted", left + "─".repeat(Math.max(0, width - 2)) + right), width, "");
-				return [border("╭", "╮"), frame(theme.fg("mdLink", stripTerminalSequences(title).replace(/[\r\n\t]/g, " "))), ...rows.map(frame), border("╰", "╯")];
-			},
-			handleMouse: () => ({ handled: true, render: false }),
-			invalidate() {},
-		},
+		component: previewFrame(title, { render: () => rows, invalidate() {} }, theme),
 	};
 }
 
@@ -66,6 +100,7 @@ export class FileHoverPreview {
 	private source: OverlayBounds | undefined;
 	private link: FileLink | undefined;
 	private focus: Component | null | undefined;
+	private diff: string | undefined;
 
 	constructor(private getContext: () => ExtensionContext | undefined, private getTui: () => TUI | undefined) {}
 
@@ -78,17 +113,19 @@ export class FileHoverPreview {
 		this.unsubscribe = undefined;
 		this.source = undefined;
 		this.link = undefined;
+		this.diff = undefined;
 	};
 
-	hover(link: FileLink, event: TuiMouseEvent, pathStart: number, pathEnd: number): void {
+	hover(link: FileLink, event: TuiMouseEvent, pathStart: number, pathEnd: number, diff?: string): void {
 		const ctx = this.getContext();
 		const tui = this.getTui();
 		if (!ctx || !tui || ctx.mode !== "tui" || tui.mode !== "fullscreen") return;
 		const source = { row: event.screenY, col: event.screenX - event.x + pathStart, width: pathEnd - pathStart, height: 1 };
-		if (this.link?.path === link.path && this.link.line === link.line && this.source?.row === event.screenY) { this.source = source; return; }
+		if (this.link?.path === link.path && this.link.line === link.line && this.diff === diff && this.source?.row === event.screenY) { this.source = source; return; }
 		this.close();
 		if (tui.hasOverlay()) return;
 		this.link = link;
+		this.diff = diff;
 		this.source = source;
 		const raw = new StdinBuffer();
 		const observe = (chunk: string | Buffer): void => raw.process(chunk);
@@ -97,8 +134,9 @@ export class FileHoverPreview {
 			const mouse = /^\x1b\[<(\d+);(\d+);(\d+)[Mm]$/.exec(data);
 			if (!mouse) return;
 			const code = Number(mouse[1]), x = Number(mouse[2]) - 1, y = Number(mouse[3]) - 1;
-			if (code >= 64 ||
-				(!contains(this.source, x, y) && !contains(this.handle?.getBounds(), x, y))) this.close();
+			const inside = contains(this.handle?.getBounds(), x, y);
+			if ((code >= 64 && !(this.diff !== undefined && inside)) ||
+				(!contains(this.source, x, y) && !inside)) this.close();
 		});
 		raw.on("paste", this.close);
 		process.stdin.on("data", observe);
@@ -117,10 +155,12 @@ export class FileHoverPreview {
 			const above = Math.max(0, this.source.row - 1), below = Math.max(0, tui.terminal.rows - this.source.row - 2);
 			const available = Math.min(15, Math.max(above, below));
 			if (available < 6 || tui.terminal.columns < 24) { this.close(); return; }
-			const preview = filePreview(link, ctx.cwd, ctx.ui.theme, available - 3);
+			const width = Math.min(90, tui.terminal.columns - 2);
+			const preview = diff === undefined ? filePreview(link, ctx.cwd, ctx.ui.theme, available - 3)
+				: diffPreview(link, ctx.cwd, ctx.ui.theme, diff, available - 3, width);
 			this.focus = tui instanceof TuiAltScreen ? tui.getFocusedComponent() : undefined;
 			this.handle = tui.showOverlay(preview.component, {
-				nonCapturing: true, width: Math.min(90, tui.terminal.columns - 2),
+				nonCapturing: true, width,
 				row: below >= preview.height ? this.source.row + 1 : this.source.row - preview.height,
 				col: Math.max(1, this.source.col), margin: 1,
 			});

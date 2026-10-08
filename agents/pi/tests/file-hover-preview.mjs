@@ -14,7 +14,7 @@ const loader = createJiti(import.meta.url, { alias: {
   "@earendil-works/pi-coding-agent": join(root, "dist/index.js"),
   "@earendil-works/pi-tui": join(root, "node_modules/@earendil-works/pi-tui/dist/index.js"),
 } });
-const { FileHoverPreview, filePreview } = await loader.import(fileURLToPath(new URL("../extensions/neon-format/file-hover-preview.ts", import.meta.url)));
+const { FileHoverPreview, filePreview, diffPreview } = await loader.import(fileURLToPath(new URL("../extensions/neon-format/file-hover-preview.ts", import.meta.url)));
 const { ToolCallLine, default: neonFormat } = await loader.import(fileURLToPath(new URL("../extensions/neon-format/index.ts", import.meta.url)));
 const pi = await loader.import(join(root, "dist/index.js"));
 const tui = await loader.import(join(root, "node_modules/@earendil-works/pi-tui/dist/index.js"));
@@ -52,6 +52,26 @@ try {
   assert.ok(tui.stripTerminalSequences(filePreview({ path: join(scratch, "large.ts") }, scratch, theme).component.render(80).join("\n")).includes("256 KiB"));
   writeFileSync(join(scratch, "binary.ts"), Buffer.from([0, 1, 2]));
   assert.ok(tui.stripTerminalSequences(filePreview({ path: join(scratch, "binary.ts") }, scratch, theme).component.render(80).join("\n")).includes("Binary file"));
+  const diffFixture = [
+    ...Array.from({ length: 25 }, (_, i) => ` ${55 + i} const CONTEXT${55 + i} = 0;`),
+    '-80 const label = "FIRST_OLD";', '+80 const label = "FIRST_NEW";',
+    ...Array.from({ length: 18 }, (_, i) => ` ${81 + i} const tail${81 + i} = 0;`),
+    "...", '-160 const later = "SECOND_OLD";', '+160 const later = "SECOND_NEW";',
+  ].join("\n");
+  const diffView = diffPreview(link, scratch, theme, diffFixture, 12, 80);
+  const firstDiffRows = diffView.component.render(80);
+  const firstDiff = tui.stripTerminalSequences(firstDiffRows.join("\n"));
+  assert.ok(firstDiff.includes("FIRST_NEW"));
+  assert.ok(!firstDiff.includes("CONTEXT55"), "Diff must start near the first change, not at file/context start");
+  assert.ok(!firstDiff.includes("SECOND_NEW"));
+  const addedBg = tui.backgroundAnsi(tui.mixColors(theme.colors.userMessageBg, theme.colors.toolDiffAdded, 0.12, "srgb"), tui.getTerminalColorMode());
+  const removedBg = tui.backgroundAnsi(tui.mixColors(theme.colors.userMessageBg, theme.colors.toolDiffRemoved, 0.12, "srgb"), tui.getTerminalColorMode());
+  assert.ok(firstDiffRows.join("\n").includes(addedBg) && firstDiffRows.join("\n").includes(removedBg), "Diff popup must preserve SyntaxDiff addition/removal backgrounds");
+  diffView.component.handleMouse({ type: "wheel", wheelDelta: 100 });
+  assert.ok(tui.stripTerminalSequences(diffView.component.render(80).join("\n")).includes("SECOND_NEW"));
+  for (const width of [1, 3, 20, 80]) for (const row of diffView.component.render(width)) assert.ok(tui.visibleWidth(row) <= width);
+  const wrappedContext = ` 1 ${"+4 ordinary_context ".repeat(80)}\n-2 const old = 1;\n+2 const ACTUAL_FIRST_CHANGE = 2;`;
+  assert.ok(tui.stripTerminalSequences(diffPreview(link, scratch, theme, wrappedContext, 12, 40).component.render(40).join("\n")).includes("ACTUAL_FIRST_CHANGE"), "Wrapped context resembling a plus gutter must not be mistaken for a changed row");
   let clicks = 0;
   const header = new ToolCallLine(" Read", "example.ts", ":15", theme, link, () => { preview.close(); clicks++; }, undefined, (link, event, start, end) => preview.hover(link, event, start, end));
   const layout = new tui.Container();
@@ -138,9 +158,64 @@ try {
   assert.equal(ui.getFocusedComponent(), mode.editor);
   process.stdin.emit("data", "\x1b"); mock.timers.tick(10);
   assert.equal(ui.hasOverlay(), false);
+  const editTool = pi.createEditTool(scratch);
+  const editArgs = { path, edits: [
+    { oldText: 'const value14: string = "line 14";', newText: 'const value14: string = "ALPHA_FIRST_EDIT";' },
+    { oldText: 'const value28: string = "line 28";', newText: 'const value28: string = "OMEGA_FIRST_EDIT";' },
+  ] };
+  const edited = await editTool.execute("hover-edit-first", editArgs, undefined, () => {}, { cwd: scratch });
+  const beforeEditPayload = JSON.stringify(edited);
+  const editComponent = new pi.ToolExecutionComponent("edit", "hover-edit-first", editArgs, {}, resolver("edit", () => editTool), ui, scratch);
+  layout.clear(); layout.addChild(editComponent); layout.addChild(editorContainer);
+  ui.renderNow(true); mouse(10, 1); mock.timers.tick(350);
+  assert.equal(ui.hasOverlay(), false, "Edit without a completed diff must not fall back to file-head preview");
+  editComponent.updateResult(edited, true);
+  ui.renderNow(true); mouse(10, 1); mock.timers.tick(350);
+  assert.equal(ui.hasOverlay(), false, "Partial Edit result must not present a final diff");
+  editComponent.updateResult(edited, false);
+  writeFileSync(path, 'const current = "CURRENT_FILE_NOT_THIS_EDIT";');
+  layout.clear(); layout.addChild(editComponent); layout.addChild(editorContainer);
+  ui.renderNow(true);
+  mouse(10, 1); mock.timers.tick(350); writes.length = 0; ui.renderNow(true);
+  assert.equal(ui.hasOverlay(), true);
+  assert.ok(tui.stripTerminalSequences(writes.join("")).includes("ALPHA_FIRST_EDIT"), "Hover must use this real Edit result, not the current file");
+  assert.ok(!tui.stripTerminalSequences(writes.join("")).includes("CURRENT_FILE_NOT_THIS_EDIT"));
+  assert.ok(!tui.stripTerminalSequences(writes.join("")).includes("OMEGA_FIRST_EDIT"), "Initial viewport stays at the first hunk");
+  let sawSecondHunk = false;
+  for (let i = 0; i < 12 && !sawSecondHunk; i++) {
+    writes.length = 0; mouse(20, 8, 65); ui.renderNow(true);
+    assert.equal(ui.hasOverlay(), true, "Wheel inside diff must scroll instead of closing popup");
+    sawSecondHunk = tui.stripTerminalSequences(writes.join("")).includes("OMEGA_FIRST_EDIT");
+  }
+  assert.ok(sawSecondHunk, "Native wheel must reach the later hunk");
+  assert.equal(ui.getFocusedComponent(), mode.editor);
+  assert.equal(JSON.stringify(edited), beforeEditPayload, "Preview must not change tool/model payload");
+  process.stdin.emit("data", "\x1b"); mock.timers.tick(10);
+  const secondArgs = { path, edits: [{ oldText: "CURRENT_FILE_NOT_THIS_EDIT", newText: "SECOND_CALL_ONLY" }] };
+  const secondResult = await editTool.execute("hover-edit-second", secondArgs, undefined, () => {}, { cwd: scratch });
+  const secondComponent = new pi.ToolExecutionComponent("edit", "hover-edit-second", secondArgs, {}, resolver("edit", () => editTool), ui, scratch);
+  secondComponent.updateResult(secondResult, false);
+  layout.clear(); layout.addChild(editComponent); layout.addChild(secondComponent); layout.addChild(editorContainer);
+  ui.renderNow(true);
+  mouse(10, 1); mock.timers.tick(350); writes.length = 0; ui.renderNow(true);
+  assert.ok(tui.stripTerminalSequences(writes.join("")).includes("ALPHA_FIRST_EDIT"));
+  assert.ok(!tui.stripTerminalSequences(writes.join("")).includes("SECOND_CALL_ONLY"), "Later same-file Edit must not replace earlier call's diff");
+  process.stdin.emit("data", "\x1b"); mock.timers.tick(10);
+  editComponent.updateResult({ content: [{ type: "text", text: "Edit failed" }], details: edited.details, isError: true }, false);
+  ui.renderNow(true); mouse(10, 1); mock.timers.tick(350);
+  assert.equal(ui.hasOverlay(), false, "Failed Edit must clear stale successful diff preview");
+  const writeTool = pi.createWriteTool(scratch);
+  const writeArgs = { path: join(scratch, "written.ts"), content: 'const written = "WRITE_CONTENT_PREVIEW";' };
+  const written = await writeTool.execute("hover-write", writeArgs, undefined, () => {}, { cwd: scratch });
+  const writeComponent = new pi.ToolExecutionComponent("write", "hover-write", writeArgs, {}, resolver("write", () => writeTool), ui, scratch);
+  writeComponent.updateResult(written, false);
+  layout.clear(); layout.addChild(writeComponent); layout.addChild(editorContainer);
+  ui.renderNow(true); mouse(10, 1); mock.timers.tick(350); writes.length = 0; ui.renderNow(true);
+  assert.ok(tui.stripTerminalSequences(writes.join("")).includes("WRITE_CONTENT_PREVIEW"), "Write hover keeps file content, not Edit diff mode");
+  process.stdin.emit("data", "\x1b"); mock.timers.tick(10);
   for (const hook of hooks.get("session_shutdown")) await hook({ reason: "reload" }, liveCtx);
   assert.equal(process.stdin.listenerCount("data"), baseline + 1, "Extension reload cleans preview and focus observers");
-  console.log("PASS: actual extension resolver/native editor factory + TuiAltScreen SGR hover → 350ms overlay; native syntax colors, line window, safe bounded reads; pointer/ESC/typing cancellation, focus/draft and other dialogs preserved, click unchanged, stale session/reload cleanup");
+  console.log("PASS: actual extension/native editor + raw SGR hover; exact real Edit snapshot at first changed hunk, SyntaxDiff colors/backgrounds, wheel to later hunk; same-file calls isolated, payload unchanged, partial/error cleared; Read window/read safety, focus/draft/dialogs/click and reload cleanup preserved");
 } finally {
   cleanupExtension();
   preview.close();

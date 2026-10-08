@@ -122,11 +122,18 @@ export default function neonFormat(pi: ExtensionAPI): void {
 				const suffix = name === "read" && args.offset ? `:${args.offset}`
 					: (name === "grep" || name === "find") && path ? ` in ${displayPath(path, context.cwd)}` : "";
 				return new ToolCallLine(labels[name], value, suffix, theme, link, activateFile, undefined,
-					(link, event, start, end) => { if (!editorOpen) preview.hover(link, event, start, end); });
+					(link, event, start, end) => {
+						if (editorOpen) return;
+						const diff = name === "edit" ? context.state.hoverDiff : undefined;
+						if (name === "edit" && typeof diff !== "string") { preview.close(); return; }
+						preview.hover(link, event, start, end, typeof diff === "string" ? diff : undefined);
+					});
 			},
 			renderResult(result, options, theme, context) {
 				if (result.content.some(block => block.type === "image") && original?.renderResult) return original.renderResult(result, options, theme, context);
 				const output = result.content.filter(block => block.type === "text").map(block => block.text).join("\n");
+				const diff = (result.details as { diff?: unknown } | undefined)?.diff;
+				if (name === "edit") context.state.hoverDiff = !options.isPartial && !context.isError && typeof diff === "string" ? diff : undefined;
 				if (name === "bash") {
 					context.state.complete = !options.isPartial;
 					if (options.isPartial) return new Text(output ? theme.fg("dim", output) : theme.fg("warning", "  Running…"), 1, 0);
@@ -148,7 +155,6 @@ export default function neonFormat(pi: ExtensionAPI): void {
 					}
 				}
 				if (options.isPartial) return new Text(theme.fg("warning", "  Running…"), 0, 0);
-				const diff = (result.details as { diff?: unknown } | undefined)?.diff;
 				if (!context.isError && name === "edit" && typeof diff === "string") {
 					const lines = diff.split("\n");
 					const added = lines.filter(line => line.startsWith("+") && !line.startsWith("+++")).length;

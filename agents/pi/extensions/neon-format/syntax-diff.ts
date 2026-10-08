@@ -76,11 +76,14 @@ function emphasize(row: DiffRow, text: string, base: Color, strong: Color, theme
 
 export class SyntaxDiff implements Component {
 	private rows?: (DiffRow | undefined)[];
+	private firstChanged = 0;
+
+	get firstChangedRow(): number { return this.firstChanged; }
 
 	constructor(private diff: string, private path: string, private theme: Theme) {}
 
 	render(width: number): string[] {
-		if (width <= 0) return [];
+		if (width <= 0) { this.firstChanged = 0; return []; }
 		const lines = this.diff.split("\n");
 		if (!this.rows) {
 			this.rows = lines.map(parseRow);
@@ -89,12 +92,14 @@ export class SyntaxDiff implements Component {
 		}
 		const rows = this.rows;
 		const output: string[] = [];
+		let firstChanged: number | undefined;
 		for (let i = 0; i < rows.length; i++) {
 			const row = rows[i];
 			if (!row) {
 				output.push(truncateToWidth(this.theme.fg("dim", ` ${lines[i]}`), width, "…"));
 				continue;
 			}
+			if (row.prefix !== " ") firstChanged ??= output.length;
 			const token = row.prefix === "+" ? "toolDiffAdded" : row.prefix === "-" ? "toolDiffRemoved" : "muted";
 			const base = mixColors(this.theme.colors.userMessageBg, this.theme.colors[token], 0.12, "srgb");
 			const strong = mixColors(this.theme.colors.userMessageBg, this.theme.colors[token], 0.3, "srgb");
@@ -106,6 +111,7 @@ export class SyntaxDiff implements Component {
 				output.push(row.prefix === " " ? line : this.theme.style(line + " ".repeat(Math.max(0, width - visibleWidth(line))), { bg: base }));
 			}
 		}
+		this.firstChanged = firstChanged ?? 0;
 		return output;
 	}
 
