@@ -4,14 +4,43 @@ import * as fs from "node:fs";
 import * as net from "node:net";
 import * as os from "node:os";
 import * as path from "node:path";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-import { Container, Text } from "@earendil-works/pi-tui";
+import type { ExtensionAPI, ExtensionContext, Theme } from "@earendil-works/pi-coding-agent";
+import { Text, stripTerminalSequences, truncateToWidth, visibleWidth, type Component, type TuiMouseEvent } from "@earendil-works/pi-tui";
 import { Type } from "typebox";
 
 const registryDir = path.join(os.homedir(), ".claude", "sessions");
 const entryFileRe = /^(\d+)\.json$/;
 const keyFileRe = /^(\d+)\.[0-9a-f]{64}\.key$/;
 const customMessageType = "cc-peer.message";
+type PeerViewState = { expanded?: boolean; globalExpanded: boolean };
+
+function peerMessageView(direction: "from" | "to", name: string, body: string, state: PeerViewState, theme: Theme): Component {
+  const cleanName = stripTerminalSequences(name).replace(/\s+/g, " ").trim() || "unknown";
+  const header = `${theme.fg("dim", `› Message ${direction} `)}${theme.fg("warning", `@${cleanName}: `)}`;
+  let canExpand = false;
+  let rowCount = 0;
+  return {
+    render(width: number) {
+      const pad = width > 2 ? " " : "";
+      const contentWidth = Math.max(0, width - pad.length * 2);
+      const rows = new Text(header + theme.fg("dim", stripTerminalSequences(body)), 0, 0).render(contentWidth);
+      canExpand = rows.length > 3;
+      let shown = rows;
+      if (!(state.expanded ?? state.globalExpanded) && canExpand) {
+        const hint = " …";
+        shown = [...rows.slice(0, 2), truncateToWidth(rows[2], Math.max(0, contentWidth - visibleWidth(hint)), "") + truncateToWidth(hint, contentWidth, "…")];
+      }
+      rowCount = shown.length;
+      return shown.map(row => pad + row + pad);
+    },
+    handleMouse(event: TuiMouseEvent) {
+      if (!canExpand || event.type !== "click" || event.button !== "left" || event.y < 0 || event.y >= rowCount) return undefined;
+      state.expanded = !(state.expanded ?? state.globalExpanded);
+      return { handled: true, render: true };
+    },
+    invalidate() {},
+  };
+}
 const wireVersion = 1;
 const maxMessageChars = 1_000_000;
 const maxPendingInjects = 50;
@@ -242,15 +271,18 @@ export default async function ccPeer(pi: ExtensionAPI) {
     return dialPipe(pipe, 5_000, trackSocket);
   };
 
+  const peerViews = new WeakMap<object, PeerViewState>();
   pi.registerMessageRenderer(customMessageType, (message, options, theme) => {
     const content = typeof message.content === "string" ? message.content : "";
-    const firstLine = content.split("\n").find((line) => line.trim().length > 0) ?? "";
-    const nameMatch = /from-name="([^"\n>]+)/.exec(content);
-    const header = `cc-peer message${nameMatch ? ` from ${nameMatch[1]}` : ""}`;
-    const container = new Container();
-    container.addChild(new Text(`${theme.fg("dim", "┈┈ ")}${theme.fg("warning", header)}`, 1, 0));
-    container.addChild(new Text(options.expanded ? content : firstLine.slice(0, 200), 1, 0));
-    return container;
+    const tag = /<cross-session-message\b[^>]*>/.exec(content);
+    const name = stripTerminalSequences(/from-name="([^">]*)"/.exec(tag?.[0] ?? "")?.[1] ?? "unknown").replace(/\s+/g, " ").trim();
+    const body = tag ? content.slice(tag.index + tag[0].length).replace(/\s*<\/cross-session-message>\s*$/, "").trim() : content.trim();
+    let view = peerViews.get(message);
+    if (!view || view.globalExpanded !== options.expanded) {
+      view = { globalExpanded: options.expanded };
+      peerViews.set(message, view);
+    }
+    return peerMessageView("from", name, body, view, theme);
   });
 
   const writeAtomic = (file: string, text: string): void => {
@@ -550,6 +582,15 @@ export default async function ccPeer(pi: ExtensionAPI) {
     }
   });
 
+  pi.on("session_info_changed", (event) => {
+    if (explicitName || removed) return;
+    peerName = event.name || `pi-${pid}`;
+    if (!base) return;
+    const now = Date.now();
+    base = { ...base, name: peerName, nameSince: now };
+    writeAtomic(entryPath, JSON.stringify({ ...base, status: lastStatus, updatedAt: now }));
+  });
+
   pi.on("turn_start", () => setStatus("busy"));
   pi.on("agent_start", () => {
     agentBusy = true;
@@ -598,6 +639,21 @@ export default async function ccPeer(pi: ExtensionAPI) {
   pi.registerTool({
     name: "cc_send_message",
     label: "CC Send",
+    renderShell: "self",
+    renderCall(args, theme, context) {
+      const to = String(args.to ?? "…");
+      const match = /^(.*?)\s*\[(\d+)\]$/.exec(to);
+      const target = match?.[1].trim() ?? to;
+      const peer = readRegistry().entries.find(entry => entry.name === target && (!match || entry.pid === Number(match[2])));
+      if (!context.state.peerView || context.state.peerView.globalExpanded !== context.expanded) context.state.peerView = { globalExpanded: context.expanded };
+      return peerMessageView("to", peer?.name ?? target, String(args.message ?? ""), context.state.peerView, theme);
+    },
+    renderResult(result, options, theme, context) {
+      if (!context.isError) return { render: () => [], invalidate() {} };
+      const output = result.content.filter(block => block.type === "text").map(block => block.text).join("\n");
+      const text = new Text(theme.fg("error", output), 0, 0);
+      return { render: (width: number) => options.expanded ? text.render(width) : text.render(width).slice(0, 3), invalidate() {} };
+    },
     promptSnippet: "Send a message to a discovered peer; optionally subscribe to its idle notification.",
     description:
       "Send a cross-session message to a Claude Code peer by name over its messaging pipe. Prefer cc_list_peers first. Set subscribe_idle true to be notified when the peer goes idle.",
