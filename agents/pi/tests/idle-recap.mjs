@@ -84,7 +84,7 @@ try {
   const { CustomMessageComponent } = await loader.import(join(root, "dist/modes/interactive/components/custom-message.js"));
   const component = new CustomMessageComponent(recaps()[0], renderer);
   const rendered = component.render(100).join("\n");
-  assert.ok(tui.stripTerminalSequences(rendered).includes("󰏿 recap:"));
+  assert.ok(tui.stripTerminalSequences(rendered).includes("󰋚 recap:"));
   assert.ok(rendered.includes(themeModule.theme.getFgAnsi("dim")));
   await session.prompt("Next step.");
   assert.equal(recaps().length, 1, "Posted recap must remain after new input");
@@ -127,7 +127,7 @@ try {
   await new Promise(resolve => setImmediate(resolve));
   const blockedMessage = recaps().at(-1);
   assert.equal(blockedMessage.details.status, "blocked");
-  assert.ok(tui.stripTerminalSequences(new CustomMessageComponent(blockedMessage, renderer).render(100).join("\n")).includes("󰏿 blocked:"));
+  assert.ok(tui.stripTerminalSequences(new CustomMessageComponent(blockedMessage, renderer).render(100).join("\n")).includes("󰋚 blocked:"));
   faux.setResponses([respond(ready), respond(ready), respond(answer)]);
   calls = seen.length;
   await session.prompt("Continue approved work.");
@@ -145,7 +145,7 @@ try {
   const unknown = recaps().at(-1);
   assert.equal(unknown.details.status, "unknown");
   assert.ok(unknown.content.includes("chưa xác định"));
-  assert.ok(tui.stripTerminalSequences(new CustomMessageComponent(unknown, renderer).render(100).join("\n")).includes("󰏿 status:"));
+  assert.ok(tui.stripTerminalSequences(new CustomMessageComponent(unknown, renderer).render(100).join("\n")).includes("󰋚 status:"));
   let toolId = 0;
   const tool = (name, args) => context => {
     seen.push(structuredClone(context));

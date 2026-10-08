@@ -51,7 +51,7 @@ export default function idleRecap(pi: ExtensionAPI): void {
 		const text = typeof message.content === "string" ? message.content : "";
 		const status = (message.details as { status?: StopStatus } | undefined)?.status;
 		const label = status === "blocked" ? "blocked" : status === "ready" ? "ready" : status === "done" ? "recap" : "status";
-		return new Text(theme.fg("dim", `󰏿 ${label}: ${stripTerminalSequences(text)}`), options.outputPad, 0);
+		return new Text(theme.fg("dim", `󰋚 ${label}: ${stripTerminalSequences(text)}`), options.outputPad, 0);
 	});
 	pi.on("context", event => {
 		const lastReply = event.messages.findLastIndex(message => message.role === "assistant" || message.role === "user");
