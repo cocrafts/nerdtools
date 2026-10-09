@@ -30,7 +30,7 @@ defaultEditor.onSubmit = text => submitted = text;
 defaultEditor.onChange = () => {};
 let appCalls = 0;
 defaultEditor.actionHandlers.set("app.model.cycleForward", () => appCalls++);
-const mode = { defaultEditor, editor: defaultEditor, ui: fakeTui, keybindings: keys, editorContainer: new tui.Container(), disposeActiveSelector() {}, autocompleteProvider: new tui.CombinedAutocompleteProvider([{ name: "skill:trace-nim" }, { name: "skill:split-commit" }, { name: "model" }], process.cwd()) };
+const mode = { defaultEditor, editor: defaultEditor, ui: fakeTui, keybindings: keys, editorContainer: new tui.Container(), disposeActiveSelector() {}, autocompleteProvider: new tui.CombinedAutocompleteProvider([{ name: "skill:trace-ref" }, { name: "skill:split-commit" }, { name: "model" }], process.cwd()) };
 const errors = [];
 const ctx = { mode: "tui", sessionManager: { getSessionId: () => "skill-test" }, ui: {
 	get theme() { return themeModule.theme; },
@@ -41,7 +41,7 @@ const ctx = { mode: "tui", sessionManager: { getSessionId: () => "skill-test" },
 const scratch = mkdtempSync(join(tmpdir(), "pi-atomic-input-"));
 const bus = new EventEmitter();
 const events = { on: (name, fn) => { bus.on(name, fn); return () => bus.off(name, fn); }, emit: (name, data) => bus.emit(name, data) };
-const files = new Map(["trace-nim", "split-commit"].map(name => {
+const files = new Map(["trace-ref", "split-commit"].map(name => {
 	const path = join(scratch, `${name}.md`);
 	writeFileSync(path, `---\nname: ${name}\ndescription: fixture\n---\nBody ${name}. A literal /skill:split-commit in this file must not be rescanned.\n`);
 	return [name, path];
@@ -64,7 +64,7 @@ try {
 	assert.equal(editor.onSubmit, defaultEditor.onSubmit);
 	assert.equal(editor.onChange, defaultEditor.onChange);
 	assert.equal(editor.actionHandlers.get("app.model.cycleForward"), defaultEditor.actionHandlers.get("app.model.cycleForward"));
-	for (const text of ["", "abc", "/skill:trace-nim", "ab\ncd"]) {
+	for (const text of ["", "abc", "/skill:trace-ref", "ab\ncd"]) {
 		editor.setText(text);
 		const draft = editor.getDraft();
 		for (const cursor of [0, draft.text.length]) {
@@ -81,9 +81,9 @@ try {
 			}
 		}
 	}
-	const original = "Review /skill:trace-nim rồi /skill:split-commit";
+	const original = "Review /skill:trace-ref rồi /skill:split-commit";
 	editor.setText(original);
-	assert.equal(editor.getText(), "Review  trace-nim rồi  split-commit");
+	assert.equal(editor.getText(), "Review  trace-ref rồi  split-commit");
 	assert.equal(editor.getExpandedText(), original);
 	for (const width of [1, 2, 8, 20, 40, 80, 120]) for (const padding of [0, 2]) {
 		editor.setPaddingX(padding);
@@ -104,38 +104,38 @@ try {
 	const transformed = await handlers.get("input")({ text: submitted, source: "interactive" }, ctx);
 	assert.equal(transformed.action, "transform");
 	assert.equal((transformed.text.match(/<skill name=/g) ?? []).length, 2);
-	assert.ok(transformed.text.indexOf('name="trace-nim"') < transformed.text.indexOf('name="split-commit"'));
+	assert.ok(transformed.text.indexOf('name="trace-ref"') < transformed.text.indexOf('name="split-commit"'));
 	assert.ok(transformed.text.endsWith(original));
 	assert.ok(!transformed.text.includes("description: fixture"));
 	const first = pi.parseSkillBlock(transformed.text);
-	assert.equal(first.name, "trace-nim");
-	assert.equal(markdown(first.userMessage, { messageType: "user" }), "Review  trace-nim rồi  split-commit");
+	assert.equal(first.name, "trace-ref");
+	assert.equal(markdown(first.userMessage, { messageType: "user" }), "Review  trace-ref rồi  split-commit");
 	assert.equal(markdown(first.userMessage, { messageType: "assistant" }), first.userMessage);
 	assert.equal(await handlers.get("input")({ text: original, source: "extension" }, ctx), undefined);
-	for (const text of ["!echo /skill:trace-nim", "/model /skill:trace-nim", "Use /skill:missing", "Use `/skill:trace-nim` literally"]) assert.equal(await handlers.get("input")({ text, source: "interactive" }, ctx), undefined);
+	for (const text of ["!echo /skill:trace-ref", "/model /skill:trace-ref", "Use /skill:missing", "Use `/skill:trace-ref` literally"]) assert.equal(await handlers.get("input")({ text, source: "interactive" }, ctx), undefined);
 	assert.equal(submit.skillPromptInput(transformed.text), original);
 	editor.addToHistory(transformed.text);
 	editor.handleInput("\x1b[A"); assert.equal(editor.getExpandedText(), original);
 	editor.handleInput("\x1b[B"); assert.equal(editor.getText(), "");
 	editor.setText("Review "); editor.handleInput("/");
 	await tick(); assert.equal(editor.isShowingAutocomplete(), true, "Inline slash must open the skill menu");
-	assert.ok(plain(editor.render(80).join("\n")).includes("/skill:trace-nim"));
+	assert.ok(plain(editor.render(80).join("\n")).includes("/skill:trace-ref"));
 	editor.handleInput("tra"); await tick();
 	assert.equal(editor.isShowingAutocomplete(), true, "Inline slash must filter skill names");
 	editor.handleInput("\t");
-	assert.equal(editor.getExpandedText(), "Review /skill:trace-nim ");
+	assert.equal(editor.getExpandedText(), "Review /skill:trace-ref ");
 	editor.handleInput("then /"); await tick();
 	assert.equal(editor.isShowingAutocomplete(), true, "Inline slash must work after an existing chip");
 	editor.handleInput("split"); await tick(); editor.handleInput("\t");
-	assert.equal(editor.getExpandedText(), "Review /skill:trace-nim then /skill:split-commit ");
+	assert.equal(editor.getExpandedText(), "Review /skill:trace-ref then /skill:split-commit ");
 	editor.setText("Review /skill:tra"); editor.handleInput("\t"); await tick();
 	if (editor.isShowingAutocomplete()) editor.handleInput("\t");
-	assert.equal(editor.getText(), "Review  trace-nim ");
-	assert.equal(editor.getExpandedText(), "Review /skill:trace-nim ");
+	assert.equal(editor.getText(), "Review  trace-ref ");
+	assert.equal(editor.getExpandedText(), "Review /skill:trace-ref ");
 	editor.handleInput("\x1f"); assert.equal(editor.getText(), "Review /skill:tra");
 	editor.setText("");
-	for (const char of "Review /skill:trace-nim then ") editor.handleInput(char);
-	assert.equal(editor.getText(), "Review  trace-nim then ");
+	for (const char of "Review /skill:trace-ref then ") editor.handleInput(char);
+	assert.equal(editor.getText(), "Review  trace-ref then ");
 	editor.setText("/mo"); editor.handleInput("\t"); await tick();
 	if (editor.isShowingAutocomplete()) editor.handleInput("\t");
 	assert.equal(editor.getText().trim(), "/model");
@@ -158,7 +158,7 @@ try {
 	assert.deepEqual(editor.getDraft(), saved);
 	editor.handleInput(`\x1b[200~${longPaste}second\x1b[201~`);
 	assert.ok(editor.getExpandedText().includes("second"));
-	editor.setText("/skill:trace-nim");
+	editor.setText("/skill:trace-ref");
 	const dark = editor.render(80).join("\n"); pi.initTheme("light");
 	const light = editor.render(80).join("\n"); assert.notEqual(dark, light); assert.equal(plain(dark), plain(light));
 	let requests = 0;
@@ -205,12 +205,12 @@ try {
 	assert.equal(requests, 5, "Explicit file completion must keep updating within its token");
 	pending.shift().resolve(null);
 	await tick(); assert.equal(editor.isShowingAutocomplete(), false, "Empty results must dismiss the previous popup");
-	editor.setText("/skill:trace-nim");
-	unlinkSync(files.get("trace-nim"));
-	editor.handleInput("\r"); assert.equal(editor.getExpandedText(), "/skill:trace-nim"); assert.equal(errors.at(-1).kind, "error");
+	editor.setText("/skill:trace-ref");
+	unlinkSync(files.get("trace-ref"));
+	editor.handleInput("\r"); assert.equal(editor.getExpandedText(), "/skill:trace-ref"); assert.equal(errors.at(-1).kind, "error");
 	const broken = await handlers.get("input")({ text: original, source: "interactive" }, ctx);
 	assert.equal(broken.action, "handled");
-	assert.ok(errors.at(-1).text.includes("trace-nim"));
+	assert.ok(errors.at(-1).text.includes("trace-ref"));
 	const palette = () => themeModule.theme;
 	for (let steps = 0; steps < 15; steps++) for (const text of ["foo bar", "can't stop", "foo-bar/baz.qux", "hello 🌙 world", "a\nline two", "é 👩🏽‍💻 foo"]) {
 		for (const input of ["\x1bb", "\x1bf", "\x17", "\x1bd", "\x15", "\x0b", "\x01", "\x05", "\x1b[A", "\x1b[B", "\x1b[D", "\x7f"]) {

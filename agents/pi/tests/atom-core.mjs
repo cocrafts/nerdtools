@@ -35,16 +35,16 @@ const skillToken = (name:string) => '/skill:'+name;
 ${Object.values(reference.skillFunctions).join("\n")}`;
 const oracleModule = await jiti.evalModule(oracleCode, { filename: join(here, "fixtures/omp-atoms-reference.ts"), async: true });
 const { OmpAtomOracle } = oracleModule;
-const known = new Set(["trace-nim", "split-commit", "root.foo", "pkg/name"]);
+const known = new Set(["trace-ref", "split-commit", "root.foo", "pkg/name"]);
 const cases = [
-	"Review /skill:trace-nim rồi /skill:split-commit",
-	"/skill:trace-nim /skill:split-commit",
-	"Review\n/skill:trace-nim\nthen /skill:split-commit",
-	"/model other /skill:trace-nim",
-	"!echo /skill:trace-nim", "$ echo /skill:trace-nim", "$$ echo /skill:trace-nim",
-	"${value} /skill:trace-nim", "$value /skill:trace-nim",
+	"Review /skill:trace-ref rồi /skill:split-commit",
+	"/skill:trace-ref /skill:split-commit",
+	"Review\n/skill:trace-ref\nthen /skill:split-commit",
+	"/model other /skill:trace-ref",
+	"!echo /skill:trace-ref", "$ echo /skill:trace-ref", "$$ echo /skill:trace-ref",
+	"${value} /skill:trace-ref", "$value /skill:trace-ref",
 	"/skill:unknown", "Use /skill:pkg/name/deep", "Use /skill:root.foo /skill:pkg/name",
-	"Use `/skill:trace-nim` as an example", "Use /skill:trace-nim. as an example",
+	"Use `/skill:trace-ref` as an example", "Use /skill:trace-ref. as an example",
 ];
 for (const text of cases) {
 	const buffer = new AtomBuffer(skills.SKILL_CHIP_PATTERN);
@@ -63,7 +63,7 @@ for (const name of known) {
 	buffer.registerAtom(` ${name}`, `/skill:${name}`);
 	oracle.registerAtom(` ${name}`, `/skill:${name}`);
 }
-const display = "a  trace-nim b  split-commit c";
+const display = "a  trace-ref b  split-commit c";
 buffer.setText(display);
 assert.equal(buffer.getExpandedText(), oracle.expand(display));
 let comparisons = 0;
@@ -94,7 +94,7 @@ for (const span of buffer.getAtomSpans()) {
 }
 buffer.setText(display);
 const first = buffer.getAtomSpans()[0];
-assert.equal(buffer.copyRange(first.start + 2, first.end - 1), "/skill:trace-nim");
+assert.equal(buffer.copyRange(first.start + 2, first.end - 1), "/skill:trace-ref");
 buffer.replaceRange(first.start + 2, first.end - 1, "replacement");
 assert.equal(buffer.getText(), display.slice(0, first.start) + "replacement" + display.slice(first.end));
 buffer.undo();
@@ -103,22 +103,22 @@ buffer.setCursor(first.start + 3);
 buffer.moveRight(); assert.equal(buffer.getCursor(), first.start + 4);
 buffer.moveLeft(); assert.equal(buffer.getCursor(), first.start + 3);
 buffer.setText("Review ");
-buffer.insertAtom(" trace-nim", "/skill:trace-nim");
-assert.equal(buffer.getExpandedText(), "Review /skill:trace-nim ");
+buffer.insertAtom(" trace-ref", "/skill:trace-ref");
+assert.equal(buffer.getExpandedText(), "Review /skill:trace-ref ");
 buffer.undo(); assert.equal(buffer.getText(), "Review ");
-buffer.redo(); assert.equal(buffer.getText(), "Review  trace-nim ");
+buffer.redo(); assert.equal(buffer.getText(), "Review  trace-ref ");
 buffer.undo(); buffer.insertText("different"); assert.equal(buffer.redo(), false);
-buffer.setText("Review /skill:trace-nim then");
+buffer.setText("Review /skill:trace-ref then");
 buffer.setCursor(buffer.getText().length);
-buffer.collapseToAtom(7, 23, " trace-nim", "/skill:trace-nim");
-assert.equal(buffer.getText(), "Review  trace-nim then");
+buffer.collapseToAtom(7, 23, " trace-ref", "/skill:trace-ref");
+assert.equal(buffer.getText(), "Review  trace-ref then");
 assert.equal(buffer.getCursor(), buffer.getText().length);
-assert.equal(buffer.getExpandedText(), "Review /skill:trace-nim then");
-buffer.undo(); assert.equal(buffer.getText(), "Review /skill:trace-nim then");
-for (const [text, cursor] of [["/skill:trace-nim", 0], ["/skill:trace-nim", 8]]) {
+assert.equal(buffer.getExpandedText(), "Review /skill:trace-ref then");
+buffer.undo(); assert.equal(buffer.getText(), "Review /skill:trace-ref then");
+for (const [text, cursor] of [["/skill:trace-ref", 0], ["/skill:trace-ref", 8]]) {
 	buffer.setText(text); buffer.setCursor(cursor);
-	buffer.collapseToAtom(0, text.length, " trace-nim", "/skill:trace-nim");
-	assert.equal(buffer.getCursor(), cursor === 0 ? 0 : " trace-nim".length);
+	buffer.collapseToAtom(0, text.length, " trace-ref", "/skill:trace-ref");
+	assert.equal(buffer.getCursor(), cursor === 0 ? 0 : " trace-ref".length);
 }
 const nested = new AtomBuffer();
 const nestedOracle = new OmpAtomOracle();
@@ -163,7 +163,7 @@ const badPattern = new AtomBuffer(/(?=x)/); badPattern.setText("x");
 assert.throws(() => badPattern.getAtomSpans(), /empty token/);
 assert.throws(() => buffer.registerAtom("", "raw"), /Atom label/);
 assert.throws(() => buffer.registerAtom("a\nb", "raw"), /Atom label/);
-assert.throws(() => buffer.registerAtom(" trace-nim", "different"), /Conflicting/);
+assert.throws(() => buffer.registerAtom(" trace-ref", "different"), /Conflicting/);
 buffer.setText(emoji);
 assert.throws(() => buffer.setCursor(1), /splits a grapheme/);
 assert.throws(() => buffer.setCursor(-1), /outside/);
