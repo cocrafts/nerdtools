@@ -9,7 +9,7 @@ The metascript recompiler ports Nim's memory-management + move semantics
 (ARC/ORC `injectdestructors`, `dfa`, `liftdestructors`, `sempass2`). Over time,
 refactors **silently drift** from the Nim model — a decref path forgets to gate
 a destructor on last-ref, a move stops zeroing, a `=sink` degrades into a
-`=copy`. `/trace-nim` catches this **reactively** (after a crash). `/nim-guard`
+`=copy`. `/trace-ref` catches this **reactively** (after a crash). `/nim-guard`
 is the **proactive** half: it bakes a test into the suite that goes RED the
 moment a refactor breaks a Nim-derived lifecycle invariant — at CI, not via a
 lucky production crash weeks later.
@@ -56,8 +56,8 @@ print the right answer and still double-free intermittently).
   mangled name is brittle under transform refactors.
 - **Every guard cites Nim + NIM-REF.** The probe header states the invariant, the
   Nim source (proc / test), the NIM-REF row + verdict (SAME vs
-  DIVERGE-INTENTIONAL), and a "RED MEANS … run /trace-nim on the named type"
-  line. A red guard is a `/trace-nim` entry point, not a bare X.
+  DIVERGE-INTENTIONAL), and a "RED MEANS … run /trace-ref on the named type"
+  line. A red guard is a `/trace-ref` entry point, not a bare X.
 - **Make timing windows deterministic.** Concurrency/lifecycle races (spawn env,
   completion drain, actor suspend) surface intermittently. Amplify with high
   iteration so the bad interleaving executes every run — do NOT rely on a lucky
@@ -75,8 +75,8 @@ print the right answer and still double-free intermittently).
 
 1. **Pin the invariant.** State it as a violated property, not a symptom
    ("a destructor ran on a value that still had an owner"). If the root cause
-   isn't already known, run `/trace-nim` first — nim-guard freezes a verdict that
-   trace-nim produced.
+   isn't already known, run `/trace-ref` first — nim-guard freezes a verdict that
+   trace-ref produced.
 2. **Find Nim's analogue + its own guard.** Locate the Nim proc
    (`injectdestructors` / `liftdestructors` / `dfa`) and, if one exists, the Nim
    test that guards it (`tests/arc/*`). Read how Nim asserts it (counters /

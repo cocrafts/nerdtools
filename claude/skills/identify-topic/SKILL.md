@@ -18,9 +18,9 @@ This is the *explain* counterpart to `/zone-issue-area` (which *classifies a bug
 
 If the term is genuinely ambiguous (`type error`, `it crashes`), ask ONE disambiguating question before answering. Do not answer three interpretations in parallel.
 
-### Mode B — "báo cáo đang làm gì / tới đâu / có bám /trace-nim không?"
+### Mode B — "báo cáo đang làm gì / tới đâu / có bám /trace-ref không?"
 
-Triggered by any of: *"báo cáo mình đang làm gì"*, *"progress tới đâu"*, *"đang làm cái gì vậy"*, *"có bám sát /trace-nim không"*, *"what are we doing right now"*. This is the same skill pointed at **the work in flight** instead of at a term — the user has lost the thread of an arc that has run long, and wants it re-grounded in **user-space** (what a person writing `.ms` sees), not in compiler internals.
+Triggered by any of: *"báo cáo mình đang làm gì"*, *"progress tới đâu"*, *"đang làm cái gì vậy"*, *"có bám sát /trace-ref không"*, *"what are we doing right now"*. This is the same skill pointed at **the work in flight** instead of at a term — the user has lost the thread of an arc that has run long, and wants it re-grounded in **user-space** (what a person writing `.ms` sees), not in compiler internals.
 
 Answer with these slots, in this order, and nothing else:
 
@@ -30,7 +30,7 @@ Answer with these slots, in this order, and nothing else:
    - *same syntax, new diagnostic* — code that compiled now errors (say what error, and that it's a good thing)
    - *new syntax* — rare; show before/after
 3. **Progress** — done / in flight / not started, with the measurement that backs each claim. A step is "done" only if a gate was run; "code written" is *in flight*, not done.
-4. **/trace-nim compliance** — explicitly yes/no/partial, with what was actually read. Name the reference file+proc consulted, and state whether our behaviour *matches*, is an *intentional divergence* (cite NIM-REF.md row), or is an *unverified gap*. If the answer is "chưa đọc reference cho phần này" — say that plainly; it's the most useful sentence in the report.
+4. **/trace-ref compliance** — explicitly yes/no/partial, with what was actually read. Name the reference file+proc consulted, and state whether our behaviour *matches*, is an *intentional divergence* (cite NIM-REF.md row), or is an *unverified gap*. If the answer is "chưa đọc reference cho phần này" — say that plainly; it's the most useful sentence in the report.
 5. **Còn lại** — what's next, and the one decision (if any) waiting on the user.
 
 Rules specific to Mode B:
