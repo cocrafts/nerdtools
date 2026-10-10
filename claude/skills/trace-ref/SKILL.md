@@ -131,6 +131,12 @@ Grep `paper/NIM-REF.md` for the mechanism:
 - **Listed SAME / not listed** → the divergence is **unintentional**. The fix is to
   **refactor back to the reference's model.** (If NIM-REF.md claims SAME but the code
   clearly isn't, that's the smoking gun — an undocumented workaround crept in.)
+- **A new entry** is written only when the divergence is forced: the reference's behaviour
+  breaks the safety rule, or the TS meaning cannot be carried on its mechanism (workspace
+  `CLAUDE.md` §Language behaviour). Show that evidence and write it after the person
+  approves. Emitted code that differs while every program keeps its result is not a
+  divergence, and a difference seen only where a type lies is a bug for an inbox card,
+  because an entry reads as permission to every later session.
 
 ### 6. Produce the report
 - **App-visible conclusion and recommendation first**, following `~/metascript/CLAUDE.md`
