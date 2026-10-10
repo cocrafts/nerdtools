@@ -81,6 +81,14 @@ try {
 			}
 		}
 	}
+	for (const data of ["+", "\x1b[43u", "\x1b[43;2u"]) {
+		editor.setText("1"); editor.handleInput(data); editor.handleInput("2");
+		assert.equal(editor.getExpandedText(), "1+2", `Plus must be printable: ${JSON.stringify(data)}`);
+	}
+	for (const data of ["\x1b[43;5u", "\x1b[43;3u"]) {
+		editor.setText("draft"); editor.handleInput(data);
+		assert.equal(editor.getExpandedText(), "draft", "Ctrl/Alt plus must not insert text");
+	}
 	const original = "Review /skill:trace-ref rồi /skill:split-commit";
 	editor.setText(original);
 	assert.equal(editor.getText(), "Review  trace-ref rồi  split-commit");

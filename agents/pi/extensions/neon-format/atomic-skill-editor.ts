@@ -10,7 +10,7 @@ const herdrPaneBorder = parseColor("#89b4fa");
 const graphemes = new Intl.Segmenter(undefined, { granularity: "grapheme" });
 const printable = (data: string): string | undefined => {
 	const key = parseKey(data);
-	if (key?.includes("+") && !key.startsWith("shift+")) return undefined;
+	if (key !== "+" && key?.includes("+") && !key.startsWith("shift+")) return undefined;
 	return decodeKittyPrintable(data) ?? (data && !/[\x00-\x1f\x7f]/.test(data) ? data : undefined);
 };
 
