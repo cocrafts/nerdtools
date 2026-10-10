@@ -32,7 +32,8 @@ let appCalls = 0;
 defaultEditor.actionHandlers.set("app.model.cycleForward", () => appCalls++);
 const mode = { defaultEditor, editor: defaultEditor, ui: fakeTui, keybindings: keys, editorContainer: new tui.Container(), disposeActiveSelector() {}, autocompleteProvider: new tui.CombinedAutocompleteProvider([{ name: "skill:trace-ref" }, { name: "skill:split-commit" }, { name: "model" }], process.cwd()) };
 const errors = [];
-const ctx = { mode: "tui", sessionManager: { getSessionId: () => "skill-test" }, ui: {
+let queued = { steering: [], followUp: [] };
+const ctx = { hasPendingMessages: () => queued.steering.length + queued.followUp.length > 0, mode: "tui", sessionManager: { getSessionId: () => "skill-test" }, ui: {
 	get theme() { return themeModule.theme; },
 	getEditorText: () => mode.editor.getExpandedText(), setEditorText: text => mode.editor.setText(text),
 	setEditorComponent: factory => InteractiveMode.prototype.setCustomEditorComponent.call(mode, factory),
@@ -89,6 +90,19 @@ try {
 		editor.setText("draft"); editor.handleInput(data);
 		assert.equal(editor.getExpandedText(), "draft", "Ctrl/Alt plus must not insert text");
 	}
+	let aborts = 0;
+	const queueMode = {
+		editor, clearAllQueues() { const previous = queued; queued = { steering: [], followUp: [] }; return previous; },
+		updatePendingMessagesDisplay() {}, session: { abort() { aborts++; } },
+	};
+	editor.actionHandlers.set("app.message.dequeue", () => InteractiveMode.prototype.restoreQueuedMessagesToEditor.call(queueMode));
+	queued = { steering: ["pending /skill:trace-ref"], followUp: ["next prompt"] };
+	editor.setText("current draft"); editor.handleInput("\x1b[A");
+	assert.equal(editor.getExpandedText(), "pending /skill:trace-ref\n\nnext prompt\n\ncurrent draft", "Up must use native queue restoration and preserve draft");
+	assert.equal(ctx.hasPendingMessages(), false);
+	assert.equal(aborts, 0, "Editing queue must not abort active run");
+	editor.addToHistory("history after dequeue"); editor.setText(""); editor.handleInput("\x1b[A");
+	assert.equal(editor.getExpandedText(), "history after dequeue", "Without pending messages Up keeps history behavior");
 	const original = "Review /skill:trace-ref rồi /skill:split-commit";
 	editor.setText(original);
 	assert.equal(editor.getText(), "Review  trace-ref rồi  split-commit");

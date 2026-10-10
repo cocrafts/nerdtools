@@ -52,7 +52,7 @@ const mode = {
 };
 const handlers = new Map();
 const ctx = {
-	mode: "tui", sessionManager: { getSessionId: () => "focus-test" },
+	hasPendingMessages: () => false, mode: "tui", sessionManager: { getSessionId: () => "focus-test" },
 	ui: {
 		get theme() { return themeModule.theme; },
 		getEditorText: () => mode.editor.getExpandedText(),

@@ -148,7 +148,7 @@ try {
   const hooks = new Map();
   let resolver;
   const liveCtx = {
-    mode: "tui", cwd: scratch, isIdle: () => false, sessionManager: { getSessionId: () => "native-hover-integration" },
+    mode: "tui", cwd: scratch, hasPendingMessages: () => false, isIdle: () => false, sessionManager: { getSessionId: () => "native-hover-integration" },
     ui: {
       theme, onTerminalInput: handler => ui.addInputListener(handler),
       getEditorText: () => mode.editor.getExpandedText(),

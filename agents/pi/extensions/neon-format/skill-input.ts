@@ -47,7 +47,7 @@ export function registerSkillInput(pi: ExtensionAPI): () => TUI | undefined {
 					}
 					return true;
 				} catch (error) { ctx.ui.notify(error instanceof Error ? error.message : String(error), "error"); return false; }
-			}, error => ctx.ui.notify(error.message, "error"));
+			}, error => ctx.ui.notify(error.message, "error"), () => ctx.hasPendingMessages());
 			unsubscribeFocus?.();
 			const input = new StdinBuffer();
 			const onInput = (chunk: string | Buffer) => input.process(chunk);

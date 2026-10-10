@@ -43,7 +43,7 @@ export class AtomicSkillEditor extends CustomEditor {
 	private jumpDirection?: "forward" | "backward";
 	private terminalFocused = true;
 
-	constructor(tui: TUI, theme: EditorTheme, keys: KeybindingsManager, private known: () => ReadonlySet<string>, private palette: () => Theme, private beforeSubmit: (text: string) => boolean = () => true, private reportError: (error: Error) => void = error => { throw error; }) {
+	constructor(tui: TUI, theme: EditorTheme, keys: KeybindingsManager, private known: () => ReadonlySet<string>, private palette: () => Theme, private beforeSubmit: (text: string) => boolean = () => true, private reportError: (error: Error) => void = error => { throw error; }, private hasPendingMessages: () => boolean = () => false) {
 		super(tui, theme, keys, { embedWorkingStatus: true });
 		this.editorKeys = keys;
 		this.editorTheme = theme;
@@ -176,6 +176,10 @@ export class AtomicSkillEditor extends CustomEditor {
 		}
 		if (match("app.interrupt")) { (this.onEscape ?? this.actionHandlers.get("app.interrupt"))?.(); return; }
 		if (match("app.exit") && !this.getText()) { (this.onCtrlD ?? this.actionHandlers.get("app.exit"))?.(); return; }
+		if (matchesKey(data, "up") && this.hasPendingMessages()) {
+			const restore = this.actionHandlers.get("app.message.dequeue");
+			if (restore) { restore(); return; }
+		}
 		if (match("tui.editor.historyPrevious")) { this.browseHistory(-1); return; }
 		if (match("tui.editor.historyNext")) { this.browseHistory(1); return; }
 		for (const [action, handler] of this.actionHandlers) if (action !== "app.interrupt" && action !== "app.exit" && match(action)) {
