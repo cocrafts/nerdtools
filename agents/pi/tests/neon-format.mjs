@@ -177,6 +177,36 @@ try {
 	assert.ok(msHighlight.highlightMetaScript('const answer = 42;', saigon).includes(saigon.fg("syntaxNumber", "42")));
 	assert.notEqual(msHighlight.highlightMetaScript('const answer = 42;', saigon), msHighlight.highlightMetaScript('const answer = 42;', theme.theme));
 
+	const bashRenderer = resolver("bash", () => undefined);
+	for (const command of [
+		"node --input-type=module <<'JS'\nimport {chromium} from 'playwright-core'; import assert from 'node:assert/strict';\nconst b = await chromium.launch({executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:true});\ntry { await b.newPage(); } finally { await b.close(); }\nJS",
+		"OUT=/tmp/hibernal-background-system-public ./build-public.sh hibernal/colosseum >/tmp/hibernal-background-system-build.log 2>&1; status=$?; python3 - <<'PY'\nfrom pathlib import Path\nprint('\\n'.join(Path('/tmp/hibernal-background-system-build.log').read_text().splitlines()[-2:]))\nPY",
+		"printf '%s' " + "x".repeat(500),
+	]) {
+		for (const width of [8, 40, 100]) for (const isError of [false, true]) {
+			const context = { state: { complete: isError }, expanded: false, isError };
+			const call = bashRenderer.renderCall({ command }, theme.theme, context);
+			const rows = call.render(width);
+			assert.equal(rows.length, 3, "Collapsed commands must cap wrapped rows, regardless of shell syntax");
+			assert.ok(rows[0].includes(theme.theme.getFgAnsi("dim")));
+			assert.ok(plain(rows[2]).includes("…"));
+			for (const row of rows) assert.ok(tui.visibleWidth(row) <= width);
+			context.expanded = true;
+			assert.deepEqual(call.render(width), new tui.Text(` ${theme.theme.fg("muted", "$ ")}${pi.highlightCode(command, "bash").join("\n")}`, 0, 0).render(width));
+			context.expanded = false;
+			context.isError = false;
+			context.state.complete = true;
+			assert.deepEqual(call.render(width), []);
+		}
+		const pending = new pi.ToolExecutionComponent("bash", "preview-test", { command }, {}, bashRenderer, ui, cwd);
+		pending.setArgsComplete();
+		pending.markExecutionStarted();
+		const collapsedRows = pending.render(40);
+		assert.ok(collapsedRows.some(row => row.includes(theme.theme.getFgAnsi("dim"))));
+		assert.ok(plain(collapsedRows.join("\n")).includes("…"));
+		pending.setExpanded(true);
+		assert.ok(pending.render(40).length > collapsedRows.length);
+	}
 	const bash = pi.createBashToolDefinition(cwd);
 	const bashArgs = { command: 'if true; then printf "hello\\n"; fi' };
 	const bashResult = await bash.execute("bash-test", bashArgs, undefined, () => {}, { cwd, sessionManager: { getSessionId: () => "neon-format-test", getSessionFile: () => undefined } });
@@ -185,7 +215,7 @@ try {
 	bashComponent.markExecutionStarted();
 	bashComponent.updateResult(genericResult, true);
 	const running = bashComponent.render(120).join("\n");
-	assert.ok(running.includes(theme.theme.fg("syntaxKeyword", "if")));
+	assert.ok(running.includes(theme.theme.fg("dim", ` $ ${bashArgs.command}`)));
 	assert.ok(plain(running).includes(bashArgs.command));
 	assert.ok(plain(running).includes("row-11"), "Running output must remain fully visible");
 	bashComponent.updateResult(bashResult, false);

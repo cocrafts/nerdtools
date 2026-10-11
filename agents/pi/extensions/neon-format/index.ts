@@ -111,7 +111,9 @@ export default function neonFormat(pi: ExtensionAPI): void {
 			renderCall(args, theme, context) {
 				if (name === "bash") return {
 					render: (width: number) => context.state.complete && !context.expanded && !context.isError ? []
-						: new Text(` ${theme.fg("muted", "$ ")}${highlightCode(String((args as { command?: unknown }).command ?? ""), "bash").join("\n")}`, 0, 0).render(width),
+						: context.expanded
+							? new Text(` ${theme.fg("muted", "$ ")}${highlightCode(String((args as { command?: unknown }).command ?? ""), "bash").join("\n")}`, 0, 0).render(width)
+							: new OutputPreview(` $ ${String((args as { command?: unknown }).command ?? "")}`, theme, "dim").render(width),
 					invalidate() {},
 				};
 				const path = typeof args.path === "string" ? args.path : "";
