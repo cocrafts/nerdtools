@@ -1,25 +1,26 @@
 ---
 name: worktree-relaunch
-description: End a worker session at a chunk boundary and hand its worktree to a fresh session. It rewrites the card as a lean State, writes a one-generation handoff file with the session's hot memory, and gives the kickstart line. Use when the user types /worktree-relaunch, after a sizable chunk of an arc is committed or landed, when a design question has gone to the person, or when the context passes roughly 300k tokens. Requires a workspace that opts into ~/nerdtools/claude/playbooks/worktree.md.
+description: End a worker session at a chunk boundary and hand its worktree to a fresh session. It rewrites the card as a lean State, writes a one-generation handoff file with the session's hot memory, and gives the kickstart line. Use when the user types /worktree-relaunch, after a sizable chunk of an arc is committed or landed, when a design question has gone to the person, or before a long investigation in an already heavy session. Requires a workspace that opts into ~/nerdtools/claude/playbooks/worktree.md.
 ---
 
 # worktree-relaunch — a fresh session for each chunk of an arc
 
-A session does its best work in roughly its first 300k tokens. After that, early facts compete
-with a long tail of tool output, a compaction summarizes what it cannot judge, and the session
-starts to re-derive or misremember. An arc outlives its sessions:
+A large transcript makes a fresh session useful at a safe chunk boundary; no universal
+300k quality ceiling has been measured. Compaction preserves the current investigation,
+while a relaunch deliberately rebuilds its working context. An arc outlives its sessions:
 
 - **code and commits** hold what was done;
 - **tracked docs** hold what is known;
 - **the card** holds where we are;
 - **one handoff file** carries what the last session knew that is too hot to keep.
 
-So relaunch on purpose at a chunk boundary, instead of letting the context decay into a compaction.
+Relaunch on purpose at a chunk boundary. Before compacting the same session, run only step 3
+(rewrite the card) and step 4 when hot state would be lost, then compact; skip settle, clear
+and kickstart, because compaction keeps the in-flight step that a relaunch would discard.
 
 **When:**
 - a chunk is committed or landed;
 - a design question went to the person, and the session would otherwise idle on a large context;
-- the context is past ~300k tokens, or has already been compacted once;
 - before a long investigation in a session that is already heavy.
 
 **Not mid-step.** Finish or revert the step first.
@@ -59,16 +60,15 @@ the handoff.
 3. **Rewrite the card. Overwrite it, never append.**
    - **Goal and Done when:** keep the person's words. Strike done items (`~~…~~`). Mark dropped
      items with the reason.
-   - **State:** write it for a reader who has seen none of the arc:
-     - what landed, as sha ranges with a few words each;
-     - the current measured baseline, with its date and conditions (idle or shared machine);
-     - closed paths: what was tried and the number that killed it, one line each;
-     - questions waiting on the person, each with the fact it rests on;
-     - the next step, startable without opening another file.
+   - **State:** use the worktree playbook's Verified, In flight, Blocked and Next contract.
+     Name checked commits/trees, evidence paths and verification limits; label hypotheses.
+     Keep only the landed baseline and closed-path pointers needed for the next decision,
+     because a new session needs where we are, not a second history.
    - **Neighbours:** only live ones. Check that each branch and card still exists.
    - **Cut:** session narrative, step-by-step history, anything grep or `git log` answers, and stage codes.
-   - **Size:** the context hook prints the whole card at every session start, so aim for about
-     120 lines. When over, drop history (git has it) and move findings toward docs.
+   - **Size:** State ≤4,000 Unicode characters; whole card ≤8,000, per the worktree playbook.
+     Count characters, not lines: long lines still consume context. Remove narrative and move
+     durable findings to docs when over; never cut approved constraints to fit.
 
 4. **Write the handoff.** Overwrite `<card root>/handoff/<name>.md`, where `<card root>` is the
    directory that holds the card. It lives for one generation. The subdirectory keeps it out of

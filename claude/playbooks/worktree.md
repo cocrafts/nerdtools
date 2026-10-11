@@ -21,8 +21,34 @@ shared `<workspace>/.wt/<name>.md`; that override belongs in the workspace rules
 contains Goal, Done when, and a short State that lets a new session start without another
 transcript. Memory points to the card and never copies it.
 
-Update State before a session ends. Delete the card only after Done when holds on the main
-branch and every fact worth keeping has moved into code, tests, or tracked documentation.
+Overwrite State after each completed step, before compaction, and before a session ends,
+because a summary cannot reconstruct evidence that was never checkpointed. State contains:
+- **Verified:** the result, its command or artifact, checked commit/tree, and limits. A clean
+  tree or successful commit is not a passing test. Preserve evidence while its scope is unchanged.
+- **In flight:** the current step, changed paths and what is still unverified. Compaction does
+  not require finishing, reverting or committing that step.
+- **Blocked:** the missing decision/dependency and what unlocks it; otherwise say none.
+- **Next:** one startable action within the approved scope, including what it needs.
+
+Keep hypotheses labelled and distinguish transcript-reported results from checks run now.
+Use paths and symbols for durable findings and rejected approaches; their details belong in
+tracked docs. Do not repeat current status in Findings, Roadmap or Next sections, because
+an old verdict beside a fresh State makes the card ambiguous. Put hot artifacts, process IDs
+and machine conditions in the one-generation handoff, not durable State.
+
+State is at most 4,000 Unicode characters; the entire card is at most 8,000. These are
+character budgets, not token counts. When over budget, the owning session removes narrative
+and moves durable findings to tracked docs before retrying; never truncate constraints or
+silently rewrite another worker's card. Goal and Done when change only with the person's
+scope decision or evidence that a done item holds.
+
+After compaction, read the fresh card and verify the local claims needed for Next. Treat it
+as a checkpoint, not new authorization or proof by itself: reconcile conflicts against code,
+Git and named evidence before acting. When the compaction hook reports that State predates a
+change, overwrite State before anything else: before a manual compact the hook blocks it, and
+after an automatic one only the summary remains, so State is written from the summary with
+its results labelled transcript-reported. Delete the card only after Done when holds on
+the main branch and every fact worth keeping has moved into code, tests, or tracked docs.
 
 A session that hands its worktree to a fresh one also writes `<card root>/handoff/<name>.md`.
 That file holds what is true now but not durable: local artifacts, machine conditions, traps met,
@@ -95,5 +121,10 @@ or define the narrow `wt_before_*`, `wt_after_*`, and `wt_context_extra` hooks t
 with the generic command. Repository-specific provisioning, gates, inboxes, generated
 artifacts, and release policy belong there; none belong in the shared tool.
 
-Claude Code and omp both invoke the shared `context` command. Do not add a second card
-reader to a project hook.
+Claude Code, Pi and omp use this shared tool for card lookup. Do not add a second card
+locator to a project hook. Compaction hooks for Pi and Claude Code check, without a model call,
+that the card was written after the HEAD commit and every changed file, because the session
+that did the work is the one that can write its State; `card-state.py stale` owns that check
+and the card validation, and the current card is reloaded after compaction.
+Compaction preserves an in-flight step. Use `worktree-relaunch` only for a fresh session at
+a safe chunk boundary, because resetting mid-investigation discards its working context.
