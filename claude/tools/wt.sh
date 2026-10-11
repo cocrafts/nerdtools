@@ -7,11 +7,13 @@ usage: wt.sh <command> [args]
 
   new <name> [rev]              create wt/<name>, its linked worktree and card
   card [name|path]              print a worktree card
+  snapshot                     JSON card/Git snapshot for an opted-in worktree, else null
   ls                            list linked worktrees and their card goals
   rm <name|path> [--force]      retire a worktree after safety checks
   context                       print session context for the current worktree: the
                                 handoff at <card root>/handoff/<name>.md if one exists,
-                                then the card
+                                then the card (--without-card preserves handoff/inbox only;
+                                --checked validates the compact checkpoint budget)
   land [name|path] [options]    rebase, gate and fast-forward the main checkout
 
 land options:
@@ -41,7 +43,10 @@ esac
 
 WT_CWD=${WT_CWD:-${CLAUDE_PROJECT_DIR:-$PWD}}
 WT_CURRENT=$(git -C "$WT_CWD" rev-parse --show-toplevel 2>/dev/null) || {
-  [ "$COMMAND" = context ] && exit 0
+  case "$COMMAND" in
+    context) exit 0 ;;
+    snapshot) printf 'null\n'; exit 0 ;;
+  esac
   die "not inside a git repository: $WT_CWD"
 }
 WT_MAIN=$(git -C "$WT_CURRENT" worktree list --porcelain 2>/dev/null | awk 'NR == 1 && /^worktree / { print substr($0, 10); exit }')
@@ -193,6 +198,17 @@ cmd_card() {
   [ -f "$card" ] || die "card: no card at $card"
   printf '%s\n' "$card"
   cat "$card"
+}
+
+cmd_snapshot() {
+  local dir name
+  dir=$WT_MAIN
+  while ! grep -Fq 'nerdtools/claude/playbooks/worktree.md' "$dir/CLAUDE.md" 2>/dev/null; do
+    [ "$dir" != / ] || { printf 'null\n'; return; }
+    dir=$(dirname "$dir")
+  done
+  name=$(wt_card_name "$WT_CURRENT") || { printf 'null\n'; return; }
+  (cd "$WT_CURRENT" && cmd_card) | python3 "$(dirname "$0")/card-state.py" snapshot "$WT_CURRENT"
 }
 
 wt_context_inbox() {
@@ -379,9 +395,23 @@ shift
 case "$COMMAND" in
   new) cmd_new "$@" ;;
   card) cmd_card "$@" ;;
+  snapshot) cmd_snapshot ;;
   ls) cmd_ls "$@" ;;
   rm) cmd_rm "$@" ;;
-  context) wt_context_handoff; cmd_context "$@" ;;
+  context)
+    if [ "${1:-}" = --without-card ]; then
+      { wt_context_handoff; cmd_context; } | python3 "$(dirname "$0")/card-state.py" strip-context
+    elif [ "${1:-}" = --checked ]; then
+      snapshot=$(cmd_snapshot) || exit $?
+      if [ "$snapshot" = null ]; then
+        wt_context_handoff; cmd_context
+      else
+        { wt_context_handoff; cmd_context; } | python3 "$(dirname "$0")/card-state.py" checked-context "$WT_CURRENT"
+      fi
+    else
+      wt_context_handoff; cmd_context "$@"
+    fi
+    ;;
   land) cmd_land "$@" ;;
   hook-create) cmd_hook_create ;;
   hook-remove) cmd_hook_remove ;;

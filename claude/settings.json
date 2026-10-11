@@ -132,6 +132,16 @@
     ],
     "PreCompact": [
       {
+        "matcher": "manual|auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -B ~/nerdtools/claude/tools/worktree-checkpoint.py",
+            "timeout": 20
+          }
+        ]
+      },
+      {
         "matcher": "",
         "hooks": [
           {
@@ -216,8 +226,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/nerdtools/claude/tools/wt.sh context",
+            "command": "~/nerdtools/claude/tools/wt.sh context --checked",
             "timeout": 15
+          }
+        ]
+      },
+      {
+        "matcher": "compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -B ~/nerdtools/claude/tools/worktree-checkpoint.py",
+            "timeout": 20
           }
         ]
       },
