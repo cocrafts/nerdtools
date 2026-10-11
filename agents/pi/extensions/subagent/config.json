@@ -1,0 +1,21 @@
+{
+  "globalConcurrencyLimit": 4,
+  "maxActiveAsyncRunsPerSession": 4,
+  "maxSubagentDepth": 1,
+  "defaultSubagentContext": "fresh",
+  "toolActivation": "eager",
+  "missions": { "enabled": false },
+  "scheduledRuns": { "enabled": false },
+  "disabledFeatures": [
+    "agent-management",
+    "watchdog",
+    "panes",
+    "missions",
+    "lane-management",
+    "spawn-budget-grants",
+    "preflight",
+    "lane-metadata",
+    "gates",
+    "external-machines"
+  ]
+}

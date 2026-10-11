@@ -13,7 +13,12 @@
     "npm:@fractaal/pi-cross-agent-memory@0.3.1",
     "npm:pi-caveman",
     "~/nerdtools/agents/pi/packages/rpiv-todo",
-    "npm:pi-claude-bridge"
+    "npm:pi-claude-bridge",
+    {
+      "source": "npm:pi-subagents@0.76.1",
+      "skills": ["skills/pi-subagents"],
+      "prompts": []
+    }
   ],
   "deviceId": "10949172-1946-4ef1-a383-35d7ba5a9458"
 }
