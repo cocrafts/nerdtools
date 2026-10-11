@@ -16,6 +16,7 @@ import {
 } from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { registerContextMessage } from "./cc-compat/context-message.ts";
+import { registerCardState } from "./cc-compat/card-state.ts";
 
 const HOME = process.env.HOME ?? process.env.USERPROFILE ?? "";
 const GUARD = join(HOME, "nerdtools", "claude", "hooks", "comment-guard.sh");
@@ -142,7 +143,7 @@ function wtSessionState(cwd: string): string | null {
   try {
     const wtSh = join(HOME, "nerdtools", "claude", "tools", "wt.sh");
     if (!existsSync(wtSh)) return null;
-    const res = spawnSync("bash", [wtSh, "context"], {
+    const res = spawnSync("bash", [wtSh, "context", "--without-card"], {
       cwd,
       encoding: "utf8",
       timeout: 15_000,
@@ -178,7 +179,7 @@ function arcContext(cwd: string, sessionId: string): string | null {
 }
 
 export default function (pi: ExtensionAPI) {
-  registerContextMessage(pi);
+  registerContextMessage(pi, registerCardState(pi));
   const writeTargetExisted = new Map<string, boolean>();
   const loadedNestedClaudeMd = new Set<string>();
 
@@ -270,7 +271,7 @@ export default function (pi: ExtensionAPI) {
     const wtState = wtSessionState(cwd);
     const parts: string[] = [];
     if (arc) parts.push(arc);
-    if (wtState) parts.push(`Worktree/card state:\n\n${wtState}`);
+    if (wtState) parts.push(`Worktree context (card projected separately):\n\n${wtState}`);
     if (!parts.length) return;
     try {
       pi.sendMessage({

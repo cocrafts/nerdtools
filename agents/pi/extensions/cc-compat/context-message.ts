@@ -41,7 +41,7 @@ class ContextMessage implements Component {
 	invalidate(): void { this.body.invalidate(); }
 }
 
-export function registerContextMessage(pi: ExtensionAPI): void {
+export function registerContextMessage(pi: ExtensionAPI, preview?: (details: unknown) => string | undefined): void {
 	const states = new WeakMap<object, Expansion>();
 	pi.registerMessageRenderer("claude-context", (message, options, theme) => {
 		let state = states.get(message);
@@ -52,8 +52,8 @@ export function registerContextMessage(pi: ExtensionAPI): void {
 			state.expanded = options.expanded;
 			state.nativeExpanded = options.expanded;
 		}
-		const content = typeof message.content === "string" ? message.content
-			: message.content.filter(block => block.type === "text").map(block => block.text).join("\n");
+		const content = preview?.(message.details) ?? (typeof message.content === "string" ? message.content
+			: message.content.filter(block => block.type === "text").map(block => block.text).join("\n"));
 		return new ContextMessage(content, state, theme, options.outputPad);
 	});
 }

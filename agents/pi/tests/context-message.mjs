@@ -61,8 +61,11 @@ try {
 	const fixture = join(temp, "fixture");
 	mkdirSync(fixture);
 	execFileSync("git", ["init", "--quiet", "--initial-branch=wt/probe", fixture]);
+	execFileSync("git", ["-C", fixture, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid", "commit", "--quiet", "--allow-empty", "-m", "test: seed"]);
+	writeFileSync(join(fixture, "CLAUDE.md"), "Read ~/nerdtools/claude/playbooks/worktree.md.\n");
 	mkdirSync(join(fixture, ".cards"));
-	writeFileSync(join(fixture, ".cards/probe.md"), "# probe\n\n## State\nVisible before the first prompt.\n");
+	const card = state => `# probe\n\n## Goal\nKeep scope.\n\n## Done when\nCheck passes.\n\n## State\n${state}\n`;
+	writeFileSync(join(fixture, ".cards/probe.md"), card("Visible before the first prompt."));
 	const delivery = Object.create(pi.AgentSession.prototype);
 	delivery._isAgentRunActive = false;
 	delivery._pendingNextTurnMessages = [];
@@ -73,16 +76,22 @@ try {
 		assert.equal(options.triggerTurn, false);
 		void delivery.sendCustomMessage(message, options);
 	};
-	const startup = loaded.extensions[0].handlers.get("session_start")[0];
+	const startup = async (event, ctx) => {
+		ctx.sessionManager.getBranch = () => [];
+		ctx.ui = { notify: message => { throw new Error(message); } };
+		for (const handler of loaded.extensions[0].handlers.get("session_start")) await handler(event, ctx);
+	};
 	await startup({ reason: "startup" }, { cwd: fixture, sessionManager: { getSessionId: () => "context-startup-test" } });
 	assert.equal(delivered.length, 1, "context must append before the first user prompt");
 	assert.equal(delivery._pendingNextTurnMessages.length, 0);
 	assert.equal(delivered[0].display, true);
-	assert.ok(delivered[0].content.includes("Visible before the first prompt."));
+	assert.ok(!delivered[0].content.includes("Visible before the first prompt."), "Snapshot body must not enter persisted compaction history");
 	const liveRenderer = loaded.extensions[0].messageRenderers.get("claude-context");
 	const startupComponent = new pi.CustomMessageComponent(delivered[0], liveRenderer);
 	assert.equal(plain(startupComponent.render(80).join("\n")).trim(), "▸ probe.md");
-	writeFileSync(join(fixture, ".cards/probe.md"), "# probe\n\n## State\nChanged card must not be reinjected by reload.\n");
+	startupComponent.setExpanded(true);
+	assert.ok(plain(startupComponent.render(80).join("\n")).includes("Visible before the first prompt."));
+	writeFileSync(join(fixture, ".cards/probe.md"), card("Changed card must not be reinjected by reload."));
 	for (let reload = 0; reload < 3; reload++) await startup({ reason: "reload" }, { cwd: fixture, sessionManager: { getSessionId: () => "context-startup-test" } });
 	assert.equal(delivered.length, 1, "Reload must not inject context, even if the card changed");
 	for (const reason of ["new", "resume", "fork"]) await startup({ reason }, { cwd: fixture, sessionManager: { getSessionId: () => `context-${reason}-test` } });
