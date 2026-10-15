@@ -370,6 +370,7 @@
   "editorMode": "normal",
   "verbose": false,
   "autoCompactEnabled": true,
+  "autoCompactWindow": 320000,
   "switchModelsOnFlag": true,
   "autoContinueAtUsageLimit": false,
   "crossSessionInbound": "accept",
