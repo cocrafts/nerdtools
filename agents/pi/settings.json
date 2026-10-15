@@ -12,7 +12,6 @@
     "npm:pi-web-access",
     "npm:@fractaal/pi-cross-agent-memory@0.3.1",
     "npm:pi-caveman",
-    "~/nerdtools/agents/pi/packages/rpiv-todo",
     "npm:pi-claude-bridge",
     {
       "source": "npm:pi-subagents@0.76.1",
