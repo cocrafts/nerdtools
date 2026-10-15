@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { mock } from "node:test";
 import { createRequire } from "node:module";
-import { mkdtempSync, mkdirSync, readFileSync, existsSync, symlinkSync, rmSync } from "node:fs";
+import { mkdtempSync, mkdirSync, symlinkSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -18,8 +18,6 @@ const loader = createJiti(import.meta.url, { alias: {
   "@earendil-works/pi-ai": join(root, "node_modules/@earendil-works/pi-ai/dist/index.js"),
 } });
 const { default: idleRecap, recapFooter } = await loader.import(fileURLToPath(new URL("../extensions/idle-recap.ts", import.meta.url)));
-const { registerTodoTool } = await loader.import(fileURLToPath(new URL("../packages/rpiv-todo/todo.ts", import.meta.url)));
-const { replayFromBranch } = await loader.import(fileURLToPath(new URL("../packages/rpiv-todo/state/replay.ts", import.meta.url)));
 const pi = await loader.import(join(root, "dist/index.js"));
 const ai = await loader.import(join(root, "node_modules/@earendil-works/pi-ai/dist/index.js"));
 const tui = await loader.import(join(root, "node_modules/@earendil-works/pi-tui/dist/index.js"));
@@ -45,7 +43,7 @@ try {
   symlinkSync(fileURLToPath(new URL("../extensions", import.meta.url)), join(scratch, "extensions"), "dir");
   const { loadExtensions } = await import(pathToFileURL(join(root, "dist/core/extensions/loader.js")).href);
   const loaded = await loadExtensions([join(scratch, "extensions/idle-recap.ts")], scratch);
-  assert.deepEqual(loaded.errors, [], "Live symlink loader must resolve the existing todo replay module");
+  assert.deepEqual(loaded.errors, [], "Live symlink loader must load idle-recap");
   assert.equal(loaded.extensions.length, 1);
   const faux = ai.fauxProvider({ provider: "recap-fixture", models: [{ id: "fixture" }] });
   faux.setResponses(Array.from({ length: 5 }, () => context => { seen.push(structuredClone(context)); return ai.fauxAssistantMessage(answer); }));
@@ -54,7 +52,6 @@ try {
     cwd: scratch, agentDir, settingsManager, noExtensions: true, noContextFiles: true, noSkills: true, noPromptTemplates: true, noThemes: true,
     extensionFactories: [api => {
       api.registerProvider(faux.provider);
-      registerTodoTool(api);
       idleRecap({ ...api,
         on: (name, handler) => { handlers.set(name, handler); return api.on(name, handler); },
         registerMessageRenderer: (name, render) => { renderer = render; api.registerMessageRenderer(name, render); },
@@ -63,7 +60,7 @@ try {
     }],
   });
   await resources.reload();
-  ({ session } = await pi.createAgentSession({ cwd: scratch, agentDir, settingsManager, resourceLoader: resources, sessionManager: pi.SessionManager.inMemory(scratch), model: faux.getModel(), tools: ["bash", "todo"] }));
+  ({ session } = await pi.createAgentSession({ cwd: scratch, agentDir, settingsManager, resourceLoader: resources, sessionManager: pi.SessionManager.inMemory(scratch), model: faux.getModel(), tools: [] }));
   await session.bindExtensions({ mode: "tui", uiContext: { notify() {}, theme: themeModule.theme }, onError: error => { throw error; } });
   mock.timers.enable({ apis: ["setTimeout"] });
   const recaps = () => session.messages.filter(message => message.role === "custom" && message.customType === "idle-recap");
@@ -146,77 +143,7 @@ try {
   assert.equal(unknown.details.status, "unknown");
   assert.ok(unknown.content.includes("chưa xác định"));
   assert.ok(tui.stripTerminalSequences(new CustomMessageComponent(unknown, renderer).render(100).join("\n")).includes("󰋚 status:"));
-  let toolId = 0;
-  const tool = (name, args) => context => {
-    seen.push(structuredClone(context));
-    return ai.fauxAssistantMessage(ai.fauxToolCall(name, args, { id: `todo-stop-proof-${++toolId}` }), { stopReason: "toolUse" });
-  };
-  const board = () => replayFromBranch({ sessionManager: session.sessionManager }).tasks;
-  faux.setResponses([
-    tool("todo", { action: "create", subject: "Run approved check", description: "User approved this check in the current request." }),
-    respond(answer),
-    respond(ready),
-    tool("todo", { action: "update", id: 1, status: "in_progress" }),
-    tool("bash", { command: `node -e "require('fs').writeFileSync('verification.txt', 'pass')"` }),
-    tool("todo", { action: "update", id: 1, status: "completed" }),
-    respond(answer),
-  ]);
-  calls = seen.length;
-  await session.prompt("I approve running the verification. Track it with todo, run the check writing verification.txt, then mark it complete. Finish all this work.");
-  assert.equal(seen.length - calls, 7, "False done with real runnable todo must be rechecked and continue through the native tools");
-  assert.equal(readFileSync(join(scratch, "verification.txt"), "utf8"), "pass");
-  assert.equal(board()[0].status, "completed");
-  assert.ok(JSON.stringify(seen[calls + 2].messages).includes("Actual unfinished todos on the current branch"));
-  mock.timers.tick(180000);
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(recaps().at(-1).details.status, "done");
-  assert.equal(seen.length - calls, 7, "Completed board must not cause idle inference");
-  faux.setResponses([
-    tool("todo", { action: "create", subject: "Approve external contract change", description: "Discussion only. Requires explicit user approval; implementation is not authorized." }),
-    respond(answer),
-    respond(blocked),
-  ]);
-  calls = seen.length;
-  await session.prompt("Discuss the external contract proposal only. Do not implement it; approval is still missing.");
-  assert.equal(seen.length - calls, 3, "Unapproved todo must get classification, not automatic execution");
-  assert.equal(board()[1].status, "pending");
-  assert.ok(JSON.stringify(seen.at(-1).messages).includes("Todo records do NOT grant permission"));
-  assert.equal(existsSync(join(scratch, "unauthorized.txt")), false);
-  mock.timers.tick(180000);
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(recaps().at(-1).details.status, "blocked");
-  faux.setResponses([respond(answer), respond(answer), respond(ready)]);
-  calls = seen.length;
-  await session.prompt("Report status without implementing the unapproved proposal.");
-  assert.equal(seen.length - calls, 2, "Repeated false done must not create an unbounded checking loop");
-  mock.timers.tick(180000);
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(recaps().at(-1).details.status, "unknown", "Actual unfinished board must not be presented as done");
-  assert.equal(board()[1].status, "pending", "Stop checker must not edit/delete tasks to satisfy itself");
-  faux.setResponses([
-    tool("todo", { action: "create", subject: "Integrate external contract", description: "Waiting for approved contract delivery; do not implement before approval.", blockedBy: [1, 2] }),
-    respond(answer), respond(blocked),
-  ]);
-  calls = seen.length;
-  await session.prompt("Record dependency on the completed check and still-unapproved external contract; report blockers without implementing.");
-  assert.equal(seen.length - calls, 3);
-  assert.deepEqual(board()[2].blockedBy, [1, 2]);
-  assert.ok(JSON.stringify(seen.at(-1).messages).includes('\\"dependencies\\":[{\\"id\\":1'), "Stop check must include resolved dependency status, not invent missing blockers");
-  mock.timers.tick(180000);
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(recaps().at(-1).details.status, "blocked");
-  handlers.get("before_agent_start")({ systemPrompt: "" }, { mode: "tui" });
-  handlers.get("message_end")({ message: ai.fauxAssistantMessage(answer) }, { mode: "tui" });
-  assert.equal(handlers.get("agent_before_settle")({ outcome: "completed" }, { mode: "tui", sessionManager: { getBranch: () => [] } }), undefined, "Another branch without todos must not inherit the active board");
-  faux.setResponses([tool("todo", { action: "clear" }), respond(answer)]);
-  calls = seen.length;
-  await session.prompt("Discard the test proposal and its dependency tasks; I approve clearing this test board.");
-  assert.equal(seen.length - calls, 2, "Latest empty snapshot must override older unfinished snapshots");
-  assert.equal(board().length, 0);
-  mock.timers.tick(180000);
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(recaps().at(-1).details.status, "done");
-  console.log("PASS: native symlink loader + real Pi AgentSession/faux provider + rpiv-todo + Bash; false done rechecked against branch snapshot, approved check executes and completes, unapproved/dependent tasks stay blocked; repeated false done stays unknown; resolved dependencies and empty/other-branch snapshots correct; bounded ready rescue, three-minute idle without inference, persistent dim Pi status, lifecycle safety");
+  console.log("PASS: native symlink loader + real Pi AgentSession/faux provider; bounded ready rescue, three-minute idle without inference, persistent dim Pi status, lifecycle safety");
 } finally {
   await session?.dispose();
   mock.timers.reset();
