@@ -250,6 +250,14 @@ cmd_ls() {
   done < <(wt_worktrees)
 }
 
+wt_unlink_dir_links() {
+  local link
+  while IFS= read -r -d '' link; do
+    [ -d "$link" ] || continue
+    rm -f -- "$link" && [ ! -L "$link" ] && [ ! -e "$link" ] || die "rm: cannot unlink $link; git would empty its target"
+  done < <(find "$1" -path "$1/.git" -prune -o -type l -print0)
+}
+
 cmd_rm() {
   local target="" force=0 arg path dirty unlanded processes branch
   for arg in "$@"; do
@@ -271,6 +279,7 @@ cmd_rm() {
     [ -z "$unlanded" ] || die "rm: commits not on $WT_BASE remain in $path"
     [ -z "$processes" ] || die "rm: live processes remain in $path: $(printf '%s' "$processes" | tr '\n' ' ')"
   fi
+  wt_unlink_dir_links "$path"
   if [ "$force" -eq 1 ]; then
     git -C "$WT_MAIN" worktree remove --force "$path" || die "rm: git refused"
   else
