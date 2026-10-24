@@ -327,7 +327,8 @@ cmd_land() {
   landlog="$(git -C "$WT_MAIN" rev-parse --path-format=absolute --git-common-dir)/wt-land.log"
   say "land: files changed on both sides: ${both:-none}"
   say "land: previous land: $( [ -f "$landlog" ] && tail -n 1 "$landlog" | cut -d' ' -f2 || echo unrecorded)"
-  git -C "$path" rebase --rebase-merges "$old" || {
+  git -C "$path" merge-base --is-ancestor "$old" "$tip" ||
+    git -C "$path" rebase --rebase-merges "$old" || {
     git -C "$path" rebase --abort >/dev/null 2>&1 || true
     die "land: rebase onto $WT_BASE failed"
   }
