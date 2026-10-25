@@ -86,7 +86,7 @@ src/test/known-red.json. Never push, land, run tools/gate.sh, the corpus or SAN 
 
 Owned paths: <list>. Do not edit anything else; an edit another path needs goes in your report.
 
-Read first: <path>/CLAUDE.md, <path>/paper/local.md, ~/metascript/docs/CODE-STYLE.md,
+Read first: <path>/CLAUDE.md, <path>/paper/local.md, ~/metascript/recompiler/docs/LANG-PREFERENCE.md,
 ~/nerdtools/claude/playbooks/comment.md (comments default to zero).
 
 Every step: invoke the `trace-ref` skill and follow it. Reproduce with a minimal .ms in

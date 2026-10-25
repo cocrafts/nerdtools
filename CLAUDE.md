@@ -24,5 +24,5 @@ typos                             # spellcheck
 - Lua: stylua-formatted; keymaps follow `nvim/lua/utils/key.lua`
 - New LSP: add `nvim/lua/core/lsp/<lang>.lua`, register in `lsp/init.lua`; formatters/linters in `lsp/none-ls.lua`
 - Plugin spec changes need `:Lazy sync`
-- MetaScript: `~/metascript/docs/CODE-STYLE.md`; each rule module exports one `RuleGroup`
+- MetaScript: `~/metascript/recompiler/docs/LANG-PREFERENCE.md`; each rule module exports one `RuleGroup`
 - `setup/*.md` sections: Goal → Preconditions → Steps → Skip rule → Verify → Notes. Idempotent; extend an existing section rather than adding a file. Hardcode paths for tools we install (e.g. mise at `~/.local/bin/mise`); detect brew/apt prefixes
