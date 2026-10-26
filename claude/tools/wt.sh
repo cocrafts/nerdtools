@@ -154,10 +154,16 @@ wt_after_land() { :; }
 wt_context_extra() { :; }
 
 wt_gate() {
-  local worktree=$1 gate=$2
+  local worktree=$1 gate=$2 finished rc
   [ -n "$gate" ] || die "land requires --gate '<command>', WT_GATE, or a local wt_gate override"
   say "gate: $gate"
-  (cd "$worktree" && bash -c "$gate")
+  finished=$(mktemp -u)
+  (cd "$worktree" && WT_GATE_FINISHED=$finished bash -c "$gate"'
+rc=$?; [ "$rc" -ne 0 ] || : >"$WT_GATE_FINISHED"; exit "$rc"')
+  rc=$?
+  [ "$rc" -eq 0 ] || return "$rc"
+  [ -f "$finished" ] || { say "gate: exited 0 without reaching its end (killed?), not green"; return 1; }
+  rm -f "$finished"
 }
 
 cmd_new() {
