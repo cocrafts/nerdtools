@@ -18,6 +18,7 @@ back on memory and reports a guess as a trace:
 |---|---|---|
 | core: DRC/ownership, transforms, codegen, generics and monomorphization, macros and the VM, overload ranking | Nim, `~/projects/nim/compiler/` | authority for the mechanism |
 | TS-surface mechanisms Nim has no analog for: binder and flow narrowing, unions and literal types, TS-style inference, LSP | typescript-go, `~/projects/typescript-go/internal/` | authority for the mechanism; TS also decides what the author's code means |
+| formatter: `msc fmt`, LSP formatting edits | Biome, `~/projects/biome/crates/biome_formatter`, `biome_js_formatter`, `biome_lsp`; typescript-go `internal/format/` read alongside | authority for the mechanism; Prettier (`~/projects/prettier`) shows the expected output |
 | concerns neither covers: actors and capabilities, sendability, borrowing, comptime, toolchain | Pony (`~/projects/ponyc`), Swift (`~/projects/swift`), Rust (`~/projects/rust`), Zig (`~/projects/zig`) | prior art only; adopting one is still NEW MECHANISM |
 
 When Nim and TS both have a mechanism for one concern, TS decides the behaviour the
