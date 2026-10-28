@@ -15,11 +15,11 @@ esac
 
 heavy=""
 case $cmd in
-  *"build src/index.ms"*|*"build ./src/index.ms"*) heavy="a compiler candidate build" ;;
-  *--tests-in-dir*) heavy="a --tests-in-dir run" ;;
-  *corpus/run.ms*) heavy="a corpus run" ;;
-  *guard/run.ms*) heavy="a guard run" ;;
-  *tools/gate.sh*) heavy="a gate" ;;
+  *"msc build src/index.ms"*|*"msc build ./src/index.ms"*) heavy="a compiler candidate build" ;;
+  *"msc test "*--tests-in-dir*) heavy="a --tests-in-dir run" ;;
+  *"run src/test/corpus/run.ms"*|*"run ./src/test/corpus/run.ms"*) heavy="a corpus run" ;;
+  *"src/test/guard/run.ms"*) case $cmd in *"msc run"*) heavy="a guard run" ;; esac ;;
+  "tools/gate.sh"*|"./tools/gate.sh"*|*"&& tools/gate.sh"*|*"; tools/gate.sh"*|*"bash tools/gate.sh"*) heavy="a gate" ;;
 esac
 [ -n "$heavy" ] || exit 0
 
