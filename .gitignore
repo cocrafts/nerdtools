@@ -44,6 +44,7 @@ claude/hooks/*
 !claude/hooks/comment-guard.sh
 !claude/hooks/ask-guard.sh
 !claude/hooks/commit-msg
+!claude/hooks/heavy-on-mac-guard.sh
 
 # local again — inside a shared folder, but this machine's own
 claude/settings.local.json
