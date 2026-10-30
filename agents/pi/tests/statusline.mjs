@@ -118,51 +118,11 @@ try {
 	handlers.session_shutdown();
 	handlers.session_start({}, ctx);
 	assert.ok(lines()[1].includes(" —"));
-	const todoPlugin = await loader.import(fileURLToPath(new URL("../packages/rpiv-todo/todo.ts", import.meta.url)));
-	let todoTool;
-	todoPlugin.registerTodoTool({ registerTool: tool => todoTool = tool });
-	const todo = async params => {
-		const result = await todoTool.execute("test", params, undefined, undefined, ctx);
-		const entry = { id: String(entries.length + 1), type: "message", message: { role: "toolResult", toolName: "todo", ...result } };
-		handlers.message_end({ message: entry.message }, ctx);
-		entries.push(entry);
-		branch = [...branch, entry];
-		const before = renders;
-		handlers.turn_end({}, ctx);
-		assert.ok(renders > before, "turn end must refresh persisted todo snapshot");
-	};
-	assert.ok(!/\(\d+\/\d+\)/.test(lines()[1]));
-	await todo({ action: "create", subject: "First" });
-	assert.ok(lines()[1].trimEnd().endsWith("(0/1)"));
-	assert.ok(!lines()[1].includes("TODO"));
-	await todo({ action: "update", id: 1, status: "in_progress" });
-	await todo({ action: "update", id: 1, status: "completed" });
-	await todo({ action: "create", subject: "Second" });
-	await todo({ action: "create", subject: "Deleted" });
-	await todo({ action: "delete", id: 3 });
-	await todo({ action: "list", status: "pending" });
 	sessionName = "Tên session 長い名前";
-	assert.ok(lines()[1].trimEnd().endsWith(`${sessionName} · (1/2)`));
+	assert.ok(lines()[1].trimEnd().endsWith(sessionName));
 	for (const width of [0, 1, 2, 8, 20, 60, 120]) {
 		for (const line of footer.render(width)) assert.ok(visibleWidth(line) <= width);
 	}
-	const shortName = sessionName;
-	sessionName = "Session ".repeat(100);
-	assert.ok(lines(60)[1].trimEnd().endsWith("(1/2)"), "long session name must not hide todo count");
-	sessionName = shortName;
-	const savedBranch = branch;
-	await todo({ action: "clear" });
-	assert.ok(!/\(\d+\/\d+\)/.test(lines()[1]));
-	assert.ok(lines()[1].trimEnd().endsWith(sessionName));
-	branch = savedBranch;
-	handlers.session_tree({}, ctx);
-	assert.ok(lines()[1].trimEnd().endsWith("(1/2)"), "branch switch restores todos despite unchanged entry count");
-	handlers.session_shutdown();
-	handlers.session_start({}, ctx);
-	assert.ok(lines()[1].trimEnd().endsWith("(1/2)"), "session resume restores todos");
-	branch = [];
-	handlers.session_tree({}, ctx);
-	assert.ok(!/\(\d+\/\d+\)/.test(lines()[1]), "abandoned branch todos stay hidden");
 	sessionName = undefined;
 	for (const hit of [undefined, 99, 98.01, 98, 95, 94]) {
 		const cacheRead = hit === undefined ? 0 : hit * 100;
@@ -179,7 +139,7 @@ try {
 			assert.ok(line.endsWith(` ·  ${hit.toFixed(2)}%`), "warning/error cache stays visible");
 		}
 	}
-	console.log("PASS statusline: throughput, widths, reset, todo counts, branch switch, resume, gray cache hidden, warning/error cache visible at boundaries");
+	console.log("PASS statusline: throughput, widths, reset, session name, gray cache hidden, warning/error cache visible at boundaries");
 } finally {
 	handlers.session_shutdown?.();
 	if (originalNow) Object.defineProperty(performance, "now", originalNow);

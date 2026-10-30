@@ -159,10 +159,16 @@ wt_after_land() { :; }
 wt_context_extra() { :; }
 
 wt_gate() {
-  local worktree=$1 gate=$2
+  local worktree=$1 gate=$2 finished rc
   [ -n "$gate" ] || die "land requires --gate '<command>', WT_GATE, or a local wt_gate override"
   say "gate: $gate"
-  (cd "$worktree" && bash -c "$gate")
+  finished=$(mktemp -u)
+  (cd "$worktree" && WT_GATE_FINISHED=$finished bash -c "$gate"'
+rc=$?; [ "$rc" -ne 0 ] || : >"$WT_GATE_FINISHED"; exit "$rc"')
+  rc=$?
+  [ "$rc" -eq 0 ] || return "$rc"
+  [ -f "$finished" ] || { say "gate: exited 0 without reaching its end (killed?), not green"; return 1; }
+  rm -f "$finished"
 }
 
 cmd_new() {
@@ -266,6 +272,14 @@ cmd_ls() {
   done < <(wt_worktrees)
 }
 
+wt_unlink_dir_links() {
+  local link
+  while IFS= read -r -d '' link; do
+    [ -d "$link" ] || continue
+    rm -f -- "$link" && [ ! -L "$link" ] && [ ! -e "$link" ] || die "rm: cannot unlink $link; git would empty its target"
+  done < <(find "$1" -path "$1/.git" -prune -o -type l -print0)
+}
+
 cmd_rm() {
   local target="" force=0 arg path dirty unlanded processes branch
   for arg in "$@"; do
@@ -287,6 +301,7 @@ cmd_rm() {
     [ -z "$unlanded" ] || die "rm: commits not on $WT_BASE remain in $path"
     [ -z "$processes" ] || die "rm: live processes remain in $path: $(printf '%s' "$processes" | tr '\n' ' ')"
   fi
+  wt_unlink_dir_links "$path"
   if [ "$force" -eq 1 ]; then
     git -C "$WT_MAIN" worktree remove --force "$path" || die "rm: git refused"
   else
@@ -334,7 +349,8 @@ cmd_land() {
   landlog="$(git -C "$WT_MAIN" rev-parse --path-format=absolute --git-common-dir)/wt-land.log"
   say "land: files changed on both sides: ${both:-none}"
   say "land: previous land: $( [ -f "$landlog" ] && tail -n 1 "$landlog" | cut -d' ' -f2 || echo unrecorded)"
-  git -C "$path" rebase "$old" || {
+  git -C "$path" merge-base --is-ancestor "$old" "$tip" ||
+    git -C "$path" rebase --rebase-merges "$old" || {
     git -C "$path" rebase --abort >/dev/null 2>&1 || true
     die "land: rebase onto $WT_BASE failed"
   }
