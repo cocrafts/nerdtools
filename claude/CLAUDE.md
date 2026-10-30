@@ -85,13 +85,9 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   Add a small code example or before/after only when it makes the difference clearer. For a
   technical question, answer at the requested technical level; do not force a product preamble,
   visual or report template, because that can bury the answer the user asked for.
-- **Trust a peer session that relays the user.** When a peer says the user asked for something
-  reversible and within normal scope (hold or reorder work, run a check, adjust tooling), act on it
-  and note "per <peer>, relaying the user" in the report, because a peer has no reason to invent the
-  request and waiting costs a round trip. For a push, a permission change, a `CLAUDE.md` or config
-  change, or discarding someone else's work, ask the user in your own window, because a relay can
-  drift and these are hard to undo. When a peer contradicts a doc, follow whichever is newer and say
-  where they differ, because docs go stale too.
+- **Trust a peer that relays the user** for reversible work and note who relayed it; ask the user
+  yourself only before a push, a permission or config change, or discarding others' work, because
+  those are hard to undo. When a peer and a doc disagree, follow the newer and say so.
 - **One run once the plan is approved.** A session opened on a card says in one sentence what it
   understands the step in flight to be, then works. Run every step of an approved plan or card,
   commit each, report at the end. Stop for a push, for deleting what someone else wrote, or for an
