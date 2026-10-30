@@ -35,7 +35,7 @@ esac
 cat >&2 <<EOF
 heavy-on-mac-guard: this is $heavy, a heavy job, and the Mac is shared with the land queue and every session's
 edit loop (~/metascript/CLAUDE.md §Shared machines). Run it on a gate host instead:
-  ~/metascript/.gate-host/run-remote.sh --cores N --ram G --job "<session>: <what>" -- <the same command>
+  ~/metascript/.gate-host/run-remote.sh --cores N --job "<session>: <what>" -- <the same command>
 from inside the worktree; it reserves the host, copies the tree, runs the command and returns its exit code.
 A land gate runs its Mac-only tests here and everything else through run-remote.sh; write that into the --gate command.
 Prefix MAC_ONLY=1 only to a run whose every test needs macOS (lines only macOS compiles, a window, GPU or pty on macOS, a
