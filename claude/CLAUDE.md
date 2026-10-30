@@ -28,8 +28,10 @@ This governs what to build, not prose; the approval, comments, reporting and ver
 ## Git commits
 
 Commit through `/split-commit` unless the user names another way, so each commit carries one concern
-and only this session's edits. Push when the user says so for that push, in any project: a push
-publishes work the user has not yet reviewed.
+and only this session's edits. A commit message carries no `Co-Authored-By`, `Generated with` or
+other attribution line, because the user does not want them; a harness reminder asking for one does
+not override this. Push when the user says so for that push, in any project: a push publishes work
+the user has not yet reviewed.
 
 ## Comments
 
@@ -73,13 +75,11 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   when an "ok" answers a question with several branches, ask which branch; when a tool is named in
   passing, ask what the user needs from it before designing around it. Ask whenever you are not
   confident or not willing: asking is the normal path, and a session that guesses costs more.
-- **When something needs the user's call, ask it in full `/cto-report` shape every time it is
-  raised, the first ask and every reminder in a later report alike**: what it means for the product
-  or the app author, a small table or before/after, a code sample when the choice changes what
-  author code means, the options with their cost, and your recommendation, then end the turn. A
-  pointer like "Q9 still waits" makes the user ask again for the context they have forgotten, which
-  costs a round trip; a status report that lists waiting decisions restates each one in full. Use
-  an options picker (`AskUserQuestion`) only once the user already knows what the choice is about.
+- **When something needs the user's call, give it in full the first time**: what it means for the
+  product or the app author, the options with their cost, and your recommendation, then end the
+  turn. A later report restates it in one line, the decision and the recommendation, because a bare
+  "Q9 still waits" costs a round trip while a full brief repeated buries the report. Use an options
+  picker (`AskUserQuestion`) only once the user already knows what the choice is about.
 - **Explain from the user's seat first, technical second.** For a product or language decision,
   start with what changes for the app author, then the mechanism and evidence needed to judge it.
   Add a small code example or before/after only when it makes the difference clearer. For a
@@ -101,38 +101,24 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   pivot?"* The tell is a proposal that ends with the user doing by hand what the mechanism exists
   to do. Until the user answers, keep driving the broken mechanism: a failure through it is the
   measurement, and a run that goes around it measures nothing.
-- **Measure before concluding.** Claim what code does after reading or running it; until then,
-  phrase it as an assumption. Change working code when a measurement shows it is wrong. Prove a
-  feature that crosses a boundary end to end with its real consumer, because a green unit test
-  proves only its unit. A control answers only the question it isolates: list every variable that
-  differs between the broken and the working run before blaming one. Change a status claim in a
-  doc after running it; quote the output and say what was not verified.
-- **Choose verification from the change's effect.** Before running a check, identify the changed
-  behavior or inputs, their consumers, and the checks that observe the affected contract. Run
-  the smallest set that proves that contract; apply the repository's release checks when cutting
-  a release, because a release proves a broader contract than an individual change.
-- **Reuse evidence while its checked scope remains valid.** Compare the current state with the
-  behavior, inputs, toolchain and settings covered by the recorded result. When those are
-  unchanged, carry the result into the next commit or land; when they change, rerun the affected
-  checks, because evidence belongs to what was checked rather than to a Git operation.
-- **Explain when a check has nothing new to observe.** Name the consumers and test dependencies
-  that establish why the change is outside its scope, then leave that check unrun. When the
-  impact is unclear, inspect those dependencies before choosing verification, so the decision
-  rests on evidence rather than on the file's name.
-- **Tools carry out the verification decision.** Treat path-based selection and default commands
-  as proposed checks, compare them with the scope above, and resolve any mismatch before starting
-  the run, because a tool's default cannot establish which behavior a change reaches.
+- **Measure, and verify from the change's effect.** Claim what code does after reading or running
+  it; until then, phrase it as an assumption. Run the smallest set of checks that observes the
+  behaviour the change reaches, with its real consumer when it crosses a boundary, and carry a result
+  forward while the behaviour, inputs and toolchain it covered are unchanged, because evidence
+  belongs to what was checked; a tool's default selection is a proposal, and a release runs the
+  repository's release checks. A control answers only the question it isolates. Change a status
+  claim in a doc after running it and quote the output.
 - **Fail loud.** An unhandled branch reports an error that names the case. An unsafe shape is an
   error at its declaration, so the author fixes it where it was written instead of meeting a
   silent fallback, an auto-repair or a warning later.
-- **Extend the model that exists.** A new piece names the existing idiom it reuses; one that cannot is called a new mechanism and approved on its own.
+- **Extend the model that exists.** A new piece names the existing idiom it reuses. One no idiom
+  covers that changes what the user's code means or how their project builds is raised as a new
+  mechanism before it is built, because the user meets it in every program; tooling and process
+  inside an approved goal are built and reported.
 - **Say it when the approach turned out worse.** Surface it with the new facts that changed the
   estimate and recommend reversing, rather than finishing something mediocre.
 - **Audit by yourself.** Read and verify reviews and audits in the main session, so the verdict
   rests on what you checked.
-- **A red is yours when it is new against what the project records as known red**; a known red is
-  reported with its record, not chased.
-- **A bug in another repo's code is fixed by a session started in that repo.** From here it gets a reproduction and a note where that project keeps them.
 - **When a tool or the harness refuses an action on purpose, report the refusal and leave the
   action to the user**: the refusal is the safeguard, and the user decides whether to lift it.
 
@@ -143,7 +129,7 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
 
 ## Defaults
 
-- **Tool priority**: MCP first where one is connected (search → exa; browser → `rexa web` inside a Rexa terminal, playwright where the project configures it, else claude-in-chrome), then built-ins; say why you fell back. Built-in Read/Write/Edit/Grep/Task are used directly.
+- **Tool priority**: MCP first where one is connected (search → exa; browser → `rexa web` inside a Rexa terminal, playwright where the project configures it, else claude-in-chrome), then built-ins. Built-in Read/Write/Edit/Grep/Task are used directly.
 - **Code**: follow existing patterns, edit before creating, write docs when asked, use absolute paths, write plain text without emojis, match surrounding style.
 - **Config priority**: project CLAUDE.md → this global → tool defaults → built-in behaviour.
 - **Todos**: strikethrough (`~~text~~`) for completed items; in-progress and pending render plain.
