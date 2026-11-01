@@ -121,7 +121,7 @@ or define the narrow `wt_before_*`, `wt_after_*`, and `wt_context_extra` hooks t
 with the generic command. Repository-specific provisioning, gates, inboxes, generated
 artifacts, and release policy belong there; none belong in the shared tool.
 
-Claude Code, Pi and omp use this shared tool for card lookup. Do not add a second card
+Claude Code and Pi use this shared tool for card lookup. Do not add a second card
 locator to a project hook. Compaction hooks for Pi and Claude Code check, without a model call,
 that the card was written after the HEAD commit and every changed file, because the session
 that did the work is the one that can write its State; `card-state.py stale` owns that check

@@ -136,56 +136,13 @@ action runs `bash` directly on every OS. Link it the same way (needs `jq`):
 herdr plugin link ~/nerdtools/conf/herdr/pane-split && herdr server reload-config
 ```
 
-## oh-my-pi (omp)
-
-`~/.omp/agent` stays a **real directory** for the same reason `~/.claude` does: it holds
-`agent.db`, the auth store, plus session transcripts and caches. Link the tracked files
-in one by one — `extensions/` excepted: everything in it is tracked, so the whole
-directory is one link and a new extension needs no new line.
-
-```bash
-mkdir -p ~/.omp/agent
-ln -sfn ~/nerdtools/omp/config.yml ~/.omp/agent/config.yml
-ln -sfn ~/nerdtools/omp/AGENTS.md  ~/.omp/agent/AGENTS.md
-ln -sfn ~/nerdtools/omp/extensions ~/.omp/agent/extensions
-mkdir -p ~/.omp/plugins
-ln -sfn ~/nerdtools/omp/plugins/package.json ~/.omp/plugins/package.json
-ln -sfn ~/nerdtools/omp/plugins/bun.lock     ~/.omp/plugins/bun.lock
-(
-  cd ~/.omp/plugins
-  bun install --frozen-lockfile
-)
-omp plugin doctor
-```
-
-On Windows use the PowerShell block below — under Git Bash, `ln -sfn` silently copies
-the file instead of linking it unless `MSYS=winsymlinks:nativestrict` is exported, and a
-copy drifts from the repo without ever saying so.
-
-Unlike Claude Code's `settings.json`, `config.yml` is symlinked outright — nothing in it
-is machine-specific, because credentials live in `agent.db` and `.env`, not here.
-
-The plugin dependency manifest and Bun lockfile are shared; `node_modules/`, caches, and
-`omp-plugins.lock.json` stay local. The runtime lock can contain plugin settings, including
-secrets. With no runtime entry, an installed dependency loads enabled with its default features.
-`bun install --frozen-lockfile` restores the exact package graph; `omp plugin doctor` validates it.
-
-`~/.omp/agent/AGENTS.md` is the one user-level instruction file omp keeps, and it outranks
-`~/.claude/CLAUDE.md`. It is deliberately a wrapper: its first line imports
-`~/.claude/CLAUDE.md`, which imports the shared config in turn, and the rest is what omp
-must do by hand because it cannot read Claude Code's own wiring — where memory lives, and
-that a subdirectory may carry its own `CLAUDE.md`. Skills need no line here; omp reads
-`~/.agents/skills` natively.
-
-It imports the wrapper rather than the repo file so that a rule written for this machine
-reaches both agents from one place. The two hops expand — measured 2026-09-20, `omp -p`
-returning a value that only exists in `claude/CLAUDE.md`.
-
-**Codex does not get this treatment.** It has no `@` import
+**Codex gets a symlink, not a wrapper.** Pi's `agents/pi/AGENTS.md` is a wrapper: its
+first line imports `~/.claude/CLAUDE.md`, so a rule written for this machine reaches Pi
+too, and the rest is Pi's adapters. Codex has no `@` import
 ([openai/codex#17401](https://github.com/openai/codex/issues/17401) is still open), so a
 wrapper there would ship the model one literal `@` line and silently drop every shared
 rule. `~/.codex/AGENTS.md` stays a hard symlink to `claude/CLAUDE.md`, so Codex goes
-without the adapters and without the machine-local half the other two get through the
+without the adapters and without the machine-local half the others get through the
 wrapper. The rule that decides: an agent that expands `@` gets a wrapper, an
 agent that does not gets the symlink — never a copy of the content. Claude Code expands
 `@`, so it is on the wrapper side too.
@@ -194,7 +151,7 @@ agent that does not gets the symlink — never a copy of the content. Claude Cod
 
 **Goal:** share Pi configuration and extensions without syncing credentials or sessions.
 
-**Preconditions:** Pi 1.0.4 and Node/npm are installed; the shared Claude setup above is complete.
+**Preconditions:** Pi 1.2.0 (`npm install -g @earendil-works/pi-coding-agent@1.2.0`) and Node/npm are installed; the shared Claude setup above is complete.
 The commands below use Bash. Native Windows needs permission to create real symlinks.
 
 **Steps:**
@@ -233,7 +190,7 @@ PI_PACKAGE_ROOT="$(npm root -g)/@earendil-works/pi-coding-agent" \
   node ~/nerdtools/agents/pi/tests/neon-format.mjs
 ```
 
-**Notes:** use `/login` for a provider and `/model` to select it. OMP credentials are not migrated.
+**Notes:** use `/login` for a provider and `/model` to select it.
 Keep `~/.pi/web-search.json` local because it can contain provider keys.
 Windows runtime parity still needs a smoke test on Windows; the shared files alone do not prove it.
 
@@ -328,18 +285,6 @@ New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\scripts"       -Targ
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\themes"        -Target "$HOME\nerdtools\claude\themes" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md"      -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
 
-New-Item -ItemType Directory -Force -Path "$HOME\.omp\agent" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\config.yml" -Target "$HOME\nerdtools\omp\config.yml" | Out-Null
-New-Item -ItemType Junction -Force -Path "$HOME\.omp\agent\extensions" -Target "$HOME\nerdtools\omp\extensions" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\agent\AGENTS.md"  -Target "$HOME\nerdtools\omp\AGENTS.md" | Out-Null
-New-Item -ItemType Directory -Force -Path "$HOME\.omp\plugins" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\plugins\package.json" -Target "$HOME\nerdtools\omp\plugins\package.json" | Out-Null
-New-Item -ItemType SymbolicLink -Force -Path "$HOME\.omp\plugins\bun.lock"     -Target "$HOME\nerdtools\omp\plugins\bun.lock" | Out-Null
-Push-Location "$HOME\.omp\plugins"
-bun install --frozen-lockfile
-Pop-Location
-omp plugin doctor
-
 Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
   Test-Path "$($_.FullName)\SKILL.md"
 } | ForEach-Object {
@@ -349,7 +294,7 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 ```
 
 - Junctions replace the whole target dir, so they are idempotent with `-Force`.
-- The file symlinks (`AGENTS.md`, `statusline.sh`, `omp/plugins/*`) need Developer Mode
+- The file symlinks (`AGENTS.md`, `statusline.sh`) need Developer Mode
   and a pwsh 7 shell. `~/.agents/skills` stays junctions so Codex works without it.
 - Keep the two Codex fallback keys above in `$HOME\.codex\config.toml`; that file remains machine-local.
 - Apps that read `%APPDATA%`/`%LOCALAPPDATA%` instead of `~/.config` on Windows (e.g. Alacritty)
@@ -362,7 +307,7 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushell ~/.config/tmux \
             ~/.aider.conf.yml ~/revive.toml ~/.config/lazygit/config.yml ~/.config/zls.json \
             ~/.config/herdr/config.toml ~/.claude/commands ~/.claude/statusline.sh \
-            ~/.omp/plugins/package.json ~/.omp/plugins/bun.lock ~/.codex/AGENTS.md; do
+            ~/.codex/AGENTS.md; do
   if [[ -L "$link" && -e "$link" ]]; then
     printf "✓ %-40s -> %s\n" "$link" "$(readlink "$link")"
   else

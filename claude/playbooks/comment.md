@@ -84,9 +84,9 @@ When flagged: delete the comment, or check it against the three-part test and ke
 The hook is a reminder, not a court — but never argue with it or edit around it.
 
 Scope: both agents, one law. Claude Code wires the script in `~/.claude/settings.json`
-(PostToolUse, matcher `Edit|Write`); omp execs the same script from
-`~/nerdtools/omp/extensions/cc-compat.ts` (`tool_result` on write/edit, synthesizing the
-hook payload — verified 2026-09-21 on both paths: new-file write and edit `+` rows).
+(PostToolUse, matcher `Edit|Write`); Pi execs the same script from
+`~/nerdtools/agents/pi/extensions/cc-compat.ts` (`tool_result` on write/edit, synthesizing
+the hook payload).
 
 ## Why the exception exists (2026-09-21)
 
