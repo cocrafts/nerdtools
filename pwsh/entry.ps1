@@ -54,11 +54,11 @@ if (Get-Module -ListAvailable PSReadLine) {
 if (Get-Module -ListAvailable posh-git) { Import-Module posh-git }
 
 # --- Tool init (starship / mise) ---
-if (Get-Command starship -ErrorAction SilentlyContinue) {
-    Invoke-Expression (&starship init powershell)
-}
 if (Get-Command mise -ErrorAction SilentlyContinue) {
     Invoke-Expression (& { (mise activate pwsh | Out-String) })
+}
+if (Get-Command starship -ErrorAction SilentlyContinue) {
+    Invoke-Expression (&starship init powershell)
 }
 
 # --- Per-machine override (counterpart of entry.sh's local.zsh) ---
