@@ -55,6 +55,7 @@ mise use -g bat@latest stylua@latest starship@latest taplo@latest typos@latest
 mise use -g github:Kampfkarren/selene github:nushell/nushell
 mise use -g lazygit@latest shfmt@latest gofumpt@latest
 mise use -g delta@latest github:Wilfred/difftastic
+mise use -g herdr@latest
 ```
 
 - **zig** is a drop-in C/C++ compiler (`zig cc`) for crates/plugins that build C without MSVC.
