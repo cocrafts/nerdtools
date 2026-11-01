@@ -17,6 +17,12 @@ $env:PATH = @(
     $env:PATH
 ) -join ';'
 
+$gitExe = Get-Command git.exe -ErrorAction SilentlyContinue
+if ($gitExe) {
+    $gitBashDir = Join-Path (Split-Path (Split-Path $gitExe.Source)) 'bin'
+    if (Test-Path "$gitBashDir\bash.exe") { $env:PATH = "$gitBashDir;$env:PATH" }
+}
+
 # --- Env ---
 $env:XDG_CONFIG_HOME = "$HOME\.config"
 $env:STARSHIP_CONFIG = "$NerdRoot\conf\starship.toml"
