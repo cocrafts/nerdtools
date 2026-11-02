@@ -114,7 +114,10 @@ fires on a deletion you meant, make the commit show the intent; if it still fire
 report its output.
 
 The machine is shared: one build at a time, no long suites; check `df -h /System/Volumes/Data`
-before a large build.
+before a large build. To stop a command of yours that hangs, stop it by its own handle: the
+background task id, or the PID of the process whose command line you started. Never kill by
+image name (`taskkill /IM msc.exe`, `pkill msc`): other sessions' gates run the same binary,
+and a killed test lands in their land verdict as a red they did not cause.
 
 Final message, 60 lines at most, no narrative. Per step: the commits; the reference file:line
 followed; the pins with one line of red/green evidence each; what you did not verify; proposed
