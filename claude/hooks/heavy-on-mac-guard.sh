@@ -37,8 +37,9 @@ heavy-on-mac-guard: this is $heavy, a heavy job, and the Mac is shared with the 
 edit loop (~/metascript/CLAUDE.md §Shared machines). Run it on a gate host instead:
   ~/metascript/.gate-host/run-remote.sh --cores N --job "<session>: <what>" -- <the same command>
 from inside the worktree; it reserves the host, copies the tree, runs the command and returns its exit code.
-A land gate runs its Mac-only tests here and everything else through run-remote.sh; write that into the --gate command.
-Prefix MAC_ONLY=1 only to a run whose every test needs macOS (lines only macOS compiles, a window, GPU or pty on macOS, a
-darwin budget), because the rest of every repo runs the same on Linux and the gate hosts wait idle (§Shared machines).
+A run whose every test needs macOS (lines only macOS compiles, a window, GPU or pty on macOS, a darwin budget) goes through
+run-remote.sh --mac, which takes a remote Mac first and this Mac only while none is free; a land gate splits its Mac-only
+tests there and everything else through run-remote.sh. Prefix MAC_ONLY=1 here only to a run that needs this Mac's own
+screen session or attached devices, because the person works on this Mac (§Shared machines).
 EOF
 exit 2
