@@ -194,14 +194,15 @@ agent that does not gets the symlink — never a copy of the content. Claude Cod
 
 **Goal:** share Pi configuration and extensions without syncing credentials or sessions.
 
-**Preconditions:** Pi 1.0.4 and Node/npm are installed; the shared Claude setup above is complete.
+**Preconditions:** Pi 1.1.0 and Node/npm are installed; the shared Claude setup above is complete.
 The commands below use Bash. Native Windows needs permission to create real symlinks.
 
 **Steps:**
 
 Keep `~/.pi/agent` a real directory: credentials, session transcripts, trust decisions,
 installed npm packages, and caches stay machine-local. Shared sources live in
-`~/nerdtools/agents/pi`; skills link to the existing Claude source rather than a separate copy.
+`~/nerdtools/agents/pi`. Pi discovers the shared `~/.agents/skills` links from the Claude
+setup above natively; do not add duplicate links under `~/.pi/agent/skills`.
 Before replacing an existing real settings file or extensions directory, move it to a
 local backup and preserve its integrations in the repo source.
 
@@ -210,11 +211,6 @@ mkdir -p ~/.pi/agent
 ln -sfn ~/nerdtools/agents/pi/settings.json ~/.pi/agent/settings.json
 ln -sfn ~/nerdtools/agents/pi/AGENTS.md     ~/.pi/agent/AGENTS.md
 ln -sfn ~/nerdtools/agents/pi/extensions   ~/.pi/agent/extensions
-mkdir -p ~/.pi/agent/skills
-for skill in ~/nerdtools/claude/skills/*; do
-  [ -f "$skill/SKILL.md" ] || continue
-  ln -sfn "$skill" ~/.pi/agent/skills/"$(basename "$skill")"
-done
 pi install npm:pi-web-access
 pi install npm:@fractaal/pi-cross-agent-memory@0.3.1
 npm ci --ignore-scripts --legacy-peer-deps --prefix ~/nerdtools/agents/pi/extensions/neon-format
@@ -235,7 +231,7 @@ PI_PACKAGE_ROOT="$(npm root -g)/@earendil-works/pi-coding-agent" \
 
 **Notes:** use `/login` for a provider and `/model` to select it. OMP credentials are not migrated.
 Keep `~/.pi/web-search.json` local because it can contain provider keys.
-Windows runtime parity still needs a smoke test on Windows; the shared files alone do not prove it.
+Windows startup was smoke-tested with Pi 1.1.0 and Node 24.18.0, with no extension-load errors. Other renderer interactions still need native Windows verification.
 
 ## Syncthing (compiler docs)
 

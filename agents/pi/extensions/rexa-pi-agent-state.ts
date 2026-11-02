@@ -30,7 +30,7 @@ function post(payload: Record<string, unknown>): void {
  * receiver, and the value comes back empty for a manager that keeps its
  * session on itself.
  */
-export function sessionOf(ctx: any): { sessionId?: string; sessionPath?: string } {
+function sessionOf(ctx: any): { sessionId?: string; sessionPath?: string } {
   let sessionId: string | undefined;
   let sessionPath: string | undefined;
   try {

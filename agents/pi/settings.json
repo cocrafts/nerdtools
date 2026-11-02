@@ -1,5 +1,6 @@
 {
-  "lastChangelogVersion": "1.2.0",
+  "lastChangelogVersion": "1.4.0",
+  "enableInstallTelemetry": false,
   "theme": "saigon-night",
   "themes": [
     "~/nerdtools/agents/pi/themes"
@@ -19,7 +20,8 @@
         "skills/pi-subagents"
       ],
       "prompts": []
-    }
+    },
+    "npm:pi-codex-image-gen@0.2.0"
   ],
   "deviceId": "10949172-1946-4ef1-a383-35d7ba5a9458"
 }

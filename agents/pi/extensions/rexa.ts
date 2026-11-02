@@ -1,1 +1,0 @@
-/Applications/Rexa.app/Contents/Resources/extensions/pi-adapter/pi-extensions/rexa.ts
