@@ -37,6 +37,7 @@ find ~/.local/share/mise/installs/github-* -type f -exec chmod +x {} \; 2>/dev/n
   go install mvdan.cc/sh/v3/cmd/shfmt@latest
   go install github.com/jesseduffield/lazygit@latest
 '
+[ "$(uname)" = Linux ] && ~/.local/bin/mise use -g neovim@latest
 ~/.local/bin/mise reshim
 ```
 
@@ -74,7 +75,7 @@ mise use -g herdr@latest
 ## Verify
 
 ```bash
-for t in rust-analyzer bat stylua starship taplo typos selene nu neocmakelsp lazygit shfmt gofumpt revive delta difft; do
+for t in nvim rust-analyzer bat stylua starship taplo typos selene nu neocmakelsp lazygit shfmt gofumpt revive delta difft; do
   command -v "$t" >/dev/null 2>&1 && echo "$t: ok" || echo "$t: MISSING"
 done
 ```
