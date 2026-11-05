@@ -1,3 +1,4 @@
+local key = require("utils.key")
 local M = {}
 
 M.configure = function()
@@ -9,7 +10,7 @@ M.configure = function()
 		},
 		server = {
 			on_attach = function(_, bufnr)
-				vim.keymap.set("n", "<C-space>", function()
+				vim.keymap.set("n", key.lead("space"), function()
 					vim.cmd.RustLsp({ "hover", "actions" })
 				end, { buffer = bufnr })
 				vim.keymap.set("n", "<leader>a", function()

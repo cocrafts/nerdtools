@@ -30,16 +30,20 @@ local function nav(wincmd, dir)
   end
 end
 
-local function map(lhs, wincmd, dir, desc)
-  vim.keymap.set("n", lhs, function()
-    nav(wincmd, dir)
-  end, { silent = true, noremap = true, desc = desc })
+local mods = vim.g.herdr_nav_mods or { "C" }
+
+local function map(key, dir, desc)
+  for _, mod in ipairs(mods) do
+    vim.keymap.set("n", "<" .. mod .. "-" .. key .. ">", function()
+      nav(key, dir)
+    end, { silent = true, noremap = true, desc = desc })
+  end
 end
 
-map("<C-h>", "h", "left", "Navigate left (vim/herdr)")
-map("<C-j>", "j", "down", "Navigate down (vim/herdr)")
-map("<C-k>", "k", "up", "Navigate up (vim/herdr)")
-map("<C-l>", "l", "right", "Navigate right (vim/herdr)")
+map("h", "left", "Navigate left (vim/herdr)")
+map("j", "down", "Navigate down (vim/herdr)")
+map("k", "up", "Navigate up (vim/herdr)")
+map("l", "right", "Navigate right (vim/herdr)")
 
 -- Tell the herdr side that Neovim owns this pane's <C-h/j/k/l>. herdr detects
 -- Vim from the pane's foreground process, which needs a tty process group and

@@ -1,3 +1,4 @@
+local key = require("utils.key")
 local M = {}
 
 M.configure = function()
@@ -47,10 +48,10 @@ M.configure = function()
 		incremental_selection = {
 			enable = true,
 			keymaps = {
-				init_selection = "<c-space>",
-				node_incremental = "<c-space>",
-				scope_incremental = "<c-s>",
-				node_decremental = "<M-space>",
+				init_selection = key.lead("space"),
+				node_incremental = key.lead("space"),
+				scope_incremental = key.lead("s"),
+				node_decremental = key.other("space"),
 			},
 		},
 		textobjects = {
@@ -132,7 +133,6 @@ M.configure = function()
 		},
 		filetype = "d2",
 	}
-
 end
 
 return M

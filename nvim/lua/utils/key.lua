@@ -1,5 +1,18 @@
 local M = {}
 
+local mac = vim.uv.os_uname().sysname == "Darwin"
+
+M.mod = mac and "C" or "M"
+M.other_mod = mac and "M" or "C"
+
+M.lead = function(key)
+	return "<" .. M.mod .. "-" .. key .. ">"
+end
+
+M.other = function(key)
+	return "<" .. M.other_mod .. "-" .. key .. ">"
+end
+
 local generic_opts_any = { noremap = true, silent = true }
 local generic_opts = {
 	x = { silent = true },

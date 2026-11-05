@@ -1,3 +1,4 @@
+local key = require("utils.key")
 local theme = require("utils.config").theme
 local colors = theme.colors
 local M = {}
@@ -73,7 +74,7 @@ M.configure = function()
 			border = "curved",
 			winblend = 0,
 		},
-		open_mapping = [[<c-\>]],
+		open_mapping = key.lead("\\"),
 		winbar = {
 			enabled = false,
 			name_formater = function(term)

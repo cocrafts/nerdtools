@@ -1,3 +1,4 @@
+local key = require("utils.key")
 local M = {}
 local config = require("utils.config")
 local icons = require("utils.icons")
@@ -65,16 +66,16 @@ M.configure = function()
 			end
 		end, { "i", "s" }),
 		-- Ctrl+Space to trigger completion menu
-		["<C-Space>"] = cmp.mapping.complete(),
+		[key.lead("Space")] = cmp.mapping.complete(),
 		-- Navigate between snippet placeholder
-		["<C-f>"] = cmp_mapping(function(fallback)
+		[key.lead("f")] = cmp_mapping(function(fallback)
 			if luasnip.jumpable(1) then
 				luasnip.jump(1)
 			else
 				fallback()
 			end
 		end, { "i", "s" }),
-		["<C-b>"] = cmp_mapping(function(fallback)
+		[key.lead("b")] = cmp_mapping(function(fallback)
 			if luasnip.jumpable(-1) then
 				luasnip.jump(-1)
 			else

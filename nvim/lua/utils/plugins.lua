@@ -41,6 +41,7 @@ return {
 			local root = vim.uv.fs_realpath(config) or config
 			local plugin = vim.fs.joinpath(vim.fs.dirname(root), "conf/herdr/vim-herdr-navigation/editor/nvim.lua")
 			if vim.uv.fs_stat(plugin) then
+				vim.g.herdr_nav_mods = { "C", require("utils.key").mod }
 				dofile(plugin)
 			else
 				vim.notify("vim-herdr-navigation not found at " .. plugin, vim.log.levels.WARN)
@@ -402,7 +403,7 @@ return {
 		"akinsho/toggleterm.nvim",
 		version = "*",
 		cmd = { "ToggleTerm", "TermExec", "ToggleTermToggleAll", "TermSelect" },
-		keys = { { [[<c-\>]], mode = { "n", "i" } }, { "<leader>G", desc = "Lazygit" } },
+		keys = { { require("utils.key").lead("\\"), mode = { "n", "i" } }, { "<leader>G", desc = "Lazygit" } },
 		config = function()
 			require("core.toggleterm").configure()
 		end,

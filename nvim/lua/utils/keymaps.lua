@@ -3,9 +3,9 @@ local key = require("utils.key")
 key.mode_keys("i", {})
 
 key.mode_keys("n", {
-	["<C-x>"] = ":split<CR>:b#<CR>",
-	["<C-s>"] = ":vsplit<CR>:b#<CR>",
-	["<C-g>"] = ":tabnew<CR>",
+	[key.lead("x")] = ":split<CR>:b#<CR>",
+	[key.lead("s")] = ":vsplit<CR>:b#<CR>",
+	[key.lead("g")] = ":tabnew<CR>",
 	["<leader>'"] = ":tabclose<CR>",
 
 	["<TAB>"] = ":bnext<CR>",
@@ -17,8 +17,8 @@ key.mode_keys("n", {
 	["N"] = "Nzz",
 
 	-- Git navigation
-	["<C-f>"] = "<cmd>lua require('gitsigns').next_hunk()<CR>:lua vim.api.nvim_feedkeys('zz', 'n', true)<CR>",
-	["<C-a>"] = "<cmd>lua require('gitsigns').prev_hunk()<CR>:lua vim.api.nvim_feedkeys('zz', 'n', true)<CR>",
+	[key.lead("f")] = "<cmd>lua require('gitsigns').next_hunk()<CR>:lua vim.api.nvim_feedkeys('zz', 'n', true)<CR>",
+	[key.lead("a")] = "<cmd>lua require('gitsigns').prev_hunk()<CR>:lua vim.api.nvim_feedkeys('zz', 'n', true)<CR>",
 
 	["*"] = "<cmd>lua require('utils.helper').toggle_highlight_search()<CR>",
 })
@@ -31,13 +31,13 @@ key.mode_keys("v", {
 })
 
 if vim.g.neovide then
-	vim.g.neovide_input_use_logo = 1                                                  -- enable use of the logo (cmd) key
-	vim.keymap.set("n", "<D-s>", ":up<CR>")                                           -- Save
-	vim.keymap.set("v", "<D-c>", '"+y')                                               -- Copy
-	vim.keymap.set("n", "<D-v>", '"+P')                                               -- Paste normal mode
-	vim.keymap.set("v", "<D-v>", '"+P')                                               -- Paste visual mode
-	vim.keymap.set("c", "<D-v>", "<C-R>+")                                            -- Paste command mode
-	vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli')                                       -- Paste insert mode
+	vim.g.neovide_input_use_logo = 1 -- enable use of the logo (cmd) key
+	vim.keymap.set("n", "<D-s>", ":up<CR>") -- Save
+	vim.keymap.set("v", "<D-c>", '"+y') -- Copy
+	vim.keymap.set("n", "<D-v>", '"+P') -- Paste normal mode
+	vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode
+	vim.keymap.set("c", "<D-v>", "<C-R>+") -- Paste command mode
+	vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert mode
 	vim.api.nvim_set_keymap("!", "<D-v>", "<C-R>+", { noremap = true, silent = true }) -- Allow insert mode paste
 
 	-- Runtime font scale
@@ -45,10 +45,10 @@ if vim.g.neovide then
 	local change_scale_factor = function(delta)
 		vim.g.neovide_scale_factor = vim.g.neovide_scale_factor * delta
 	end
-	vim.keymap.set("n", "<C-=>", function()
+	vim.keymap.set("n", key.lead("="), function()
 		change_scale_factor(1.25)
 	end)
-	vim.keymap.set("n", "<C-->", function()
+	vim.keymap.set("n", key.lead("-"), function()
 		change_scale_factor(1 / 1.25)
 	end)
 
