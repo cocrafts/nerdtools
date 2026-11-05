@@ -39,7 +39,7 @@ nvim/
 │   │   │                   rust, sql, swift, terminal (bash+nushell),
 │   │   │                   terraform, toml, typescript-tools, wgsl, zls
 │   │   └── <feature>.lua   bufferline, comment, devicons, diff, fold, fzf,
-│   │                       gitsigns, graphical, hlchunk, hurl, illuminate,
+│   │                       gitsigns, hlchunk, hurl, illuminate,
 │   │                       lualine, luasnip, markdown, neo-tree, noice,
 │   │                       package-info, rainbow, satellite, surround, tabby,
 │   │                       toggleterm, treesitter, whichkey, lastplace, …

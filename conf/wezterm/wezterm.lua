@@ -24,8 +24,6 @@ config.inactive_pane_hsb = {
 	brightness = 0.6,
 }
 
--- Image protocol support for image.nvim
--- WezTerm supports both Kitty and iTerm2 protocols
 config.term = "wezterm" -- Use WezTerm's terminfo for accurate capabilities
 
 -- https://wezfurlong.org/wezterm/config/lua/wezterm/target_triple.html

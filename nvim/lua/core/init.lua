@@ -27,8 +27,7 @@ M.initialize = function()
 			version = false,
 		},
 		checker = { enabled = true },
-		-- Windows: skip Lazy's luarocks/hererocks (needs MSVC). image.nvim uses magick_cli, no rock needed.
-		rocks = { enabled = vim.fn.has("win32") ~= 1 },
+		rocks = { enabled = false },
 		performance = {
 			rtp = {
 				disabled_plugins = {

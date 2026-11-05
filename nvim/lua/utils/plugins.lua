@@ -235,12 +235,6 @@ return {
 		end,
 	},
 	{
-		"3rd/image.nvim",
-		config = function()
-			require("core.graphical").configureImage()
-		end,
-	},
-	{
 		"nvim-lualine/lualine.nvim",
 		event = "VimEnter",
 		config = function()
