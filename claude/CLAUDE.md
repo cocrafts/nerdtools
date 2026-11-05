@@ -70,11 +70,9 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   when an "ok" answers a question with several branches, ask which branch; when a tool is named in
   passing, ask what the user needs from it before designing around it. Ask whenever you are not
   confident or not willing: asking is the normal path, and a session that guesses costs more.
-- **When something needs the user's call, give it in full the first time**: what it means for the
-  product or the app author, the options with their cost, and your recommendation, then end the
-  turn. A later report restates it in one line, the decision and the recommendation, because a bare
-  "Q9 still waits" costs a round trip while a full brief repeated buries the report. Use an options
-  picker (`AskUserQuestion`) only once the user already knows what the choice is about.
+- **Present user-owned decisions in full once:** impact on the product or author, options and costs,
+  and your recommendation; then end the turn. Later reports restate the decision and recommendation
+  in one line, not a bare identifier or the whole brief. Use `AskUserQuestion` only after explaining the choice.
 - **Explain from the user's seat first, technical second.** For a product or language decision,
   start with what changes for the app author, then the mechanism and evidence needed to judge it.
   Add a small code example or before/after only when it makes the difference clearer. For a
