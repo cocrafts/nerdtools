@@ -18,17 +18,17 @@ local opts = {
 	timeout = true,
 	timeoutlen = 100, -- time to wait for mapped sequence to complete
 	-- utilities
-	title = true,     -- show buffer name in window title
-	undofile = true,  -- enable persistent undo
+	title = true, -- show buffer name in window title
+	undofile = true, -- enable persistent undo
 	cursorline = true, -- highlight current line
-	hlsearch = true,  -- highlight all matches on previous search pattern
+	hlsearch = true, -- highlight all matches on previous search pattern
 	incsearch = true,
 	ignorecase = true, -- ignore case when search
 	smartcase = true,
 	mouse = "a",
 	-- clipboard = "unnamedplus",
 	-- line numbers
-	number = true,        -- show line numbers
+	number = true, -- show line numbers
 	relativenumber = true, -- show relative numbers
 	numberwidth = 3,
 	signcolumn = "yes",
@@ -46,7 +46,7 @@ local opts = {
 local defer_opts = {
 	-- use tab
 	autoindent = true,
-	tabstop = config.indent_size,   -- insert 2 spaces for a tab
+	tabstop = config.indent_size, -- insert 2 spaces for a tab
 	shiftwidth = config.indent_size, -- number of spaces inserted for each indentation
 }
 

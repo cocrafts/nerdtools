@@ -9,7 +9,7 @@ M.configure = function()
 			})
 		end,
 	})
-		vim.lsp.enable("eslint")
+	vim.lsp.enable("eslint")
 end
 
 return M

@@ -82,7 +82,7 @@ local function cs(trigger, nodes, opts) --{{{
 	end
 
 	table.insert(target_table, snippet) -- insert snippet into appropriate table
-end                                  --}}}
+end --}}}
 
 -- Old Style --
 
@@ -92,14 +92,14 @@ local if_fmt_1 = fmt( --{{{
     ]],
 	{
 		i(1, ""),
-		c(2, { sn(nil, {i(1, "LHS")}), sn(nil, {i(1, "10")}) }),
+		c(2, { sn(nil, { i(1, "LHS") }), sn(nil, { i(1, "10") }) }),
 		c(3, {
-			sn(nil, {i(1, "===")}),
-			sn(nil, {i(1, "<")}),
-			sn(nil, {i(1, ">")}),
-			sn(nil, {i(1, "<=")}),
-			sn(nil, {i(1, ">=")}),
-			sn(nil, {i(1, "!==")})
+			sn(nil, { i(1, "===") }),
+			sn(nil, { i(1, "<") }),
+			sn(nil, { i(1, ">") }),
+			sn(nil, { i(1, "<=") }),
+			sn(nil, { i(1, ">=") }),
+			sn(nil, { i(1, "!==") }),
 		}),
 		i(4, "RHS"),
 		i(5, "//TODO:"),
@@ -113,14 +113,14 @@ local if_fmt_2 = fmt(
     ]],
 	{
 		i(1, ""),
-		c(2, { sn(nil, {i(1, "LHS")}), sn(nil, {i(1, "10")}) }),
+		c(2, { sn(nil, { i(1, "LHS") }), sn(nil, { i(1, "10") }) }),
 		c(3, {
-			sn(nil, {i(1, "===")}),
-			sn(nil, {i(1, "<")}),
-			sn(nil, {i(1, ">")}),
-			sn(nil, {i(1, "<=")}),
-			sn(nil, {i(1, ">=")}),
-			sn(nil, {i(1, "!==")})
+			sn(nil, { i(1, "===") }),
+			sn(nil, { i(1, "<") }),
+			sn(nil, { i(1, ">") }),
+			sn(nil, { i(1, "<=") }),
+			sn(nil, { i(1, ">=") }),
+			sn(nil, { i(1, "!==") }),
 		}),
 		i(4, "RHS"),
 		i(5, "//TODO:"),
@@ -133,7 +133,7 @@ local if_snippet = s(
 		if_fmt_1,
 		if_fmt_2,
 	})
-)                         --}}}
+) --}}}
 local function_fmt = fmt( --{{{
 	[[
 function {}({}) {{
@@ -142,26 +142,29 @@ function {}({}) {{
     ]],
 	{
 		i(1, "myFunc"),
-		c(2, { sn(nil, {i(1, "arg")}), sn(nil, {i(1, "")}) }),
+		c(2, { sn(nil, { i(1, "arg") }), sn(nil, { i(1, "") }) }),
 		i(3, "//TODO:"),
 	}
 )
 
 local function_snippet = s({ trig = "f[un]?", regTrig = true, hidden = true }, function_fmt)
-local function_snippet_func = s({ trig = "func" }, fmt(
-	[[
+local function_snippet_func = s(
+	{ trig = "func" },
+	fmt(
+		[[
 function {}({}) {{
   {}
 }}
     ]],
-	{
-		i(1, "myFunc"),
-		c(2, { sn(nil, {i(1, "arg")}), sn(nil, {i(1, "")}) }),
-		i(3, "//TODO:"),
-	}
-)) --}}}
+		{
+			i(1, "myFunc"),
+			c(2, { sn(nil, { i(1, "arg") }), sn(nil, { i(1, "") }) }),
+			i(3, "//TODO:"),
+		}
+	)
+) --}}}
 
-local short_hand_if_fmt = fmt(                                                 --{{{
+local short_hand_if_fmt = fmt( --{{{
 	[[
 if ({}) {}
 {}
@@ -207,15 +210,15 @@ for (let {} = 0; {} < {}; {}++) {{
 			end),
 			rep(1),
 			c(2, {
-				sn(nil, {i(1, "num")}),
-				sn(nil, { i(1, "arr"), t(".length") })
+				sn(nil, { i(1, "num") }),
+				sn(nil, { i(1, "arr"), t(".length") }),
 			}),
 			rep(1),
 			i(3, "// TODO:"),
 			i(4),
 		}
 	)
-)   --}}}
+) --}}}
 
 cs( -- [while] JS While Loop snippet{{{
 	"while",

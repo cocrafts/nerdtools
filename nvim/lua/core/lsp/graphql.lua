@@ -5,7 +5,7 @@ M.configure = function()
 		cmd = { "graphql-lsp", "server", "-m", "stream" },
 		filetypes = { "graphql", "typescript", "typescriptreact", "javascript", "javascriptreact" },
 	})
-		vim.lsp.enable("graphql")
+	vim.lsp.enable("graphql")
 end
 
 return M

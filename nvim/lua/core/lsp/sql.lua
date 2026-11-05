@@ -6,7 +6,7 @@ M.configure = function()
 			require("sqls").on_attach(client, bufnr)
 		end,
 	})
-		vim.lsp.enable("sqls")
+	vim.lsp.enable("sqls")
 end
 
 return M

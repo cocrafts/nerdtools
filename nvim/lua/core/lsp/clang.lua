@@ -12,9 +12,9 @@ M.configure = function()
 				},
 				fallbackFlags = { "-std=c++20" },
 			},
-		}
+		},
 	})
-		vim.lsp.enable("clangd")
+	vim.lsp.enable("clangd")
 end
 
 return M

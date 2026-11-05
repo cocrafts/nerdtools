@@ -74,7 +74,13 @@ M.configure = function()
 				"<cmd>e<CR>",
 				desc = "Reload buffer",
 			},
-			{ "<leader>u", function() pick.recent_files() end, desc = "Recent files" },
+			{
+				"<leader>u",
+				function()
+					pick.recent_files()
+				end,
+				desc = "Recent files",
+			},
 			{
 				"<leader>U",
 				function()
@@ -123,11 +129,23 @@ M.configure = function()
 				end,
 				desc = "Find File",
 			},
-			{ "<leader>O", function() pick.files() end, desc = "File search" },
+			{
+				"<leader>O",
+				function()
+					pick.files()
+				end,
+				desc = "File search",
+			},
 
 			{ "<leader>b", group = "Buffer" },
 			{ "<leader>bj", "<cmd>bufferlinepick<CR>", desc = "jump" },
-			{ "<leader>bf", function() pick.buffers() end, desc = "find" },
+			{
+				"<leader>bf",
+				function()
+					pick.buffers()
+				end,
+				desc = "find",
+			},
 			{ "<leader>bw", "<cmd>bufferwipeout<CR>", desc = "wipeout" },
 
 			{ "<leader>j", group = "Jumps" },
@@ -140,7 +158,13 @@ M.configure = function()
 			},
 			{ "<leader>jD", "<cmd>lua vim.diagnostic.reset()<CR>", desc = "Clear diagnostics" },
 			{ "<leader>jm", "<cmd>MarkdownPreviewToggle<CR>", desc = "Preview markdown" },
-			{ "<leader>J", function() pick.buffers() end, desc = "Find buffers" },
+			{
+				"<leader>J",
+				function()
+					pick.buffers()
+				end,
+				desc = "Find buffers",
+			},
 
 			{ "<leader>T", group = "Treesitter" },
 			{ "<leader>Ti", ":InspectTree<CR>", desc = "Inspect tree" },
@@ -217,7 +241,11 @@ M.configure = function()
 			{ "<leader>lf", "<cmd>lua vim.lsp.buf.format()<CR>", desc = "Format" },
 			{ "<leader>ll", "<cmd>checkhealth vim.lsp<CR>", desc = "Info" },
 			{ "<leader>lL", "<cmd>Mason<CR>", desc = "Installer Info" },
-			{ "<leader>lj", "<cmd>lua vim.diagnostic.jump({ count = 1, float = true })<CR>", desc = "Next Dianogstics" },
+			{
+				"<leader>lj",
+				"<cmd>lua vim.diagnostic.jump({ count = 1, float = true })<CR>",
+				desc = "Next Dianogstics",
+			},
 			{
 				"<leader>lk",
 				"<cmd>lua vim.diagnostic.jump({ count = -1, float = true })<CR>",

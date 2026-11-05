@@ -69,6 +69,6 @@ local function cs(trigger, nodes, opts) --{{{
 end --}}}
 
 cs("co", { t('echo "'), i(1, ""), t('"') }, { "jcl", "jj" })
-cs("im", { t('import '), i(1, "") }, { "jcl", "jj" })
+cs("im", { t("import "), i(1, "") }, { "jcl", "jj" })
 
 return snippets, autosnippets

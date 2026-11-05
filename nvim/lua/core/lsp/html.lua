@@ -6,18 +6,18 @@ M.configure = function()
 	vim.lsp.config("html", {
 		capabilities = capabilities,
 	})
-		vim.lsp.enable("html")
+	vim.lsp.enable("html")
 
 	vim.lsp.config("svelte", {
 		filetypes = { "svelte" },
 		root_markers = { "svelte.config.js", ".git" },
 	})
-		vim.lsp.enable("svelte")
+	vim.lsp.enable("svelte")
 
 	vim.lsp.config("cssls", {
 		capabilities = capabilities,
 	})
-		vim.lsp.enable("cssls")
+	vim.lsp.enable("cssls")
 
 	-- Tailwind CSS LSP starts only in projects with a Tailwind config.
 	vim.lsp.config("tailwindcss", {
@@ -26,14 +26,14 @@ M.configure = function()
 				experimental = {
 					classRegex = {
 						-- Standard patterns
-						{ "class:\\s*([^=]+)",                    "[\"'`]([^\"'`]*).*?[\"'`]" },
-						{ "class=\\s*[\"'`]([^\"'`]*).*?[\"'`]",  "[\"'`]([^\"'`]*).*?[\"'`]" },
+						{ "class:\\s*([^=]+)", "[\"'`]([^\"'`]*).*?[\"'`]" },
+						{ "class=\\s*[\"'`]([^\"'`]*).*?[\"'`]", "[\"'`]([^\"'`]*).*?[\"'`]" },
 						{ ":class=\\s*[\"'`]([^\"'`]*).*?[\"'`]", "[\"'`]([^\"'`]*).*?[\"'`]" },
 					},
 				},
 				includeLanguages = {
 					svelte = "html",
-					heex = "html",    -- Phoenix LiveView support
+					heex = "html", -- Phoenix LiveView support
 					eex = "html",
 					elixir = "html",
 				},

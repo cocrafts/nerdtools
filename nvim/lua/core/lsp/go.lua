@@ -46,7 +46,7 @@ M.configure = function()
 	})
 
 	vim.lsp.config("gopls", lsp_config)
-		vim.lsp.enable("gopls")
+	vim.lsp.enable("gopls")
 end
 
 return M
