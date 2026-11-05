@@ -152,14 +152,6 @@ return {
 					require("crates").setup()
 				end,
 			},
-			{
-				"MysticalDevil/inlay-hints.nvim",
-				event = "LspAttach",
-				dependencies = { "neovim/nvim-lspconfig" },
-				config = function()
-					require("inlay-hints").setup()
-				end,
-			},
 			-- {
 			-- 	"TabbyML/vim-tabby",
 			-- 	event = { "InsertEnter" },
