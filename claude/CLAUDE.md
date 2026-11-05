@@ -9,21 +9,18 @@ Apply [Ponytail](https://github.com/DietrichGebert/ponytail)'s full discipline t
 refactoring, review and design task, because less unnecessary code means less to maintain.
 This governs what to build, not prose; the approval, comments, reporting and verification rules below still apply.
 
-- **Understand, then minimize.** Read affected code and trace callers and consumers before choosing
-  a solution, because a small diff in the wrong layer is another bug.
-- **Stop at the first sufficient option:** skip speculative work → reuse existing code or idioms →
-  standard library → native platform feature → installed dependency → readable one-liner → minimum
-  custom code. Ask before dropping requested behavior; a smaller scope is the user's choice.
-- **Prefer deletion and boring code.** Keep the smallest readable working diff and fewest necessary
-  files; omit speculative abstractions, single-product factories, unused configuration and scaffolding
-  for later, because flexibility without a consumer is maintenance without a benefit.
-- **Correct beats short.** Choose the edge-case-correct option when equally small; preserve trust-boundary
-  validation, data-loss handling, security, accessibility, real-world calibration and explicit requirements,
-  because code is minimal only when it still fulfills its contract.
-- **Make shortcuts accountable.** When accepting a known ceiling, state the limit and upgrade trigger;
-  put the fact in a name, assertion or regression check first, and use a comment only under the Comments rule.
-  Verify non-trivial behavior with the smallest runnable check that catches its failure; reuse existing tests
-  before adding machinery, because less code does not excuse an unproved result.
+- **Understand, then minimize.** Read affected code, callers and consumers first, because a small diff
+  in the wrong layer is another bug.
+- **Stop at the first sufficient option:** skip speculative work → reuse existing code or idioms → standard
+  library → native platform → installed dependency → readable one-liner → minimum custom code.
+  Ask before dropping requested behavior; scope is the user's choice.
+- **Prefer deletion and boring code.** Keep the smallest readable working diff and fewest files;
+  omit speculative abstractions, single-product factories, unused configuration and scaffolding for later.
+- **Correct beats short.** Preserve explicit requirements, edge cases, trust-boundary validation,
+  data-loss handling, security, accessibility and real-world calibration; minimal code still fulfills its contract.
+- **Make shortcuts accountable.** State a known ceiling and upgrade trigger in a name, assertion or
+  regression check before considering a comment. Prove non-trivial behavior with the smallest runnable
+  check that catches failure, reusing existing tests before adding machinery.
 
 ## Git commits
 
@@ -55,13 +52,11 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
 - **Background lanes**: launch a long job in the background and report when its notification
   arrives, so the user never has to poll.
 - **When the agent commits on its own, the report ends with one git line**: `commit <sha…> · land <sha | not yet, because …> · tree clean | left: <path> (why)`. Name anything edited outside the repo (memory, inbox, plans) there too, because `git status` does not show it.
-- **Choose the shape for the request, not for every reply.** For questions, explanations and
-  discussion, answer directly in natural prose; a short confirmation or progress update needs
-  only a sentence or two. For a work report, give the result, supporting evidence and the next
-  action when there is one, in plain paragraphs or bullets without mandatory labels. For a
-  decision brief, add the trade-off, recommendation and the choice the user must make. This
-  keeps the answer ahead of its supporting detail; reserve `/cto-report` for an explicit request
-  or a product-level brief. Headers start at about 500 words; process detail belongs in commits.
+- **Match the request.** Answer questions directly; confirmations and progress need only a sentence
+  or two. Work reports give the result, evidence and any next action in plain prose or bullets, without
+  mandatory labels. Decision briefs add trade-offs, a recommendation and the user's choice. Keep the
+  answer first; use `/cto-report` only when requested or for product-level briefs. Headers start around
+  500 words; process detail belongs in commits.
 - **Read a file over 300 lines in the part you need** (Grep, or Read with offset and limit), and
   summarise a log by script to at most 20 lines, so the context keeps room for the work.
 
