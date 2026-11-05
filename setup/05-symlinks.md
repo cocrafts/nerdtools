@@ -52,7 +52,6 @@ tracked items into it one by one, so a new tracked file is one more line here:
 mkdir -p ~/.claude/skills ~/.codex ~/.agents/skills
 printf '@~/nerdtools/claude/CLAUDE.md\n' > ~/.claude/CLAUDE.md
 ln -sfn ~/nerdtools/claude/statusline.sh ~/.claude/statusline.sh
-ln -sfn ~/nerdtools/claude/commands      ~/.claude/commands
 ln -sfn ~/nerdtools/claude/scripts       ~/.claude/scripts
 ln -sfn ~/nerdtools/claude/themes        ~/.claude/themes
 ln -sfn ~/nerdtools/claude/CLAUDE.md     ~/.codex/AGENTS.md
@@ -306,7 +305,7 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 ```bash
 for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushell ~/.config/tmux \
             ~/.aider.conf.yml ~/revive.toml ~/.config/lazygit/config.yml ~/.config/zls.json \
-            ~/.config/herdr/config.toml ~/.claude/commands ~/.claude/statusline.sh \
+            ~/.config/herdr/config.toml ~/.claude/statusline.sh \
             ~/.codex/AGENTS.md; do
   if [[ -L "$link" && -e "$link" ]]; then
     printf "✓ %-40s -> %s\n" "$link" "$(readlink "$link")"
@@ -323,6 +322,6 @@ head -1 ~/.claude/CLAUDE.md   # a real file, must print: @~/nerdtools/claude/CLA
 
 - `ln -sfn` is idempotent (force-overwrite existing symlink, no-deref).
 - `~/.claude` is a real directory holding live credentials, sessions, history, and
-  installed plugins. Only `statusline.sh`, `commands/`, `scripts/`, `themes/`, and
+  installed plugins. Only `statusline.sh`, `scripts/`, `themes/`, and
   each `skills/<name>/` are linked back to the repo; `CLAUDE.md` is a real file that
   imports the repo's, and `settings.json` is merged by hand.
