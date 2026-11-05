@@ -2,7 +2,7 @@
 size = 14.2
 
 [[keyboard.bindings]]
-chars = " w"
+chars = "\u001B[115;9u"
 key = "S"
 mods = "Command"
 

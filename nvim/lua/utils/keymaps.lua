@@ -23,6 +23,8 @@ key.mode_keys("n", {
 	["*"] = "<cmd>lua require('utils.helper').toggle_highlight_search()<CR>",
 })
 
+vim.keymap.set({ "n", "i", "v" }, key.save, "<cmd>up<CR>", { silent = true, desc = "save" })
+
 key.mode_keys("v", {
 	["J"] = ":m '>+1<CR>gv=gv",
 	["K"] = ":m '<-2<CR>gv=gv",
@@ -32,7 +34,6 @@ key.mode_keys("v", {
 
 if vim.g.neovide then
 	vim.g.neovide_input_use_logo = 1 -- enable use of the logo (cmd) key
-	vim.keymap.set("n", "<D-s>", ":up<CR>") -- Save
 	vim.keymap.set("v", "<D-c>", '"+y') -- Copy
 	vim.keymap.set("n", "<D-v>", '"+P') -- Paste normal mode
 	vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode

@@ -4,6 +4,7 @@ local mac = vim.uv.os_uname().sysname == "Darwin"
 
 M.mod = mac and "C" or "M"
 M.other_mod = mac and "M" or "C"
+M.save = mac and "<D-s>" or "<C-s>"
 
 M.lead = function(key)
 	return "<" .. M.mod .. "-" .. key .. ">"
