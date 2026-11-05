@@ -45,7 +45,7 @@ Worker and coach context have separate owners:
 
 The shared worktree command resolves `<workspace>/.wt/<name>.md` or
 `<main checkout>/.cards/<name>.md`; it is the only card reader used by Claude Code and
-omp. The coach hook walks up from cwd to the first ancestor holding `.coach/`, then
+Pi. The coach hook walks up from cwd to the first ancestor holding `.coach/`, then
 inlines the board only up to a page. Past that it prints the path and State section, so a
 board that has grown into a record costs its own reader the context it saved.
 

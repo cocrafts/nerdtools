@@ -17,6 +17,12 @@ $env:PATH = @(
     $env:PATH
 ) -join ';'
 
+$gitExe = Get-Command git.exe -ErrorAction SilentlyContinue
+if ($gitExe) {
+    $gitBashDir = Join-Path (Split-Path (Split-Path $gitExe.Source)) 'bin'
+    if (Test-Path "$gitBashDir\bash.exe") { $env:PATH = "$gitBashDir;$env:PATH" }
+}
+
 # --- Env ---
 $env:XDG_CONFIG_HOME = "$HOME\.config"
 $env:STARSHIP_CONFIG = "$NerdRoot\conf\starship.toml"
@@ -54,11 +60,11 @@ if (Get-Module -ListAvailable PSReadLine) {
 if (Get-Module -ListAvailable posh-git) { Import-Module posh-git }
 
 # --- Tool init (starship / mise) ---
-if (Get-Command starship -ErrorAction SilentlyContinue) {
-    Invoke-Expression (&starship init powershell)
-}
 if (Get-Command mise -ErrorAction SilentlyContinue) {
     Invoke-Expression (& { (mise activate pwsh | Out-String) })
+}
+if (Get-Command starship -ErrorAction SilentlyContinue) {
+    Invoke-Expression (&starship init powershell)
 }
 
 # --- Per-machine override (counterpart of entry.sh's local.zsh) ---

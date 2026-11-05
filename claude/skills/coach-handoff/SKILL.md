@@ -114,6 +114,6 @@ are an interested party, so recover from the board, not by asking them.
 - **Never ship a standing rule from a template.** Every rule written into `reentry.md` is copied
   from the board, which the human corrects; a rule typed from memory or from an example in this
   file survives its own retirement. Both handoff defects seen so far were of this shape.
-- **A session address is not durable state.** Names like `omp-<pid>` die with the process. Verify
+- **A session address is not durable state.** Names like `pi-<pid>` die with the process. Verify
   every address against the registry at write time, and identify a worker by the directory it
   stands in.

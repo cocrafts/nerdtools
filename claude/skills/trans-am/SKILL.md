@@ -22,8 +22,10 @@ around them.
   does not (TS loss, two reference-faithful paths, a mechanism the reference lacks), write a
   `/cto-report` for the person and park the item; never guess.
 - **Lanes are path-disjoint.** Each lane owns a list of paths; an edit another lane's file needs
-  goes to the merge-final step. Concurrency ceiling: the workspace's tested worker count
-  (`~/metascript/CLAUDE.md` §Coaching: two).
+  goes to the merge-final step. Run every ready lane at once and choose how many from the
+  dependency graph and the measured load (`~/metascript/CLAUDE.md` §Coaching), because
+  tracing and editing proceed in parallel while builds stay serialized by the one-build rule
+  in the lane contract.
 - **One agent per step, not one agent per lane.** A step returns, the coordinator audits it,
   the next step of that lane starts. A lane-long agent drowns its own context.
 - **The coordinator audits in the main session** (global rule "Audit by yourself"): it reads
@@ -50,7 +52,7 @@ around them.
    `~/nerdtools/claude/tools/wt.sh new <arc>-lane-<x> wt/<arc>` with `MSC_BUILDER` set to the
    fresh builder. Note each lane in the arc card's State.
 5. **Brief and launch.** One background `Agent` per step, `model: "sonnet"`, prompt = the lane
-   contract below plus the step. Run both lanes at once.
+   contract below plus the step. Run every ready lane at once.
 6. **On each return:** audit the diff, rerun one pin red/green, apply its NIM-REF proposals,
    update the card State, start the lane's next step. A step that came back with a question
    goes through rule 2 of the hard rules.
@@ -112,7 +114,10 @@ fires on a deletion you meant, make the commit show the intent; if it still fire
 report its output.
 
 The machine is shared: one build at a time, no long suites; check `df -h /System/Volumes/Data`
-before a large build.
+before a large build. To stop a command of yours that hangs, stop it by its own handle: the
+background task id, or the PID of the process whose command line you started. Never kill by
+image name (`taskkill /IM msc.exe`, `pkill msc`): other sessions' gates run the same binary,
+and a killed test lands in their land verdict as a red they did not cause.
 
 Final message, 60 lines at most, no narrative. Per step: the commits; the reference file:line
 followed; the pins with one line of red/green evidence each; what you did not verify; proposed

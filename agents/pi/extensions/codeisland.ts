@@ -249,6 +249,8 @@ function extractLastAssistantText(
 // ── Extension ─────────────────────────────────────────────────────────────────
 
 export default function codeislandExtension(pi: ExtensionAPI) {
+  if (process.platform !== "darwin") return;
+
   /** TTY path detected once at startup. */
   const tty = detectTty();
 
