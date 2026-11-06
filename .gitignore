@@ -57,3 +57,15 @@ claude/**/*.backup
 claude/**/*.bak.*
 
 core/target
+
+# Machine-local leftovers: build output, Syncthing's per-device ignore, trash, archives, scratch
+out/
+claude/tools/claudeQuota/out/
+claude/tools/claudeQuota/claudeQuota
+claude/skills/.trash/
+claude/skills/colosseum-copilot
+*.removed/
+*.backup
+omp/config.yml.lock
+.stignore
+note.md
