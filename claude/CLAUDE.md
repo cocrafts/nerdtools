@@ -67,7 +67,9 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
   around 500 words; process detail belongs in commits.
 - **Report a stop as verdict, completed, next.** The run-to-completion rule below decides when to
   stop: when no path in the agreed scope moves, or at a `/worktree-relaunch` boundary. Report that
-  stop once, in `/cto-report` shape, with the verdict first, then what completed with its evidence,
+  stop once, in `/cto-report` shape, with the verdict first, naming what backs the chosen fix (a
+  reference, a measurement or the existing design) or that it is a workaround waiting on the user's
+  pivot decision, then what completed with its evidence,
   then what is next and who acts, because the user returns from many sessions and reads the top.
 - **Read a file over 300 lines in the part you need** (Grep, or Read with offset and limit), and
   summarise a log by script to at most 20 lines, so the context keeps room for the work.
