@@ -92,7 +92,9 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
   without this one's context: write it in the `/cto-report` shape unasked, open with the goal and
   what blocks it, show a behaviour choice as a minimal code example with its real output, and gloss
   or drop any term this session coined. A choice with a conventional answer is one sentence naming
-  your default. Then end the turn; later reports restate it in one line. `AskUserQuestion` comes after the brief.
+  your default. Then end the turn, never with an options menu (`AskUserQuestion`), because a menu asks
+  for a pick before the context that decides it. A later report restates each waiting decision with
+  one sentence of what it changes for the user and the recommendation, not a bare label.
 - **Explain from the user's seat first, technical second.** For a product or language decision,
   start with what changes for the app author, then the mechanism and evidence needed to judge it.
   Add a small code example or before/after only when it makes the difference clearer. For a
