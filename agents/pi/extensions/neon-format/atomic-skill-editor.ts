@@ -1,5 +1,5 @@
 import { CustomEditor, type KeybindingsManager, type Theme } from "@earendil-works/pi-coding-agent";
-import { CURSOR_MARKER, SelectList, decodeKittyPrintable, isKeyRelease, matchesKey, parseColor, parseKey, stripTerminalSequences, visibleWidth, type AutocompleteProvider, type AutocompleteSuggestions, type EditorTheme, type TUI, type TuiMouseEvent, type TuiMouseEventResult } from "@earendil-works/pi-tui";
+import { CURSOR_MARKER, SelectList, decodeKittyPrintable, isKeyRelease, matchesKey, parseColor, parseKey, renderFakeCursor, stripTerminalSequences, visibleWidth, type AutocompleteProvider, type AutocompleteSuggestions, type EditorTheme, type TUI, type TuiMouseEvent, type TuiMouseEventResult } from "@earendil-works/pi-tui";
 import { AtomBuffer } from "./atom-buffer.ts";
 import { layoutAtoms, caretInRows, cursorInRow, type AtomRow } from "./atom-layout.ts";
 import { SKILL_CHIP_PATTERN, allowsSkillTokens, collapseSkillTokens } from "./skill-atoms.ts";
@@ -134,12 +134,12 @@ export class AtomicSkillEditor extends CustomEditor {
 			for (const cell of row.cells) {
 				let shown = cell.text;
 				if (cell.atom?.expansion?.startsWith("/skill:") && this.known().has(cell.atom.expansion.slice(7))) shown = this.palette().style(shown, { fg: "customMessageLabel", bg: "customMessageBg", bold: true });
-				if (showCursor && (cell.start === this.buffer.getCursor() || (bodyWidth === 1 && cell === row.cells.at(-1) && this.buffer.getCursor() === row.end && !row.softBreak))) shown = CURSOR_MARKER + this.palette().style(cell.text, { fg: this.palette().colors.customMessageBg, bg: this.palette().colors.muted });
+				if (showCursor && (cell.start === this.buffer.getCursor() || (bodyWidth === 1 && cell === row.cells.at(-1) && this.buffer.getCursor() === row.end && !row.softBreak))) shown = CURSOR_MARKER + renderFakeCursor(shown);
 				text += shown;
 				columns += cell.columns;
 			}
 			if (showCursor && this.buffer.getCursor() === row.end && !row.softBreak && columns < bodyWidth) {
-				text += CURSOR_MARKER + this.palette().style(" ", { fg: this.palette().colors.customMessageBg, bg: this.palette().colors.muted });
+				text += CURSOR_MARKER + renderFakeCursor(" ");
 				columns++;
 			}
 			text += " ".repeat(Math.max(0, bodyWidth - columns) + this.renderedPadding);

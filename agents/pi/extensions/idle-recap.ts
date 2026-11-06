@@ -66,7 +66,8 @@ export default function idleRecap(pi: ExtensionAPI): void {
 			: { recap: "Agent đã dừng; chưa xác định xong hay blocked.", status: "unknown" };
 	});
 	pi.on("agent_before_settle", (event, ctx) => {
-		if (ctx.mode !== "tui" || event.outcome !== "completed" || pending?.status !== "ready") return;
+		if (ctx.mode !== "tui" || event.outcome !== "completed" || !pending) return;
+		if (pending.status !== "ready") return;
 		if (readyRescues >= maxReadyRescuesPerRun) {
 			pending = { status: "ready", recap: `Agent vẫn dừng khi còn việc đã duyệt: ${pending.recap}` };
 			return;

@@ -28,7 +28,8 @@ let nativeHandler;
 const feedNative = chunk => nativeInput.process(chunk);
 const terminal = {
 	rows: 24, columns: 80, kittyProtocolActive: false,
-	write: data => writes.push(data), hideCursor() {}, showCursor() {},
+	write: data => writes.push(data),
+	hideCursor() { writes.push("\x1b[?25l"); }, showCursor() { writes.push("\x1b[?25h"); },
 	start(handler) {
 		nativeHandler = handler;
 		process.stdin.on("data", feedNative);
@@ -38,7 +39,8 @@ const terminal = {
 nativeInput.on("data", data => nativeHandler(data));
 nativeInput.on("paste", text => nativeHandler(`\x1b[200~${text}\x1b[201~`));
 const fullscreen = process.env.PI_FOCUS_TEST_MODE !== "regular";
-const ui = new (fullscreen ? tui.TuiAltScreen : tui.TuiMainScreen)(terminal, false);
+const hardwareCursor = process.env.PI_CURSOR_TEST_MODE === "hardware";
+const ui = new (fullscreen ? tui.TuiAltScreen : tui.TuiMainScreen)(terminal, hardwareCursor);
 let hookReports = 0;
 ui.addInputListener(data => { if (data === "\x1b[I" || data === "\x1b[O") hookReports++; });
 const defaultEditor = new pi.CustomEditor(ui, editorTheme, keys);
@@ -63,9 +65,11 @@ const ctx = {
 };
 const feed = data => process.stdin.emit("data", data);
 const frame = () => { writes.length = 0; ui.renderNow(true); return writes.join(""); };
-const cursorBackground = themeModule.theme.style("cursor", { bg: themeModule.theme.colors.muted }).split("cursor")[0];
 const focused = () => {
-	assert.ok(frame().includes(cursorBackground));
+	const output = frame();
+	assert.equal(output.includes("\x1b[7m"), !hardwareCursor, "Only software mode must draw a fake cursor");
+	assert.ok(mode.editor.render(80).join("\n").includes(tui.CURSOR_MARKER));
+	if (hardwareCursor) assert.ok(output.includes("\x1b[?25h"), "Hardware mode must show the terminal cursor");
 	const rows = mode.editor.render(80);
 	for (const row of [rows[0], rows.at(-1)]) assert.equal(row, themeModule.theme.style(tui.stripTerminalSequences(row), { fg: tui.parseColor("#89b4fa") }), "Focused input border must match Herdr blue");
 };
@@ -73,7 +77,10 @@ const dimmed = () => {
 	for (const row of mode.editor.render(80)) assert.equal(row, themeModule.theme.fg("dim", tui.stripTerminalSequences(row)), "Unfocused input border and all text, including skill chips, must be dim");
 };
 const blurred = () => {
-	assert.ok(!frame().includes(cursorBackground), "Window focus-out must remove the software cursor while editor remains focused");
+	const output = frame();
+	assert.ok(!output.includes("\x1b[7m"), "Window focus-out must remove the software cursor while editor remains focused");
+	assert.ok(!mode.editor.render(80).join("\n").includes(tui.CURSOR_MARKER));
+	if (hardwareCursor) assert.ok(!output.includes("\x1b[?25h"), "Window focus-out must not show the terminal cursor");
 	dimmed();
 };
 try {
@@ -115,7 +122,7 @@ try {
 	assert.equal(process.stdin.listenerCount("data"), count, "Reload must restore only one observer");
 	feed("\x1b[O"); blurred();
 	feed("\x1b[I"); focused();
-	console.log(`PASS terminal focus (${fullscreen ? "fullscreen" : "regular"}): Herdr-blue border overrides effort color; terminal and dialog blur dim border/text/chips; native routing, cursor, redraw, split/batched reports, paste isolation, draft preservation, reload cleanup`);
+	console.log(`PASS terminal focus (${fullscreen ? "fullscreen" : "regular"}, ${hardwareCursor ? "hardware" : "software"} cursor): Herdr-blue border overrides effort color; terminal and dialog blur dim border/text/chips; native routing, cursor, redraw, split/batched reports, paste isolation, draft preservation, reload cleanup`);
 } finally {
 	await handlers.get("session_shutdown")?.({ reason: "shutdown" }, ctx);
 	ui.stop(); nativeInput.destroy();

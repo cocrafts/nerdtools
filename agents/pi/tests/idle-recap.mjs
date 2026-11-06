@@ -143,7 +143,7 @@ try {
   assert.equal(unknown.details.status, "unknown");
   assert.ok(unknown.content.includes("chưa xác định"));
   assert.ok(tui.stripTerminalSequences(new CustomMessageComponent(unknown, renderer).render(100).join("\n")).includes("󰋚 status:"));
-  console.log("PASS: native symlink loader + real Pi AgentSession/faux provider; bounded ready rescue, three-minute idle without inference, persistent dim Pi status, lifecycle safety");
+  console.log("PASS: native symlink loader + real Pi AgentSession/faux provider; bounded ready rescue, blocked and unknown stops, three-minute idle without inference, persistent dim Pi status, lifecycle safety");
 } finally {
   await session?.dispose();
   mock.timers.reset();

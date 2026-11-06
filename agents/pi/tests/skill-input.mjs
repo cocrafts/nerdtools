@@ -77,7 +77,12 @@ try {
 				assert.ok(!blurred.includes(tui.CURSOR_MARKER), "Blurred input must not expose a hardware cursor marker");
 				editor.focused = true;
 				const focused = editor.render(width).join("\n");
-				assert.ok(focused.includes(themeModule.theme.style("cursor", { bg: themeModule.theme.colors.muted }).split("cursor")[0]) && focused.includes(tui.CURSOR_MARKER), "Focused input must restore its cursor block");
+				const renderer = new tui.TuiMainScreen(fakeTui.terminal, false);
+				const software = renderer.resolveFakeCursors([focused]).join("\n");
+				assert.ok(software.includes("\x1b[7m") && software.includes(tui.CURSOR_MARKER), "Software mode must draw Pi's cursor");
+				const hardware = new tui.TuiMainScreen(fakeTui.terminal, true).resolveFakeCursors([focused]).join("\n");
+				assert.ok(!hardware.includes("\x1b[7m") && hardware.includes(tui.CURSOR_MARKER), "Hardware mode must keep the position marker without a fake cursor");
+				assert.equal(plain(hardware), plain(software), "Cursor mode must preserve prompt text");
 				assert.equal(editor.getDraft().cursor, cursor, "Focus changes must preserve cursor position");
 			}
 		}

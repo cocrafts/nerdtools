@@ -1,13 +1,18 @@
 {
-  "lastChangelogVersion": "1.2.0",
+  "lastChangelogVersion": "1.5.0",
   "theme": "saigon-night",
   "themes": [
     "~/nerdtools/agents/pi/themes"
   ],
-  "defaultProvider": "openai-codex",
+  "skills": [
+    "~/nerdtools/claude/skills",
+    "!**/synced/**"
+  ],
+  "defaultProvider": "openai",
   "defaultModel": "gpt-6.1-sol",
   "defaultThinkingLevel": "medium",
   "hideThinkingBlock": true,
+  "showHardwareCursor": true,
   "packages": [
     "npm:pi-web-access",
     "npm:@fractaal/pi-cross-agent-memory@0.3.1",
@@ -21,5 +26,9 @@
       "prompts": []
     }
   ],
-  "deviceId": "10949172-1946-4ef1-a383-35d7ba5a9458"
+  "deviceId": "10949172-1946-4ef1-a383-35d7ba5a9458",
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
+    "{\"source\":\"npm:pi-subagents@0.78.0\",\"scope\":\"user\"}": "0.78.0"
+  }
 }
