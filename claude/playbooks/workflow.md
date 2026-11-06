@@ -72,3 +72,11 @@ Before adopting a rule, read it as the steps a session will take:
    in the layer that owns it, so a tool default does not silently replace the decision.
 5. When an example helps, show the intended action and the evidence that selects it. Keep the
    incident's history in its issue or commit, so the instruction teaches how to act.
+
+## Shorten without changing what a rule decides
+
+A trim keeps every decision the text made: list each instruction it removes and where that
+instruction now lives (another rule, a playbook, the harness), and keep any that has no other home,
+because a trim that drops one silently changes behaviour no reader notices until it is gone
+(2026-10-31: the "list every differing variable" and "never an options menu" rules). A change to
+what a rule decides is its own commit, named as a rule change.
