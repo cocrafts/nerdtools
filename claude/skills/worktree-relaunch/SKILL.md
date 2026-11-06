@@ -54,6 +54,9 @@ the handoff.
    - Commit finished steps through the repository's commit procedure. Revert or finish a half step.
    - Stop every background job, or name it in the handoff with its process, path and output file.
      The next session cannot see a job it did not start. On Windows, kill the whole process tree.
+   - Wait for running subagents instead of stopping them, and record each result in the card or
+     handoff: a subagent reports only to the session that started it, so its work is lost to a
+     cleared one.
    - Remove probe dirs that the gate would read as changed paths.
    - `git status --short` is clean, or every leftover is named in the handoff.
 

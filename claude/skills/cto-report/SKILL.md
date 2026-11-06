@@ -23,7 +23,8 @@ give the product-level answer; the detail waits until it is asked for.
    and unrelated edge cases for a follow-up, so the brief stays focused on the user's call.
 
 Scale to the stakes: a status check or yes/no is one line with no structure. A decision is
-the options with their trade-offs, your recommendation, and one question. Confusion at the
+the options with each one's concrete cost and risk, your recommendation, what you do while
+waiting, and one question. Confusion at the
 product level ("là sao", "wait what") gets the question re-framed from the user's seat, not
 the detail repeated.
 

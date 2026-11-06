@@ -28,11 +28,8 @@ worktree, edit a protected runtime, start a restricted lane or bypass a safeguar
 
 ## 2. Trace, then resolve the technical decision
 
-For a MetaScript compiler/runtime issue, load and follow
-[trace-ref](../trace-ref/SKILL.md): reproduce with controls, inspect emitted operations, read
-the analogous reference pass, check intentional divergences and runtime prerequisites, then
-produce the verdict. Follow repository rules when they override a skill's command recipe;
-for example, preserve the object cache when the repository forbids clearing it.
+For a MetaScript compiler/runtime issue, load and follow [trace-ref](../trace-ref/SKILL.md)
+to its verdict. Repository rules override a skill's command recipe (e.g. keep the object cache).
 
 For another project, use its designated reference and the same evidence discipline. If no
 reference exists, say so and test the existing implementation's contract; absence is not
@@ -49,9 +46,10 @@ remains unverified. This is the agent's assessment, not a simulated user approva
 - **Evidence is insufficient but a permitted probe can distinguish the explanations:** run
   that probe, then reassess. Missing evidence is an investigation task, not a product choice.
   Stop when the probe would not add evidence; do not repeat runs to avoid making a judgment.
-- **An intentional divergence, new mechanism, scope change, workaround/pivot, safety or
-  performance trade-off, or explicit permission boundary remains:** go to step 3. Do not
-  weaken the user's acceptance criteria to make the recommendation executable.
+- **An intentional divergence, a NEW MECHANISM the trace proved, scope change,
+  workaround/pivot, safety or measured performance trade-off, or explicit permission
+  boundary remains:** go to step 3. Do not weaken the user's acceptance criteria to make the
+  recommendation executable. The hours a fix costs are information, never the reason.
 
 Call a root cause proven only when it explains both the failing case and its controls, and
 at least one variant pins the same invariant. A fixed bug does not prove a common root for
@@ -65,8 +63,10 @@ Use cto-report to give one self-contained decision brief, then end the turn:
 2. **Evidence and boundary:** what the trace answered, what is still unknown, and why the
    existing authorization or design does not select an action.
 3. **Recommendation and trade-off:** one recommended next action; name the existing idiom
-   it reuses, or mark **NEW MECHANISM** and say what it adds and can regress. Explain a
-   real alternative only when the user genuinely has a choice.
+   or reference mechanism it reuses. Mark **NEW MECHANISM** only on a part the trace proved
+   neither Nim nor typescript-go has (workspace §Language behaviour, "NEW MECHANISM is a
+   finding a trace proves"), with what it adds and can regress; an unread part is "not
+   traced yet". Explain a real alternative only when the user genuinely has a choice.
 4. **One concrete question:** name exactly what approval or product choice unlocks. Approval
    to investigate or prepare a design is not approval to implement that design.
 
