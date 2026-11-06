@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# Usage: diskclean-slot [--dry-run] [--skip-file FILE] [--deep-metascript PATH]... [PATH]...
+# With no PATH, removes every allowed path found in ~/metascript worktrees.
+set -uo pipefail
+shopt -s nullglob
+ROOT=$HOME/metascript
+META=$HOME/.metascript
+WT='(\.wt/wt-[^/]+|neon-wt-[^/]+|neon)'
+dry=0 skipfile= deep=() args=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --dry-run) dry=1 ;;
+    --skip-file) skipfile=${2:?--skip-file needs a file}; shift ;;
+    --deep-metascript) deep+=("${2:?--deep-metascript needs a path}"); shift ;;
+    -*) echo "unknown option: $1" >&2; exit 2 ;;
+    *) args+=("$1") ;;
+  esac; shift
+done
+[ -z "$skipfile" ] || [ -f "$skipfile" ] || { echo "skip file not found: $skipfile" >&2; exit 2; }
+
+absolute() { case "$1" in /*) printf '%s\n' "${1%/}" ;; *) printf '%s\n' "$PWD/${1%/}" ;; esac; }
+resolved() { [ -e "$1" ] || [ -L "$1" ] || return 1; printf '%s/%s\n' "$(cd "$(dirname "$1")" && pwd -P)" "$(basename "$1")"; }
+in_deep() { local d; for d in "${deep[@]+"${deep[@]}"}"; do [ "$(absolute "$d")" = "$1" ] && return 0; done; return 1; }
+
+# Prints the refusal reason, or nothing when the path may be removed.
+refusal() {
+  local p=$1
+  case "/$p/" in */.git/*) echo "inside a .git directory"; return ;; esac
+  case "/$p/" in */../*|*/./*) echo "path has . or .. components"; return ;; esac
+  if [ "$p" = "$META" ]; then echo "the whole ~/.metascript"; return; fi
+  if [ "${p#"$META"/}" != "$p" ]; then
+    in_deep "$p" || echo "under ~/.metascript without --deep-metascript naming it"; return
+  fi
+  if [ "${p#"$ROOT/recompiler/"}" != "$p" ]; then echo "recompiler main checkout"; return; fi
+  if [[ $p =~ ^$ROOT/$WT/out/[^/]+/\.cache$ ]]; then return; fi
+  if [[ $p =~ ^$ROOT/$WT/out/debug/_test_[^/]+$ ]]; then
+    [ -z "$(command find "$p" -mmin -120 -print -quit 2>/dev/null)" ] || echo "_test_ dir written within 2h"; return
+  fi
+  echo "outside the allowlist (out/*/.cache, out/debug/_test_* older than 2h)"
+}
+
+check() {
+  local p r why
+  p=$(absolute "$1")
+  why=$(refusal "$p")
+  if [ -z "$why" ]; then
+    if ! r=$(resolved "$p"); then why="does not exist"
+    elif [ "$r" != "$p" ]; then why=$(refusal "$r"); why=${why:+"resolves to $r: $why"}; fi
+  fi
+  [ -z "$why" ] && { printf '%s\n' "$p"; return 0; }
+  echo "refused: $p ($why)" >&2; return 1
+}
+
+owner() {
+  local p=$1
+  if [ "${p#"$META"/}" != "$p" ]; then printf '%s\n' "$p"; return; fi
+  [[ $p =~ ^($ROOT/$WT)/ ]] && printf '%s\n' "${BASH_REMATCH[1]}"
+}
+
+skipped() {
+  local w=$1 name=${1##*/} card
+  if [ -n "$skipfile" ] && grep -qxF "$name" "$skipfile"; then echo "on the skip list"; return; fi
+  card=$ROOT/.wt/${name#wt-}.md
+  if [ "${w#"$ROOT/.wt/"}" != "$w" ] && [ -f "$card" ] &&
+    grep -iE 'in flight' "$card" | grep -iE 'gate|land' | grep -viqE 'none|nothing|no [a-z ]*in flight'; then
+    echo "card has a gate/land in flight"; return; fi
+}
+
+refused=0 paths=()
+if [ ${#args[@]} -gt 0 ] || [ ${#deep[@]} -gt 0 ]; then
+  for a in "${args[@]+"${args[@]}"}" "${deep[@]+"${deep[@]}"}"; do
+    p=$(check "$a") && paths+=("$p") || refused=$((refused+1))
+  done
+else
+  for w in "$ROOT"/.wt/wt-* "$ROOT"/neon-wt-* "$ROOT"/neon; do
+    for c in "$w"/out/*/.cache "$w"/out/debug/_test_*; do
+      p=$(check "$c" 2>/dev/null) && paths+=("$p")
+    done
+  done
+fi
+for p in "${paths[@]+"${paths[@]}"}"; do
+  [ "${p#"$META"/}" != "$p" ] && echo "--deep-metascript will remove: $p"
+done
+
+free() { df -g /System/Volumes/Data | awk 'NR==2{print $4}'; }
+[ $dry -eq 1 ] || echo "before: $(free)GB free"
+last=
+for p in "${paths[@]+"${paths[@]}"}"; do
+  w=$(owner "$p")
+  [ -n "$w" ] || { echo "refused: $p (no owning worktree)" >&2; refused=$((refused+1)); continue; }
+  why=$(skipped "$w")
+  [ -n "$why" ] && { echo "skip $p ($why)"; continue; }
+  if [ "$w" != "$last" ] || [ $dry -eq 0 ]; then
+    held=$(nice -n 19 lsof +D "$w" 2>/dev/null | awk 'NR>1{print $1}' | sort -u | tr '\n' ' '); last=$w
+  fi
+  [ -n "$held" ] && { echo "skip $p (open by: ${held% })"; continue; }
+  size=$(nice -n 19 du -sh "$p" 2>/dev/null | cut -f1)
+  if [ $dry -eq 1 ]; then echo "would remove $p ($size)"; continue; fi
+  nice -n 19 rm -rf -- "$p" && echo "removed $p ($size)"
+done
+[ $dry -eq 1 ] || echo "after: $(free)GB free"
+[ $refused -eq 0 ] || { echo "$refused path(s) refused" >&2; exit 1; }

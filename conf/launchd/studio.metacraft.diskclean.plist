@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>studio.metacraft.diskclean</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/usr/bin/lockf</string>
+		<string>-t</string>
+		<string>0</string>
+		<string>/Users/le/Library/Caches/diskclean.lock</string>
+		<string>/bin/bash</string>
+		<string>/Users/le/nerdtools/bin/diskclean</string>
+		<string>--auto</string>
+	</array>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+	</dict>
+	<key>StartInterval</key>
+	<integer>300</integer>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>LowPriorityIO</key>
+	<true/>
+	<key>StandardOutPath</key>
+	<string>/Users/le/Library/Logs/diskclean.log</string>
+	<key>StandardErrorPath</key>
+	<string>/Users/le/Library/Logs/diskclean.log</string>
+</dict>
+</plist>

@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# Usage: diskclean [--auto]; --auto exits unless free space is under 50GB or the last run is 30+ minutes old.
+shopt -s nullglob
+stamp=~/Library/Caches/diskclean.stamp
+free=$(df -g /System/Volumes/Data | awk 'NR==2{print $4}')
+if [ "${1:-}" = --auto ] && [ "$free" -ge 50 ] && [ -n "$(find "$stamp" -mmin -30 2>/dev/null)" ]; then exit 0; fi
+touch "$stamp"
+date '+%F %T'
+df -h /System/Volumes/Data | tail -1
+build='^(msc[^ ]*|zig|clang|clang\+\+|cc|ld|ar|gate|make|ninja|xcrun|xcodebuil[a-z]*|bun|vite|esbuild)$'
+if [ "$free" -lt 50 ]; then cd ~/metascript; mkdir -p .wt/.trash; t=$(date +%H%M%S); n=0
+  open=$(lsof -nP +c0 -F cn 2>/dev/null | awk '/^c/{c=substr($0,2)} /^n\/Users\/le\/metascript\//{print c"\t"substr($0,2)}')
+  for w in .wt/wt-* neon-wt-* neon; do card=.wt/${w#.wt/wt-}.md
+    [ -f "$card" ] && grep -iE 'in flight' "$card" | grep -iE 'gate|land' | grep -viqE 'none|nothing|no [a-z ]*in flight' && { echo "skip $w (card: gate/land in flight)"; continue; }
+    echo "$open" | awk -F'\t' -v d="$PWD/$w/" 'index($2, d) == 1 {print $1}' | grep -qE "$build" && continue
+    for c in "$w"/out/*/.cache; do mv "$c" ".wt/.trash/${c//\//_}.$t" && n=$((n+1)); done
+  done; rm -rf .wt/.trash; echo "cleared $n idle out/*/.cache"; df -h /System/Volumes/Data | tail -1; fi
+cd ~/metascript/recompiler
+for w in ~/metascript/.wt/wt-*/; do w=${w%/}; git -C "$w" rev-parse --git-dir >/dev/null 2>&1 || continue
+  b=$(git -C "$w" symbolic-ref -q --short HEAD) || continue
+  git -C "$w" reflog show --format=%gs "$b" | grep -qv '^branch: Created from' || { echo "fresh ${w##*/}"; continue; }
+  out=$(WT_CWD=$HOME/metascript/recompiler bash ~/nerdtools/claude/tools/wt.sh rm "$w" 2>&1)
+  echo "$out" | grep -q "removed $w" && echo "retired ${w##*/}"; done
+cd ~/metascript; mkdir -p .wt/.trash; t=$(date +%H%M%S)
+for w in .wt/wt-* neon-wt-* neon; do [ -d "$w/out" ] || continue
+  held=$(lsof +D "$PWD/$w" 2>/dev/null | awk 'NR>1')
+  if [ "${w#.wt/}" != "$w" ] && [ -z "$held" ] && [ -z "$(command find "$w/out" -mmin -120 -print -quit 2>/dev/null)" ]; then
+    s=$(du -sh "$w/out" | cut -f1); rm -rf "$w/out"; echo "removed $w/out ($s)"; continue; fi
+  b=$(echo "$held" | awk '{print $1}' | sort -u | grep -E "$build" | head -1)
+  [ -n "$b" ] && { echo "building $w ($b)"; continue; }
+  open=$(echo "$held" | grep -o '_test_[^/ ]*' | sort -u); n=0
+  for d in $(command find "$w/out/debug" -maxdepth 1 -name '_test_*' -mmin +120 2>/dev/null); do
+    echo "$open" | grep -qx "${d##*/}" || { rm -rf "$d"; n=$((n+1)); }; done
+  [ $n -gt 0 ] && echo "removed $n stale $w/out/debug/_test_*"
+done; rm -rf .wt/.trash
+n=0; cd /private/tmp
+for e in * .[!.]*; do case "$e" in claude-501|powerlog|com.apple.*|.X*|.s.*|cc-socks) continue;; esac
+  [ -n "$(command find "$e" -mmin -360 -print -quit 2>/dev/null)" ] && continue
+  lsof +D "/private/tmp/$e" >/dev/null 2>&1 && continue
+  [ -n "$(command find "$e" -maxdepth 5 -name .git -print -quit 2>/dev/null)" ] && { echo "kept /tmp/$e (git repo)"; continue; }
+  rm -rf "$e" 2>/dev/null && n=$((n+1)); done; echo "removed $n /tmp entries"
+if [ -z "$(pgrep -x zig)" ] && [ -d ~/.cache/zig ]; then s=$(du -sh ~/.cache/zig | cut -f1); mv ~/.cache/zig ~/.cache/zig.trash && rm -rf ~/.cache/zig.trash && echo "zig cache deleted ($s)"; fi
+du -sh ~/.metascript/cache ~/metascript/.wt
+df -h /System/Volumes/Data | tail -1
