@@ -67,7 +67,7 @@ quota_segment() {
     [ "$at" -gt "$now" ] && countdown=$(awk -v s=$((at - now)) 'BEGIN{
       d = int(s/86400); h = int(s%86400/3600); m = int(s%3600/60);
       if (d > 0) printf "\033[2m-%dd%dh\033[22m", d, h;
-      else if (h > 0) printf "\033[2m-%dh%dm\033[22m", h, m;
+      else if (h > 0) printf "\033[2m-%dh%d\033[22m", h, m;
       else if (m > 0) printf "\033[2m-%dm\033[22m", m;
       else printf "\033[2m-<1m\033[22m";
     }')
@@ -79,7 +79,9 @@ quota_segment() {
 
 quota="$(quota_segment "5h " "$five" "$five_at")$(quota_segment "7d " "$week" "$week_at")"
 
-account=$(jq -r '.oauthAccount.emailAddress // empty' "$HOME/.claude.json" 2>/dev/null)
-[ -n "$account" ] && account=" · $account"
+profile=''
+case "${CLAUDE_CONFIG_DIR:-}" in
+  */.claude-[0-9]*) profile=" · cl${CLAUDE_CONFIG_DIR##*/.claude-}" ;;
+esac
 
-printf '%s%s%s (%s%%)%s · %s%s%s' "$model" "$ecolor" "$ctx" "$pct" "$ereset" "$folder" "$quota" "$account"
+printf '%s%s%s (%s%%)%s%s%s · %s' "$model" "$ecolor" "$ctx" "$pct" "$ereset" "$profile" "$quota" "$folder"
