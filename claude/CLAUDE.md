@@ -114,11 +114,6 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
 - **When a tool or the harness refuses an action on purpose, report the refusal and leave the
   action to the user**: the refusal is the safeguard, and the user decides whether to lift it.
 
-## Frontend Component Architecture
-
-**Pattern**: a ui/content/layout/features split, rather than Atomic atoms/molecules/organisms.
-**Trigger**: starting a React/Vue/Svelte project | refactoring `components/` | choosing where a new component lives | asked about Atomic Design.
-
 ## Defaults
 
 - **Tool priority**: web search goes through the Exa MCP, which every machine installs (`setup/05-symlinks.md`); when it is missing or unauthorized, say so and fall back to the built-in search. Built-in Read/Write/Edit/Grep/Task are used directly.
