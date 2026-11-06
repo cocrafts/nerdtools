@@ -37,8 +37,19 @@ When a session decides wrong, or the person corrects how it worked:
    share.
 5. Read the rewrite against the failing case and against the case the old text was written
    for. A session reading it acts right on both.
+6. Offer a tool when text cannot hold the decision: the passage was already right and the
+   session broke it, the same slip returns after a rewrite, or the decision has to be made at
+   a moment the session does not notice (a host gone idle, a job that hung, a waiter that
+   missed an outcome). A session forgets across compaction and pauses and reads a rule only
+   when it thinks to, so a promise to do better holds nothing. Propose, in the same reply as
+   the correction, the check that carries the decision without being remembered (a watcher
+   or alarm that fires on its own, a script that refuses the wrong action, a waiter that
+   returns on every outcome), with what it costs to run and what it would have caught. Build
+   it once the person agrees, and name it in the instruction that governs the work, so the
+   text points at the tool instead of standing in for it.
 
-Report the change as: the decision that went wrong, the passage that caused it, the new text.
+Report the change as: the decision that went wrong, the passage that caused it, the new text,
+and the tool offered or the reason none can carry it.
 
 ## Memory holds preferences and pointers
 
