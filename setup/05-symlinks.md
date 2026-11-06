@@ -98,10 +98,11 @@ Dropping a skill upstream leaves a dangling link behind, so prune before linking
 `find ~/.claude/skills ~/.agents/skills -maxdepth 1 -type l ! -exec test -e {} \; -exec rm {} \;`.
 
 `settings.json` is **merged by hand, never symlinked**. Claude Code reads one
-user-level `settings.json`, and part of it is machine-specific — the
-`rexa post claude` hooks only make sense where Rexa is installed. The repo's
-`claude/settings.json` carries the shared keys only; fold them into the live file
-on each machine, which lets the repo win on any key it declares:
+user-level `settings.json`, and part of it is machine-specific. The repo's `claude/settings.json` carries the shared keys
+only; fold them into the live file on each machine, which lets the repo win on any key
+it declares. `jq *` replaces an array whole, so a hook one machine needs stays in the
+repo copy, guarded to no-op where its tool is missing (the herdr hook), and paths use
+`~`, never `/Users/le`:
 
 ```bash
 jq -s '.[0] * .[1]' ~/.claude/settings.json ~/nerdtools/claude/settings.json   > ~/.claude/settings.new && mv ~/.claude/settings.new ~/.claude/settings.json

@@ -101,7 +101,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash '/Users/le/.claude/hooks/herdr-agent-state.sh' session",
+            "command": "[ -f ~/.claude/hooks/herdr-agent-state.sh ] && bash ~/.claude/hooks/herdr-agent-state.sh session || true",
             "timeout": 10
           }
         ]
@@ -216,7 +216,7 @@
   "autoMode": {
     "soft_deny": [
       "$defaults",
-      "Bash(git stash:*) in /Users/le/metascript/recompiler — repo CLAUDE.md hard-forbids discarding working-tree state (stash/reset/checkout .../restore)",
+      "Bash(git stash:*) in ~/metascript/recompiler — repo CLAUDE.md hard-forbids discarding working-tree state (stash/reset/checkout .../restore)",
       "Bash(rm:*) targeting /tmp/verify-parent — shared long-lived worktree the repo docs say must not be removed"
     ],
     "environment": [
@@ -241,10 +241,10 @@
       "**Protected deployment namespaces / environments**: None configured — fall back to the Sensitive remote targets heuristic",
       "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment",
       "### User-specific",
-      "**Primary use of Claude Code**: software development (MetaScript self-hosted compiler — build/test/verify workflow, routine under /Users/le/metascript/recompiler)",
-      "**Trusted repo**: /Users/le/metascript/recompiler (origin: github.com:metascriptlang/compiler.git, public) — confidential material is NOT cleared for this repo since it's public; only the repo's own work belongs here, and secrets/sensitive data are never cleared in regardless of visibility",
+      "**Primary use of Claude Code**: software development (MetaScript self-hosted compiler — build/test/verify workflow, routine under ~/metascript/recompiler)",
+      "**Trusted repo**: ~/metascript/recompiler (origin: github.com:metascriptlang/compiler.git, public) — confidential material is NOT cleared for this repo since it's public; only the repo's own work belongs here, and secrets/sensitive data are never cleared in regardless of visibility",
       "**Org-specific CLIs**: None configured (project-specific: `msc` compiler CLI is this repo's own build output, not an org service)",
-      "routine under /Users/le/metascript/recompiler/ prefix: build/test/sync workflow via `msc`, `tools/sync-local-binary.sh`, corpus/guard test runners"
+      "routine under ~/metascript/recompiler/ prefix: build/test/sync workflow via `msc`, `tools/sync-local-binary.sh`, corpus/guard test runners"
     ]
   }
 }
