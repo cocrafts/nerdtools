@@ -19,7 +19,8 @@ Relaunch on purpose at a chunk boundary. Before compacting the same session, run
 and kickstart, because compaction keeps the in-flight step that a relaunch would discard.
 
 **When:**
-- a chunk is committed or landed;
+- a chunk is committed or landed and the next step is new work, at any context size, because the
+  next work does not use the old context and every turn pays for it;
 - a design question went to the person, and the session would otherwise idle on a large context;
 - before a long investigation in a session that is already heavy.
 
