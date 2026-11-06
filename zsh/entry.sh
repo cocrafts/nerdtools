@@ -53,6 +53,12 @@ plugins=(git copyfile jsontools zsh-autosuggestions zsh-syntax-highlighting)
 # ── Aliases ────────────────────────────────────────────────────
 alias vide="neovide"
 alias nvim="env TERM=wezterm nvim"
+alias cl1='CLAUDE_CONFIG_DIR="$HOME/.claude-1" claude'
+alias cl2='CLAUDE_CONFIG_DIR="$HOME/.claude-2" claude'
+alias cl3='CLAUDE_CONFIG_DIR="$HOME/.claude-3" claude'
+alias cl4='CLAUDE_CONFIG_DIR="$HOME/.claude-4" claude'
+alias cl5='CLAUDE_CONFIG_DIR="$HOME/.claude-5" claude'
+alias cl6='CLAUDE_CONFIG_DIR="$HOME/.claude-6" claude'
 
 # ── Tools post-mise (PATH-discoverable) ────────────────────────
 command -v starship >/dev/null && eval "$(starship init zsh)"
