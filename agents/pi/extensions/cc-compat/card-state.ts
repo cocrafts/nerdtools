@@ -4,7 +4,7 @@ import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const HOME = process.env.HOME ?? process.env.USERPROFILE ?? "";
 const TOOL = join(HOME, "nerdtools", "claude", "tools", "wt.sh");
-const CONTRACT = join(HOME, "nerdtools", "claude", "tools", "card-state.py");
+const CONTRACT = join(HOME, "nerdtools", "claude", "tools", "card-state.ts");
 
 interface Snapshot {
   cwd: string;
@@ -37,7 +37,7 @@ function snapshot(cwd: string): Snapshot | null {
 }
 
 function contract(command: string, cwd: string, input: unknown): any {
-  return run("python3", [CONTRACT, command], cwd, input);
+  return run("bun", [CONTRACT, command], cwd, input);
 }
 
 export function withoutCardSnapshots(messages: any[]): any[] {

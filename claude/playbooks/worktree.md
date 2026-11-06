@@ -124,7 +124,20 @@ artifacts, and release policy belong there; none belong in the shared tool.
 Claude Code and Pi use this shared tool for card lookup. Do not add a second card
 locator to a project hook. Compaction hooks for Pi and Claude Code check, without a model call,
 that the card was written after the HEAD commit and every changed file, because the session
-that did the work is the one that can write its State; `card-state.py stale` owns that check
+that did the work is the one that can write its State; `card-state.ts stale` owns that check
 and the card validation, and the current card is reloaded after compaction.
 Compaction preserves an in-flight step. Use `worktree-relaunch` only for a fresh session at
 a safe chunk boundary, because resetting mid-investigation discards its working context.
+
+In Claude Code, `worktree-checkpoint.ts` also asks a carded session to reach a chunk boundary,
+run the full `worktree-relaunch` and end the turn for the person to `/clear`, once context
+passes the auto-compact window minus 100k tokens, after a tool batch and again at Stop unless
+the card was rewritten since. It defers proactive auto-compaction for such a session until the
+card is rewritten, up to the window plus 200k, because a session idle above the mark compacts on
+the person's next message before any tool batch or Stop can remind it (wt-std-unix-socket,
+2026-11-03, 378k); a deferral never reaches the model's real limit, where blocking would fail
+the request. The window is
+`CLAUDE_CODE_AUTO_COMPACT_WINDOW` in the `env` of `claude/settings.json`, not
+`autoCompactWindow`: an inherited value of that variable outranks the setting, and on
+2026-11-02 sessions in long-lived herdr shells kept compacting at about 447k (an inherited
+480000 minus the 33k reserve) while the setting said 400k.

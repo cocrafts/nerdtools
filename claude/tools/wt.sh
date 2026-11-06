@@ -214,7 +214,7 @@ cmd_snapshot() {
     dir=$(dirname "$dir")
   done
   name=$(wt_card_name "$WT_CURRENT") || { printf 'null\n'; return; }
-  (cd "$WT_CURRENT" && cmd_card) | python3 "$(dirname "$0")/card-state.py" snapshot "$WT_CURRENT"
+  (cd "$WT_CURRENT" && cmd_card) | bun "$(dirname "$0")/card-state.ts" snapshot "$WT_CURRENT"
 }
 
 wt_context_inbox() {
@@ -416,13 +416,13 @@ case "$COMMAND" in
   rm) cmd_rm "$@" ;;
   context)
     if [ "${1:-}" = --without-card ]; then
-      { wt_context_handoff; cmd_context; } | python3 "$(dirname "$0")/card-state.py" strip-context
+      { wt_context_handoff; cmd_context; } | bun "$(dirname "$0")/card-state.ts" strip-context
     elif [ "${1:-}" = --checked ]; then
       snapshot=$(cmd_snapshot) || exit $?
       if [ "$snapshot" = null ]; then
         wt_context_handoff; cmd_context
       else
-        { wt_context_handoff; cmd_context; } | python3 "$(dirname "$0")/card-state.py" checked-context "$WT_CURRENT"
+        { wt_context_handoff; cmd_context; } | bun "$(dirname "$0")/card-state.ts" checked-context "$WT_CURRENT"
       fi
     else
       wt_context_handoff; cmd_context "$@"
