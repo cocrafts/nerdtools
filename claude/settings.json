@@ -87,6 +87,15 @@
             "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -x ~/.lightcube/hooks/claude-code-session-end.sh ] && exec ~/.lightcube/hooks/claude-code-session-end.sh || true",
+            "timeout": 15
+          }
+        ]
       }
     ],
     "SessionStart": [
@@ -127,6 +136,15 @@
             "timeout": 20
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -x ~/.lightcube/hooks/claude-code-session-start.sh ] && exec ~/.lightcube/hooks/claude-code-session-start.sh || true",
+            "timeout": 15
+          }
+        ]
       }
     ],
     "Stop": [
@@ -145,6 +163,15 @@
           {
             "type": "command",
             "command": "[ -n \"$SUPERSET_HOME_DIR\" ] && [ -x \"$SUPERSET_HOME_DIR/hooks/notify.sh\" ] && SUPERSET_AGENT_ID=claude \"$SUPERSET_HOME_DIR/hooks/notify.sh\" || true"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ -x ~/.lightcube/hooks/claude-code-user-prompt-submit.sh ] && exec ~/.lightcube/hooks/claude-code-user-prompt-submit.sh || true",
+            "timeout": 15
           }
         ]
       }
