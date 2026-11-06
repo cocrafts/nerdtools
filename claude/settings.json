@@ -1,4 +1,8 @@
 {
+  "env": {
+    "CLAUDE_CODE_SCROLL_SPEED": "5",
+    "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "400000"
+  },
   "permissions": {
     "allow": [
       "Bash(top:*)",
@@ -14,14 +18,17 @@
       "Bash(istats:*)",
       "Bash(sudo powermetrics:*)",
       "mcp__plugin_exa_exa__web_search_exa",
-      "mcp__plugin_exa_exa__web_fetch_exa"
+      "mcp__plugin_exa_exa__web_fetch_exa",
+      "Bash(~/metascript/.gate-host/gate-queue:*)",
+      "Bash(/Users/le/metascript/.gate-host/gate-queue:*)"
     ],
     "deny": [],
     "ask": [
       "Bash(git push:*)"
     ],
-    "defaultMode": "bypassPermissions"
+    "defaultMode": "auto"
   },
+  "model": "opus",
   "disableClaudeAiConnectors": true,
   "hooks": {
     "PermissionRequest": [
@@ -225,7 +232,7 @@
       "effortLevel": "high"
     },
     "claude-opus-5-5": {
-      "effortLevel": "high"
+      "effortLevel": "medium"
     }
   },
   "promptSuggestionEnabled": false,
@@ -237,7 +244,7 @@
   "editorMode": "normal",
   "verbose": false,
   "autoCompactEnabled": true,
-  "autoCompactWindow": 320000,
+  "idleCompaction": false,
   "switchModelsOnFlag": true,
   "autoContinueAtUsageLimit": false,
   "crossSessionInbound": "accept",

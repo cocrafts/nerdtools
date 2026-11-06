@@ -21,9 +21,11 @@ input=$(cat)
     (.effort.level // "")' | tr -d '\r'
 )
 
+[ -n "${CLAUDE_CODE_AUTO_COMPACT_WINDOW:-}" ] && pct=$((tokens * 100 / CLAUDE_CODE_AUTO_COMPACT_WINDOW))
+
 case "$effort" in
   low)    ecolor=$'\033[2m' ;;
-  medium) ecolor=$'\033[39m' ;;
+  medium) ecolor=$'\033[22;39m' ;;
   high)   ecolor=$'\033[94m' ;;
   xhigh)  ecolor=$'\033[93m' ;;
   max)    ecolor=$'\033[91m' ;;
@@ -42,7 +44,7 @@ folder=$(basename "$dir")
 
 ctx=$(awk -v t="$tokens" 'BEGIN{
   if (t >= 1000000) printf "%.1fM", t/1000000;
-  else if (t >= 1000) printf "%.1fK", t/1000;
+  else if (t >= 1000) printf "%.0fk", t/1000;
   else printf "%d", t;
 }')
 
