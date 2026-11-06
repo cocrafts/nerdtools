@@ -5,8 +5,8 @@ import { join } from "node:path";
 import { stale, type Snapshot } from "./card-state.ts";
 
 const COMPACT_RESERVE = 33_000;
-const RELAUNCH_HEADROOM = 100_000;
-const COMPACT_DEFER_LIMIT = 200_000;
+const RELAUNCH_HEADROOM = 133_000;
+const COMPACT_DEFER_LIMIT = 150_000;
 
 function snapshot(cwd: string): Snapshot | null {
   const found = spawnSync("bash", [join(import.meta.dir, "wt.sh"), "snapshot"], { cwd, env: { ...process.env, WT_CWD: cwd }, encoding: "utf8", timeout: 20_000 });

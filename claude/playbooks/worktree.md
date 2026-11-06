@@ -131,9 +131,13 @@ a safe chunk boundary, because resetting mid-investigation discards its working 
 
 In Claude Code, `worktree-checkpoint.ts` also asks a carded session to reach a chunk boundary,
 run the full `worktree-relaunch` and end the turn for the person to `/clear`, once context
-passes the auto-compact window minus 100k tokens, after a tool batch and again at Stop unless
-the card was rewritten since. It defers proactive auto-compaction for such a session until the
-card is rewritten, up to the window plus 200k, because a session idle above the mark compacts on
+passes the auto-compact window minus 133k tokens, after a tool batch and again at Stop unless
+the card was rewritten since. The window is 533000, so the reminder comes near 400k and
+compaction near 500k: the person, 2026-11-07, moved both up by 100k so a session runs longer in
+one piece, accepting that each turn in that band reads 40-50k tokens' worth of cache against
+about 4k in a fresh session. It defers proactive auto-compaction for such a session until the
+card is rewritten, up to the window plus 150k (about 683k, near the 680k ceiling the earlier 480000 window
+set; the model's own limit was not read), because a session idle above the mark compacts on
 the person's next message before any tool batch or Stop can remind it (wt-std-unix-socket,
 2026-11-03, 378k); a deferral never reaches the model's real limit, where blocking would fail
 the request. The window is
