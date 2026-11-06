@@ -121,7 +121,7 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
 
 ## Defaults
 
-- **Tool priority**: MCP first where one is connected (search → exa; browser → `rexa web` inside a Rexa terminal, playwright where the project configures it, else claude-in-chrome), then built-ins. Built-in Read/Write/Edit/Grep/Task are used directly.
+- **Tool priority**: web search goes through the Exa MCP, which every machine installs (`setup/05-symlinks.md`); when it is missing or unauthorized, say so and fall back to the built-in search. Built-in Read/Write/Edit/Grep/Task are used directly.
 - **Code**: follow existing patterns, edit before creating, write docs when asked, use absolute paths, write plain text without emojis, match surrounding style.
 - **Config priority**: project CLAUDE.md → this global → tool defaults → built-in behaviour.
 - **Todos**: strikethrough (`~~text~~`) for completed items; in-progress and pending render plain.

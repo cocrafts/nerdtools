@@ -13,7 +13,8 @@
       "Bash(lsof:*)",
       "Bash(istats:*)",
       "Bash(sudo powermetrics:*)",
-      "mcp__exa__web_search_exa"
+      "mcp__plugin_exa_exa__web_search_exa",
+      "mcp__plugin_exa_exa__web_fetch_exa"
     ],
     "deny": [],
     "ask": [],
@@ -161,7 +162,8 @@
     "gopls-lsp@claude-plugins-official": true,
     "swift-lsp@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": false,
-    "typesafe@typesafe-ai": true
+    "typesafe@typesafe-ai": true,
+    "exa@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "zedra": {

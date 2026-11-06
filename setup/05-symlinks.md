@@ -69,7 +69,14 @@ for repo in ~/metascript/{recompiler,yoga,void,neon,ion,lightcube}; do
   mkdir -p "$hookDir"
   ln -sfn "$commitHook" "$hookDir/commit-msg"
 done
+
+claude plugin install exa@claude-plugins-official
 ```
+
+Web search goes through the Exa MCP on every machine (global `CLAUDE.md`, Tool priority),
+installed as the official plugin. Its server asks for OAuth once per machine: in an
+interactive `claude` session run `/mcp`, pick `plugin:exa:exa`, and authenticate. Until
+then a `claude -p` run reports the server as unauthorized.
 
 The hook loop asks Git for each repository's effective hook directory instead of
 changing `core.hooksPath`. Existing repository hooks remain active, and linked
@@ -284,6 +291,8 @@ New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\scripts"       -Targ
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\themes"        -Target "$HOME\nerdtools\claude\themes" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md"      -Target "$HOME\nerdtools\claude\CLAUDE.md" | Out-Null
 
+claude plugin install exa@claude-plugins-official
+
 Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
   Test-Path "$($_.FullName)\SKILL.md"
 } | ForEach-Object {
@@ -315,6 +324,7 @@ for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushe
 done
 
 head -1 ~/.claude/CLAUDE.md   # a real file, must print: @~/nerdtools/claude/CLAUDE.md
+claude plugin list | grep -A3 'exa@claude-plugins-official'   # Status: enabled
 [ "$(uname)" = Darwin ] && readlink ~/.config/nerdtools/alacritty.toml   # macOS: ~/nerdtools/conf/alacritty/mac.toml
 ```
 
