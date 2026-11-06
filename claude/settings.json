@@ -17,7 +17,9 @@
       "mcp__plugin_exa_exa__web_fetch_exa"
     ],
     "deny": [],
-    "ask": [],
+    "ask": [
+      "Bash(git push:*)"
+    ],
     "defaultMode": "bypassPermissions"
   },
   "disableClaudeAiConnectors": true,
