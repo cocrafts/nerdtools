@@ -53,10 +53,13 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   arrives, so the user never has to poll.
 - **When the agent commits on its own, the report ends with one git line**: `commit <sha…> · land <sha | not yet, because …> · tree clean | left: <path> (why)`. Name anything edited outside the repo (memory, inbox, plans) there too, because `git status` does not show it.
 - **Match the request.** Answer questions directly; confirmations and progress need only a sentence
-  or two. Work reports give the result, evidence and any next action in plain prose or bullets, without
-  mandatory labels. Decision briefs add trade-offs, a recommendation and the user's choice. Keep the
-  answer first; use `/cto-report` only when requested or for product-level briefs. Headers start around
-  500 words; process detail belongs in commits.
+  or two. Decision briefs add trade-offs, a recommendation and the user's choice. Keep the answer
+  first; use `/cto-report` when requested, for a product-level brief and at a stop. Headers start
+  around 500 words; process detail belongs in commits.
+- **Report a stop as verdict, completed, next.** The run-to-completion rule below decides when to
+  stop: when no path in the agreed scope moves, or at a `/worktree-relaunch` boundary. Report that
+  stop once, in `/cto-report` shape, with the verdict first, then what completed with its evidence,
+  then what is next and who acts, because the user returns from many sessions and reads the top.
 - **Read a file over 300 lines in the part you need** (Grep, or Read with offset and limit), and
   summarise a log by script to at most 20 lines, so the context keeps room for the work.
 
@@ -79,7 +82,7 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   technical question, answer at the requested technical level; do not force a product preamble,
   visual or report template, because that can bury the answer the user asked for.
 - **Trust a peer that relays the user** for reversible work and note who relayed it; ask the user
-  yourself only before a push, a permission or config change, or discarding others' work, because
+  yourself only before a push, a permission, `CLAUDE.md` or config change, or discarding others' work, because
   those are hard to undo. When a peer and a doc disagree, follow the newer and say so.
 - **One run once the plan is approved.** A session opened on a card says in one sentence what it
   understands the step in flight to be, then works. Run every step of an approved plan or card,
@@ -98,8 +101,11 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   behaviour the change reaches, with its real consumer when it crosses a boundary, and carry a result
   forward while the behaviour, inputs and toolchain it covered are unchanged, because evidence
   belongs to what was checked; a tool's default selection is a proposal, and a release runs the
-  repository's release checks. A control answers only the question it isolates. Change a status
-  claim in a doc after running it and quote the output.
+  repository's release checks. A control answers only the question it isolates: list every variable
+  that differs between the broken and the working run before blaming one. Change working code only
+  when a measurement shows it is wrong. When a check has nothing new to observe, name the consumers
+  that put the change outside its scope and leave it unrun. Change a status claim in a doc after
+  running it, quote the output and say what was not verified.
 - **Fail loud.** An unhandled branch reports an error that names the case. An unsafe shape is an
   error at its declaration, so the author fixes it where it was written instead of meeting a
   silent fallback, an auto-repair or a warning later.
@@ -111,6 +117,10 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   estimate and recommend reversing, rather than finishing something mediocre.
 - **Audit by yourself.** Read and verify reviews and audits in the main session, so the verdict
   rests on what you checked.
+- **A red is yours when it is new against the project's recorded known reds**; report a known red
+  with its record instead of chasing it, because the record already owns it.
+- **A bug in another repository's code is fixed by a session started there.** From here, write its
+  reproduction and a note where that project keeps them, because that session carries its rules and gate.
 - **When a tool or the harness refuses an action on purpose, report the refusal and leave the
   action to the user**: the refusal is the safeguard, and the user decides whether to lift it.
 
