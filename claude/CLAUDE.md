@@ -43,9 +43,18 @@ at the rest.** Before writing or editing one, read `~/nerdtools/claude/playbooks
 
 ## Workflow — instructions and memory
 
-**An instruction says what to do and why; a mistake is fixed in the instruction that produced it.**
-Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory, read
+**An instruction says what to do and why; a mistake is fixed in the instruction that produced it,
+or by a tool when the instruction was right and the slip happened anyway.** When the person
+corrects how you worked, before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory, read
 `~/nerdtools/claude/playbooks/workflow.md`.
+
+## Browsing — the person's real browser
+
+**When the answer needs a page as the person sees it, drive their own browser through the Aside
+CLI; when it needs only public facts, search.** Aside carries the person's sign-ins, cookies and
+GPU, which a web search or a headless harness does not. Before debugging a page, opening or
+reading a tab, checking a flow end to end, or reaching anything behind the person's login, read
+`~/nerdtools/claude/playbooks/browsing.md`.
 
 ## Reporting
 
@@ -69,13 +78,21 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
   better", answer with a recommendation and end the turn: the question opens a discussion, and a
   design change made in the same turn as its conclusion closes it before the user has spoken.
   Read-only probes, debug prints and reverts go ahead without asking.
-- **Ask when it is unclear.** When a report is vague, ask for the command and its verbatim output;
-  when an "ok" answers a question with several branches, ask which branch; when a tool is named in
-  passing, ask what the user needs from it before designing around it. Ask whenever you are not
-  confident or not willing: asking is the normal path, and a session that guesses costs more.
-- **Present user-owned decisions in full once:** impact on the product or author, options and costs,
-  and your recommendation; then end the turn. Later reports restate the decision and recommendation
-  in one line, not a bare identifier or the whole brief. Use `AskUserQuestion` only after explaining the choice.
+- **Resolve technical uncertainty before asking.** During approved work, trace code and consumers,
+  run the smallest distinguishing probe, and follow applicable references (`/trace-ref`, then
+  `/trace-before-ask` against the user's stated criteria). Implement and verify the best-supported
+  solution within scope, because investigation is the agent's job. If uncertainty remains but safe
+  work can proceed, choose the best-supported reversible path and report assumptions, limits and
+  verification gaps; lack of confidence alone is not a blocker. Ask only for genuinely missing intent,
+  approval or necessary evidence: an ambiguous "ok", a tool without a goal, or unrecoverable output.
+  Before presenting any technical choice, apply that reference-then-criteria sequence to each
+  applicable option. Bring the remaining user-owned choice with traced options and a recommendation.
+  Never present an assumption as verified.
+- **Ask a decision so it is answered in one read**, because the user returns from other sessions
+  without this one's context: write it in the `/cto-report` shape unasked, open with the goal and
+  what blocks it, show a behaviour choice as a minimal code example with its real output, and gloss
+  or drop any term this session coined. A choice with a conventional answer is one sentence naming
+  your default. Then end the turn; later reports restate it in one line. `AskUserQuestion` comes after the brief.
 - **Explain from the user's seat first, technical second.** For a product or language decision,
   start with what changes for the app author, then the mechanism and evidence needed to judge it.
   Add a small code example or before/after only when it makes the difference clearer. For a
@@ -84,10 +101,14 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
 - **Trust a peer that relays the user** for reversible work and note who relayed it; ask the user
   yourself only before a push, a permission, `CLAUDE.md` or config change, or discarding others' work, because
   those are hard to undo. When a peer and a doc disagree, follow the newer and say so.
-- **One run once the plan is approved.** A session opened on a card says in one sentence what it
-  understands the step in flight to be, then works. Run every step of an approved plan or card,
-  commit each, report at the end. Stop for a push, for deleting what someone else wrote, or for an
-  open design question; everything else runs through.
+- **Finish the approved scope in one run.** State a card's step in flight, then complete its acceptance
+  criteria, verification and authorized commits/lands without renewing approval at slice boundaries.
+  Batch non-blocking questions into the final report, because interruptions make the user manage work
+  the agent can finish. Stop only the part blocked by missing permission, a scope/product decision,
+  an unavailable dependency or an unmet safety requirement; continue independent approved work. At a boundary or blocker, start the next
+  step already selected by the agreed goal, milestones or plan. If none is selected after
+  `/trace-before-ask`, propose a direction with a recommendation or the one unblocking question.
+  Completion pressure never authorizes a push, discarding others' work, weaker checks or unverified success.
 - **Fix the root.** A broken call site is a symptom: fix the path that produced it, and offer that
   fix on its own. When the root fix is too large for one session, say so and split it by scope.
 - **A workaround is a pivot, and a pivot is the user's.** When the fix you would propose goes
