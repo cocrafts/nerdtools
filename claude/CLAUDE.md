@@ -111,8 +111,11 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
   step already selected by the agreed goal, milestones or plan. If none is selected after
   `/trace-before-ask`, propose a direction with a recommendation or the one unblocking question.
   Completion pressure never authorizes a push, discarding others' work, weaker checks or unverified success.
-- **Fix the root.** A broken call site is a symptom: fix the path that produced it, and offer that
-  fix on its own. When the root fix is too large for one session, say so and split it by scope.
+- **Fix the root, with the best-backed option.** A broken call site is a symptom: fix the path that
+  produced it, and offer that fix on its own. Between options, choose the one backed by a reference,
+  a measurement or the existing design over a quicker one; the effort an option costs is information
+  in the brief, never the reason to pick it, because a hasty fix is paid again by everyone after.
+  When the root fix is too large for one session, say so and split it by scope.
 - **A workaround is a pivot, and a pivot is the user's.** When the fix you would propose goes
   around something you are building together, it ends the investment in that thing, which is a
   scope decision. Say it in one line and ask: *"this is a workaround, the root fix is X, do we
