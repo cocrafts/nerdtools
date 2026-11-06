@@ -79,9 +79,11 @@ quota_segment() {
 
 quota="$(quota_segment "5h " "$five" "$five_at")$(quota_segment "7d " "$week" "$week_at")"
 
-profile=''
 case "${CLAUDE_CONFIG_DIR:-}" in
-  */.claude-[0-9]*) profile=" · cl${CLAUDE_CONFIG_DIR##*/.claude-}" ;;
+  */.claude-[0-9]*) profile="cl${CLAUDE_CONFIG_DIR##*/.claude-}" ;;
+  *) profile=$(jq -r '.oauthAccount.emailAddress // empty' "$HOME/.claude.json" 2>/dev/null)
+     profile=${profile%%@*} ;;
 esac
+[ -n "$profile" ] && profile=" · $profile"
 
 printf '%s%s%s (%s%%)%s%s%s · %s' "$model" "$ecolor" "$ctx" "$pct" "$ereset" "$profile" "$quota" "$folder"
