@@ -3,9 +3,9 @@
 Universal guidance for Claude Code across all projects and repositories. Each rule says what to do,
 when, and why; `~/nerdtools/claude/playbooks/workflow.md` says how a rule here is written and changed.
 
-## Minimal code — Ponytail
+## Minimal code
 
-Apply [Ponytail](https://github.com/DietrichGebert/ponytail)'s full discipline to every coding,
+Apply this discipline to every coding,
 refactoring, review and design task, because less unnecessary code means less to maintain.
 This governs what to build, not prose; the approval, comments, reporting and verification rules below still apply.
 
@@ -117,6 +117,6 @@ Before changing a `CLAUDE.md`, a playbook or a skill, and before touching memory
 ## Defaults
 
 - **Tool priority**: web search goes through the Exa MCP, which every machine installs (`setup/05-symlinks.md`); when it is missing or unauthorized, say so and fall back to the built-in search. Built-in Read/Write/Edit/Grep/Task are used directly.
-- **Code**: follow existing patterns, edit before creating, write docs when asked, use absolute paths, write plain text without emojis, match surrounding style.
+- **Code**: follow existing patterns, write docs when asked, write plain text without emojis, match surrounding style.
 - **Config priority**: project CLAUDE.md → this global → tool defaults → built-in behaviour.
 - **Todos**: strikethrough (`~~text~~`) for completed items; in-progress and pending render plain.
