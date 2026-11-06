@@ -94,6 +94,7 @@ M.configure = function()
 			},
 			follow_current_file = {
 				enabled = true,
+				leave_dirs_open = true,
 			},
 			group_empty_dirs = false,
 			-- "open_default", netrw disabled, opening a directory opens neo-tree in whatever position is specified in window.position
