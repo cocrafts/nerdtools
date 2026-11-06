@@ -30,6 +30,12 @@ mode = "Alt"
 mods = "Command"
 
 [[keyboard.bindings]]
+chars = "\u001B[101;9u"
+key = "E"
+mode = "Alt"
+mods = "Command"
+
+[[keyboard.bindings]]
 chars = "\u001B[49;9u"
 key = "1"
 mode = "Alt"

@@ -1,0 +1,80 @@
+onboarding = false
+
+[theme.custom]
+active_row_bg = "#1E202F"
+
+[keys]
+focus_agent = ["ctrl+1..9", "alt+shift+1..9"]
+switch_workspace = ["alt+1..9"]
+next_tab = ["prefix+n", "ctrl+tab"]
+previous_tab = ["prefix+p", "ctrl+shift+tab"]
+new_tab = ["prefix+c"]
+close_pane = ["prefix+x", "alt+w"]
+split_vertical = ["prefix+v", "ctrl+shift+l"]
+split_horizontal = ["prefix+minus", "ctrl+shift+j"]
+zoom = ["prefix+z", "ctrl+z", "ctrl+enter"]
+toggle_sidebar = ["prefix+b", "ctrl+e"]
+
+[ui]
+sidebar_collapsed_mode = "hidden"
+prompt_new_tab_name = false
+pane_gaps = false
+hide_tab_bar_when_single_tab = true
+agent_panel_sort = "spaces"
+
+[ui.sidebar.agents]
+rows = [["state_icon", "machine", "workspace", "tab"], ["terminal_title_stripped"]]
+
+[ui.toast.clipboard]
+position = "top-right"
+
+[experimental]
+pane_history = false
+
+[[keys.command]]
+key = ["ctrl+h", "alt+h"]
+type = "plugin_action"
+command = "vim-herdr-navigation.left"
+description = "navigate left (vim/herdr)"
+
+[[keys.command]]
+key = ["ctrl+j", "alt+j"]
+type = "plugin_action"
+command = "vim-herdr-navigation.down"
+description = "navigate down (vim/herdr)"
+
+[[keys.command]]
+key = ["ctrl+k", "alt+k"]
+type = "plugin_action"
+command = "vim-herdr-navigation.up"
+description = "navigate up (vim/herdr)"
+
+[[keys.command]]
+key = ["ctrl+l", "alt+l"]
+type = "plugin_action"
+command = "vim-herdr-navigation.right"
+description = "navigate right (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+w"
+type = "plugin_action"
+command = "vim-herdr-navigation.close"
+description = "close pane (vim/herdr)"
+
+[[keys.command]]
+key = "ctrl+shift+h"
+type = "plugin_action"
+command = "pane-split.left"
+description = "split left"
+
+[[keys.command]]
+key = "ctrl+shift+k"
+type = "plugin_action"
+command = "pane-split.up"
+description = "split up"
+
+[[keys.command]]
+key = "prefix+d"
+type = "pane"
+command = "lumen diff"
+description = "review diff với lumen"

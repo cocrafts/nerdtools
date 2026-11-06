@@ -16,7 +16,12 @@ ln -sfn ~/nerdtools/conf/revive.toml    ~/revive.toml
 ln -sfn ~/nerdtools/conf/lazygit.yml    ~/.config/lazygit/config.yml
 ln -sfn ~/nerdtools/conf/zls.json       ~/.config/zls.json
 ln -sfn ~/nerdtools/conf/tmux           ~/.config/tmux
-mkdir -p ~/.config/herdr && ln -sfn ~/nerdtools/conf/herdr/config.toml ~/.config/herdr/config.toml
+mkdir -p ~/.config/herdr
+if [ "$(uname)" = Darwin ]; then
+  ln -sfn ~/nerdtools/conf/herdr/mac.toml ~/.config/herdr/config.toml
+else
+  ln -sfn ~/nerdtools/conf/herdr/windows.toml ~/.config/herdr/config.toml
+fi
 mkdir -p ~/.config/git && ln -sfn ~/nerdtools/conf/git/ignore ~/.config/git/ignore
 [ "$(uname)" = Darwin ] && mkdir -p ~/.config/nerdtools && ln -sfn ~/nerdtools/conf/alacritty/mac.toml ~/.config/nerdtools/alacritty.toml
 ```
@@ -36,6 +41,16 @@ It carries the patterns every repo needs and no repo should have to declare:
 also holds `allowed-signers`, which is machine-local.
 
 `~/.config/herdr/` also holds machine-local runtime state (logs, sockets, `session.json`), so only the `config.toml` file is symlinked, not the whole directory.
+
+Herdr reads one complete profile: `conf/herdr/mac.toml` on macOS and
+`conf/herdr/windows.toml` on Windows. Linux uses the Windows profile's Control/Alt
+bindings with its native shell defaults. There is no shared config or merge step.
+
+After changing Herdr keybindings, reload them from a Herdr pane with
+`herdr server reload-config` (or use the default prefix, then `Shift+r`).
+The sidebar shortcut uses `Cmd+E` on macOS and `Ctrl+E` on Windows, hiding it completely rather than leaving a compact rail.
+Alacritty needs the macOS slot linked above to forward `Cmd+E` in the alternate screen.
+The macOS profile leaves `Ctrl+E` available to shell/editor apps.
 
 ## Claude Code and Codex
 
@@ -135,9 +150,10 @@ The `vim-herdr-navigation` plugin (seamless `Ctrl+h/j/k/l` across herdr panes an
 herdr plugin link ~/nerdtools/conf/herdr/vim-herdr-navigation && herdr server reload-config
 ```
 
-`pane-split` (`~/nerdtools/conf/herdr/pane-split`) backs `Ctrl+Shift+h/k`: herdr only splits right/down, and a
-`type = "shell"` command runs through `cmd.exe` on Windows, where `"$HERDR_BIN_PATH"` never expands. A plugin
-action runs `bash` directly on every OS. Link it the same way (needs `jq`):
+`pane-split` (`~/nerdtools/conf/herdr/pane-split`) provides `Ctrl+Shift+h/k` in both profiles.
+macOS also keeps `Cmd+Shift+h/k` with native shell commands. The Windows profile omits
+those commands because `cmd.exe` does not expand `"$HERDR_BIN_PATH"`.
+The plugin runs `bash` directly. Link it once per machine the same way (needs `jq`):
 
 ```bash
 herdr plugin link ~/nerdtools/conf/herdr/pane-split && herdr server reload-config
@@ -165,7 +181,8 @@ The commands below use Bash. Native Windows needs permission to create real syml
 
 Keep `~/.pi/agent` a real directory: credentials, session transcripts, trust decisions,
 installed npm packages, and caches stay machine-local. Shared sources live in
-`~/nerdtools/agents/pi`; skills link to the existing Claude source rather than a separate copy.
+`~/nerdtools/agents/pi`; `settings.json` lists `~/nerdtools/claude/skills` as a skill directory,
+so Pi reads the Claude skills in place and a renamed or added skill needs no relink.
 Before replacing an existing real settings file or extensions directory, move it to a
 local backup and preserve its integrations in the repo source.
 
@@ -174,11 +191,6 @@ mkdir -p ~/.pi/agent
 ln -sfn ~/nerdtools/agents/pi/settings.json ~/.pi/agent/settings.json
 ln -sfn ~/nerdtools/agents/pi/AGENTS.md     ~/.pi/agent/AGENTS.md
 ln -sfn ~/nerdtools/agents/pi/extensions   ~/.pi/agent/extensions
-mkdir -p ~/.pi/agent/skills
-for skill in ~/nerdtools/claude/skills/*; do
-  [ -f "$skill/SKILL.md" ] || continue
-  ln -sfn "$skill" ~/.pi/agent/skills/"$(basename "$skill")"
-done
 pi install npm:pi-web-access
 pi install npm:@fractaal/pi-cross-agent-memory@0.3.1
 npm ci --ignore-scripts --legacy-peer-deps --prefix ~/nerdtools/agents/pi/extensions/neon-format
@@ -250,6 +262,23 @@ un-escape before comparing), not by timestamp.
 `docs/` is inside the recompiler git repo, so `docs/.stfolder/` and
 `docs/*.sync-conflict-*` are gitignored there.
 
+## Disk cleanup agent (macOS)
+
+```bash
+[ "$(uname)" = Darwin ] && {
+  ln -sfn ~/nerdtools/conf/launchd/studio.metacraft.diskclean.plist ~/Library/LaunchAgents/studio.metacraft.diskclean.plist
+  launchctl bootout gui/$(id -u)/studio.metacraft.diskclean 2>/dev/null
+  launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/studio.metacraft.diskclean.plist
+}
+```
+
+Recompiler and Neon worktree builds under `~/metascript` can fill the disk within hours, and a full disk lets macOS
+SIGKILL the agent sessions. Every 5 minutes launchd runs `bin/diskclean --auto`, which does the cleanup
+when free space is under 50GB or 30 minutes have passed; `lockf` keeps runs from overlapping. It only
+retires landed worktrees through `wt.sh rm`, deletes a recompiler worktree's `out/` once nothing holds
+it and nothing in it was written for 2 hours, clears recompiler `.cache` only under 50GB free, and
+keeps Neon `out/` (rebuilding it costs a cold build), removing only stale `_test_*` there. Output goes to `~/Library/Logs/diskclean.log`. The plist hardcodes `/Users/le`.
+
 ## Windows
 
 Windows uses **directory junctions** instead of `ln -sfn`. Junctions need no admin (unlike
@@ -273,6 +302,10 @@ New-Item -ItemType Junction -Force -Path "$env:APPDATA\alacritty" -Target "$HOME
 New-Item -ItemType Directory -Force -Path "$HOME\.config\nerdtools" | Out-Null
 New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\nerdtools\alacritty.toml" -Target "$HOME\nerdtools\conf\alacritty\windows.toml" | Out-Null
 
+New-Item -ItemType Directory -Force -Path "$HOME\.config\herdr", "$env:APPDATA\herdr" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.config\herdr\config.toml" -Target "$HOME\nerdtools\conf\herdr\windows.toml" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$env:APPDATA\herdr\config.toml" -Target "$HOME\nerdtools\conf\herdr\windows.toml" | Out-Null
+
 # git's default core.excludesfile. A file needs SymbolicLink (junctions are directories only),
 # so this line needs Developer Mode or an elevated shell — or copy the file and re-copy on change.
 New-Item -ItemType Directory -Force -Path "$HOME\.config\git" | Out-Null
@@ -294,11 +327,20 @@ New-Item -ItemType SymbolicLink -Force -Path "$HOME\.codex\AGENTS.md"      -Targ
 
 claude plugin install exa@claude-plugins-official
 
+New-Item -ItemType Directory -Force -Path "$HOME\.pi\agent" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.pi\agent\settings.json" -Target "$HOME\nerdtools\agents\pi\settings.json" | Out-Null
+New-Item -ItemType SymbolicLink -Force -Path "$HOME\.pi\agent\AGENTS.md" -Target "$HOME\nerdtools\agents\pi\AGENTS.md" | Out-Null
+New-Item -ItemType Junction -Force -Path "$HOME\.pi\agent\extensions" -Target "$HOME\nerdtools\agents\pi\extensions" | Out-Null
+pi install npm:pi-web-access
+pi install npm:@fractaal/pi-cross-agent-memory@0.3.1
+
+New-Item -ItemType Directory -Force -Path "$HOME\.pi\agent\skills" | Out-Null
 Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
   Test-Path "$($_.FullName)\SKILL.md"
 } | ForEach-Object {
   New-Item -ItemType SymbolicLink -Force -Path "$HOME\.claude\skills\$($_.Name)" -Target $_.FullName | Out-Null
   New-Item -ItemType Junction     -Force -Path "$HOME\.agents\skills\$($_.Name)" -Target $_.FullName | Out-Null
+  New-Item -ItemType Junction     -Force -Path "$HOME\.pi\agent\skills\$($_.Name)" -Target $_.FullName | Out-Null
 }
 ```
 
@@ -316,7 +358,8 @@ Get-ChildItem "$HOME\nerdtools\claude\skills" -Directory | Where-Object {
 for link in ~/.config/nvim ~/.config/alacritty ~/.config/wezterm ~/.config/nushell ~/.config/tmux \
             ~/.aider.conf.yml ~/revive.toml ~/.config/lazygit/config.yml ~/.config/zls.json \
             ~/.config/herdr/config.toml ~/.claude/statusline.sh \
-            ~/.codex/AGENTS.md; do
+            ~/.codex/AGENTS.md \
+            ~/.pi/agent/settings.json ~/.pi/agent/AGENTS.md ~/.pi/agent/extensions; do
   if [[ -L "$link" && -e "$link" ]]; then
     printf "✓ %-40s -> %s\n" "$link" "$(readlink "$link")"
   else
