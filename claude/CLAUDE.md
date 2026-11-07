@@ -66,7 +66,7 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
   first; use `/cto-report` when requested, for a product-level brief and at a stop. Headers start
   around 500 words; process detail belongs in commits.
 - **End every turn that leaves approved work done, in flight or blocked with a stop report** in
-  the `/cto-report` stop shape (verdict, solid, backed by, next, ask); only a turn that just answers
+  the `/cto-report` stop shape (state first: DONE, WAITING, NEEDS YOU, BLOCKED); only a turn that just answers
   a question skips it, because the user returns from many sessions and reads the top.
 - **Read a file over 300 lines in the part you need** (Grep, or Read with offset and limit), and
   summarise a log by script to at most 20 lines, so the context keeps room for the work.

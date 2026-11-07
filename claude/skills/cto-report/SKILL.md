@@ -30,16 +30,19 @@ the detail repeated.
 
 ## Stop report
 
-Every turn that leaves approved work done, in flight or blocked ends with these five, one or two
-lines each, in this order:
+Every turn that leaves approved work done, in flight or blocked ends with one. The first line is
+the state, named by who acts next:
 
-- **Verdict**: done, partly done or blocked, in one sentence the user can act on.
-- **Solid**: what is verified, by which check and its result; what is not verified.
-- **Backed by**: the reference, measurement or existing design behind the choice, or "workaround,
-  root fix is X, pivot?".
-- **Next**: the next step and who takes it.
-- **Ask**: each decision waiting on the user, with what it changes for them and your
-  recommendation; "none" when there is none.
+- **DONE**: nothing left in scope; the result, with its number when there is one.
+- **WAITING**: on what, how it resumes by itself, roughly when; what happens if it does not come.
+- **NEEDS YOU**: the decision, what it changes for the user, the recommendation, what continues meanwhile.
+- **BLOCKED**: on whom or what, who was told, how the session will know.
+
+Several at once: lead with NEEDS YOU, then BLOCKED, WAITING, DONE. Add **Solid** (what was checked,
+what was not, what a peer only reported) and **Backed by** (reference, measurement or design; or
+"workaround, root fix is X, pivot?") only when the result cannot speak for itself: compiler or other
+subtle logic, above all against a reference; a claim others build on. A turn that changes nothing
+says so in one line; each waiting decision is restated until answered.
 
 ## The report failed when
 
