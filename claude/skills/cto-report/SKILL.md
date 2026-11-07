@@ -1,6 +1,6 @@
 ---
 name: cto-report
-description: Report on a requested subject in CTO mode — product-level answer first, evidence and recommendation as needed. Use for an explicit /cto-report request or a product-level status, decision, or findings brief, not ordinary technical questions or progress replies.
+description: Report on a requested subject in CTO mode — product-level answer first, evidence and recommendation as needed. Use for an explicit /cto-report request, a product-level status, decision or findings brief, and the stop report that ends any turn leaving approved work done, in flight or blocked; not for a turn that only answers a question.
 ---
 
 # /cto-report
@@ -28,13 +28,27 @@ waiting, and one question. Confusion at the
 product level ("là sao", "wait what") gets the question re-framed from the user's seat, not
 the detail repeated.
 
+## Stop report
+
+Every turn that leaves approved work done, in flight or blocked ends with these five, one or two
+lines each, in this order:
+
+- **Verdict**: done, partly done or blocked, in one sentence the user can act on.
+- **Solid**: what is verified, by which check and its result; what is not verified.
+- **Backed by**: the reference, measurement or existing design behind the choice, or "workaround,
+  root fix is X, pivot?".
+- **Next**: the next step and who takes it.
+- **Ask**: each decision waiting on the user, with what it changes for them and your
+  recommendation; "none" when there is none.
+
 ## The report failed when
 
 - it opens with a file path or tool output;
 - the answer sits below the build-up;
 - several questions stand at the same depth with no recommendation;
 - a diff arrives with "OK?" before it says what it is trying to do;
-- a one-line answer carries headers.
+- a one-line answer carries headers;
+- a turn that leaves work done, in flight or blocked ends without the stop report.
 
 Gather silently: the report is the output, not the investigation log. Quote the user's own
 load-bearing phrases verbatim instead of paraphrasing them.
