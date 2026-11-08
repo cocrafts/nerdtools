@@ -57,7 +57,7 @@ an entire arc; distinguish proven per-bug roots from an unproven overarching exp
 
 ## 3. Ask only the decision that remains
 
-Use cto-report to give one self-contained decision brief, then end the turn:
+Use cto-report to give one self-contained decision brief inside the stop report's 150 words, a line or two per part, then end the turn:
 
 1. **Consequence first:** what goes wrong for the app and why this decision matters now.
 2. **Evidence and boundary:** what the trace answered, what is still unknown, and why the

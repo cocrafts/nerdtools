@@ -63,11 +63,15 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
 - **When the agent commits on its own, the report ends with one git line**: `commit <sha…> · land <sha | not yet, because …> · tree clean | left: <path> (why)`. Name anything edited outside the repo (memory, inbox, plans) there too, because `git status` does not show it.
 - **Match the request.** Answer questions directly; confirmations and progress need only a sentence
   or two. Decision briefs add trade-offs, a recommendation and the user's choice. Keep the answer
-  first; use `/cto-report` when requested, for a product-level brief and at a stop. Headers start
-  around 500 words; process detail belongs in commits.
+  first; use `/cto-report` when requested, for a product-level brief and at a stop. Headers belong
+  only in a brief the user asked for; process detail belongs in commits and the card.
 - **End every turn that leaves approved work done, in flight or blocked with a stop report** in
-  the `/cto-report` stop shape (state first: DONE, WAITING, NEEDS YOU, BLOCKED); only a turn that just answers
-  a question skips it, because the user returns from many sessions and reads the top.
+  the `/cto-report` stop shape, at most about 150 words, one sentence per line, no headers or tables,
+  a decision included, leaving out what the card and commits already hold: the
+  state line (DONE, WAITING, NEEDS YOU or BLOCKED and the one fact that matters), a context line
+  (the arc's goal in plain words, what is done and what is next), only what that state needs, then
+  the git line. Only a turn that just answers a question skips it, because the user reads the top
+  of many sessions cold.
 - **Read a file over 300 lines in the part you need** (Grep, or Read with offset and limit), and
   summarise a log by script to at most 20 lines, so the context keeps room for the work.
 
@@ -88,9 +92,9 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
   applicable option. Bring the remaining user-owned choice with traced options and a recommendation.
   Never present an assumption as verified.
 - **Ask a decision so it is answered in one read**, because the user returns from other sessions
-  without this one's context: write it in the `/cto-report` shape unasked, open with the goal and
-  what blocks it, show a behaviour choice as a minimal code example with its real output, and gloss
-  or drop any term this session coined. A choice with a conventional answer is one sentence naming
+  without this one's context: inside the stop report, each option is one sentence with its cost,
+  then the recommendation; show a behaviour choice as a minimal code example with its real output
+  only when the example decides it, and gloss or drop any term this session coined. A choice with a conventional answer is one sentence naming
   your default. Then end the turn, never with an options menu (`AskUserQuestion`), because a menu asks
   for a pick before the context that decides it. A later report restates each waiting decision with
   one sentence of what it changes for the user and the recommendation, not a bare label.

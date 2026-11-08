@@ -30,9 +30,9 @@ the detail repeated.
 
 ## Stop report
 
-Every turn that leaves approved work done, in flight or blocked ends with one, about ten lines,
-because the user reads it cold, between many sessions. Detail lives in the card, the commits or a
-follow-up the user asks for, not here.
+Every turn that leaves approved work done, in flight or blocked ends with one, at most about 150
+words with one sentence per line, because the user reads it cold, between many sessions. Detail
+lives in the card, the commits or a follow-up the user asks for, not here.
 
 1. **State line**, first: **DONE**, **WAITING**, **NEEDS YOU** or **BLOCKED**, named by who acts
    next, and the one fact that matters: the result with its number; what it waits on and when it
