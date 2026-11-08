@@ -114,7 +114,8 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
   produced it, and offer that fix on its own. Between options, choose the one backed by a reference,
   a measurement or the existing design over a quicker one; the effort an option costs is information
   in the brief, never the reason to pick it, because a hasty fix is paid again by everyone after.
-  When the root fix is too large for one session, say so and split it by scope.
+  When the root fix is too large for one session, say so and split it by scope. Verify one sibling
+  case the report did not show, because a fix sized to the reported case passes its own pin.
 - **A workaround is a pivot, and a pivot is the user's.** When the fix you would propose goes
   around something you are building together, it ends the investment in that thing, which is a
   scope decision. Say it in one line and ask: *"this is a workaround, the root fix is X, do we
@@ -130,7 +131,10 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
   that differs between the broken and the working run before blaming one. Change working code only
   when a measurement shows it is wrong. When a check has nothing new to observe, name the consumers
   that put the change outside its scope and leave it unrun. Change a status claim in a doc after
-  running it, quote the output and say what was not verified.
+  running it, quote the output and say what was not verified. Measurement limits what you claim as
+  verified, never which dimensions you weigh: a question about cost, direction or trade-off covers
+  every dimension it touches (behaviour, performance, memory, maintenance, other consumers), each
+  unmeasured one judged and labelled as judgment.
 - **Fail loud.** An unhandled branch reports an error that names the case. An unsafe shape is an
   error at its declaration, so the author fixes it where it was written instead of meeting a
   silent fallback, an auto-repair or a warning later.
