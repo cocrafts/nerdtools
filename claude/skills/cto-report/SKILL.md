@@ -41,10 +41,11 @@ the state, named by who acts next:
 Several at once: lead with NEEDS YOU, then BLOCKED, WAITING, DONE. Add **Solid** (what was checked,
 what was not, what a peer only reported) and **Backed by** (reference, measurement or design; or
 "workaround, root fix is X, pivot?") only when the result cannot speak for itself: compiler or other
-subtle logic, above all against a reference; a claim others build on. A turn that changes nothing
-says so in one line; each waiting decision is restated until answered. A turn that picks a fix or
-a design also gives **Covers** (the class of cases it fixes) and **Leaves** (sibling cases it does
-not, and why), one line each, because a narrow fix must show in the report, not in a later question.
+subtle logic, above all against a reference; a claim others build on. Under the same condition, a
+turn that picks a fix or a design adds **Covers** (the class of cases it fixes) and **Leaves**
+(sibling cases it does not, and why), one line each, because a narrow fix must show in the report,
+not in a later question. A turn that changes nothing says so in one line; each waiting decision is
+restated until answered.
 
 ## The report failed when
 
