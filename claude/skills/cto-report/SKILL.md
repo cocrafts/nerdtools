@@ -30,22 +30,28 @@ the detail repeated.
 
 ## Stop report
 
-Every turn that leaves approved work done, in flight or blocked ends with one. The first line is
-the state, named by who acts next:
+Every turn that leaves approved work done, in flight or blocked ends with one, about ten lines,
+because the user reads it cold, between many sessions. Detail lives in the card, the commits or a
+follow-up the user asks for, not here.
 
-- **DONE**: nothing left in scope; the result, with its number when there is one.
-- **WAITING**: on what, how it resumes by itself, roughly when; what happens if it does not come.
-- **NEEDS YOU**: the decision, what it changes for the user, the recommendation, what continues meanwhile.
-- **BLOCKED**: on whom or what, who was told, how the session will know.
+1. **State line**, first: **DONE**, **WAITING**, **NEEDS YOU** or **BLOCKED**, named by who acts
+   next, and the one fact that matters: the result with its number; what it waits on and when it
+   resumes by itself; the decision; the blocker and who was told.
+2. **Context line**: the arc's goal in plain words and where this stop sits in it (done, next,
+   left), so a reader arriving from another session knows what this is. A name the reader needs (a
+   host, a card, a term this session coined) is glossed where it appears or dropped.
+3. **What the state needs, nothing more.** NEEDS YOU: each option in one sentence with its cost, the
+   recommendation, what continues meanwhile; one minimal example only when it decides the choice.
+   Several states or decisions: one line each, NEEDS YOU first and the weightiest decision first;
+   each waiting decision is restated in one line until answered.
+4. **Solid**, **Backed by**, **Covers**, **Leaves**: one line each, only when the result cannot speak
+   for itself (compiler or other subtle logic, above all against a reference; a claim others build
+   on). Backed by may read "workaround, root fix is X, pivot?". Covers is the class of cases a chosen
+   fix or design fixes, Leaves the sibling cases it does not and why, because a narrow fix must
+   show here, not in a later question.
+5. **The git line** the global reporting rule asks for, last.
 
-Several at once: lead with NEEDS YOU, then BLOCKED, WAITING, DONE. Add **Solid** (what was checked,
-what was not, what a peer only reported) and **Backed by** (reference, measurement or design; or
-"workaround, root fix is X, pivot?") only when the result cannot speak for itself: compiler or other
-subtle logic, above all against a reference; a claim others build on. Under the same condition, a
-turn that picks a fix or a design adds **Covers** (the class of cases it fixes) and **Leaves**
-(sibling cases it does not, and why), one line each, because a narrow fix must show in the report,
-not in a later question. A turn that changes nothing says so in one line; each waiting decision is
-restated until answered.
+A turn that changes nothing says so in one line.
 
 ## The report failed when
 
@@ -54,7 +60,8 @@ restated until answered.
 - several questions stand at the same depth with no recommendation;
 - a diff arrives with "OK?" before it says what it is trying to do;
 - a one-line answer carries headers;
-- a turn that leaves work done, in flight or blocked ends without the stop report.
+- a turn that leaves work done, in flight or blocked ends without the stop report;
+- the state is not the first line, or the stop report carries headers, tables or the investigation.
 
 Gather silently: the report is the output, not the investigation log. Quote the user's own
 load-bearing phrases verbatim instead of paraphrasing them.
