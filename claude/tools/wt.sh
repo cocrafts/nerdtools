@@ -12,7 +12,7 @@ usage: wt.sh <command> [args]
   rm <name|path> [--force]      retire a worktree after safety checks
   context                       print session context for the current worktree: the
                                 handoff at <card root>/handoff/<name>.md if one exists,
-                                then the card (--without-card preserves handoff/inbox only;
+                                moved to handoff/delivered/ once printed, then the card (--without-card preserves handoff/inbox only;
                                 --checked validates the compact checkpoint budget)
   land [name|path] [options]    rebase, gate and fast-forward the main checkout
 
@@ -228,14 +228,16 @@ wt_context_inbox() {
 }
 
 wt_context_handoff() {
-  local name handoff
+  local name handoff delivered
   name=$(wt_card_name "$WT_CURRENT") || return 0
   handoff=$(wt_handoff_path "$name")
   [ -f "$handoff" ] || return 0
-  printf 'Handoff from the previous session, %s, written %s. Read it before the card and check the local state it names. Delete it once your first step is under way. Where it disagrees with the card, the card wins.\n' \
-    "$handoff" "$(date -r "$handoff" '+%Y-%m-%d %H:%M' 2>/dev/null || printf 'at an unknown time')"
+  delivered="$(dirname "$handoff")/delivered/$(basename "$handoff")"
+  printf 'Handoff from the previous session, written %s, now kept at %s. Read it before the card and check the local state it names. Where it disagrees with the card, the card wins.\n' \
+    "$(date -r "$handoff" '+%Y-%m-%d %H:%M' 2>/dev/null || printf 'at an unknown time')" "$delivered"
   cat "$handoff"
   printf '\n'
+  mkdir -p "$(dirname "$delivered")" && mv -f "$handoff" "$delivered"
 }
 
 cmd_context() {

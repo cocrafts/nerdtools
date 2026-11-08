@@ -103,12 +103,11 @@ the handoff.
 
 ## The receiving session
 
-`wt.sh context`, the session-start hook, prints the handoff when one exists, then the card.
-The receiving session:
+`wt.sh context`, the session-start hook, prints the handoff when one exists and moves it to
+`handoff/delivered/<name>.md`, so a later session start never reprints a stale one and no session
+deletes it. Then it prints the card. The receiving session:
 1. states the step in flight in one sentence;
-2. verifies each local-state claim it will rely on, which is cheap (`git status`, the named paths);
-3. deletes the handoff once its first step is under way, not at start: a crash in the first
-   minutes would otherwise lose it.
+2. verifies each local-state claim it will rely on, which is cheap (`git status`, the named paths).
 
 If the handoff and the card disagree about what is in flight, the card wins.
 
@@ -121,8 +120,6 @@ If the handoff and the card disagree about what is in flight, the card wins.
 - **A durable decision only in the handoff.** It dies with the file.
 - **A kickstart prompt.** The hook already prints the handoff and the card. A prompt that restates
   either one drifts from it.
-- **A handoff left behind.** The hook prints it at every session start until someone deletes it,
-  so a stale one misleads each later session. The receiving session deletes it.
 - **Relaunching while a background job still runs, without saying so.** The next session either
   duplicates it or measures on top of it.
 - **Session names and pids as addresses.** Identify work by its path. Processes die.
