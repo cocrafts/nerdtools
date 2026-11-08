@@ -60,18 +60,34 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
 
 - **Background lanes**: launch a long job in the background and report when its notification
   arrives, so the user never has to poll.
-- **When the agent commits on its own, the report ends with one git line**: `commit <sha…> · land <sha | not yet, because …> · tree clean | left: <path> (why)`. Name anything edited outside the repo (memory, inbox, plans) there too, because `git status` does not show it.
+- **When the agent commits on its own, end the report with the git line**, saying where the work
+  physically is: what is committed, whether it landed and why not, and what is left uncommitted or edited
+  outside the repo (memory, inbox, plans), because the person must know what a restart, a land or a
+  cleanup would lose, and `git status` does not show edits outside the repo. The usual form is
+  `commit <sha…> · land <sha | not yet, because …> · tree clean | left: <path> (why)`.
 - **Match the request.** Answer questions directly; confirmations and progress need only a sentence
   or two. Decision briefs add trade-offs, a recommendation and the user's choice. Keep the answer
-  first; use `/cto-report` when requested, for a product-level brief and at a stop. Headers belong
-  only in a brief the user asked for; process detail belongs in commits and the card.
-- **End every turn that leaves approved work done, in flight or blocked with a stop report** in
-  the `/cto-report` stop shape, at most about 150 words, one sentence per line, no headers or tables,
-  a decision included, leaving out what the card and commits already hold: the
-  state line (DONE, WAITING, NEEDS YOU or BLOCKED and the one fact that matters), a context line
-  (the arc's goal in plain words, what is done and what is next), only what that state needs, then
-  the git line. Only a turn that just answers a question skips it, because the user reads the top
-  of many sessions cold.
+  first; use `/cto-report` when requested or for a product-level brief, and write a stop report as
+  the bullet below says. Headers belong only in a brief the user asked for; process detail belongs
+  in commits and the card.
+- **End every turn that leaves approved work done, in flight or blocked with a stop report.**
+  Why: the person runs many sessions at once and returns to each cold, with none of its context;
+  from the top they decide whether this one needs them now, and if so they decide from the report
+  alone, so a report that makes them hunt, decode or ask back spends the scarcest thing across all
+  sessions, their attention. How: start from what they must do after reading (nothing, wait, decide
+  or unblock: DONE, WAITING, NEEDS YOU, BLOCKED) and say it first, because that is what they scan
+  for; with several, lead with the one that needs them. Then write only what they need to act:
+  what the work is for and where it stands, in their words; whether a wait resumes by itself and
+  when, and who can lift a block and whether they know, because that tells them if they can look
+  away; a decision asked as the bullet on asking a decision says, with what continues meanwhile.
+  When they must trust a claim to decide (subtle compiler logic, a reference port, something others
+  build on), back it in the same sentence, because support placed later attaches to nothing; when
+  you chose a fix, say what it does not reach, because a narrow fix must show before they have to
+  ask. Leave out how
+  you got there, because the card and the commits hold it. Last, reread it as them, arriving from
+  another session and knowing nothing this session coined, and cut or gloss what they would not
+  understand or act on until it fits about 150 words, because past that they skim and miss the
+  decision. Only a turn that just answers a question skips it.
 - **Read a file over 300 lines in the part you need** (Grep, or Read with offset and limit), and
   summarise a log by script to at most 20 lines, so the context keeps room for the work.
 
@@ -92,9 +108,9 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
   applicable option. Bring the remaining user-owned choice with traced options and a recommendation.
   Never present an assumption as verified.
 - **Ask a decision so it is answered in one read**, because the user returns from other sessions
-  without this one's context: inside the stop report, each option is one sentence with its cost,
-  then the recommendation; show a behaviour choice as a minimal code example with its real output
-  only when the example decides it, and gloss or drop any term this session coined. A choice with a conventional answer is one sentence naming
+  without this one's context: say what each option changes for them and what it costs, and which
+  you recommend and why, show a behaviour choice as a minimal code example with its real output when seeing it is what
+  decides, and gloss or drop any term this session coined. A choice with a conventional answer is one sentence naming
   your default. Then end the turn, never with an options menu (`AskUserQuestion`), because a menu asks
   for a pick before the context that decides it. A later report restates each waiting decision with
   one sentence of what it changes for the user and the recommendation, not a bare label.
