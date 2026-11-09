@@ -23,6 +23,12 @@ else
   ln -sfn ~/nerdtools/conf/herdr/windows.toml ~/.config/herdr/config.toml
 fi
 mkdir -p ~/.config/git && ln -sfn ~/nerdtools/conf/git/ignore ~/.config/git/ignore
+mkdir -p ~/.config/herdr-app/layouts ~/.config/herdr-app/mods
+ln -sfn ~/nerdtools/conf/herdr-app/settings.json         ~/.config/herdr-app/settings.json
+[ "$(uname)" = Darwin ] && k=keys.macos.json || k=keys.json; ln -sfn ~/nerdtools/conf/herdr-app/$k ~/.config/herdr-app/keys.json
+ln -sfn ~/nerdtools/conf/herdr-app/layouts/my-main.json  ~/.config/herdr-app/layouts/my-main.json
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-agents        ~/.config/herdr-app/mods/my-agents
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-keys          ~/.config/herdr-app/mods/my-keys
 [ "$(uname)" = Darwin ] && mkdir -p ~/.config/nerdtools && ln -sfn ~/nerdtools/conf/alacritty/mac.toml ~/.config/nerdtools/alacritty.toml
 ```
 
@@ -51,6 +57,16 @@ After changing Herdr keybindings, reload them from a Herdr pane with
 The sidebar shortcut uses `Cmd+E` on macOS and `Ctrl+E` on Windows, hiding it completely rather than leaving a compact rail.
 Alacritty needs the macOS slot linked above to forward `Cmd+E` in the alternate screen.
 The macOS profile leaves `Ctrl+E` available to shell/editor apps.
+
+`~/.config/herdr-app/` (the Herdr desktop app) is the same: the app rewrites its shipped layouts,
+mods and `AGENTS.md` on every start and keeps window state beside them, so only our own files are
+linked, one line each. Edit a shipped layout or mod by cloning it (`herdr-app do mod.clone
+'{"name":"agents","as":"my-agents"}'`), then move the clone here and link it. The app writes
+`settings.json` through the link (zoom, Settings) and keeps it a link. Which layout shows is
+machine-local; on a new machine pick ours once: `herdr-app do layout.switch '{"name":"my-main"}'`.
+`keys.json` is per OS, as the app ships it (`defaults/keys.json` and `defaults/keys.macos.json` in
+`herdr-app`): macOS links `keys.macos.json`, Linux and Windows share `keys.json`. Each is the app's
+default for that OS plus our keys, so a key both want goes in both files.
 
 ## Claude Code and Codex
 

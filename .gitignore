@@ -69,3 +69,7 @@ claude/skills/colosseum-copilot
 omp/config.yml.lock
 .stignore
 note.md
+
+# Herdr app rewrites these type files into every mod folder on each start.
+conf/herdr-app/mods/*/gpui-kit.d.ts
+conf/herdr-app/mods/*/jsconfig.json
