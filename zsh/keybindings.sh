@@ -1,12 +1,3 @@
-# up snippet
-function up_widget() {
-	BUFFER="cd .."
-	zle accept-line
-}
-
-zle -N up_widget
-bindkey "^k" up_widget
-
 # Sudo snippet
 function add_sudo() {
 	BUFFER="sudo "$BUFFER
@@ -24,12 +15,4 @@ function fzf_widget() {
 
 zle -N fzf_widget
 bindkey "^f" fzf_widget
-
-# Home - Navigates to the current root workspace
-function git_root() {
-	BUFFER="cd $(git rev-parse --show-toplevel || echo ".")"
-	zle accept-line
-}
-zle -N git_root
-bindkey "^l" git_root
 
