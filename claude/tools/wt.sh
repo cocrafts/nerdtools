@@ -125,7 +125,7 @@ wt_seed_card() {
   [ -e "$path" ] && return 0
   mkdir -p "$WT_CARD_ROOT" || return 1
   printf '# %s\n\nRepo: %s · worktree %s · branch wt/%s\n\n## Goal\n\n## Done when\n\n## State\n' \
-    "$name" "$WT_MAIN" "$(wt_worktree_path "$name")" "$name" >"$path"
+    "$name" "${WT_MAIN/#$HOME/\~}" "$(wt_worktree_path "$name" | sed "s#^$HOME#~#")" "$name" >"$path"
   say "card: $path"
 }
 
