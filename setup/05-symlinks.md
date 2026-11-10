@@ -24,7 +24,7 @@ else
 fi
 mkdir -p ~/.config/git && ln -sfn ~/nerdtools/conf/git/ignore ~/.config/git/ignore
 mkdir -p ~/.config/herdr-app/layouts ~/.config/herdr-app/mods
-ln -sfn ~/nerdtools/conf/herdr-app/settings.json         ~/.config/herdr-app/settings.json
+[ "$(uname)" = Darwin ] && s=settings.macos.json || s=settings.json; ln -sfn ~/nerdtools/conf/herdr-app/$s ~/.config/herdr-app/settings.json
 [ "$(uname)" = Darwin ] && k=keys.macos.json || k=keys.json; ln -sfn ~/nerdtools/conf/herdr-app/$k ~/.config/herdr-app/keys.json
 ln -sfn ~/nerdtools/conf/herdr-app/layouts/my-main.json  ~/.config/herdr-app/layouts/my-main.json
 ln -sfn ~/nerdtools/conf/herdr-app/mods/my-agents        ~/.config/herdr-app/mods/my-agents
@@ -81,6 +81,8 @@ a link out of it, so a mod with icons gets a real folder: its code is linked fil
 `keys.json` is per OS, as the app ships it (`defaults/keys.json` and `defaults/keys.macos.json` in
 `herdr-app`): macOS links `keys.macos.json`, Linux and Windows share `keys.json`. Each is the app's
 default for that OS plus our keys, so a key both want goes in both files.
+`settings.json` is per OS the same way, because the Mac reads its terminals best a half size smaller
+(the person, 2026-11-10): macOS links `settings.macos.json`, so a setting both want goes in both files.
 
 ## Claude Code and Codex
 

@@ -1,0 +1,12 @@
+{
+  "zoom": 1.0,
+  "sounds": {
+    "enabled": true
+  },
+  "font": "OperatorMonoLig Nerd Font Mono",
+  "font_size": 14.5,
+  "font_ligatures": false,
+  "telemetry": false,
+  "minimum_contrast": 1.0,
+  "appearance": "dark"
+}
