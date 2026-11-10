@@ -81,10 +81,26 @@ export default class Agents extends View {
     this.folded = new Set();
     // Each agent's last state and when it changed (ms), kept across restarts.
     this.changed = JSON.parse(localStorage.getItem("changed") ?? "{}");
+    this.unseen = new Set(JSON.parse(localStorage.getItem("unseen") ?? "[]"));
     this.pendingPins = JSON.parse(localStorage.getItem("pins") ?? "[]");
     if (!this.pendingPins.length) localStorage.removeItem("pins");
     this.migratingPins = new Set();
     cx.timer.every(30000, (cx) => cx.notify());
+  }
+
+  // Herdr's done turns idle as soon as the pane is on screen, on any machine;
+  // here a finished agent stays done until its pane is focused on this one.
+  markUnseen(list) {
+    const before = [...this.unseen].join();
+    for (const a of list) {
+      const finished = a.status === "done" || (a.status === "idle" && this.changed[a.address]?.s === "working");
+      if (a.focused || a.status === "working" || a.status === "blocked") this.unseen.delete(a.address);
+      else if (finished) this.unseen.add(a.address);
+    }
+    const listed = new Set(list.map((a) => a.address));
+    if (list.length) for (const k of this.unseen) if (!listed.has(k)) this.unseen.delete(k);
+    if ([...this.unseen].join() !== before) localStorage.setItem("unseen", JSON.stringify([...this.unseen]));
+    return list.map((a) => (this.unseen.has(a.address) ? { ...a, status: "done" } : a));
   }
 
   // Stamps agents whose state changed. Done and idle count as one: looking at a
@@ -231,6 +247,7 @@ export default class Agents extends View {
     this.migratePins(all);
     const shown = focused()?.agent;
     const now = Date.now();
+    list = this.markUnseen(list);
     this.track(list, now);
     this.hold(list);
     // A kept sub-agent (one with a pane) is in agents() too: where a tree shows
@@ -307,8 +324,6 @@ export default class Agents extends View {
     const row = (a, i, subs = []) => {
       const pic = icon(a.program, 16, t.foreground);
       const more = detail.get(a.address);
-      // An agent on another machine (`vps/t7`) says which.
-      const machine = a.address.includes("/") ? a.address.split("/")[0] : null;
       if (collapsed) {
         return h_flex()
           .id(`ag-${a.address}`)
@@ -360,7 +375,7 @@ export default class Agents extends View {
             this.folded.has(a.address) ? this.folded.delete(a.address) : this.folded.add(a.address);
             cx.notify();
           })).child(pic)))
-        .child(div().flex_1().min_w(0).truncate().text_color(idle ? t.muted : t.foreground).child(folder))
+        .child(div().flex_1().min_w(0).truncate().text_color(idle ? t.muted : t.foreground).child(session))
         .when(subs.length > 0, el => el.child(fold(a, subs)))
         .when(this.hovered === a.address, el => el.child(pin))
         .when(this.hovered !== a.address && Boolean(when), el => el.child(div().flex_none().text_size(11).text_color(t.dim).child(duration(now - when))))
@@ -383,9 +398,7 @@ export default class Agents extends View {
         })
         .on_click(() => run("pane.focus", { pane: a.pane }))
         .child(top)
-        .child(h_flex().w_full().min_w(0).gap(6).items_center()
-          .child(div().flex_1().min_w(0).truncate().text_size(11).text_color(t.dim).child(session))
-          .when(Boolean(machine), el => el.child(div().flex_none().text_size(10).text_color(t.dim).child(machine))));
+        .child(div().w_full().min_w(0).truncate().text_size(11).text_color(t.dim).child(folder));
     };
 
     // Groups in list order: spaces (grouped) or priority sections. Agents of a
@@ -434,7 +447,7 @@ export default class Agents extends View {
       .min_h(0)
       .bg(t.chrome)
       .border_t(1)
-      .border_color(t.border)
+      .border_color(`${t.border.slice(0, 7)}0b`)
       .text_size(13)
       .when(!collapsed, (el) =>
         el.child(
