@@ -24,6 +24,8 @@ local function nav(wincmd, dir)
       herdr = "herdr"
     end
     vim.fn.system({ herdr, "pane", "focus", "--direction", dir, "--current" })
+  elseif vim.env.HC_TERMINAL_ID and vim.env.HC_TERMINAL_ID ~= "" then
+    vim.fn.jobstart({ "hc", "label", vim.env.HC_TERMINAL_ID, ("herdr.nav=%s:%d"):format(dir, vim.uv.hrtime()) })
   elseif vim.env.TMUX and vim.env.TMUX ~= "" then
     local tmux = { left = "Left", down = "Down", up = "Up", right = "Right" }
     pcall(vim.cmd, "TmuxNavigate" .. tmux[dir])
