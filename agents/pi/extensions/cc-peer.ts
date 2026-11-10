@@ -97,28 +97,42 @@ const procStartViaPowerShell = (targetPid: number): Promise<string> => {
   return promise;
 };
 
-export const readSelfProcStart = async (): Promise<string | undefined> =>
-  process.platform === "win32"
-    ? (await procStartViaPowerShell(process.pid)) || undefined
-    : procStartViaPs(process.pid);
+// Linux Claude Code records the start time in clock ticks: field 22 of /proc/<pid>/stat.
+const procStartViaProcStat = (targetPid: number): string | undefined => {
+  try {
+    const stat = fs.readFileSync(`/proc/${targetPid}/stat`, "utf8");
+    return stat.slice(stat.lastIndexOf(")") + 2).split(" ")[19] || undefined;
+  } catch {
+    return undefined;
+  }
+};
 
-export const readProcStartForLiveness = async (targetPid: number): Promise<string | undefined> =>
-  process.platform === "win32"
-    ? (await procStartViaPowerShell(targetPid)) || undefined
-    : procStartViaPs(targetPid);
+const readProcStart = async (targetPid: number): Promise<string | undefined> => {
+  if (process.platform === "win32") return (await procStartViaPowerShell(targetPid)) || undefined;
+  if (process.platform === "linux") return procStartViaProcStat(targetPid);
+  return procStartViaPs(targetPid);
+};
+
+export const readSelfProcStart = (): Promise<string | undefined> => readProcStart(process.pid);
+
+export const readProcStartForLiveness = (targetPid: number): Promise<string | undefined> => readProcStart(targetPid);
 
 const pidDomainForPlatform = (): string => {
   if (process.platform === "win32") return `win32:${os.hostname().toLowerCase()}`;
   if (process.platform === "darwin") return "darwin";
+  if (process.platform === "linux") return `linux:${fs.readFileSync("/etc/machine-id", "utf8").trim()}:${fs.readlinkSync("/proc/self/ns/pid")}`;
   throw new Error(
-    `cc-peer: no Claude Code pidDomain for platform '${process.platform}'; only win32 and darwin are implemented`,
+    `cc-peer: no Claude Code pidDomain for platform '${process.platform}'; only win32, darwin and linux are implemented`,
   );
 };
 
-const messagingSocketPathForPlatform = (pid: number): string =>
-  process.platform === "win32"
-    ? `\\\\.\\pipe\\LOCAL\\cc-msg-${randomBytes(16).toString("hex")}`
-    : path.join("/tmp/cc-socks", `${pid}.sock`);
+const messagingSocketPathForPlatform = (pid: number): string => {
+  if (process.platform === "win32") return `\\\\.\\pipe\\LOCAL\\cc-msg-${randomBytes(16).toString("hex")}`;
+  if (process.platform !== "linux") return path.join("/tmp/cc-socks", `${pid}.sock`);
+  const runtime = process.env.XDG_RUNTIME_DIR;
+  if (!runtime) throw new Error("cc-peer: XDG_RUNTIME_DIR is unset; Linux Claude Code keeps peer sockets under it");
+  return path.join(runtime, "cc-socks", `${pid}.sock`);
+};
 
 type RegistryEntry = {
   pid: number;
