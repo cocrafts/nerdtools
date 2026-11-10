@@ -29,6 +29,17 @@ ln -sfn ~/nerdtools/conf/herdr-app/settings.json         ~/.config/herdr-app/set
 ln -sfn ~/nerdtools/conf/herdr-app/layouts/my-main.json  ~/.config/herdr-app/layouts/my-main.json
 ln -sfn ~/nerdtools/conf/herdr-app/mods/my-agents        ~/.config/herdr-app/mods/my-agents
 ln -sfn ~/nerdtools/conf/herdr-app/mods/my-keys          ~/.config/herdr-app/mods/my-keys
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-picker        ~/.config/herdr-app/mods/my-picker
+ln -sfn ~/nerdtools/conf/herdr-app/mods/agent-resume     ~/.config/herdr-app/mods/agent-resume
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-tabs          ~/.config/herdr-app/mods/my-tabs
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-timeline      ~/.config/herdr-app/mods/my-timeline
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-inbox         ~/.config/herdr-app/mods/my-inbox
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-status        ~/.config/herdr-app/mods/my-status
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-chrome        ~/.config/herdr-app/mods/my-chrome
+mkdir -p ~/.config/herdr-app/mods/my-menu
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-menu/main.js  ~/.config/herdr-app/mods/my-menu/main.js
+ln -sfn ~/nerdtools/conf/herdr-app/mods/my-menu/mod.json ~/.config/herdr-app/mods/my-menu/mod.json
+cp ~/nerdtools/conf/herdr-app/mods/my-menu/*.svg         ~/.config/herdr-app/mods/my-menu/
 [ "$(uname)" = Darwin ] && mkdir -p ~/.config/nerdtools && ln -sfn ~/nerdtools/conf/alacritty/mac.toml ~/.config/nerdtools/alacritty.toml
 ```
 
@@ -64,6 +75,9 @@ linked, one line each. Edit a shipped layout or mod by cloning it (`herdr-app do
 '{"name":"agents","as":"my-agents"}'`), then move the clone here and link it. The app writes
 `settings.json` through the link (zoom, Settings) and keeps it a link. Which layout shows is
 machine-local; on a new machine pick ours once: `herdr-app do layout.switch '{"name":"my-main"}'`.
+The app draws a mod's icons (`svg()`) only from real files under `~/.config/herdr-app`, not through
+a link out of it, so a mod with icons gets a real folder: its code is linked file by file and its
+`.svg` files are copied; copy again after editing one.
 `keys.json` is per OS, as the app ships it (`defaults/keys.json` and `defaults/keys.macos.json` in
 `herdr-app`): macOS links `keys.macos.json`, Linux and Windows share `keys.json`. Each is the app's
 default for that OS plus our keys, so a key both want goes in both files.
