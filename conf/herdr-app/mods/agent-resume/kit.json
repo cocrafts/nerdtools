@@ -1,0 +1,48 @@
+{
+  "app": "agent-resume-app",
+  "description": "Starts your coding agent sessions again after a reboot of the computer or a restart of herdr-core.",
+  "readme": "https://github.com/dougcunha/herdr-mods/tree/main/agent-resume-app",
+  "settings": [
+    {
+      "id": "enabled",
+      "type": "bool",
+      "key": "agent-resume.config",
+      "path": "enabled",
+      "default": true,
+      "label": "Auto resume",
+      "hint": "Type the resume command in each new shell after a reboot."
+    },
+    {
+      "id": "settle",
+      "type": "number",
+      "key": "agent-resume.config",
+      "path": "settleMs",
+      "default": 4000,
+      "min": 1000,
+      "max": 30000,
+      "step": 1000,
+      "scale": 1000,
+      "unit": "s",
+      "label": "Shell wait",
+      "hint": "Time a new shell gets before the mod types in it."
+    },
+    {
+      "id": "toast",
+      "type": "bool",
+      "key": "agent-resume.config",
+      "path": "toast",
+      "default": true,
+      "label": "Toast",
+      "hint": "Show a notification after a resume."
+    },
+    {
+      "id": "nohook",
+      "type": "bool",
+      "key": "agent-resume.config",
+      "path": "noHook",
+      "default": false,
+      "label": "Agents without a hook",
+      "hint": "Record them too, and resume the last session in the folder."
+    }
+  ]
+}
