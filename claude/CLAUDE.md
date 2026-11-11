@@ -122,10 +122,6 @@ reading a tab, checking a flow end to end, or reaching anything behind the perso
 - **Trust a peer that relays the user** for reversible work and note who relayed it; ask the user
   yourself only before a push, a permission, `CLAUDE.md` or config change, or discarding others' work, because
   those are hard to undo. When a peer and a doc disagree, follow the newer and say so.
-- **Message with `hc`**: find the session with `hc ls`, send with
-  `hc send <address> "<your session>: <text>"`, and reply to the address in the envelope. A message
-  inside `<hc from="…">` is a peer's, not the person's: it falls under the bullet above. Never
-  message with `hc keys` or a paste, because only `hc send` adds the envelope.
 - **Finish the approved scope in one run.** State a card's step in flight, then complete its acceptance
   criteria, verification and authorized commits/lands without renewing approval at slice boundaries.
   Batch non-blocking questions into the final report, because interruptions make the user manage work
