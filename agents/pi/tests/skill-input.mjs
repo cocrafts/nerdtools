@@ -30,10 +30,11 @@ defaultEditor.onSubmit = text => submitted = text;
 defaultEditor.onChange = () => {};
 let appCalls = 0;
 defaultEditor.actionHandlers.set("app.model.cycleForward", () => appCalls++);
-const mode = { defaultEditor, editor: defaultEditor, ui: fakeTui, keybindings: keys, editorContainer: new tui.Container(), disposeActiveSelector() {}, autocompleteProvider: new tui.CombinedAutocompleteProvider([{ name: "skill:trace-ref" }, { name: "skill:split-commit" }, { name: "model" }], process.cwd()) };
+const mode = { extensionDialogs: [], defaultEditor, editor: defaultEditor, ui: fakeTui, keybindings: keys, editorContainer: new tui.Container(), disposeActiveSelector() {}, autocompleteProvider: new tui.CombinedAutocompleteProvider([{ name: "skill:trace-ref" }, { name: "skill:split-commit" }, { name: "model" }], process.cwd()) };
 const errors = [];
 let queued = { steering: [], followUp: [] };
-const ctx = { hasPendingMessages: () => queued.steering.length + queued.followUp.length > 0, mode: "tui", sessionManager: { getSessionId: () => "skill-test" }, ui: {
+let sessionName;
+const ctx = { hasPendingMessages: () => queued.steering.length + queued.followUp.length > 0, mode: "tui", sessionManager: { getSessionId: () => "skill-test", getSessionName: () => sessionName }, ui: {
 	get theme() { return themeModule.theme; },
 	getEditorText: () => mode.editor.getExpandedText(), setEditorText: text => mode.editor.setText(text),
 	setEditorComponent: factory => InteractiveMode.prototype.setCustomEditorComponent.call(mode, factory),
@@ -64,6 +65,32 @@ try {
 	assert.equal(editor.getExpandedText(), longPaste);
 	assert.equal(editor.onSubmit, defaultEditor.onSubmit);
 	assert.equal(editor.onChange, defaultEditor.onChange);
+	sessionName = "Tên session 長い名前";
+	const top = (width = 80) => editor.render(width)[0];
+	assert.ok(plain(top()).endsWith(` ${sessionName} ─`), "Session name must sit at the top right of input");
+	assert.ok(top().includes(themeModule.theme.style(` ${sessionName} `, { fg: "text" })), "Idle session name uses normal white text");
+	const { WorkingStatusIndicator } = await import(pathToFileURL(join(root, "dist/modes/interactive/components/status-indicator.js")).href);
+	const working = new WorkingStatusIndicator(fakeTui, "Working…");
+	try {
+		assert.equal(InteractiveMode.prototype.setEditorWorkingStatusIndicator.call(mode, working), true, "Native mode must embed working status instead of adding a separate Working row");
+		const first = top();
+		assert.match(plain(first), new RegExp(` ${sessionName} .+ ─$`), "Spinner must follow session name");
+		assert.ok(!plain(first).includes("Working"));
+		assert.ok(first.includes(themeModule.theme.style(` ${sessionName} ${plain(working.renderSpinnerInBorder(10))} `, { fg: tui.parseColor("#89b4fa") })), "Working name and spinner must be blue");
+		await new Promise(resolve => setTimeout(resolve, 90));
+		assert.notEqual(top(), first, "Native spinner must advance while working");
+		for (const name of [sessionName, "", "long session ".repeat(30), "👩‍💻 é 長い名前".repeat(10)]) {
+			sessionName = name;
+			for (const width of [0, 1, 2, 5, 6, 8, 20, 80]) for (const row of editor.render(width)) assert.ok(tui.visibleWidth(row) <= width, `Session border must fit ${width} columns`);
+		}
+	} finally {
+		working.dispose();
+		InteractiveMode.prototype.setEditorWorkingStatusIndicator.call(mode, undefined);
+	}
+	sessionName = "Renamed session";
+	assert.ok(plain(top()).endsWith(` ${sessionName} ─`), "Rename must be reflected without recreating the editor");
+	assert.ok(top().includes(themeModule.theme.style(` ${sessionName} `, { fg: "text" })), "After work ends, spinner disappears and name becomes white");
+	sessionName = undefined;
 	assert.equal(editor.actionHandlers.get("app.model.cycleForward"), defaultEditor.actionHandlers.get("app.model.cycleForward"));
 	for (const text of ["", "abc", "/skill:trace-ref", "ab\ncd"]) {
 		editor.setText(text);

@@ -119,7 +119,7 @@ try {
 	handlers.session_start({}, ctx);
 	assert.ok(lines()[1].includes(" —"));
 	sessionName = "Tên session 長い名前";
-	assert.ok(lines()[1].trimEnd().endsWith(sessionName));
+	assert.ok(!lines().join("\n").includes(sessionName), "Session name belongs above input, not in the footer");
 	for (const width of [0, 1, 2, 8, 20, 60, 120]) {
 		for (const line of footer.render(width)) assert.ok(visibleWidth(line) <= width);
 	}
@@ -139,7 +139,7 @@ try {
 			assert.ok(line.endsWith(` ·  ${hit.toFixed(2)}%`), "warning/error cache stays visible");
 		}
 	}
-	console.log("PASS statusline: throughput, widths, reset, session name, gray cache hidden, warning/error cache visible at boundaries");
+	console.log("PASS statusline: throughput, widths, reset, session name hidden, gray cache hidden, warning/error cache visible at boundaries");
 } finally {
 	handlers.session_shutdown?.();
 	if (originalNow) Object.defineProperty(performance, "now", originalNow);

@@ -49,12 +49,12 @@ container.addChild(defaultEditor);
 ui.addChild(container);
 ui.setFocus(defaultEditor);
 const mode = {
-	defaultEditor, editor: defaultEditor, ui, keybindings: keys, editorContainer: container,
+	extensionDialogs: [], defaultEditor, editor: defaultEditor, ui, keybindings: keys, editorContainer: container,
 	disposeActiveSelector() {}, autocompleteProvider: new tui.CombinedAutocompleteProvider([], process.cwd()),
 };
 const handlers = new Map();
 const ctx = {
-	hasPendingMessages: () => false, mode: "tui", sessionManager: { getSessionId: () => "focus-test" },
+	hasPendingMessages: () => false, mode: "tui", sessionManager: { getSessionId: () => "focus-test", getSessionName: () => undefined },
 	ui: {
 		get theme() { return themeModule.theme; },
 		getEditorText: () => mode.editor.getExpandedText(),
