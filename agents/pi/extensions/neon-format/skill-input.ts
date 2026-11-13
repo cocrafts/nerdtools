@@ -47,7 +47,7 @@ export function registerSkillInput(pi: ExtensionAPI): () => TUI | undefined {
 					}
 					return true;
 				} catch (error) { ctx.ui.notify(error instanceof Error ? error.message : String(error), "error"); return false; }
-			}, error => ctx.ui.notify(error.message, "error"), () => ctx.hasPendingMessages());
+			}, error => ctx.ui.notify(error.message, "error"), () => ctx.hasPendingMessages(), () => ctx.sessionManager.getSessionName());
 			unsubscribeFocus?.();
 			const input = new StdinBuffer();
 			const onInput = (chunk: string | Buffer) => input.process(chunk);
@@ -70,6 +70,7 @@ export function registerSkillInput(pi: ExtensionAPI): () => TUI | undefined {
 		ctx.ui.setEditorText(draft);
 		pi.events.emit(draftChannel, { sessionId: ctx.sessionManager.getSessionId(), restore: (snapshot: SkillDraft) => editor?.restoreDraft(snapshot) } satisfies DraftRequest);
 	});
+	pi.on("session_info_changed", () => activeTui?.requestRender());
 	pi.on("input", (event, ctx) => {
 		if (ctx.mode !== "tui" || event.source !== "interactive") return;
 		try {

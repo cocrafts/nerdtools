@@ -289,17 +289,11 @@ export default function ccStatusLine(pi: ExtensionAPI) {
 					const cavemanColor = cavemanLevel === "off" ? "\x1b[2m"
 						: cavemanLevel === "lite" || cavemanLevel === "wenyan-lite" ? "\x1b[97m"
 						: cavemanLevel === "full" || cavemanLevel === "wenyan" ? "\x1b[91m" : "\x1b[95m";
-					const left = truncateToWidth(
+					const stats = truncateToWidth(
 						`${cavemanColor}${cavemanIcon}${RESET} ${theme.fg(modelColor, modelLabel)} · ${speedLabel}${cacheLabel ? ` · ${cacheLabel}` : ""}`,
 						statsWidth,
 						"…",
 					);
-					const sessionName = manager.getSessionName();
-					const rightWidth = Math.max(0, statsWidth - visibleWidth(cavemanIcon) - 4);
-					const right = sessionName ? `${GRAY}${truncateToWidth(sessionName, rightWidth, "…")}${FG_DEFAULT}` : "";
-					const fittedLeft = right ? truncateToWidth(left, Math.max(0, statsWidth - visibleWidth(right) - 2), "…") : left;
-					const padding = Math.max(0, statsWidth - visibleWidth(fittedLeft) - visibleWidth(right));
-					const stats = fittedLeft + " ".repeat(padding) + right;
 					const statsLine = width < 2 ? " ".repeat(Math.max(0, width))
 						: truncateToWidth(` ${stats}${" ".repeat(Math.max(0, statsWidth - visibleWidth(stats)))} `, width, "…");
 					const quota = quotaWindows.length ? quotaWindows.map(quotaLabel).join(" · ") : theme.fg("dim", quotaState);

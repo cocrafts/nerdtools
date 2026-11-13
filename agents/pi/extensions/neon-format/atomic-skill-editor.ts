@@ -1,5 +1,5 @@
 import { CustomEditor, type KeybindingsManager, type Theme } from "@earendil-works/pi-coding-agent";
-import { CURSOR_MARKER, SelectList, decodeKittyPrintable, isKeyRelease, matchesKey, parseColor, parseKey, renderFakeCursor, stripTerminalSequences, visibleWidth, type AutocompleteProvider, type AutocompleteSuggestions, type EditorTheme, type TUI, type TuiMouseEvent, type TuiMouseEventResult } from "@earendil-works/pi-tui";
+import { CURSOR_MARKER, SelectList, decodeKittyPrintable, isKeyRelease, matchesKey, parseColor, parseKey, renderFakeCursor, stripTerminalSequences, truncateToWidth, visibleWidth, type AutocompleteProvider, type AutocompleteSuggestions, type EditorTheme, type TUI, type TuiMouseEvent, type TuiMouseEventResult } from "@earendil-works/pi-tui";
 import { AtomBuffer } from "./atom-buffer.ts";
 import { layoutAtoms, caretInRows, cursorInRow, type AtomRow } from "./atom-layout.ts";
 import { SKILL_CHIP_PATTERN, allowsSkillTokens, collapseSkillTokens } from "./skill-atoms.ts";
@@ -42,11 +42,26 @@ export class AtomicSkillEditor extends CustomEditor {
 	private yankSpan?: { start: number; end: number; index: number };
 	private jumpDirection?: "forward" | "backward";
 	private terminalFocused = true;
+	private borderStatus?: Parameters<CustomEditor["setWorkingStatusIndicator"]>[0];
 
-	constructor(tui: TUI, theme: EditorTheme, keys: KeybindingsManager, private known: () => ReadonlySet<string>, private palette: () => Theme, private beforeSubmit: (text: string) => boolean = () => true, private reportError: (error: Error) => void = error => { throw error; }, private hasPendingMessages: () => boolean = () => false) {
+	constructor(tui: TUI, theme: EditorTheme, keys: KeybindingsManager, private known: () => ReadonlySet<string>, private palette: () => Theme, private beforeSubmit: (text: string) => boolean = () => true, private reportError: (error: Error) => void = error => { throw error; }, private hasPendingMessages: () => boolean = () => false, private sessionName: () => string | undefined = () => undefined) {
 		super(tui, theme, keys, { embedWorkingStatus: true });
 		this.editorKeys = keys;
 		this.editorTheme = theme;
+	}
+
+	setWorkingStatusIndicator(indicator: Parameters<CustomEditor["setWorkingStatusIndicator"]>[0]): void {
+		this.borderStatus = indicator;
+	}
+	protected renderTopBorder(width: number, hiddenLineCount: number): string {
+		if (width < 6) return super.renderTopBorder(width, hiddenLineCount);
+		const spinner = stripTerminalSequences(this.borderStatus?.renderSpinnerInBorder(width - 5) ?? "");
+		const nameWidth = Math.max(0, width - 5 - (spinner ? visibleWidth(spinner) + 1 : 0));
+		const name = truncateToWidth(this.sessionName() ?? "", nameWidth, "…");
+		const text = [name, spinner].filter(Boolean).join(" ");
+		if (!text) return super.renderTopBorder(width, hiddenLineCount);
+		const label = this.palette().style(` ${text} `, { fg: this.borderStatus ? herdrPaneBorder : "text" });
+		return super.renderTopBorder(width - visibleWidth(label) - 1, hiddenLineCount) + label + this.borderColor("─");
 	}
 
 	getText(): string { return this.buffer.getText(); }
