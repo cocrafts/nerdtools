@@ -1,15 +1,18 @@
 #!/usr/bin/env bash
-# Usage: diskclean-slot [--dry-run] [--skip-file FILE] [--deep-metascript PATH]... [PATH]...
-# With no PATH, removes every allowed path found in ~/metascript worktrees.
+# Usage: diskclean-slot [--dry-run] [--skip-file FILE] [--landed-out] [--deep-metascript PATH]... [PATH]...
+# With no PATH, removes every allowed path found in ~/metascript worktrees. --landed-out, passed only when the person
+# asked for it in that request, also removes the whole out/ of a worktree whose HEAD is in its main and whose tracked
+# files are clean, because nothing waits on a landed tree and out/ is rebuilt from it.
 set -uo pipefail
 shopt -s nullglob
 ROOT=$HOME/metascript
 META=$HOME/.metascript
-WT='(\.wt/wt-[^/]+|neon-wt-[^/]+|neon)'
-dry=0 skipfile= deep=() args=()
+WT='(\.wt/wt-[^/]+|[a-z0-9]+-wt-[^/]+|neon)'
+dry=0 skipfile= deep=() args=() landed=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --dry-run) dry=1 ;;
+    --landed-out) landed=1 ;;
     --skip-file) skipfile=${2:?--skip-file needs a file}; shift ;;
     --deep-metascript) deep+=("${2:?--deep-metascript needs a path}"); shift ;;
     -*) echo "unknown option: $1" >&2; exit 2 ;;
@@ -33,10 +36,17 @@ refusal() {
   fi
   if [ "${p#"$ROOT/recompiler/"}" != "$p" ]; then echo "recompiler main checkout"; return; fi
   if [[ $p =~ ^$ROOT/$WT/out/[^/]+/\.cache$ ]]; then return; fi
+  if [ $landed -eq 1 ] && [[ $p =~ ^($ROOT/(\.wt/wt-[^/]+|[a-z0-9]+-wt-[^/]+))/out$ ]]; then
+    local w=${BASH_REMATCH[1]} m
+    m=$(git -C "$w" rev-parse -q --verify main || git -C "$w" rev-parse -q --verify master) || { echo "no main branch"; return; }
+    git -C "$w" merge-base --is-ancestor HEAD "$m" || { echo "HEAD not landed in main"; return; }
+    [ -z "$(git -C "$w" status --porcelain --untracked-files=no | head -1)" ] || { echo "tracked files modified"; return; }
+    [ -z "$(command find "$p" -mmin -120 -print -quit 2>/dev/null)" ] || echo "out/ written within 2h"; return
+  fi
   if [[ $p =~ ^$ROOT/$WT/out/debug/_test_[^/]+$ ]]; then
     [ -z "$(command find "$p" -mmin -120 -print -quit 2>/dev/null)" ] || echo "_test_ dir written within 2h"; return
   fi
-  echo "outside the allowlist (out/*/.cache, out/debug/_test_* older than 2h)"
+  echo "outside the allowlist (out/*/.cache, out/debug/_test_* older than 2h, a landed worktree's out/ with --landed-out)"
 }
 
 check() {
@@ -72,7 +82,8 @@ if [ ${#args[@]} -gt 0 ] || [ ${#deep[@]} -gt 0 ]; then
     p=$(check "$a") && paths+=("$p") || refused=$((refused+1))
   done
 else
-  for w in "$ROOT"/.wt/wt-* "$ROOT"/neon-wt-* "$ROOT"/neon; do
+  for w in "$ROOT"/.wt/wt-* "$ROOT"/*-wt-* "$ROOT"/neon; do
+    [ $landed -eq 1 ] && [ "$w" != "$ROOT/neon" ] && [ -d "$w/out" ] && p=$(check "$w/out" 2>/dev/null) && { paths+=("$p"); continue; }
     for c in "$w"/out/*/.cache "$w"/out/debug/_test_*; do
       p=$(check "$c" 2>/dev/null) && paths+=("$p")
     done
